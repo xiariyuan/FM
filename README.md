@@ -59,6 +59,22 @@ Other submission scripts:
 TrackEval is included under `TrackEval/`. Follow its official instructions
 to evaluate your submission files.
 
+## 7) Experiment Evidence
+
+If you want the shortest path through the diagnosis and experiment history, start with:
+
+- `docs/experiment_index.md`
+- `outputs/experiment_registry.csv`
+
+This repository intentionally keeps lightweight structured experiment records in git
+while excluding heavy artifacts such as checkpoints, shard dumps, and raw dataset
+outputs.
+
+Useful helper scripts:
+
+- `scripts/git_stage_experiment_records.sh`
+- `scripts/git_sync_experiment_records.sh`
+
 ---
 
 If you run into issues, check:
