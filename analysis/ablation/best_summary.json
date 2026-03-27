@@ -1,0 +1,9 @@
+{
+  "metric": "HOTA",
+  "best_exp": "fa_mot_v2_resume",
+  "best_epoch": 28,
+  "best_value": 86.823,
+  "best_summary_path": "/gemini/code/FMtrack-main/FM-Track/outputs/fa_mot_v2_resume/train/eval_during_train/epoch_28/tracker/tracker_default/pedestrian_summary.txt",
+  "best_config_src": "/gemini/code/FMtrack-main/FM-Track/outputs/fa_mot_v2_resume/train/config.yaml",
+  "best_config_out": "/gemini/code/FMtrack-main/FM-Track/configs/bytetrack_fa_mot_mot17_best.yaml"
+}

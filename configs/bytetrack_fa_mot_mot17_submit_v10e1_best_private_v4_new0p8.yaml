@@ -1,0 +1,32 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# MOT17 Codabench submission config (PRIVATE detections).
+#
+# v4: same as v3 sweep, but raise NEWBORN_THRESH to reduce ID fragmentation on test sequences.
+# This is an inference-only change (no retraining).
+
+EXP_NAME: submit_mot17_full_v10e1_best_private_v4_new0p8
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+# Submission generation only (no GT available for test split).
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Use the internal YOLOX detector rather than MOT17 public det/det.txt.
+BYTETRACK_DET_SOURCE: model
+
+# === Inference thresholds / params ===
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.8
+ID_THRESH: 0.003
+ASSOC_IOU_GATE: 0.35
+DET_MAX_PER_FRAME: 60
+MISS_TOLERANCE: 30
+
+# Optional post-processing (off by default for submission stability)
+USE_TRACK_INTERPOLATION: false
+INTERPOLATION_MAX_GAP: 10
+INTERPOLATION_MIN_LENGTH: 3
+INTERPOLATION_METHOD: linear

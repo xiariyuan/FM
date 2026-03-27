@@ -1,0 +1,22 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6.yaml
+
+# Submission config (MOT17 test) using the best checkpoint from v10 epoch 1,
+# with tuned association parameters from the local sweep on MOT17-04/05.
+#
+# NOTE: TrackEval must be disabled for test split (no GT available).
+EXP_NAME: submit_mot17_test_v10e1_best_private
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Private detections: use internal YOLOX (ByteTrack) detector.
+BYTETRACK_DET_SOURCE: model
+
+# Best sweep params (val MOT17-04/05, all 3 det versions combined):
+# HOTA 76.374 / AssA 79.096
+ID_THRESH: 0.004
+ASSOC_IOU_GATE: 0.35
+DET_MAX_PER_FRAME: 60
+

@@ -1,0 +1,19 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_fromscratch_unfreezeproj_longcurr_p0fix_matchloss.yaml
+
+# v10 tune config (fix25): additional correctness/stability fixes
+# - FTT: robust all-masked attention rows; no double-LN on Mamba path; mask query-side padding
+# - IDDecoderV2: merge key padding into attn_mask to avoid dtype-mismatch masking pitfalls
+# - FGA: derive band energy when missing to activate occlusion-aware branch
+# - Triplet: early-exit on single-ID batches (prevents NaNs in soft mining)
+# - Train: optional ID-loss weight normalization flag, plus minor cleanup
+EXP_NAME: bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix25
+
+DETECTOR_FILTER: null
+VAL_SEQUENCES: [MOT17-04, MOT17-05]
+ID_THRESH: 0.003
+
+LOGGING_INTERVAL: 20
+
+# Keep the old behavior (convex combination of per-branch ID losses) unless explicitly disabled.
+ID_LOSS_NORMALIZE_BY_WEIGHT_SUM: true
+

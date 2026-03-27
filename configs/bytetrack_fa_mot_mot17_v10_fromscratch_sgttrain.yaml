@@ -1,0 +1,14 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v9_fromscratch_unfreezeproj_longcurr_p0fix.yaml
+
+# Train-time external detections (SGT) for det/mix curriculum:
+# - Boxes come from outputs/external_det/sgt/{dataset}/{split}/{seq}.txt
+# - RoI features are still extracted by the frozen YOLOX backbone (ByteTrackFeatureExtractor)
+EXP_NAME: bytetrack_fa_mot_mot17_v10_fromscratch_sgttrain
+
+# Key change: use the same detection distribution at training time.
+# (This affects only frames where TRAIN_BOX_SOURCE_SCHEDULE selects det/mix.)
+BYTETRACK_PROFILE_TRAIN: sgt_mot17
+
+# External det boxes are in original image coordinates, so augmented-image mode is unsupported.
+BYTETRACK_USE_AUG_IMAGES: false
+

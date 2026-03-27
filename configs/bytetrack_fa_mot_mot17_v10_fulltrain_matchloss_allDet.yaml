@@ -1,0 +1,13 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_fromscratch_unfreezeproj_longcurr_p0fix_matchloss.yaml
+
+# Final training config: use all MOT17-train sequences (no held-out val) and all
+# public detection variants (DPM/FRCNN/SDP). Use this for the final model that
+# will be submitted/evaluated on MOT17 test.
+EXP_NAME: bytetrack_fa_mot_mot17_v10_fulltrain_matchloss_allDet
+
+DETECTOR_FILTER: null
+VAL_SEQUENCES: []
+
+# Keep inference params aligned with the tuned setting.
+ID_THRESH: 0.003
+

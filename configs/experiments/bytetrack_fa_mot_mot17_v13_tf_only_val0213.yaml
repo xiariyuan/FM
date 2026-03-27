@@ -1,0 +1,69 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v12_align_detft_nooverlap_detonly_val0213.yaml
+
+# v13 (ablation): Pure-Transformer temporal modeling
+# Goal:
+# - Keep frequency-aware pipeline (our main contribution) intact
+# - Remove Mamba from all paths to improve stability/generalization
+# - Evaluate in hybrid association mode so the trained modules are actually used at inference-time
+
+EXP_NAME: bytetrack_fa_mot_mot17_v13_tf_only_val0213
+
+# Stability: YOLOX fp16 can occasionally overflow on rare frames and poison downstream features.
+# Force fp32 feature extraction for training runs that feed our frequency-aware modules.
+BYTETRACK_FP16: false
+
+# --- Architecture switches ---
+# FTT: use attention for ALL bands (no low-frequency Mamba).
+USE_MAMBA_FOR_LOWFREQ: false
+# ID decoder: use Transformer self-attention (avoid order-sensitive Mamba over unordered detection tokens).
+USE_MAMBA_IN_ID_DECODER: false
+# Trajectory modeling: disable the extra global Mamba smoothing block.
+USE_GLOBAL_MAMBA: false
+
+# --- Validation/inference mode ---
+# Use HYBRID so our trajectory_modeling + id_decoder participate in association (feature-only mode bypasses them).
+ASSOC_MODE: hybrid
+# Start from your known-good ReID feature settings (we will sweep around these later).
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+# NOTE:
+# - `softmax` normalizes each detection's scores across *all* active tracks, so the absolute score depends on
+#   how many tracks are alive (and can easily fall below `ID_THRESH`, causing every frame to "rebirth" IDs).
+# - `raw` keeps scores in [0, 1] (cosine-sim mapped to [0, 1]) and is much less sensitive to active track count.
+ASSOC_FEAT_SCORE_MODE: raw
+# For `raw` score mode, keep tau at 1.0 so cosine similarities stay in [-1, 1] before mapping to [0, 1].
+# (Small taus like 0.05 are intended for softmax temperature and will saturate raw scores.)
+ASSOC_FEAT_TAU: 1.0
+ID_THRESH: 0.08
+
+# --- Freq-guided geometry cue (opt-in) ---
+# If enabled (weight>0), add a bbox-distance similarity term to matching and (optionally) weight it dynamically
+# by the model's reliability estimate (`cal_factor` from freq-band consistency / entropy).
+ASSOC_BBOX_DIST_WEIGHT: 0.0
+ASSOC_BBOX_DIST_TAU: 1.0
+ASSOC_BBOX_DIST_USE_CAL_FACTOR: false
+
+# Optional 2-stage matching baseline (opt-in)
+ASSOC_TWO_STAGE: false
+ASSOC_STAGE2_ID_THRESH: 0.30
+ASSOC_STAGE2_IOU_GATE: 0.0
+ASSOC_STAGE2_BBOX_WEIGHT: 1.0
+
+# This control line should not inherit stale resume paths from older training chains.
+# Start clean unless a caller explicitly injects a valid checkpoint.
+RESUME_MODEL:
+RESUME_OPTIMIZER: false
+RESUME_SCHEDULER: false
+RESUME_ONLY_WEIGHTS: false
+RESUME_SKIP_YOLOX: false
+
+# Hybrid score weights (can be tuned later via scripts/sweep_assoc_params.py).
+ASSOC_ID_WEIGHT: 1.0
+ASSOC_FEAT_WEIGHT: 1.0
+ASSOC_IOU_WEIGHT: 0.0
+
+
+# --- OOM safety overrides for validation ---
+DET_MAX_PER_FRAME: 40
+INFERENCE_MAX_LONGER: 960
+ASSOC_FEAT_K: 3

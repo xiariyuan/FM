@@ -1,0 +1,16 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v6_shortft.yaml
+
+EXP_NAME: bytetrack_fa_mot_mot17_v6_submit_test
+
+# Use all MOT17 test sequences (DPM/FRCNN/SDP), do not filter by detector token.
+DETECTOR_FILTER: []
+
+# Use provided public detections for MOTChallenge test submission.
+BYTETRACK_DET_SOURCE: public
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+EVAL_ONLY_VAL: false
+
+# No GT on test split; skip TrackEval during submission generation.
+RUN_TRACKEVAL: false

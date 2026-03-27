@@ -1,0 +1,22 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6.yaml
+
+# Submission config (MOT17 test) using PUBLIC detections (det/det.txt).
+# This produces the standard 21-sequence result set (7 sequences × 3 detector versions).
+#
+# NOTE: TrackEval must be disabled for test split (no GT available).
+EXP_NAME: submit_mot17_test_v10e1_best_public
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Public detections: use MOTChallenge det/det.txt files.
+BYTETRACK_DET_SOURCE: public
+
+# Start with the best params from the private-det sweep as a strong default.
+# If needed, run a dedicated public-det sweep later.
+ID_THRESH: 0.004
+ASSOC_IOU_GATE: 0.35
+DET_MAX_PER_FRAME: 60
+

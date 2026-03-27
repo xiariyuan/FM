@@ -1,0 +1,202 @@
+# ============================================================================
+# Round1 Baseline Contrast: 原始增强配置（对照组）
+#
+# 目的：短跑1-2 epoch对照实验，验证增强是否是主要问题
+# 与 round1_minimal_change.yaml 对比，只有增强参数不同
+# ============================================================================
+
+SUPER_CONFIG_PATH:
+
+SEED: 42
+NUM_WORKERS: 4
+PREFETCH_FACTOR: 4
+DEVICE: cuda
+
+# Data
+DATA_ROOT: /gemini/code/datasets
+DATASETS: [MOT17]
+DATASET_SPLITS: [train]
+
+# ✅ 验证集（与Round1相同）
+VAL_SEQUENCES: [MOT17-02, MOT17-10]
+
+# ✅ 硬断言开关
+ASSERT_EVAL_ONLY_VAL: True
+
+# ✅ 只跑诊断阈值（加速对照实验）
+EVAL_DIAGNOSTIC_THRESHOLDS: True
+
+SAMPLE_STEPS: [0]
+SAMPLE_LENGTHS: [30]
+SAMPLE_INTERVALS: [4]
+LENGTH_PER_ITERATION:
+
+# ============================================================================
+# 数据增强 - 使用原始配置（高强度）⚠️ 这是关键对照点
+# ============================================================================
+AUG_RESIZE_SCALES: [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+AUG_MAX_SIZE: 1440
+AUG_RANDOM_RESIZE: [400, 500, 600]
+AUG_RANDOM_CROP_MIN: 384
+AUG_RANDOM_CROP_MAX: 600
+AUG_MAX_SHIFT_RATIO: 0.06
+AUG_OVERFLOW_BBOX: False
+AUG_BRIGHTNESS: 0.4
+AUG_CONTRAST: 0.4
+AUG_SATURATION: 0.4
+AUG_HUE: 0.2
+AUG_COLOR_JITTER_V2: False
+AUG_NUM_GROUPS: 6
+
+# ⚠️ 原始轨迹增强（高强度）
+AUG_TRAJECTORY_OCCLUSION_PROB: 0.5    # 原始：0.5（对照）
+AUG_TRAJECTORY_SWITCH_PROB: 0.5       # 原始：0.5（对照）
+
+# ⚠️ 原始BBox噪声（高强度）
+BBOX_POSITION_NOISE: 0.02       # 原始：0.02（对照）
+BBOX_SIZE_NOISE: 0.03           # 原始：0.03（对照）
+BBOX_DROP_PROB: 0.02            # 原始：0.02（对照）
+BBOX_AUG_PROB: 0.5              # 原始：0.5（对照）
+
+# ============================================================================
+# Model - 与Round1完全相同
+# ============================================================================
+ONLY_DETR: False
+NUM_CLASSES: 1                 # MOT任务只检测"人"类
+NUM_ID_VOCABULARY: 50
+DETR_FRAMEWORK: dino
+
+FEATURE_DIM: 256
+FFN_DIM_RATIO: 2
+ID_DIM: 256
+HEAD_DIM: 32
+NUM_ID_DECODER_LAYERS: 6
+
+ID_LOSS_WEIGHT: 1.0
+REL_PE_LENGTH: 30
+USE_AUX_LOSS: True
+USE_SHARED_AUX_HEAD: True
+USE_FOCAL_LOSS: False
+
+USE_FREQ_AWARE: True
+USE_FREQ_DECODER_V2: True
+USE_LEARNABLE_FUSION: True
+NUM_FREQ_BANDS: 4
+FREQ_KERNEL_SIZE: 7
+USE_MULTISCALE_FREQ: False
+NUM_FREQ_SCALES: 3
+NUM_FREQ_TEMPORAL_LAYERS: 2
+FREQ_TEMPORAL_HEADS: 8
+USE_MAMBA_FOR_LOWFREQ: True
+FREQ_DROPOUT: 0.1
+USE_FREQ_GUIDED_ASSOC: True
+USE_OCCLUSION_AWARE: True
+FREQ_ORTHO_LOSS_WEIGHT: 0.1
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.05
+USE_FREQ_ADAPTER: False
+
+BACKBONE: resnet50
+DILATION: False
+DETR_NUM_QUERIES: 900
+DETR_NUM_FEATURE_LEVELS: 5
+DETR_AUX_LOSS: True
+DETR_WITH_BOX_REFINE: True
+DETR_TWO_STAGE: True
+DETR_HIDDEN_DIM: 256
+DETR_MASKS: False
+DETR_POSITION_EMBEDDING: sine
+DETR_NUM_HEADS: 8
+DETR_ENC_LAYERS: 6
+DETR_DEC_LAYERS: 6
+DETR_DIM_FEEDFORWARD: 2048
+DETR_DROPOUT: 0.1
+DETR_DEC_N_POINTS: 4
+DETR_ENC_N_POINTS: 4
+DETR_CLS_LOSS_COEF: 2.0
+DETR_BBOX_LOSS_COEF: 5.0
+DETR_GIOU_LOSS_COEF: 2.0
+DETR_FOCAL_ALPHA: 0.25
+DETR_SET_COST_CLASS: 2.0
+DETR_SET_COST_BBOX: 5.0
+DETR_SET_COST_GIOU: 2.0
+DETR_CRITERION_BATCH_LEN: 10
+
+DINO_CONFIG_PATH: ./config/DINO/DINO_5scale.py
+DINO_TWO_STAGE_TYPE: standard
+DINO_NUM_SELECT: 300
+DINO_NMS_IOU_THRESHOLD: -1
+DINO_DEC_PRED_CLASS_EMBED_SHARE: True
+DINO_DEC_PRED_BBOX_EMBED_SHARE: True
+DINO_TWO_STAGE_BBOX_EMBED_SHARE: False
+DINO_TWO_STAGE_CLASS_EMBED_SHARE: False
+DINO_DECODER_SA_TYPE: sa
+DINO_NUM_PATTERNS: 0
+DINO_USE_DN: False
+DINO_DN_NUMBER: 100
+DINO_LABEL_NOISE_RATIO: 0.5
+DINO_BOX_NOISE_SCALE: 0.4
+DINO_LABELBOOK_SIZE: 80
+
+# ============================================================================
+# 训练设置 - ⚠️ 只跑2个epoch用于对照
+# ============================================================================
+BATCH_SIZE: 1
+LR: 1.0e-4
+LR_BACKBONE_NAMES: [backbone.0]
+LR_BACKBONE_SCALE: 0.1
+LR_LINEAR_PROJ_NAMES: [reference_points, sampling_offsets]
+LR_LINEAR_PROJ_SCALE: 0.05
+LR_DICTIONARY_NAMES: [word_to_embed, embed_to_word]
+LR_DICTIONARY_SCALE: 1.0
+LR_FREQ_NAMES: [freq_decomposition, freq_temporal_transformer, freq_association, freq_fusion, fusion_weight]
+LR_FREQ_SCALE: 1.0
+
+LR_WARMUP_EPOCHS: 1
+WEIGHT_DECAY: 0.001
+MAX_CLIP_NORM: 0.1
+EPOCHS: 2                       # ⚠️ 只跑2 epoch用于快速对照
+SCHEDULER_MILESTONES: [20, 30]
+SCHEDULER_GAMMA: 0.1
+DETR_NUM_TRAIN_FRAMES: 4
+DETR_NUM_CHECKPOINT_FRAMES: 0
+USE_DECODER_CHECKPOINT: True
+ACCUMULATE_STEPS: 1
+SEPARATE_CLIP_NORM: True
+USE_ACCELERATE_CLIP_NORM: True
+
+# Resume - 使用COCO预训练（与round1_minimal_change一致）
+DETR_PRETRAIN: ./weight/dino_r50_4scale_12ep.pth
+RESUME_MODEL:
+RESUME_OPTIMIZER: False
+RESUME_SCHEDULER: False
+RESUME_STATES: False
+
+# Inference
+INFERENCE_MODEL:
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+INFERENCE_MODE: evaluate
+INFERENCE_GROUP: default
+INFERENCE_MAX_LONGER: 1440
+INFERENCE_DTYPE: FP32
+ASSIGNMENT_PROTOCOL: object-max
+MISS_TOLERANCE: 30
+DET_THRESH: 0.3
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.2
+AREA_THRESH: 0
+MIN_TRACK_LEN: 0
+IOU_THRESH: 0.1
+INFERENCE_ONLY_DETR:
+
+# Output
+OUTPUTS_DIR: ./outputs/round1_baseline_contrast
+USE_WANDB: False
+EXP_OWNER: research
+EXP_PROJECT: FA-MOT
+EXP_GROUP:
+EXP_NAME: round1_baseline_contrast_original_aug
+GIT_VERSION:
+SAVE_CHECKPOINT_PER_EPOCH: 1
+MULTI_LAST_CHECKPOINTS: 5
+USE_PREVIOUS_CHECKPOINT: False

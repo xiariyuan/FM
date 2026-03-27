@@ -1,0 +1,26 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot20_v13_assoc_ft_val05.yaml
+
+# MOT20 association adaptation (stage-2, full-train finetune).
+# Use this after selecting best checkpoint from stage-1.
+
+EXP_NAME: bytetrack_fa_mot_mot20_v13_assoc_ft_fulltrain
+
+# Full-train on all MOT20 train sequences.
+VAL_SEQUENCES: []
+EVAL_ONLY_VAL: false
+EVAL_EVERY_EPOCH: false
+RUN_TRACKEVAL: false
+
+# Short low-lr consolidation.
+EPOCHS: 4
+LR: 0.00001
+LR_WARMUP_EPOCHS: 0
+SCHEDULER_MILESTONES: [3]
+SCHEDULER_GAMMA: 0.2
+SAVE_CHECKPOINT_PER_EPOCH: 1
+
+# stage-2 should resume from stage-1 best checkpoint via CLI:
+#   --resume-model <stage1_best_ckpt>
+RESUME_MODEL: null
+RESUME_ONLY_WEIGHTS: true
+RESUME_SKIP_YOLOX: true

@@ -1,0 +1,21 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot20_v13_assoc_ft_val05.yaml
+
+# MOT20 test submission config (external detections: sw_yolox).
+# Use with:
+#   python submit_bytetrack.py --config-path <this yaml> --inference-model <ckpt> ...
+
+EXP_NAME: bytetrack_fa_mot_mot20_v13_assoc_submit_sw_yolox
+
+INFERENCE_DATASET: MOT20
+INFERENCE_SPLIT: test
+EVAL_ONLY_VAL: false
+RUN_TRACKEVAL: false
+DETECTOR_FILTER: null
+VAL_SEQUENCES: []
+
+BYTETRACK_DET_SOURCE: external
+EXTERNAL_DET_ROOT: outputs/external_det/sw_yolox
+EXTERNAL_DET_PATTERN: "{root}/{dataset}/{split}/{seq}.txt"
+
+# Inference-only cap (can be swept later).
+DET_MAX_PER_FRAME: 300

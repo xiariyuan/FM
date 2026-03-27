@@ -1,0 +1,22 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213_reid_da.yaml
+EXP_NAME: bytetrack_fa_mot_mot17_v14_ctrl_base_reid_da_val0213
+
+# Do not inherit stale resume settings from older control chains.
+RESUME_MODEL:
+RESUME_OPTIMIZER: false
+RESUME_SCHEDULER: false
+RESUME_ONLY_WEIGHTS: false
+RESUME_SKIP_YOLOX: false
+
+USE_FREQ_AWARE: false
+USE_FREQ_DECODER_V2: false
+USE_FREQ_GUIDED_ASSOC: false
+USE_SPATIAL_FREQ_INTERACTION: false
+
+FREQ_LOSS_WEIGHT: 0.0
+FREQ_ORTHO_LOSS_WEIGHT: 0.0
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.0
+FREQ_FEATURE_ORTHO_WEIGHT: 0.0
+
+ASSOC_FREQ_GATE: false
+USE_MEMORY_BANK: false

@@ -1,0 +1,31 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# MOT17 Codabench submission config (PRIVATE detections).
+# - Uses the internal YOLOX detector (ByteTrack feature extractor) to produce detections on-the-fly.
+# - Intended for the "Private Detections" leaderboard track.
+#
+# This v2 config matches the inference hyperparameters that achieved strong TrackEval results on:
+#   MOT17/train (FRCNN-only): HOTA 66.401, DetA 71.160, AssA 62.603
+# (see: outputs/_eval_privdet_train_v10e1_20260220_191600/tracker/MOT17-train/pedestrian_summary.txt)
+
+EXP_NAME: submit_mot17_full_v10e1_best_private_v2
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+# Submission generation only (no GT available for test split).
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Use the internal YOLOX detector rather than MOT17 public det/det.txt.
+BYTETRACK_DET_SOURCE: model
+
+# === Inference thresholds / params ===
+# NOTE: Keep these aligned with the params used during the train-split private-det evaluation run.
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.003
+ASSOC_IOU_GATE: 0.3
+DET_MAX_PER_FRAME: 50
+MISS_TOLERANCE: 30
+

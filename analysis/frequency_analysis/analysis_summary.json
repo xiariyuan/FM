@@ -1,0 +1,15 @@
+{
+  "output_dir": "analysis/frequency_analysis",
+  "num_bands": 4,
+  "files_generated": [
+    "band_energy_occlusion.png",
+    "band_consistency_histogram.png",
+    "band_attention_heatmap.png",
+    "id_stability_bands.png"
+  ],
+  "insights": {
+    "occlusion_impact": "High-frequency bands most affected by occlusion",
+    "consistency": "Hard samples show lower band consistency",
+    "stability": "Low-frequency bands provide more stable ID predictions"
+  }
+}

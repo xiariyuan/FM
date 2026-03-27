@@ -1,0 +1,247 @@
+# ============================================================================
+# FA-MOT V2 (Frequency-Aware MOT with Improved ID Decoder)
+# 
+# 改进版配置，使用完整6层ID解码器 + 可学习融合权重
+# ============================================================================
+
+SUPER_CONFIG_PATH:
+
+# Seed:
+SEED: 42
+
+# System Settings:
+NUM_WORKERS: 0
+PREFETCH_FACTOR: 6
+DEVICE: cuda
+
+# Data settings:
+DATA_ROOT: /gemini/code/datasets
+DATASETS: [MOT17]
+DATASET_SPLITS: [train]
+# 只使用FRCNN检测器版本进行训练（MOT17有FRCNN/DPM/SDP三种，MOT20无检测器变体）
+DETECTOR_FILTER: [FRCNN]
+
+# ============================================================================
+# Train/Val Split Settings
+# ============================================================================
+# 验证序列列表，用于从训练集中划分验证集
+# 指定的序列将从训练集中排除，可用于验证
+# 示例: [MOT17-02, MOT17-05, MOT17-09]
+# 空列表表示使用全部训练数据
+VAL_SEQUENCES: [MOT17-02, MOT17-10]
+
+SAMPLE_STEPS: [0, ]
+SAMPLE_LENGTHS: [30, ]
+SAMPLE_INTERVALS: [4, ]
+LENGTH_PER_ITERATION:
+MIN_LEGAL_RATIO: 1.0
+
+# Data augmentation settings:
+AUG_RESIZE_SCALES: [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+AUG_MAX_SIZE: 1440
+AUG_RANDOM_RESIZE: [400, 500, 600]
+AUG_RANDOM_CROP_MIN: 384
+AUG_RANDOM_CROP_MAX: 600
+AUG_MAX_SHIFT_RATIO: 0.06
+AUG_OVERFLOW_BBOX: False
+AUG_BRIGHTNESS: 0.4
+AUG_CONTRAST: 0.4
+AUG_SATURATION: 0.4
+AUG_HUE: 0.2
+AUG_COLOR_JITTER_V2: False
+AUG_NUM_GROUPS: 6
+AUG_TRAJECTORY_OCCLUSION_PROB: 0.5
+AUG_TRAJECTORY_SWITCH_PROB: 0.5
+
+# ============================================================================
+# BBox Noise Augmentation (Simulate detector noise for public detection)
+# ============================================================================
+# 模拟检测器噪声，缩小训练-测试差距
+BBOX_POSITION_NOISE: 0.02      # 位置噪声比例 (相对于bbox宽高)
+BBOX_SIZE_NOISE: 0.03          # 尺寸噪声比例 (相对于bbox宽高)
+BBOX_DROP_PROB: 0.02           # 随机丢弃检测框概率
+BBOX_AUG_PROB: 0.5             # 应用噪声增强的整体概率
+
+# ============================================================================
+# Model settings
+# ============================================================================
+
+ONLY_DETR: False
+NUM_CLASSES: 1
+NUM_ID_VOCABULARY: 50
+DETR_FRAMEWORK: dino
+
+# Feature dimensions
+FEATURE_DIM: 256
+FFN_DIM_RATIO: 2
+ID_DIM: 256
+HEAD_DIM: 32
+NUM_ID_DECODER_LAYERS: 6
+
+# Loss settings
+ID_LOSS_WEIGHT: 1.0
+REL_PE_LENGTH: 30
+USE_AUX_LOSS: True    # 启用辅助损失以利用多层结构
+USE_SHARED_AUX_HEAD: True
+USE_FOCAL_LOSS: False
+
+# ============================================================================
+# 频率感知模块设置 (FA-MOT V2核心配置)
+# ============================================================================
+
+# 是否启用频率感知模块
+USE_FREQ_AWARE: True
+
+# *** V2新增配置 ***
+USE_FREQ_DECODER_V2: True      # 使用改进版V2解码器
+USE_LEARNABLE_FUSION: True     # 可学习的双分支融合权重
+FREQ_LOSS_WEIGHT: 1.0
+FUSION_LOSS_WEIGHT: 1.0
+
+# 频率分解设置
+NUM_FREQ_BANDS: 4              # 频带数量
+FREQ_KERNEL_SIZE: 7            # 频率滤波器核大小
+USE_FIXED_LAPLACIAN: False     # 是否使用固定滤波器(冻结频率分解参数)
+USE_MULTISCALE_FREQ: False     # 是否使用多尺度频率分解
+NUM_FREQ_SCALES: 3             # 多尺度时的尺度数量
+
+# 频率-时序建模设置
+NUM_FREQ_TEMPORAL_LAYERS: 2    # 频率-时序Transformer层数
+FREQ_TEMPORAL_HEADS: 8         # 注意力头数
+USE_MAMBA_FOR_LOWFREQ: True    # 低频是否使用Mamba
+FREQ_DROPOUT: 0.1              # Dropout率
+
+# 频率引导关联设置
+USE_FREQ_GUIDED_ASSOC: True    # 是否使用频率引导的ID关联
+USE_OCCLUSION_AWARE: True      # 是否使用遮挡感知
+
+# 频率损失权重
+FREQ_ORTHO_LOSS_WEIGHT: 0.1         # 正交性损失权重
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.05   # 一致性损失权重
+
+# 旧的频率适配器设置（保持兼容性）
+USE_FREQ_ADAPTER: False
+
+# ============================================================================
+# DINO Detector settings
+# ============================================================================
+
+BACKBONE: resnet50
+DILATION: False
+DETR_NUM_QUERIES: 900
+DETR_NUM_FEATURE_LEVELS: 4
+DETR_AUX_LOSS: True
+DETR_WITH_BOX_REFINE: True
+DETR_TWO_STAGE: True
+DETR_HIDDEN_DIM: 256
+DETR_MASKS: False
+DETR_POSITION_EMBEDDING: sine
+DETR_NUM_HEADS: 8
+DETR_ENC_LAYERS: 6
+DETR_DEC_LAYERS: 6
+DETR_DIM_FEEDFORWARD: 2048
+# Dropout for regularization (ablation: try 0.0 vs 0.1)
+DETR_DROPOUT: 0.1              # 增加dropout防止过拟合 (原值0.0)
+DETR_DEC_N_POINTS: 4
+DETR_ENC_N_POINTS: 4
+DETR_CLS_LOSS_COEF: 2.0
+DETR_BBOX_LOSS_COEF: 5.0
+DETR_GIOU_LOSS_COEF: 2.0
+DETR_FOCAL_ALPHA: 0.25
+DETR_SET_COST_CLASS: 2.0
+DETR_SET_COST_BBOX: 5.0
+DETR_SET_COST_GIOU: 2.0
+DETR_CRITERION_BATCH_LEN: 10
+
+# DINO specific
+DINO_CONFIG_PATH: ./config/DINO/DINO_4scale.py
+DINO_TWO_STAGE_TYPE: standard
+DINO_NUM_SELECT: 300
+DINO_NMS_IOU_THRESHOLD: -1
+DINO_DEC_PRED_CLASS_EMBED_SHARE: True
+DINO_DEC_PRED_BBOX_EMBED_SHARE: True
+DINO_TWO_STAGE_BBOX_EMBED_SHARE: False
+DINO_TWO_STAGE_CLASS_EMBED_SHARE: False
+DINO_DECODER_SA_TYPE: sa
+DINO_NUM_PATTERNS: 0
+DINO_USE_DN: False
+DINO_DN_NUMBER: 100
+DINO_LABEL_NOISE_RATIO: 0.5
+DINO_BOX_NOISE_SCALE: 0.4
+DINO_LABELBOOK_SIZE: 1
+
+# ============================================================================
+# Training settings
+# ============================================================================
+
+BATCH_SIZE: 1
+LR: 1.0e-4
+LR_BACKBONE_NAMES: [backbone.0]
+LR_BACKBONE_SCALE: 0.1
+LR_LINEAR_PROJ_NAMES: [reference_points, sampling_offsets]
+LR_LINEAR_PROJ_SCALE: 0.05
+LR_DICTIONARY_NAMES: [word_to_embed, embed_to_word]
+LR_DICTIONARY_SCALE: 1.0
+# 频率模块的学习率设置
+LR_FREQ_NAMES: [freq_decomposition, freq_temporal_transformer, freq_association, freq_fusion, fusion_weight]
+LR_FREQ_SCALE: 1.0
+
+LR_WARMUP_EPOCHS: 1
+# Regularization settings (ablation: try 0.001 vs 0.005 for weight decay)
+WEIGHT_DECAY: 0.001            # 增加正则化以防过拟合 (原值0.0005)
+MAX_CLIP_NORM: 0.1
+EPOCHS: 12
+SCHEDULER_MILESTONES: [8, 10]
+SCHEDULER_GAMMA: 0.1
+DETR_NUM_TRAIN_FRAMES: 4
+DETR_NUM_CHECKPOINT_FRAMES: 0
+USE_DECODER_CHECKPOINT: False
+ACCUMULATE_STEPS: 1
+SEPARATE_CLIP_NORM: True
+USE_ACCELERATE_CLIP_NORM: True
+
+# ============================================================================
+# Resume and Pretrain
+# ============================================================================
+
+DETR_PRETRAIN: ./weight/dino_r50_4scale_12ep.pth
+RESUME_MODEL:
+RESUME_OPTIMIZER: False
+RESUME_SCHEDULER: False
+RESUME_STATES: False
+
+# ============================================================================
+# Inference settings
+# ============================================================================
+
+INFERENCE_MODEL:
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+INFERENCE_MODE: evaluate
+INFERENCE_GROUP: default
+INFERENCE_MAX_LONGER: 1440
+INFERENCE_DTYPE: FP32
+ASSIGNMENT_PROTOCOL: object-max
+MISS_TOLERANCE: 30
+DET_THRESH: 0.3
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.2
+AREA_THRESH: 0
+MIN_TRACK_LEN: 0
+IOU_THRESH: 0.1
+INFERENCE_ONLY_DETR:
+
+# ============================================================================
+# Output settings
+# ============================================================================
+
+OUTPUTS_DIR:
+USE_WANDB: False
+EXP_OWNER: research
+EXP_PROJECT: FA-MOT
+EXP_GROUP:
+EXP_NAME: fa_mot_v2_mot17
+GIT_VERSION:
+SAVE_CHECKPOINT_PER_EPOCH: 1
+MULTI_LAST_CHECKPOINTS: 0
+USE_PREVIOUS_CHECKPOINT: False

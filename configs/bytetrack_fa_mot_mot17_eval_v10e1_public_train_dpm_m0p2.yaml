@@ -1,0 +1,9 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_eval_v10e1_public_train.yaml
+
+# Public-det tuning: relax DPM thresholds (more recall), keep global thresholds for FRCNN/SDP.
+EXP_NAME: eval_mot17_train_v10e1_public_dpm_m0p2
+
+# DPM-only overrides (apply when seq name ends with "-DPM")
+DET_THRESH_DPM: -0.2
+NEWBORN_THRESH_DPM: -0.2
+

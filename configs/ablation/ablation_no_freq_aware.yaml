@@ -1,0 +1,22 @@
+# Ablation Study: Without Frequency-Aware Module (Baseline)
+# This is the baseline without frequency decomposition
+SEED: 42
+DEVICE: cuda
+NUM_WORKERS: 4
+EXP_NAME: ablation_no_freq_aware
+DATA_ROOT: /gemini/code/datasets
+DATASETS: [MOT17]
+DATASET_SPLITS: [train]
+VAL_SEQUENCES: [MOT17-04, MOT17-05]
+
+# Ablation: Disable frequency-aware module
+USE_FREQ_AWARE: False
+USE_FREQ_DECODER_V2: False
+
+EPOCHS: 30
+BATCH_SIZE: 2
+LR: 0.0002
+EVAL_EVERY_EPOCH: True
+
+FEATURE_DIM: 256
+NUM_ID_VOCABULARY: 800

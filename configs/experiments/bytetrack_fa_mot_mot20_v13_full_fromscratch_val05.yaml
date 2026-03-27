@@ -1,0 +1,35 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot20_v13_assoc_only_val05.yaml
+
+# MOT20 full tracker training from scratch (detector frozen).
+# Goal:
+# - Train all tracking modules (feature_proj + trajectory_modeling + id_decoder) from scratch.
+# - Keep detector (YOLOX) frozen via ByteTrackFeatureExtractor.
+# - Use MOT20-05 as validation holdout for early signal.
+
+EXP_NAME: bytetrack_fa_mot_mot20_v13_full_fromscratch_val05
+OUTPUTS_DIR: null
+
+# --- ReID weights (MOT20-only) ---
+ASSOC_REID_WEIGHTS: outputs/reid_mot20_only_osnetain_20260304_203842/reid_best.pth
+ASSOC_REID_PRETRAINED: false
+
+# --- Override resume / freeze behavior ---
+RESUME_MODEL: null
+RESUME_ONLY_WEIGHTS: false
+RESUME_SKIP_YOLOX: false
+FREEZE_FEATURE_PROJ: false
+
+# --- Training schedule (from scratch) ---
+EPOCHS: 16
+LR: 0.00005
+LR_WARMUP_EPOCHS: 2
+SCHEDULER_MILESTONES: [10, 14]
+SCHEDULER_GAMMA: 0.2
+
+# Stability: keep memory bank disabled for clean training.
+USE_MEMORY_BANK: false
+
+# Frequency-guided gating for appearance association (plug-and-play)
+ASSOC_FREQ_GATE: true
+ASSOC_FREQ_GATE_MIN: 0.2
+ASSOC_FREQ_GATE_MAX: 1.0

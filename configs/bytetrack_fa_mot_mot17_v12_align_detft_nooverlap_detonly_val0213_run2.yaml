@@ -1,0 +1,6 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v12_align_detft_nooverlap_detonly_val0213.yaml
+
+# Run2: identical to v12 align config, but writes to a fresh outputs directory to avoid
+# mixing logs/checkpoints with the first attempt.
+EXP_NAME: bytetrack_fa_mot_mot17_v12_align_detft_nooverlap_detonly_val0213_run2
+

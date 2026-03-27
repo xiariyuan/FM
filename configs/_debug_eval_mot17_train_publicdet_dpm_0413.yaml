@@ -1,0 +1,18 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_submit_v10e1_best_public_tuned_v1.yaml
+
+# Fast public-det tuning config:
+# - Only MOT17 train split
+# - Only DPM detector variants
+# - Only sequences 04 and 13 (crowded + very low-score DPM)
+#
+# Intended use: sweep DET_THRESH/NEWBORN_THRESH quickly before validating on all DPM train sequences.
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+RUN_TRACKEVAL: true
+BYTETRACK_DET_SOURCE: public
+
+EVAL_ONLY_VAL: true
+VAL_SEQUENCES: ["MOT17-04", "MOT17-13"]
+DETECTOR_FILTER: ["DPM"]
+

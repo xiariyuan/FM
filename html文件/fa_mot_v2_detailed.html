@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FA-MOT V2 详细模型结构</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0d1117 0%, #161b22 100%);
+            min-height: 100vh; padding: 20px; color: #c9d1d9;
+        }
+        .container { max-width: 1600px; margin: 0 auto; }
+        .header {
+            text-align: center; padding: 30px; margin-bottom: 25px;
+            background: linear-gradient(135deg, rgba(88,166,255,0.1), rgba(63,185,80,0.1));
+            border: 1px solid #30363d; border-radius: 12px;
+        }
+        .header h1 {
+            font-size: 2.2em; margin-bottom: 10px;
+            background: linear-gradient(90deg, #58a6ff, #3fb950);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .module-section {
+            background: #161b22; border: 1px solid #30363d;
+            border-radius: 12px; margin-bottom: 20px; overflow: hidden;
+        }
+        .module-header {
+            background: linear-gradient(90deg, #21262d, #161b22);
+            padding: 15px 20px; cursor: pointer; display: flex;
+            align-items: center; justify-content: space-between;
+            border-bottom: 1px solid #30363d;
+        }
+        .module-header:hover { background: #30363d; }
+        .module-title { display: flex; align-items: center; gap: 12px; }
+        .module-icon {
+            width: 40px; height: 40px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.3em;
+        }
+        .module-name { font-size: 1.2em; font-weight: 600; color: #f0f6fc; }
+        .module-file { font-size: 0.85em; color: #8b949e; }
+        .expand-icon { font-size: 1.2em; color: #8b949e; transition: transform 0.3s; }
+        .module-content { display: none; padding: 20px; }
+        .module-content.expanded { display: block; }
+        .layer-tree { margin-left: 0; }
+        .layer-item {
+            border-left: 2px solid #30363d; margin-left: 15px;
+            padding-left: 15px; margin-bottom: 12px;
+        }
+        .layer-item:last-child { border-left-color: transparent; }
+        .layer-name {
+            font-weight: 600; color: #58a6ff; font-size: 0.95em;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .layer-type {
+            background: #238636; color: white; padding: 2px 8px;
+            border-radius: 4px; font-size: 0.75em; font-weight: normal;
+        }
+        .layer-params {
+            margin-top: 8px; padding: 10px; background: #0d1117;
+            border-radius: 6px; font-size: 0.85em;
+        }
+        .param-row { display: flex; margin-bottom: 4px; }
+        .param-key { color: #8b949e; min-width: 140px; }
+        .param-val { color: #3fb950; font-family: monospace; }
+        .code-block {
+            background: #0d1117; border: 1px solid #30363d;
+            border-radius: 6px; padding: 12px; margin-top: 10px;
+            font-family: 'Consolas', monospace; font-size: 0.8em;
+            overflow-x: auto; white-space: pre; color: #c9d1d9;
+        }
+        .code-comment { color: #8b949e; }
+        .code-keyword { color: #ff7b72; }
+        .code-class { color: #d2a8ff; }
+        .code-param { color: #79c0ff; }
+        .code-num { color: #a5d6ff; }
+        .sub-module { margin-top: 15px; padding: 15px; background: #21262d; border-radius: 8px; }
+        .sub-module-title { color: #f0f6fc; font-weight: 600; margin-bottom: 10px; border-bottom: 1px solid #30363d; padding-bottom: 8px; }
+        .flow-box { background: #0d1117; border-radius: 8px; padding: 15px; margin-top: 15px; }
+        .flow-title { color: #58a6ff; font-weight: 600; margin-bottom: 10px; }
+        .flow-step { display: flex; align-items: flex-start; margin-bottom: 8px; }
+        .flow-num { background: #238636; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.75em; margin-right: 10px; flex-shrink: 0; }
+        .flow-text { color: #c9d1d9; font-size: 0.9em; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px; }
+        .stat-card { background: #21262d; border: 1px solid #30363d; border-radius: 8px; padding: 15px; text-align: center; }
+        .stat-value { font-size: 1.8em; font-weight: 700; color: #58a6ff; }
+        .stat-label { color: #8b949e; font-size: 0.85em; margin-top: 5px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>FA-MOT V2 详细模型结构</h1>
+        <p style="color: #8b949e;">频率感知多目标跟踪 - 完整层级结构与参数</p>
+    </div>
+
+    <!-- 模块1: 可学习频率分解 -->
+    <div class="module-section">
+        <div class="module-header" onclick="toggleModule(this)">
+            <div class="module-title">
+                <div class="module-icon" style="background: linear-gradient(135deg, #ff9800, #ff5722);">📊</div>
+                <div>
+                    <div class="module-name">LearnableFrequencyDecomposition</div>
+                    <div class="module-file">learnable_freq_decomposition.py</div>
+                </div>
+            </div>
+            <span class="expand-icon">▼</span>
+        </div>
+        <div class="module-content">
+            <div class="flow-box">
+                <div class="flow-title">数据流</div>
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: (B, G, T, N, C) 轨迹特征，T=30帧历史</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">input_norm → LayerNorm(256)</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">freq_filter → 4个频带的可学习滤波</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">band_fusion → 频带融合网络</div></div>
+                <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">output_gate → 门控残差连接</div></div>
+                <div class="flow-step"><div class="flow-num">6</div><div class="flow-text">输出: (B, G, T, N, C) + 各频带特征</div></div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">LearnableFrequencyFilter (核心滤波器)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">base_filters <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4, 1, kernel_size=7)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">DOG (Difference of Gaussians)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">可学习的基础滤波器核</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">center_freqs <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4,)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">linspace(0.1, 0.9, 4)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各频带的中心频率</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">bandwidths <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4,)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">ones(4) * 0.2</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各频带的带宽</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">channel_mix <span class="layer-type">Conv1d</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">输入通道</span><span class="param-val">256 * 4 = 1024</span></div>
+                            <div class="param-row"><span class="param-key">输出通道</span><span class="param-val">1024</span></div>
+                            <div class="param-row"><span class="param-key">kernel_size</span><span class="param-val">1</span></div>
+                            <div class="param-row"><span class="param-key">groups</span><span class="param-val">4 (分组卷积)</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">out_projs <span class="layer-type">ModuleList[4]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Linear(256, 256)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各频带的输出投影</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_importance <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">结构</span><span class="param-val">Linear(256→64) → ReLU → Linear(64→4) → Softmax</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">自适应频带重要性权重</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block"><span class="code-comment"># 滤波器构造 (Gabor-like)</span>
+<span class="code-keyword">def</span> _construct_filters(self):
+    t = linspace(-1, 1, kernel_size=7)
+    <span class="code-keyword">for</span> i <span class="code-keyword">in</span> range(4):
+        center_f = sigmoid(center_freqs[i]) * π
+        bandwidth = sigmoid(bandwidths[i]) * 0.5 + 0.1
+        modulation = cos(2π * center_f * t)
+        envelope = exp(-t² / (2 * bandwidth²))
+        filter[i] = base_filters[i] * modulation * envelope</div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">频带融合网络</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">band_fusion <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear</span><span class="param-val">256*4=1024 → 512</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">GELU</span></div>
+                            <div class="param-row"><span class="param-key">Dropout</span><span class="param-val">0.1</span></div>
+                            <div class="param-row"><span class="param-key">Linear</span><span class="param-val">512 → 256</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">output_gate <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear</span><span class="param-val">512 → 256</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">Sigmoid</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">门控残差: x + gate * fused</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">正交性损失</div>
+                <div class="code-block"><span class="code-comment"># 确保不同频带捕获不同信息</span>
+bands_norm = F.normalize(bands_flat, dim=1)  <span class="code-comment"># L2归一化</span>
+correlation = bmm(bands_norm.T, bands_norm)  <span class="code-comment"># (K, K) 相关矩阵</span>
+ortho_loss = ((correlation - I)²).mean()     <span class="code-comment"># 非对角元素→0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模块2: 频率-时序Transformer -->
+    <div class="module-section">
+        <div class="module-header" onclick="toggleModule(this)">
+            <div class="module-title">
+                <div class="module-icon" style="background: linear-gradient(135deg, #2196f3, #00bcd4);">⏱️</div>
+                <div>
+                    <div class="module-name">FrequencyTemporalTransformer</div>
+                    <div class="module-file">freq_temporal_transformer.py</div>
+                </div>
+            </div>
+            <span class="expand-icon">▼</span>
+        </div>
+        <div class="module-content">
+            <div class="flow-box">
+                <div class="flow-title">数据流 (2层)</div>
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: (B, G, T, N, C) + band_features</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">pos_encoding → 频率感知位置编码</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">band_temporal_layers × 2 → 频带内时序注意力</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">cross_band_layers × 2 → 跨频带交互</div></div>
+                <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">ffn_layers × 2 → 前馈网络</div></div>
+                <div class="flow-step"><div class="flow-num">6</div><div class="flow-text">final_fusion → 最终融合输出</div></div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">FrequencyAwarePositionalEncoding</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">scale_factors <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4,)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">[1.0, 2.0, 4.0, 8.0] (低→高频)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">不同频带使用不同时间尺度</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">base_pe <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(1, max_len=100, dim=256)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">正弦位置编码</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_offsets <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4, dim=256)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各频带的可学习偏移</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">BandSpecificTemporalAttention (每层)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">q_proj / k_proj / v_proj <span class="layer-type">Linear</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">输入/输出</span><span class="param-val">256 → 256</span></div>
+                            <div class="param-row"><span class="param-key">注意力头数</span><span class="param-val">8</span></div>
+                            <div class="param-row"><span class="param-key">每头维度</span><span class="param-val">32</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">relative_position_bias <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_heads=8, 2*max_len-1)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">相对位置偏置 (类似Swin)</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">out_proj <span class="layer-type">Linear</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">输入/输出</span><span class="param-val">256 → 256</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">CrossBandInteraction (每层)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">cross_attn <span class="layer-type">MultiheadAttention</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">embed_dim</span><span class="param-val">256</span></div>
+                            <div class="param-row"><span class="param-key">num_heads</span><span class="param-val">8</span></div>
+                            <div class="param-row"><span class="param-key">dropout</span><span class="param-val">0.1</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_embeddings <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4, dim=256)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">频带身份嵌入</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">interaction_gate <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">结构</span><span class="param-val">Linear(512→256) → Sigmoid</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">门控跨频带信息流</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">FFN层 (每层)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">ffn <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">256 → 512 (dim*2)</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">GELU</span></div>
+                            <div class="param-row"><span class="param-key">Dropout</span><span class="param-val">0.1</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">512 → 256</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模块3: 频率引导关联 -->
+    <div class="module-section">
+        <div class="module-header" onclick="toggleModule(this)">
+            <div class="module-title">
+                <div class="module-icon" style="background: linear-gradient(135deg, #9c27b0, #673ab7);">🔗</div>
+                <div>
+                    <div class="module-name">FrequencyGuidedAssociation</div>
+                    <div class="module-file">freq_guided_association.py</div>
+                </div>
+            </div>
+            <span class="expand-icon">▼</span>
+        </div>
+        <div class="module-content">
+            <div class="flow-box">
+                <div class="flow-title">数据流</div>
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: 轨迹特征 + 频带特征</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">occlusion_estimator → 估计遮挡概率</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">freq_weight_predictor → 预测频带权重</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">multi_band_decoder → 多频带ID解码</div></div>
+                <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">输出: 加权ID预测 + 一致性分数</div></div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">OcclusionEstimator (遮挡估计器)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">temporal_diff_encoder <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">256 → 128</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">128 → 64</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">编码时序差分特征</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">freq_dist_encoder <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">num_bands=4 → 32</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">32 → 32</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">编码频率分布特征</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">occlusion_head <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">96 → 32</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">32 → 1</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">Sigmoid</span></div>
+                            <div class="param-row"><span class="param-key">输出</span><span class="param-val">遮挡概率 [0, 1]</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">FrequencyWeightPredictor (频率权重预测器)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">content_encoder <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear</span><span class="param-val">256 → 64</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">occlusion_encoder <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear</span><span class="param-val">1 → 16</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">weight_predictor <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">80 → 32</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">32 → 4</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">Softmax</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">prior_weights <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4,)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">[0.4, 0.3, 0.2, 0.1]</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">低频优先的先验权重</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block"><span class="code-comment"># 遮挡感知权重调整</span>
+<span class="code-keyword">if</span> occlusion_prob > 0.5:
+    <span class="code-comment"># 遮挡时增加低频权重（更稳定）</span>
+    weights = weights * (1 - occlusion_prob) + prior_weights * occlusion_prob</div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">MultiBandIDDecoder (多频带ID解码器)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">band_word_to_embed <span class="layer-type">ModuleList[4]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Embedding(51, 256)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各频带独立的ID嵌入</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_embed_to_word <span class="layer-type">ModuleList[4]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Linear(256, 51)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各频带的ID分类头</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_fusion <span class="layer-type">Linear</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">输入/输出</span><span class="param-val">256*4=1024 → 256</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">consistency_evaluator <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">51*4=204 → 64</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">64 → 1</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">Sigmoid</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">评估各频带预测一致性</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模块4: 频率感知ID解码器V2 -->
+    <div class="module-section">
+        <div class="module-header" onclick="toggleModule(this)">
+            <div class="module-title">
+                <div class="module-icon" style="background: linear-gradient(135deg, #4caf50, #8bc34a);">🎯</div>
+                <div>
+                    <div class="module-name">FrequencyAwareIDDecoderV3</div>
+                    <div class="module-file">freq_aware_id_decoder_v2.py</div>
+                </div>
+            </div>
+            <span class="expand-icon">▼</span>
+        </div>
+        <div class="module-content">
+            <div class="flow-box">
+                <div class="flow-title">双分支架构数据流</div>
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: (B, G, T, N, C) 轨迹特征</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">标准分支: 6层Mamba + CrossAttn + FFN</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">频率分支: 频带增强 + 多频带ID头</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">AttentionFusion: 注意力加权融合</div></div>
+                <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">输出: ID预测 (51类) + 置信度</div></div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">标准分支 (6层)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">word_to_embed <span class="layer-type">Embedding</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">词表大小</span><span class="param-val">51 (50 ID + 1 newborn)</span></div>
+                            <div class="param-row"><span class="param-key">嵌入维度</span><span class="param-val">256</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">rel_pos_embeds <span class="layer-type">ModuleList[6]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Embedding(2*30-1=59, 256)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">相对位置编码</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">self_mamba_layers <span class="layer-type">ModuleList[6]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">MambaBlock(d_model=256)</span></div>
+                            <div class="param-row"><span class="param-key">d_state</span><span class="param-val">16</span></div>
+                            <div class="param-row"><span class="param-key">d_conv</span><span class="param-val">4</span></div>
+                            <div class="param-row"><span class="param-key">expand</span><span class="param-val">2</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">cross_attn_layers <span class="layer-type">ModuleList[6]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">MultiheadAttention(256, 8)</span></div>
+                            <div class="param-row"><span class="param-key">dropout</span><span class="param-val">0.1</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">ffn_layers <span class="layer-type">ModuleList[6]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">结构</span><span class="param-val">Linear(256→512) → GELU → Dropout → Linear(512→256)</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">embed_to_word_layers <span class="layer-type">ModuleList[6]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Linear(256, 51)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各层的ID分类头 (辅助损失)</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">MambaBlock (状态空间模型)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">mamba <span class="layer-type">Mamba</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">d_model</span><span class="param-val">256</span></div>
+                            <div class="param-row"><span class="param-key">d_state</span><span class="param-val">16 (SSM状态维度)</span></div>
+                            <div class="param-row"><span class="param-key">d_conv</span><span class="param-val">4 (局部卷积核)</span></div>
+                            <div class="param-row"><span class="param-key">expand</span><span class="param-val">2 (内部扩展因子)</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">norm <span class="layer-type">LayerNorm</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">维度</span><span class="param-val">256</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block"><span class="code-comment"># Mamba SSM 核心公式</span>
+h[t] = A * h[t-1] + B * x[t]  <span class="code-comment"># 状态更新</span>
+y[t] = C * h[t] + D * x[t]    <span class="code-comment"># 输出计算</span>
+<span class="code-comment"># A, B, C, D 是输入依赖的参数 (选择性机制)</span></div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">FrequencyBranch (频率分支)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">band_enhancers <span class="layer-type">ModuleList[4]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Sequential(Linear→GELU→Linear)</span></div>
+                            <div class="param-row"><span class="param-key">维度</span><span class="param-val">256 → 512 → 256</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_id_heads <span class="layer-type">ModuleList[4]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Linear(256, 51)</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">各频带独立ID预测</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_confidence <span class="layer-type">ModuleList[4]</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">每个元素</span><span class="param-val">Sequential(Linear→ReLU→Linear→Sigmoid)</span></div>
+                            <div class="param-row"><span class="param-key">维度</span><span class="param-val">256 → 64 → 1</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">band_fusion <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">256*4=1024 → 512</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">GELU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">512 → 256</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">fusion_alpha <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(num_bands=4,)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">[0.4, 0.3, 0.2, 0.1]</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">可学习的频带融合权重</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">AttentionFusion (注意力融合)</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">fusion_net <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">512 → 256</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">GELU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">256 → 2</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">Softmax</span></div>
+                            <div class="param-row"><span class="param-key">输出</span><span class="param-val">[标准分支权重, 频率分支权重]</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">consistency_net <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">Linear 1</span><span class="param-val">51*2=102 → 64</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">ReLU</span></div>
+                            <div class="param-row"><span class="param-key">Linear 2</span><span class="param-val">64 → 1</span></div>
+                            <div class="param-row"><span class="param-key">激活</span><span class="param-val">Sigmoid</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">prior_weights <span class="layer-type">Parameter</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">形状</span><span class="param-val">(2,)</span></div>
+                            <div class="param-row"><span class="param-key">初始化</span><span class="param-val">[0.6, 0.4] (标准:频率)</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">residual_gate <span class="layer-type">Sequential</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">结构</span><span class="param-val">Linear(512→256) → Sigmoid</span></div>
+                            <div class="param-row"><span class="param-key">作用</span><span class="param-val">门控残差连接</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="code-block"><span class="code-comment"># 双分支融合</span>
+weights = fusion_net(concat(std_feat, freq_feat))  <span class="code-comment"># [w_std, w_freq]</span>
+fused_logits = weights[0] * std_logits + weights[1] * freq_logits
+<span class="code-comment"># 一致性加权</span>
+consistency = consistency_net(concat(std_logits, freq_logits))
+final_logits = fused_logits * consistency + std_logits * (1 - consistency)</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模块5: 损失函数 -->
+    <div class="module-section">
+        <div class="module-header" onclick="toggleModule(this)">
+            <div class="module-title">
+                <div class="module-icon" style="background: linear-gradient(135deg, #f44336, #e91e63);">📉</div>
+                <div>
+                    <div class="module-name">损失函数组成</div>
+                    <div class="module-file">id_criterion.py</div>
+                </div>
+            </div>
+            <span class="expand-icon">▼</span>
+        </div>
+        <div class="module-content">
+            <div class="sub-module">
+                <div class="sub-module-title">总损失公式</div>
+                <div class="code-block">L_total = L_detr + λ₁ * L_id + λ₂ * L_ortho + λ₃ * L_consistency
+
+<span class="code-comment"># 默认权重</span>
+λ₁ = 1.0   <span class="code-comment"># ID损失权重</span>
+λ₂ = 0.1   <span class="code-comment"># 正交性损失权重</span>
+λ₃ = 0.05  <span class="code-comment"># 一致性损失权重</span></div>
+            </div>
+
+            <div class="sub-module">
+                <div class="sub-module-title">各损失详解</div>
+                <div class="layer-tree">
+                    <div class="layer-item">
+                        <div class="layer-name">L_detr <span class="layer-type">DINO检测损失</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">loss_ce</span><span class="param-val">分类损失 (Focal Loss)</span></div>
+                            <div class="param-row"><span class="param-key">loss_bbox</span><span class="param-val">L1边界框损失</span></div>
+                            <div class="param-row"><span class="param-key">loss_giou</span><span class="param-val">GIoU损失</span></div>
+                            <div class="param-row"><span class="param-key">权重</span><span class="param-val">ce=2.0, bbox=5.0, giou=2.0</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">L_id <span class="layer-type">ID分类损失</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">类型</span><span class="param-val">CrossEntropyLoss</span></div>
+                            <div class="param-row"><span class="param-key">类别数</span><span class="param-val">51 (50 ID + 1 newborn)</span></div>
+                            <div class="param-row"><span class="param-key">辅助损失</span><span class="param-val">6层解码器各层输出</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">L_ortho <span class="layer-type">频带正交性损失</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">公式</span><span class="param-val">||C - I||² (C为频带相关矩阵)</span></div>
+                            <div class="param-row"><span class="param-key">目的</span><span class="param-val">确保不同频带捕获不同信息</span></div>
+                        </div>
+                    </div>
+                    <div class="layer-item">
+                        <div class="layer-name">L_consistency <span class="layer-type">双分支一致性损失</span></div>
+                        <div class="layer-params">
+                            <div class="param-row"><span class="param-key">公式</span><span class="param-val">KL(p_std || p_freq) + KL(p_freq || p_std)</span></div>
+                            <div class="param-row"><span class="param-key">目的</span><span class="param-val">鼓励两分支预测一致</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="header" style="margin-top: 30px;">
+        <h2 style="font-size: 1.5em; color: #f0f6fc; margin-bottom: 15px;">模型统计</h2>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">~45M</div>
+                <div class="stat-label">总参数量 (不含DINO)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4</div>
+                <div class="stat-label">频带数量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">ID解码器层数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2</div>
+                <div class="stat-label">时序Transformer层数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">256</div>
+                <div class="stat-label">特征维度</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">51</div>
+                <div class="stat-label">ID词表大小</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div style="text-align: center; padding: 20px; color: #8b949e; font-size: 0.85em; margin-top: 20px;">
+        FA-MOT V2 详细模型结构可视化 | 点击模块标题展开/折叠详情
+    </div>
+</div>
+
+<script>
+function toggleModule(header) {
+    const content = header.nextElementSibling;
+    const icon = header.querySelector('.expand-icon');
+
+    if (content.classList.contains('expanded')) {
+        content.classList.remove('expanded');
+        icon.style.transform = 'rotate(0deg)';
+    } else {
+        content.classList.add('expanded');
+        icon.style.transform = 'rotate(180deg)';
+    }
+}
+
+// 默认展开第一个模块
+document.addEventListener('DOMContentLoaded', function() {
+    const firstModule = document.querySelector('.module-content');
+    if (firstModule) {
+        firstModule.classList.add('expanded');
+        const firstIcon = document.querySelector('.expand-icon');
+        if (firstIcon) firstIcon.style.transform = 'rotate(180deg)';
+    }
+});
+</script>
+</body>
+</html>

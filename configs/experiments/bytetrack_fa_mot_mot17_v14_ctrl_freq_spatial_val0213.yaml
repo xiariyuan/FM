@@ -1,0 +1,12 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v14_ctrl_full_reid_da_val0213.yaml
+EXP_NAME: bytetrack_fa_mot_mot17_v14_ctrl_freq_spatial_val0213
+
+# Do not inherit stale resume settings from older control chains.
+RESUME_MODEL:
+RESUME_OPTIMIZER: false
+RESUME_SCHEDULER: false
+RESUME_ONLY_WEIGHTS: false
+RESUME_SKIP_YOLOX: false
+
+ASSOC_USE_REID: false
+ASSOC_FEAT_SOURCE: yolox

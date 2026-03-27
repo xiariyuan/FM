@@ -1,0 +1,35 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+
+# Submission config (MOT17 private / external det):
+# - Uses SGT external detections for BOTH train/test splits.
+# - Starts from the best full7 (train FRCNN) StageB params we used for SW_YOLOX,
+#   but you should re-sweep on full7 after switching detections.
+#
+# This file exists so you can A/B compare detector sources without editing YAMLs inline.
+
+EXP_NAME: bytetrack_fa_mot_mot17_v13_tf_only_sgt_fullsubmit_full7best
+
+# For submissions we MUST disable val-only inference; otherwise packing will miss sequences.
+EVAL_ONLY_VAL: false
+VAL_SEQUENCES: null
+
+# Submission packing only: do NOT run TrackEval (test split has no GT).
+RUN_TRACKEVAL: false
+
+# External detections live at:
+#   outputs/external_det/sgt/MOT17/{train|test}/{seq}.txt
+BYTETRACK_DET_SOURCE: external
+EXTERNAL_DET_ROOT: outputs/external_det/sgt/MOT17
+EXTERNAL_DET_PATTERN: "{root}/{split}/{seq}.txt"
+
+# Baseline tuned inference / association params (copy of SW_YOLOX full7 best)
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 50
+
+ID_THRESH: 0.01
+ASSOC_IOU_GATE: 0.35
+ASSOC_USE_DET_SCORE: true
+ASSOC_REID_BOX_EXPAND: 1.0
+

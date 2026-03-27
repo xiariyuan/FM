@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMtrack 模型结构可视化</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .config-panel {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .config-item {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .config-item .label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .config-item .value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .model-canvas {
+            padding: 40px;
+            background: #fafbfc;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .module-box {
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .module-box:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.05);
+        }
+
+        .module-box rect {
+            transition: all 0.3s ease;
+        }
+
+        .module-box:hover rect {
+            stroke-width: 3;
+        }
+
+        .arrow {
+            fill: none;
+            stroke: #495057;
+            stroke-width: 2;
+            marker-end: url(#arrowhead);
+        }
+
+        .data-flow {
+            fill: none;
+            stroke: #667eea;
+            stroke-width: 3;
+            stroke-dasharray: 8, 4;
+            animation: dash 20s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            max-width: 350px;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+        }
+
+        .tooltip h4 {
+            margin-bottom: 8px;
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .tooltip ul {
+            list-style: none;
+            line-height: 1.6;
+        }
+
+        .tooltip li {
+            padding: 3px 0;
+        }
+
+        .tooltip li::before {
+            content: "▸ ";
+            color: #667eea;
+            margin-right: 6px;
+        }
+
+        .legend {
+            padding: 20px 30px;
+            background: white;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .legend h3 {
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+
+        .legend-items {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .legend-color {
+            width: 30px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #dee2e6;
+        }
+
+        .stats {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            text-align: center;
+        }
+
+        .stats h3 {
+            margin-bottom: 15px;
+            color: #2d3436;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stat-card .number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .stat-card .label {
+            color: #6c757d;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 FMtrack 模型结构</h1>
+            <p>Frequency-Aware Multi-Object Tracking with DINO</p>
+        </div>
+
+        <div class="config-panel">
+            <div class="config-grid">
+                <div class="config-item">
+                    <div class="label">检测框架</div>
+                    <div class="value">DINO (DETR-Improved)</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">预训练权重</div>
+                    <div class="value">COCO 80类 → MOT 1类</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">历史记忆窗口</div>
+                    <div class="value">30帧 (REL_PE_LENGTH)</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">训练帧数</div>
+                    <div class="value">2帧 (显存优化)</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">频率带数量</div>
+                    <div class="value">4 bands (多尺度)</div>
+                </div>
+                <div class="config-item">
+                    <div class="label">ID词汇表大小</div>
+                    <div class="value">50 + 1 (unknown)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="model-canvas">
+            <svg viewBox="0 0 1200 900" xmlns="http://www.w3.org/2000/svg">
+                <!-- Definitions -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                        <polygon points="0 0, 10 3, 0 6" fill="#495057" />
+                    </marker>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="grad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#f5576c;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="grad3" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#4facfe;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#00f2fe;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+
+                <!-- Input -->
+                <g class="module-box" data-module="input">
+                    <rect x="500" y="20" width="200" height="60" rx="8" fill="url(#grad1)" stroke="#667eea" stroke-width="2"/>
+                    <text x="600" y="45" text-anchor="middle" fill="white" font-size="16" font-weight="600">输入视频序列</text>
+                    <text x="600" y="65" text-anchor="middle" fill="white" font-size="12">(B, T=30, C, H, W)</text>
+                </g>
+
+                <!-- DINO Detector -->
+                <g class="module-box" data-module="dino">
+                    <rect x="450" y="130" width="300" height="160" rx="8" fill="#e8f4f8" stroke="#4facfe" stroke-width="2"/>
+                    <text x="600" y="155" text-anchor="middle" font-size="18" font-weight="700" fill="#2d3436">DINO 检测器</text>
+
+                    <!-- Backbone -->
+                    <rect x="470" y="170" width="120" height="40" rx="6" fill="#fff" stroke="#4facfe" stroke-width="1.5"/>
+                    <text x="530" y="193" text-anchor="middle" font-size="13" font-weight="600">ResNet-50</text>
+                    <text x="530" y="207" text-anchor="middle" font-size="10" fill="#6c757d">Backbone</text>
+
+                    <!-- Encoder -->
+                    <rect x="610" y="170" width="120" height="40" rx="6" fill="#fff" stroke="#4facfe" stroke-width="1.5"/>
+                    <text x="670" y="193" text-anchor="middle" font-size="13" font-weight="600">6-Layer Enc</text>
+                    <text x="670" y="207" text-anchor="middle" font-size="10" fill="#6c757d">Transformer</text>
+
+                    <!-- Decoder -->
+                    <rect x="470" y="230" width="120" height="40" rx="6" fill="#fff" stroke="#4facfe" stroke-width="1.5"/>
+                    <text x="530" y="253" text-anchor="middle" font-size="13" font-weight="600">6-Layer Dec</text>
+                    <text x="530" y="267" text-anchor="middle" font-size="10" fill="#6c757d">900 queries</text>
+
+                    <!-- Output -->
+                    <rect x="610" y="230" width="120" height="40" rx="6" fill="#fff" stroke="#4facfe" stroke-width="1.5"/>
+                    <text x="670" y="250" text-anchor="middle" font-size="13" font-weight="600">Detection</text>
+                    <text x="670" y="264" text-anchor="middle" font-size="10" fill="#6c757d">cls + bbox</text>
+                </g>
+
+                <!-- Frequency Decomposition -->
+                <g class="module-box" data-module="freq-decomp">
+                    <rect x="150" y="350" width="260" height="120" rx="8" fill="#fff4e6" stroke="#ff9800" stroke-width="2"/>
+                    <text x="280" y="375" text-anchor="middle" font-size="18" font-weight="700" fill="#2d3436">频率分解模块</text>
+
+                    <rect x="170" y="390" width="220" height="70" rx="6" fill="#fff" stroke="#ff9800" stroke-width="1.5"/>
+                    <text x="280" y="410" text-anchor="middle" font-size="12" font-weight="600">4个频率带 (Bands)</text>
+                    <text x="280" y="425" text-anchor="middle" font-size="11" fill="#6c757d">• 高频 (快速运动)</text>
+                    <text x="280" y="440" text-anchor="middle" font-size="11" fill="#6c757d">• 中频 (正常轨迹)</text>
+                    <text x="280" y="455" text-anchor="middle" font-size="11" fill="#6c757d">• 低频 (慢速/遮挡)</text>
+                </g>
+
+                <!-- Mamba Module -->
+                <g class="module-box" data-module="mamba">
+                    <rect x="150" y="510" width="260" height="80" rx="8" fill="#f3e5f5" stroke="#9c27b0" stroke-width="2"/>
+                    <text x="280" y="535" text-anchor="middle" font-size="18" font-weight="700" fill="#2d3436">Mamba 模块</text>
+                    <text x="280" y="555" text-anchor="middle" font-size="12" fill="#6c757d">状态空间模型</text>
+                    <text x="280" y="572" text-anchor="middle" font-size="12" fill="#6c757d">低频轨迹长期建模</text>
+                </g>
+
+                <!-- Temporal Transformer -->
+                <g class="module-box" data-module="temporal">
+                    <rect x="470" y="350" width="260" height="120" rx="8" fill="#e8f5e9" stroke="#4caf50" stroke-width="2"/>
+                    <text x="600" y="375" text-anchor="middle" font-size="18" font-weight="700" fill="#2d3436">时序Transformer</text>
+
+                    <rect x="490" y="390" width="220" height="70" rx="6" fill="#fff" stroke="#4caf50" stroke-width="1.5"/>
+                    <text x="600" y="410" text-anchor="middle" font-size="12" font-weight="600">2层 × 8头注意力</text>
+                    <text x="600" y="427" text-anchor="middle" font-size="11" fill="#6c757d">• 时序特征融合</text>
+                    <text x="600" y="443" text-anchor="middle" font-size="11" fill="#6c757d">• 轨迹连续性建模</text>
+                </g>
+
+                <!-- Freq-Guided Association -->
+                <g class="module-box" data-module="freq-assoc">
+                    <rect x="790" y="350" width="260" height="120" rx="8" fill="#fce4ec" stroke="#e91e63" stroke-width="2"/>
+                    <text x="920" y="375" text-anchor="middle" font-size="18" font-weight="700" fill="#2d3436">频率引导关联</text>
+
+                    <rect x="810" y="390" width="220" height="70" rx="6" fill="#fff" stroke="#e91e63" stroke-width="1.5"/>
+                    <text x="920" y="410" text-anchor="middle" font-size="12" font-weight="600">多频带特征融合</text>
+                    <text x="920" y="427" text-anchor="middle" font-size="11" fill="#6c757d">• 可学习融合权重</text>
+                    <text x="920" y="443" text-anchor="middle" font-size="11" fill="#6c757d">• 置信度加权</text>
+                </g>
+
+                <!-- ID Decoder V2 -->
+                <g class="module-box" data-module="id-decoder">
+                    <rect x="450" y="540" width="300" height="140" rx="8" fill="url(#grad2)" stroke="#f5576c" stroke-width="2"/>
+                    <text x="600" y="565" text-anchor="middle" font-size="18" font-weight="700" fill="white">ID Decoder V2</text>
+
+                    <rect x="470" y="580" width="260" height="85" rx="6" fill="rgba(255,255,255,0.95)" stroke="#f5576c" stroke-width="1.5"/>
+                    <text x="600" y="600" text-anchor="middle" font-size="12" font-weight="600">6层解码器</text>
+                    <text x="600" y="617" text-anchor="middle" font-size="11" fill="#6c757d">• 相对位置编码 (30帧)</text>
+                    <text x="600" y="633" text-anchor="middle" font-size="11" fill="#6c757d">• 词汇表大小: 51</text>
+                    <text x="600" y="649" text-anchor="middle" font-size="11" fill="#6c757d">• 辅助损失 (Aux Loss)</text>
+                </g>
+
+                <!-- Output -->
+                <g class="module-box" data-module="output">
+                    <rect x="450" y="730" width="300" height="80" rx="8" fill="url(#grad3)" stroke="#00f2fe" stroke-width="2"/>
+                    <text x="600" y="760" text-anchor="middle" font-size="18" font-weight="700" fill="white">输出预测</text>
+                    <text x="600" y="780" text-anchor="middle" font-size="13" fill="white">目标检测 + ID分配 + 轨迹关联</text>
+                    <text x="600" y="798" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.9)">(B, G, T, N) → 多目标跟踪结果</text>
+                </g>
+
+                <!-- Data Flow Arrows -->
+                <path class="arrow" d="M 600 80 L 600 130" />
+                <path class="arrow" d="M 600 290 L 280 350" />
+                <path class="arrow" d="M 600 290 L 600 350" />
+                <path class="arrow" d="M 600 290 L 920 350" />
+                <path class="arrow" d="M 280 470 L 280 510" />
+                <path class="arrow" d="M 280 590 L 500 680" />
+                <path class="arrow" d="M 600 470 L 600 540" />
+                <path class="arrow" d="M 920 470 L 700 680" />
+                <path class="arrow" d="M 600 680 L 600 730" />
+
+                <!-- Animated Data Flow -->
+                <path class="data-flow" d="M 600 80 L 600 130 L 600 290 L 600 350 L 600 470 L 600 540 L 600 680 L 600 730" />
+            </svg>
+        </div>
+
+        <div class="legend">
+            <h3>模块说明</h3>
+            <div class="legend-items">
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                    <span>DINO检测器</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fff4e6; border-color: #ff9800;"></div>
+                    <span>频率分解</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #f3e5f5; border-color: #9c27b0;"></div>
+                    <span>Mamba状态空间</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #e8f5e9; border-color: #4caf50;"></div>
+                    <span>时序Transformer</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: #fce4ec; border-color: #e91e63;"></div>
+                    <span>频率引导关联</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                    <span>ID解码器</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stats">
+            <h3>模型统计</h3>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="number">256</div>
+                    <div class="label">特征维度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">30</div>
+                    <div class="label">历史帧数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">900</div>
+                    <div class="label">DINO查询数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">4</div>
+                    <div class="label">频率带数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">6+6</div>
+                    <div class="label">Encoder+Decoder层</div>
+                </div>
+                <div class="stat-card">
+                    <div class="number">51</div>
+                    <div class="label">ID词汇表</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tooltip" id="tooltip"></div>
+
+    <script>
+        const moduleInfo = {
+            'input': {
+                title: '输入视频序列',
+                details: [
+                    '批次大小 (B): 1',
+                    '序列长度 (T): 30帧',
+                    '采样间隔: 每4帧采样',
+                    '实际覆盖: ~120原始帧',
+                    '图像尺寸: 动态resize (480-800)',
+                ]
+            },
+            'dino': {
+                title: 'DINO检测器',
+                details: [
+                    'Backbone: ResNet-50 (COCO预训练)',
+                    'Encoder: 6层 × 8头注意力',
+                    'Decoder: 6层 × 8头注意力',
+                    'Feature Levels: 5个尺度',
+                    'Queries: 900个目标查询',
+                    'Two-stage: 标准模式',
+                    'Deformable Attention: 4个采样点',
+                ]
+            },
+            'freq-decomp': {
+                title: '频率分解模块',
+                details: [
+                    '频率带数量: 4个',
+                    '卷积核大小: 7×7',
+                    '高频: 捕捉快速运动',
+                    '中频: 建模正常轨迹',
+                    '低频: 处理慢速/遮挡',
+                    '多尺度: 支持可选',
+                ]
+            },
+            'mamba': {
+                title: 'Mamba状态空间模型',
+                details: [
+                    '用于: 低频轨迹建模',
+                    '优势: 线性复杂度',
+                    '长期依赖: 高效处理',
+                    '适用场景: 遮挡恢复',
+                    '状态维度: 256',
+                ]
+            },
+            'temporal': {
+                title: '时序Transformer',
+                details: [
+                    '层数: 2层',
+                    '注意力头: 8个',
+                    '特征维度: 256',
+                    '时序建模: 30帧历史',
+                    'Dropout: 0.1',
+                    'FFN维度: 512 (2×feature_dim)',
+                ]
+            },
+            'freq-assoc': {
+                title: '频率引导关联',
+                details: [
+                    '多频带融合: 4个频带',
+                    '可学习权重: 自适应融合',
+                    '置信度加权: 动态调整',
+                    '关联策略: 频率感知',
+                    '输出: 增强的ID特征',
+                ]
+            },
+            'id-decoder': {
+                title: 'ID Decoder V2',
+                details: [
+                    '解码器层数: 6层',
+                    '相对位置编码: 30帧',
+                    'ID词汇表: 50 + 1(unknown)',
+                    'Head维度: 32',
+                    '辅助损失: 启用',
+                    '共享辅助头: 启用',
+                    '频率引导: 启用',
+                ]
+            },
+            'output': {
+                title: '输出预测',
+                details: [
+                    '检测输出: 类别 + 边界框',
+                    'ID预测: (B, G, T, N, vocab)',
+                    '轨迹关联: 时空一致性',
+                    '损失函数: Detection + ID + Freq',
+                    'ID损失权重: 1.0',
+                    '频率正交损失: 0.1',
+                    '频率一致性损失: 0.05',
+                ]
+            }
+        };
+
+        const tooltip = document.getElementById('tooltip');
+        const modules = document.querySelectorAll('.module-box');
+
+        modules.forEach(module => {
+            module.addEventListener('mouseenter', (e) => {
+                const moduleName = module.dataset.module;
+                const info = moduleInfo[moduleName];
+
+                if (info) {
+                    tooltip.innerHTML = `
+                        <h4>${info.title}</h4>
+                        <ul>
+                            ${info.details.map(detail => `<li>${detail}</li>`).join('')}
+                        </ul>
+                    `;
+                    tooltip.classList.add('show');
+                }
+            });
+
+            module.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.pageX + 20) + 'px';
+                tooltip.style.top = (e.pageY + 20) + 'px';
+            });
+
+            module.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+        });
+
+        // Add subtle animation on load
+        window.addEventListener('load', () => {
+            modules.forEach((module, index) => {
+                module.style.opacity = '0';
+                module.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    module.style.transition = 'all 0.5s ease';
+                    module.style.opacity = '1';
+                    module.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

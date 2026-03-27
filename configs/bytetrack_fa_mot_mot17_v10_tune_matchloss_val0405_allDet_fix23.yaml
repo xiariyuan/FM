@@ -1,0 +1,11 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_fromscratch_unfreezeproj_longcurr_p0fix_matchloss.yaml
+
+# v10 tune config (fix23): same as fix22 but after correcting the V2 cross-attention mask handling.
+# New EXP_NAME avoids overwriting any previous outputs.
+EXP_NAME: bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix23
+
+DETECTOR_FILTER: null
+VAL_SEQUENCES: [MOT17-04, MOT17-05]
+ID_THRESH: 0.003
+
+LOGGING_INTERVAL: 20

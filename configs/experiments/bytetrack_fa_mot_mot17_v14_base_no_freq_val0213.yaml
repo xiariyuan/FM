@@ -1,0 +1,21 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+
+# v14-base: pure spatial/temporal baseline (frequency modules disabled)
+# Purpose:
+# - Provide a clean "Base" for ablations against our frequency-aware design.
+
+EXP_NAME: bytetrack_fa_mot_mot17_v14_base_no_freq_val0213
+
+# Disable all frequency-aware modules and losses
+USE_FREQ_AWARE: false
+USE_FREQ_DECODER_V2: false
+USE_FREQ_GUIDED_ASSOC: false
+USE_SPATIAL_FREQ_INTERACTION: false
+
+FREQ_LOSS_WEIGHT: 0.0
+FREQ_ORTHO_LOSS_WEIGHT: 0.0
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.0
+FREQ_FEATURE_ORTHO_WEIGHT: 0.0
+
+# Ensure no freq-gated association is applied in baseline
+ASSOC_FREQ_GATE: false

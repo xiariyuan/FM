@@ -1,0 +1,8 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot20_v13_assoc_only_val05_reidmot20.yaml
+
+EXP_NAME: bytetrack_fa_mot_mot20_v15_laplace_assoc_val05_reidmot20
+
+ASSOC_USE_LAPLACE: true
+ASSOC_LAPLACE_WEIGHT: 0.35
+ASSOC_LAPLACE_DECAY_SCALES: [1.0, 2.0, 4.0]
+ASSOC_LAPLACE_HIDDEN_DIM: 16

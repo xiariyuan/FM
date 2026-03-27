@@ -1,0 +1,100 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213_reid_da.yaml
+
+# MOT20 association adaptation (stage-1, with held-out validation sequence).
+# Goal:
+# - Start from MOT17-trained tracker weights.
+# - Adapt association behavior to MOT20 train distribution.
+# - Keep detector frozen (YOLOX in feature_extractor is frozen by train_bytetrack.py).
+# - Use MOT20-05 as validation holdout for early model selection.
+
+EXP_NAME: bytetrack_fa_mot_mot20_v13_assoc_ft_val05
+
+# --- Dataset split (train/val by sequence) ---
+DATASETS: [MOT20]
+DATASET_SPLITS: [train]
+DETECTOR_FILTER: null
+VAL_SEQUENCES: [MOT20-05]
+EVAL_ONLY_VAL: true
+EVAL_EVERY_EPOCH: true
+RUN_TRACKEVAL: true
+INFERENCE_DATASET: MOT20
+INFERENCE_SPLIT: train
+SAVE_CHECKPOINT_PER_EPOCH: 1
+
+# --- Detector / features ---
+# Use your strongest available detector checkpoint as frozen feature extractor backbone.
+BYTETRACK_CKPT: outputs/detector/det_yolox_mixdet_mot17full_mot20full_valchval_20260228_113639/best_ckpt.pth.tar
+BYTETRACK_FP16: false
+BYTETRACK_CONF_THRE: 0.10
+BYTETRACK_DET_SOURCE: external
+EXTERNAL_DET_ROOT: outputs/external_det/sw_yolox
+EXTERNAL_DET_PATTERN: "{root}/{dataset}/{split}/{seq}.txt"
+
+# --- Resume from MOT17 association baseline ---
+RESUME_MODEL: outputs/v13_tf_only_e12_20260302_020652/checkpoint_epoch_0.pth
+RESUME_ONLY_WEIGHTS: true
+RESUME_SKIP_YOLOX: true
+
+# --- Short adaptation schedule ---
+EPOCHS: 8
+BATCH_SIZE: 2
+ACCUMULATE_STEPS: 3
+LR: 0.00002
+LR_WARMUP_EPOCHS: 1
+SCHEDULER_MILESTONES: [6]
+SCHEDULER_GAMMA: 0.2
+
+# --- Detector-aligned training boxes ---
+TRAIN_BOX_SOURCE: det
+TRAIN_BOX_SOURCE_SCHEDULE: null
+DET_TRAIN_START_EPOCH: 0
+DET_TRAIN_PROB: 1.0
+DET_MATCH_IOU_THRESH: 0.5
+DET_MATCHING: greedy
+DET_FALLBACK_TO_GT_ON_EMPTY: true
+DET_FILL_UNMATCHED_WITH_GT: true
+DET_UNKNOWN_SUPERVISION: true
+DET_MAX_PER_FRAME: 160
+
+# Stability: disable memory bank to avoid feature contamination in adaptation stage.
+USE_MEMORY_BANK: false
+
+# --- Association defaults used during per-epoch validation ---
+DET_THRESH: 0.20
+NEWBORN_THRESH: 0.25
+MISS_TOLERANCE: 50
+ID_THRESH: 0.02
+ASSOC_IOU_GATE: 0.30
+
+ASSOC_MODE: hybrid
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: raw
+ASSOC_FEAT_TAU: 1.0
+ASSOC_FEAT_AGG: mean
+ASSOC_FEAT_K: 5
+ASSOC_USE_DET_SCORE: true
+ASSOC_REID_BOX_EXPAND: 1.0
+
+ASSOC_ID_WEIGHT: 0.25
+ASSOC_FEAT_WEIGHT: 1.0
+ASSOC_IOU_WEIGHT: 0.0
+
+# Two-stage + geometry consistency (crowd-friendly defaults).
+ASSOC_TWO_STAGE: true
+ASSOC_STAGE2_ID_THRESH: 0.22
+ASSOC_STAGE2_IOU_GATE: 0.15
+ASSOC_STAGE2_BBOX_WEIGHT: 1.0
+
+ASSOC_BBOX_DIST_WEIGHT: 0.1
+ASSOC_BBOX_DIST_TAU: 0.7
+ASSOC_BBOX_DIST_USE_CAL_FACTOR: false
+
+# Optional interpolation for smoother trajectories.
+USE_TRACK_INTERPOLATION: true
+INTERPOLATION_MAX_GAP: 10
+INTERPOLATION_MIN_LENGTH: 3
+INTERPOLATION_METHOD: linear
+
+# MOT20 images are larger; keep enough resolution budget during in-process eval.
+INFERENCE_MAX_LONGER: 1600

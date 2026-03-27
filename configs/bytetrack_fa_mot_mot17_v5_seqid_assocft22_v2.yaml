@@ -1,0 +1,38 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v5_seqid.yaml
+
+# Resume-finetune profile v2 (Triplet gradient fix + safer LR)
+EXP_NAME: bytetrack_fa_mot_mot17_v5_seqid_assocft22_v2
+EPOCHS: 38
+
+# Safer fine-tune LR (resume from epoch22 weights)
+LR: 0.00005
+LR_WARMUP_EPOCHS: 0
+SCHEDULER_MILESTONES:
+- 10
+- 13
+SCHEDULER_GAMMA: 0.2
+
+# Keep train/inference distribution steady for ID association
+TRAIN_BOX_SOURCE: mix
+TRAIN_BOX_SOURCE_SCHEDULE:
+- start: 0
+  end: 99
+  source: mix
+  prob: 0.65
+
+# Association-oriented loss strengthening
+TRIPLET_LOSS_WEIGHT: 0.5
+TRIPLET_MARGIN: 0.0
+FREQ_ORTHO_LOSS_WEIGHT: 0.5
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.2
+FREQ_ORTHO_LOSS_WEIGHT_SCHEDULE:
+- start: 0
+  end: 99
+  weight: 0.5
+FREQ_CONSISTENCY_LOSS_WEIGHT_SCHEDULE:
+- start: 0
+  end: 99
+  weight: 0.2
+
+# Save each epoch for tighter monitoring / early stop
+SAVE_CHECKPOINT_PER_EPOCH: 1

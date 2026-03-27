@@ -1,0 +1,40 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Local evaluation config: MOT17/train (TrackEval) with private detections (YOLOX)
+# Hybrid association: decoder ID probs + YOLOX appearance similarity.
+#
+# This is a high-ROI inference-only improvement (no extra ReID network).
+
+EXP_NAME: eval_mot17_train_v10e1_privdet_hybrid_yolox_softmax_frcnn
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+
+RUN_TRACKEVAL: true
+EVAL_ONLY_VAL: false
+
+DETECTOR_FILTER: ["FRCNN"]
+BYTETRACK_DET_SOURCE: model
+
+# Detection / track management
+DET_THRESH: 0.25
+DET_MAX_PER_FRAME: 60
+MISS_TOLERANCE: 15
+NEWBORN_THRESH: 0.7
+
+# Association
+ASSOC_MODE: hybrid
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.35
+ID_THRESH: 0.003
+
+ASSOC_ID_WEIGHT: 1.0
+ASSOC_FEAT_WEIGHT: 0.5
+ASSOC_FEAT_SOURCE: yolox
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.1
+ASSOC_FEAT_AGG: mean
+ASSOC_FEAT_K: 5
+
+USE_TRACK_INTERPOLATION: false
+

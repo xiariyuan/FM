@@ -1,0 +1,30 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_submit_v10e1_best_public_tuned_v1.yaml
+
+# Debug eval config (public detections) for MOT17 train split, DPM only.
+# Purpose: build a truthful baseline under MOT17 public det distribution (DPM has non-probability scores).
+#
+# This runs TrackEval on MOT17/train with only the DPM detector variants:
+#   MOT17-{02,04,05,09,10,11,13}-DPM
+#
+# Usage:
+#   python -u submit_bytetrack.py \
+#     --config-path configs/_debug_eval_mot17_train_publicdet_dpm_full.yaml \
+#     --inference-model <ckpt> \
+#     --data-root /gemini/code/datasets \
+#     --output-dir outputs/_eval_publicdet_train_dpm
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+
+# Ensure we actually run TrackEval here (submission config disables it).
+RUN_TRACKEVAL: true
+
+# Use MOTChallenge public detections from {seq}/det/det.txt
+BYTETRACK_DET_SOURCE: public
+
+# Only evaluate DPM variants (public-det tuning target).
+DETECTOR_FILTER: ["DPM"]
+
+# Evaluate all train sequences (not only 04/05).
+EVAL_ONLY_VAL: false
+

@@ -1,0 +1,5 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v14_ctrl_base_reid_da_val0213.yaml
+EXP_NAME: bytetrack_fa_mot_mot17_v14_ctrl_base_spatial_val0213
+
+ASSOC_USE_REID: false
+ASSOC_FEAT_SOURCE: yolox

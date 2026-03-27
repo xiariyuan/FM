@@ -1,0 +1,28 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Private-detection submission config:
+# - Use the internal YOLOX detector (ByteTrack feature extractor) to produce detections on-the-fly.
+# - This ignores MOT17's public det/det.txt files, and results will be identical across DPM/FRCNN/SDP variants
+#   (same underlying video).
+
+EXP_NAME: submit_mot17_v10e1_best_private_v1
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+# Submission generation only (no GT available for test split).
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+BYTETRACK_DET_SOURCE: model
+
+# Inference thresholds (start with the best 04/05 val settings; sweep later on full train).
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+
+# Association params
+ID_THRESH: 0.004
+ASSOC_IOU_GATE: 0.35
+
+# Keep a reasonable per-frame cap to control runtime. Set 0 to disable.
+DET_MAX_PER_FRAME: 60

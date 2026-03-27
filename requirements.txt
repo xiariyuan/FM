@@ -1,0 +1,29 @@
+# Base dependencies
+numpy
+opencv-python
+pyyaml
+tqdm
+einops
+torch
+torchvision
+
+# Evaluation / matching utilities (required for sweep + TrackEval + Hungarian)
+scipy
+motmetrics
+lap
+pycocotools
+cython_bbox
+tabulate
+
+# ReID encoder for inference-time association (optional but used by tuned configs)
+torchreid
+gdown
+
+# MOT / DINO configs
+-r requirements_dino.txt
+
+# ByteTrack / YOLOX
+-r third_party/ByteTrack/requirements.txt
+
+# Optional (required for frequency-aware decoder)
+# mamba-ssm

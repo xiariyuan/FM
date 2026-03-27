@@ -1,0 +1,23 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+
+# v14: Transformer-only baseline + Spatial-Frequency Interaction (SFI-lite)
+# Purpose:
+# - Keep v13 stable path untouched.
+# - Add a controllable spatial-frequency interaction block for ablation/paper evidence.
+
+EXP_NAME: bytetrack_fa_mot_mot17_v14_tf_sfi_val0213
+
+# Keep transformer-dominant setting (no Mamba in temporal / decoder paths).
+USE_MAMBA_FOR_LOWFREQ: false
+USE_MAMBA_IN_ID_DECODER: false
+USE_GLOBAL_MAMBA: false
+
+# New SFI switch.
+USE_SPATIAL_FREQ_INTERACTION: true
+SFI_HIDDEN_RATIO: 2.0
+SFI_ALPHA_INIT: 0.08
+
+# Conservative defaults for robustness.
+FREQ_DROPOUT: 0.1
+USE_MEMORY_BANK: false
+

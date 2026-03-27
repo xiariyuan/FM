@@ -1,0 +1,20 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213_reid_da.yaml
+EXP_NAME: bytetrack_fa_mot_mot17_v14_ctrl_full_reid_da_val0213
+
+# Do not inherit stale resume settings from older control chains.
+RESUME_MODEL:
+RESUME_OPTIMIZER: false
+RESUME_SCHEDULER: false
+RESUME_ONLY_WEIGHTS: false
+RESUME_SKIP_YOLOX: false
+
+USE_MAMBA_FOR_LOWFREQ: false
+USE_MAMBA_IN_ID_DECODER: false
+USE_GLOBAL_MAMBA: false
+
+USE_SPATIAL_FREQ_INTERACTION: true
+SFI_HIDDEN_RATIO: 2.0
+SFI_ALPHA_INIT: 0.08
+FREQ_DROPOUT: 0.1
+
+USE_MEMORY_BANK: false

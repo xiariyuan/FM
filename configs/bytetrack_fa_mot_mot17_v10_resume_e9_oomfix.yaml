@@ -1,0 +1,16 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6.yaml
+
+# Resume from the last good checkpoint (epoch 9).
+# The original run OOM'ed at epoch 10 when curriculum moved to longer temporal windows.
+EXP_NAME: bytetrack_fa_mot_mot17_v10_resume_e9_oomfix
+
+RESUME_MODEL: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/checkpoint_9.pth
+RESUME_OPTIMIZER: true
+RESUME_SCHEDULER: true
+
+# === OOM mitigations (24GB GPU) ===
+# - Decoder checkpointing reduces activation memory in the ID decoder.
+# - Reduce augmentation groups to lower (B*G) and attention memory at longer sample_length stages.
+USE_DECODER_CHECKPOINT: true
+AUG_NUM_GROUPS: 1
+

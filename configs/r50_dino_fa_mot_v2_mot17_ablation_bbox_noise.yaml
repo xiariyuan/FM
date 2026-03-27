@@ -1,0 +1,22 @@
+# ============================================================================
+# FA-MOT V2 Ablation: BBox Noise Only
+#
+# 仅添加 BBox 噪声增强，不改变正则化参数
+# 用于验证噪声增强的单独效果
+# ============================================================================
+
+SUPER_CONFIG_PATH: ./configs/r50_dino_fa_mot_v2_mot17.yaml
+
+# BBox 噪声增强 (保守参数)
+BBOX_POSITION_NOISE: 0.02
+BBOX_SIZE_NOISE: 0.03
+BBOX_DROP_PROB: 0.02
+BBOX_AUG_PROB: 0.5
+
+# 恢复原始正则化参数
+WEIGHT_DECAY: 0.0005
+DETR_DROPOUT: 0.0
+
+# 输出目录
+OUTPUTS_DIR: ./outputs/ablation_bbox_noise_only
+EXP_NAME: fa_mot_v2_ablation_bbox_noise

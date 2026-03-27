@@ -1,0 +1,17 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v5_seqid.yaml
+
+# Fresh training run (epoch 0, no resume)
+EXP_NAME: bytetrack_fa_mot_mot17_v7_fromscratch_fixloss
+EPOCHS: 100
+SAVE_CHECKPOINT_PER_EPOCH: 1
+
+# Keep energy-balance loss switchable via config (code now supports this)
+FREQ_ENERGY_BALANCE_WEIGHT: 0.0
+FREQ_ENERGY_BALANCE_WEIGHT_SCHEDULE:
+  - {start: 0, end: 99, weight: 0.0}
+
+# Slightly stronger newborn suppression, with warm-up schedule
+NEWBORN_PENALTY_WEIGHT: 0.35
+NEWBORN_PENALTY_WEIGHT_SCHEDULE:
+  - {start: 0, end: 9, weight: 0.25}
+  - {start: 10, end: 99, weight: 0.35}

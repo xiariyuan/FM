@@ -1,0 +1,24 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6.yaml
+
+# v11: Try to recover the generalization benefit of AUG_NUM_GROUPS=2 (as in the original best epoch),
+# while staying OOM-safe at long temporal windows by reducing per-step attention size.
+#
+# Strategy:
+# - Resume from the best checkpoint in v10_resume_e9_oomfix (epoch 20)
+# - Increase AUG_NUM_GROUPS back to 2
+# - Reduce DET_MAX_PER_FRAME and BATCH_SIZE, use gradient accumulation to keep updates stable
+# - Keep decoder checkpointing enabled for memory safety
+EXP_NAME: bytetrack_fa_mot_mot17_v11_resume_e20_g2_det40_bs4_acc2
+
+RESUME_MODEL: outputs/bytetrack_fa_mot_mot17_v10_resume_e9_oomfix/checkpoint_20.pth
+RESUME_OPTIMIZER: false
+RESUME_SCHEDULER: false
+
+# OOM safety / effective batch
+USE_DECODER_CHECKPOINT: true
+AUG_NUM_GROUPS: 2
+DET_MAX_PER_FRAME: 40
+
+BATCH_SIZE: 4
+ACCUMULATE_STEPS: 2
+

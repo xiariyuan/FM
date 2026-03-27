@@ -1,0 +1,33 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# MOT17 Codabench submission config (PRIVATE detections).
+# - Uses the internal YOLOX detector (ByteTrack feature extractor) to produce detections on-the-fly.
+# - Intended for "Private detections" style submissions (i.e., not restricted to MOT17 det/det.txt).
+#
+# v3: apply the best inference hyperparameters found by the lightweight sweep:
+#   iou_gate=0.35, det_max=60, id_thresh≈0.003~0.004
+#
+# NOTE:
+# - This only changes inference-time thresholds. It does NOT require retraining.
+# - Use a new output directory when generating a submission to avoid overwriting.
+
+EXP_NAME: submit_mot17_full_v10e1_best_private_v3_sweep
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+# Submission generation only (no GT available for test split).
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Use the internal YOLOX detector rather than MOT17 public det/det.txt.
+BYTETRACK_DET_SOURCE: model
+
+# === Inference thresholds / params ===
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.003
+ASSOC_IOU_GATE: 0.35
+DET_MAX_PER_FRAME: 60
+MISS_TOLERANCE: 30
+

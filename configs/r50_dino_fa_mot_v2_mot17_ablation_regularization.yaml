@@ -1,0 +1,22 @@
+# ============================================================================
+# FA-MOT V2 Ablation: Regularization Only
+#
+# 仅增加正则化参数，不添加 BBox 噪声增强
+# 用于验证正则化的单独效果
+# ============================================================================
+
+SUPER_CONFIG_PATH: ./configs/r50_dino_fa_mot_v2_mot17.yaml
+
+# 关闭 BBox 噪声增强
+BBOX_POSITION_NOISE: 0.0
+BBOX_SIZE_NOISE: 0.0
+BBOX_DROP_PROB: 0.0
+BBOX_AUG_PROB: 0.0
+
+# 增强的正则化参数
+WEIGHT_DECAY: 0.001
+DETR_DROPOUT: 0.1
+
+# 输出目录
+OUTPUTS_DIR: ./outputs/ablation_regularization_only
+EXP_NAME: fa_mot_v2_ablation_regularization

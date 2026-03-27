@@ -1,0 +1,55 @@
+{
+  "ambiguous_groups": 286,
+  "cluster_error_examples": 29,
+  "cluster_examples": 557,
+  "cluster_jsonl": "/gemini/code/FMtrack-main/FM-Track/outputs/official_bytetrack_editutility_rawgate_select_v1_20260326_143126/cluster_set_predictor_data/cluster_examples.jsonl",
+  "cluster_scope_recoverable_groups": 68,
+  "cluster_scope_sequences": [
+    "MOT17-05-FRCNN",
+    "MOT17-09-FRCNN",
+    "MOT17-11-FRCNN"
+  ],
+  "group_jsonl": "/gemini/code/FMtrack-main/FM-Track/outputs/official_bytetrack_editutility_rawgate_select_v1_20260326_143126/labeled_replay_top8.groups.jsonl",
+  "groups": 54018,
+  "positive_groups": 46050,
+  "positive_top1_error_groups": 145,
+  "positive_top1_error_rate": 0.0031487513572204125,
+  "recoverable_coverage_reasons": {
+    "eligible": 33,
+    "skipped_large": 35
+  },
+  "recoverable_groups": 145,
+  "rows_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/official_bytetrack_editutility_rawgate_select_v1_20260326_143126/labeled_replay_top8.csv",
+  "top_error_sequences": [
+    {
+      "ambiguous_groups": 79,
+      "background_groups": 660,
+      "groups": 3072,
+      "positive_groups": 2412,
+      "positive_top1_error_rate": 0.022388059701492536,
+      "recoverable_groups": 54,
+      "seq": "MOT17-05-FRCNN",
+      "top1_error_groups": 54
+    },
+    {
+      "ambiguous_groups": 82,
+      "background_groups": 2554,
+      "groups": 5785,
+      "positive_groups": 3231,
+      "positive_top1_error_rate": 0.013927576601671309,
+      "recoverable_groups": 45,
+      "seq": "MOT17-10-FRCNN",
+      "top1_error_groups": 45
+    },
+    {
+      "ambiguous_groups": 42,
+      "background_groups": 3032,
+      "groups": 7692,
+      "positive_groups": 4660,
+      "positive_top1_error_rate": 0.004506437768240343,
+      "recoverable_groups": 21,
+      "seq": "MOT17-13-FRCNN",
+      "top1_error_groups": 21
+    }
+  ]
+}

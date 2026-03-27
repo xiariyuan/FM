@@ -1,0 +1,38 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+
+# Submission config (MOT17 private / external det):
+# - Uses SW_YOLOX external detections for BOTH train/test splits.
+# - Locks in the best full7 (train FRCNN) StageB association params.
+#
+# Best run (full7):
+#   detthr0.25_new0.25_id0.01_iou0.35_det200_miss50_detscore1_reidbox1.0
+#   HOTA 76.807 / AssA 72.822 / IDSW 684 / Frag 829
+
+EXP_NAME: bytetrack_fa_mot_mot17_v13_tf_only_sw_yolox_fullsubmit_full7best
+
+# IMPORTANT:
+# Some training configs in the SUPER_CONFIG chain enable `EVAL_ONLY_VAL` to speed up validation (e.g., 02/13 only).
+# For submissions we MUST disable that, otherwise inference will silently run only the configured VAL_SEQUENCES and
+# the 42-file pack will fail precheck (missing sequences).
+EVAL_ONLY_VAL: false
+VAL_SEQUENCES: null
+
+# Submission packing only: do NOT run TrackEval, especially on test split (no GT).
+RUN_TRACKEVAL: false
+
+# External detections live at:
+#   outputs/external_det/sw_yolox/MOT17/{train|test}/{seq}.txt
+BYTETRACK_DET_SOURCE: external
+EXTERNAL_DET_ROOT: outputs/external_det/sw_yolox/MOT17
+EXTERNAL_DET_PATTERN: "{root}/{split}/{seq}.txt"
+
+# Tuned inference / association params (from StageB full7)
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 50
+
+ID_THRESH: 0.01
+ASSOC_IOU_GATE: 0.35
+ASSOC_USE_DET_SCORE: true
+ASSOC_REID_BOX_EXPAND: 1.0

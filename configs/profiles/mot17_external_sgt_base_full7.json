@@ -1,0 +1,29 @@
+{
+  "description": "External-det system-recovery line: SGT detections, clean feature-only base host, MOT17 train full7 FRCNN evaluation.",
+  "manifest": {
+    "line": "external-det/system-rescue",
+    "protocol_tier": "private-det",
+    "detector_source": "sgt",
+    "association_variant": "base",
+    "eval_scope": "mot17_train_full7_frcnn"
+  },
+  "settings": {
+    "config_path": "configs/bytetrack_fa_mot_mot17_proxy0213_train_reidain_feature_stageBbest_detft_nooverlap.yaml",
+    "inference_dataset": "MOT17",
+    "inference_split": "train",
+    "config_overrides": {
+      "EXP_NAME": "mot17_external_sgt_base_full7",
+      "BYTETRACK_DET_SOURCE": "external",
+      "EXTERNAL_DET_ROOT": "outputs/external_det/sgt/MOT17",
+      "EXTERNAL_DET_PATTERN": "{root}/{split}/{seq}.txt",
+      "RUN_TRACKEVAL": true,
+      "EVAL_ONLY_VAL": false,
+      "VAL_SEQUENCES": null,
+      "DETECTOR_FILTER": [
+        "FRCNN"
+      ],
+      "USE_MEMORY_BANK": false,
+      "ASSOC_USE_LAPLACE": false
+    }
+  }
+}

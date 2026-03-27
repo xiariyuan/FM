@@ -1,0 +1,26 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_submit_v10e1_best_public_tuned_v1.yaml
+
+# MOT17 Codabench submission config (PUBLIC detections) with DPM-specific thresholds.
+#
+# Motivation:
+# - DPM public detection scores are not calibrated probabilities and can be negative.
+# - A global DET_THRESH=0.25 over-filters DPM detections (e.g., MOT17-13-DPM keeps ~31% boxes),
+#   causing extremely low recall and collapsing HOTA on DPM sequences.
+#
+# Strategy:
+# - Keep the tuned global association params (id/iou gate).
+# - Only override thresholds for DPM to restore recall.
+# - Tie NEWBORN_THRESH_DPM to DET_THRESH_DPM so any kept det can start a new track.
+#
+# Next step (optional): sweep DET_THRESH_DPM and MISS_TOLERANCE_DPM on MOT17/train DPM sequences.
+
+EXP_NAME: submit_mot17_full_v10e1_best_public_tuned_v2_dpmthr
+
+# Global thresholds (leave as-is for FRCNN/SDP; they are mostly 0.9~1.0 scores)
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+
+# DPM-only overrides
+DET_THRESH_DPM: -0.2
+NEWBORN_THRESH_DPM: -0.2
+

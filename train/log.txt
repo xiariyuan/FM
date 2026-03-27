@@ -1,0 +1,2 @@
+[INFO] ByteTrack Feature Training initialized at train
+[INFO] [DET] det_source=model

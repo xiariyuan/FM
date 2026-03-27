@@ -1,0 +1,14 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v9_fromscratch_unfreezeproj_longcurr_p0fix.yaml
+
+# Fresh run with additional det<->track matching supervision (InfoNCE-style).
+EXP_NAME: bytetrack_fa_mot_mot17_v10_fromscratch_unfreezeproj_longcurr_p0fix_matchloss
+
+# === NEW: Det <-> Track Matching Loss ===
+# This loss is designed to improve association (AssA/IDSW) by directly supervising
+# detection-to-track matching using only history track features (< t), to reduce train-infer gap.
+USE_DET_TRACK_MATCH_LOSS: true
+DET_TRACK_MATCH_LOSS_WEIGHT: 0.1
+DET_TRACK_MATCH_TEMPERATURE: 0.07
+DET_TRACK_MATCH_NORMALIZE: true
+DET_TRACK_MATCH_CAUSAL: true
+

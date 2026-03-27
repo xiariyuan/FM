@@ -1,0 +1,97 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213_reid_da.yaml
+
+# MOT20 association-only adaptation (stage-1, with held-out validation sequence).
+# Design:
+# - Load the trained detector checkpoint as frozen feature backbone.
+# - Freeze feature projection as well; only retrain association modules.
+# - Use MOT20-05 as holdout val for checkpoint selection.
+
+EXP_NAME: bytetrack_fa_mot_mot20_v13_assoc_only_val05
+
+# --- Dataset split (train/val by sequence) ---
+DATASETS: [MOT20]
+DATASET_SPLITS: [train]
+DETECTOR_FILTER: null
+VAL_SEQUENCES: [MOT20-05]
+EVAL_ONLY_VAL: true
+EVAL_EVERY_EPOCH: true
+RUN_TRACKEVAL: true
+INFERENCE_DATASET: MOT20
+INFERENCE_SPLIT: train
+SAVE_CHECKPOINT_PER_EPOCH: 1
+
+# --- Detector / features ---
+BYTETRACK_CKPT: outputs/detector/det_yolox_mixdet_mot17full_mot20full_valchval_20260228_113639/best_ckpt.pth.tar
+BYTETRACK_FP16: false
+BYTETRACK_CONF_THRE: 0.10
+BYTETRACK_DET_SOURCE: external
+EXTERNAL_DET_ROOT: outputs/external_det/sw_yolox
+EXTERNAL_DET_PATTERN: "{root}/{dataset}/{split}/{seq}.txt"
+
+# Keep detector path loaded from BYTETRACK_CKPT and avoid overriding YOLOX by resume ckpt.
+RESUME_MODEL: outputs/v13_tf_only_e12_20260302_020652/checkpoint_epoch_0.pth
+RESUME_ONLY_WEIGHTS: true
+RESUME_SKIP_YOLOX: true
+FREEZE_FEATURE_PROJ: true
+
+# --- Association-only adaptation schedule ---
+EPOCHS: 10
+BATCH_SIZE: 2
+ACCUMULATE_STEPS: 3
+LR: 0.00002
+LR_WARMUP_EPOCHS: 1
+SCHEDULER_MILESTONES: [7]
+SCHEDULER_GAMMA: 0.2
+
+# --- Detector-aligned training boxes ---
+TRAIN_BOX_SOURCE: det
+TRAIN_BOX_SOURCE_SCHEDULE: null
+DET_TRAIN_START_EPOCH: 0
+DET_TRAIN_PROB: 1.0
+DET_MATCH_IOU_THRESH: 0.5
+DET_MATCHING: greedy
+DET_FALLBACK_TO_GT_ON_EMPTY: true
+DET_FILL_UNMATCHED_WITH_GT: true
+DET_UNKNOWN_SUPERVISION: true
+DET_MAX_PER_FRAME: 160
+
+# Stability: keep memory bank disabled in adaptation stage.
+USE_MEMORY_BANK: false
+
+# --- Validation association defaults ---
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+MISS_TOLERANCE: 50
+ID_THRESH: 0.03
+ASSOC_IOU_GATE: 0.30
+
+ASSOC_MODE: hybrid
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: raw
+ASSOC_FEAT_TAU: 0.7
+ASSOC_FEAT_AGG: mean
+ASSOC_FEAT_K: 5
+ASSOC_USE_DET_SCORE: true
+ASSOC_REID_BOX_EXPAND: 1.0
+
+# Reduce ReID dominance so trained association branch can affect matching.
+ASSOC_ID_WEIGHT: 1.0
+ASSOC_FEAT_WEIGHT: 0.45
+ASSOC_IOU_WEIGHT: 0.05
+
+ASSOC_TWO_STAGE: true
+ASSOC_STAGE2_ID_THRESH: 0.22
+ASSOC_STAGE2_IOU_GATE: 0.15
+ASSOC_STAGE2_BBOX_WEIGHT: 1.0
+
+ASSOC_BBOX_DIST_WEIGHT: 0.1
+ASSOC_BBOX_DIST_TAU: 0.7
+ASSOC_BBOX_DIST_USE_CAL_FACTOR: false
+
+USE_TRACK_INTERPOLATION: true
+INTERPOLATION_MAX_GAP: 10
+INTERPOLATION_MIN_LENGTH: 3
+INTERPOLATION_METHOD: linear
+
+INFERENCE_MAX_LONGER: 1600

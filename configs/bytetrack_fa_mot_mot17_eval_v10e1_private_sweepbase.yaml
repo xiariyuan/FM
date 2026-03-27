@@ -1,0 +1,26 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Sweep/evaluation base config (PRIVATE detections).
+# - Enables TrackEval (writes pedestrian_summary.txt) so scripts/sweep_assoc_params.py can parse metrics.
+# - Uses internal YOLOX detections (det_source=model).
+# - Intended for fast parameter tuning on MOT17/train.
+
+EXP_NAME: eval_mot17_v10e1_private_sweepbase
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+
+BYTETRACK_DET_SOURCE: model
+
+# IMPORTANT: enable TrackEval for sweeps
+RUN_TRACKEVAL: true
+EVAL_ONLY_VAL: false
+
+# Default params (will be overridden by sweep script)
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+ID_THRESH: 0.003
+ASSOC_IOU_GATE: 0.35
+DET_MAX_PER_FRAME: 60
+MISS_TOLERANCE: 30
+

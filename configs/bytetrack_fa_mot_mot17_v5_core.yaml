@@ -1,0 +1,373 @@
+# FM-Track v5 Configuration with Top Conference Strategies
+# Based on: FairMOT, MeMOTR, MOTIP, QDTrack, FastReID
+
+SEED: 42
+DEVICE: cuda
+NUM_WORKERS: 4
+PREFETCH_FACTOR: 2
+EXP_NAME: bytetrack_fa_mot_mot17_v5_core
+EXP_OWNER: fmtrack
+EXP_PROJECT: fmtrack
+EXP_GROUP: bytetrack_feature
+OUTPUTS_DIR: null
+USE_WANDB: false
+DATA_ROOT: /gemini/code/datasets
+
+# === Dataset Configuration ===
+DATASETS:
+- MOT17
+DATASET_SPLITS:
+- train
+DETECTOR_FILTER:
+- FRCNN
+VAL_SEQUENCES:
+- MOT17-04
+- MOT17-05
+
+# === Sampling Strategy (from MeMOTR) ===
+SAMPLE_STEPS:
+- 0
+- 30
+- 60
+SAMPLE_LENGTHS:
+- 12
+- 15
+- 18
+SAMPLE_INTERVALS:
+- 3
+- 4
+- 5
+LENGTH_PER_ITERATION: null
+MIN_LEGAL_RATIO: 0.8
+
+# === Data Augmentation (from MOTIP/MeMOTR) ===
+AUG_RANDOM_SHIFT: 0.05
+AUG_RANDOM_FLIP: 0.5
+AUG_RANDOM_RESIZE:
+- 400
+- 500
+- 600
+AUG_RESIZE_SCALES:
+- 480
+- 512
+- 544
+- 576
+- 608
+- 640
+AUG_MAX_SIZE: 1280
+AUG_MAX_SHIFT_RATIO: 0.05
+AUG_OVERFLOW_BBOX: true
+AUG_RANDOM_CROP_MIN: 384
+AUG_RANDOM_CROP_MAX: 600
+AUG_BRIGHTNESS: 0.4
+AUG_CONTRAST: 0.4
+AUG_SATURATION: 0.4
+AUG_HUE: 0.2
+AUG_COLOR_JITTER_V2: false
+AUG_NUM_GROUPS: 2
+
+# Trajectory Augmentation
+AUG_TRAJECTORY_AUGMENTATION: true
+AUG_TRAJECTORY_SWITCH_PROB: 0.0
+AUG_TRAJECTORY_OCCLUSION_PROB: 0.3
+AUG_TRAJECTORY_ID_DROP_PROB: 0.05
+AUG_TRAJECTORY_NOISE_SCALE: 0.02
+
+GT_BOX_NOISE_SCALE: 0.0
+FREEZE_FEATURE_PROJ: true
+AUG_DISABLE_RANDOM_CROP: false
+
+# === ByteTrack Feature Extractor ===
+BYTETRACK_PROFILE: mot17
+BYTETRACK_PROFILE_TRAIN: null
+BYTETRACK_DET_SOURCE: model
+EXTERNAL_DET_ROOT: null
+EXTERNAL_DET_PATTERN: "{root}/{dataset}/{split}/{seq}/det/det.txt"
+EXTERNAL_DET_FILE_BY_SEQ: {}
+BYTETRACK_PROFILE_BY_DATASET:
+  MOT17: mot17
+  MOT20: mot20
+  DEFAULT: mot17
+BYTETRACK_PROFILES:
+  mot17:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot17.pth.tar
+    FP16: true
+    CONF_THRE: 0.01
+    NMS_THRE: 0.7
+  mot20:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot20.pth.tar
+    FP16: true
+    CONF_THRE: 0.01
+    NMS_THRE: 0.7
+  mot17_public:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot17.pth.tar
+    FP16: true
+    DET_SOURCE: external
+  mot20_public:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot20.pth.tar
+    FP16: true
+    DET_SOURCE: external
+  sw_yolox_mot17:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot17.pth.tar
+    FP16: true
+    DET_SOURCE: external
+    DET_ROOT: outputs/external_det/sw_yolox
+    DET_PATTERN: "{root}/{dataset}/{split}/{seq}.txt"
+  sw_yolox_mot20:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot20.pth.tar
+    FP16: true
+    DET_SOURCE: external
+    DET_ROOT: outputs/external_det/sw_yolox
+    DET_PATTERN: "{root}/{dataset}/{split}/{seq}.txt"
+  sgt_mot17:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot17.pth.tar
+    FP16: true
+    DET_SOURCE: external
+    DET_ROOT: outputs/external_det/sgt
+    DET_PATTERN: "{root}/{dataset}/{split}/{seq}.txt"
+  sgt_mot20:
+    EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+    CKPT: weight/bytetrack_x_mot20.pth.tar
+    FP16: true
+    DET_SOURCE: external
+    DET_ROOT: outputs/external_det/sgt
+    DET_PATTERN: "{root}/{dataset}/{split}/{seq}.txt"
+BYTETRACK_EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+BYTETRACK_CKPT: weight/bytetrack_x_mot17.pth.tar
+BYTETRACK_FP16: true
+BYTETRACK_TEST_SIZE: null
+BYTETRACK_CONF_THRE: 0.01
+BYTETRACK_NMS_THRE: 0.7
+BYTETRACK_USE_AUG_IMAGES: false
+CANONICAL_SCALE: 224.0
+CANONICAL_LEVEL: 4
+ROI_MULTI_LEVEL: false
+ROI_LEVEL_FUSION: scale
+
+# === Model Architecture ===
+FEATURE_DIM: 256
+NUM_ID_VOCABULARY: 800
+ID_LABEL_STRATEGY: sequence
+ID_DIM: 256
+HEAD_DIM: 32
+REL_PE_LENGTH: 30
+
+# Frequency-Aware Modules
+USE_FREQ_AWARE: true
+NUM_BANDS: 4
+FREQ_KERNEL_SIZE: 7
+USE_FIXED_LAPLACIAN: false
+FREQ_ORTHO_METRIC: js
+USE_MULTISCALE_FREQ: false
+NUM_FREQ_SCALES: 3
+NUM_TEMPORAL_LAYERS: 2
+TEMPORAL_NUM_HEADS: 8
+MAX_SEQ_LEN: 36
+USE_MAMBA_FOR_LOWFREQ: true
+# BAND_WINDOW_SIZES: null  # e.g., [36,24,16,12]
+FFN_DIM_RATIO: 2
+DROPOUT: 0.1
+
+# ID Decoder
+USE_FREQ_DECODER_V2: true
+NUM_ID_DECODER_LAYERS: 6
+USE_AUX_LOSS: true
+USE_SHARED_AUX_HEAD: true
+USE_FREQ_GUIDED_ASSOC: true
+USE_LEARNABLE_FUSION: true
+FREQ_LOSS_WEIGHT: 1.0
+FUSION_LOSS_WEIGHT: 1.0
+USE_ENTROPY_FUSION: true
+ENTROPY_FUSION_TAU_START: 2.0
+ENTROPY_FUSION_TAU_END: 1.0
+USE_NEWBORN_HEAD: false
+NEWBORN_HEAD_DIM: 128
+
+# === Training Configuration (from MeMOTR: 130 epochs) ===
+EPOCHS: 100
+BATCH_SIZE: 6
+ACCUMULATE_STEPS: 1
+LR: 0.0002
+WEIGHT_DECAY: 0.0001
+LR_WARMUP_EPOCHS: 5
+SCHEDULER_MILESTONES:
+- 80
+- 95
+SCHEDULER_GAMMA: 0.1
+MAX_CLIP_NORM: 0.1
+LOG_EXCEPTION_TRACE: false
+DEBUG_RAISE_EXCEPTIONS: false
+
+# === Detection Box Source Schedule ===
+TRAIN_BOX_SOURCE: mix
+TRAIN_BOX_SOURCE_SCHEDULE:
+- start: 0
+  end: 15
+  source: mix
+  prob: 0.2
+- start: 16
+  end: 40
+  source: mix
+  prob: 0.4
+- start: 41
+  end: 70
+  source: mix
+  prob: 0.6
+- start: 71
+  end: 99
+  source: mix
+  prob: 0.8
+
+DET_TRAIN_START_EPOCH: 0
+DET_TRAIN_PROB: 0.5
+DET_TRAIN_PROB_SCHEDULE: false
+DET_MATCH_IOU_THRESH: 0.5
+DET_MATCHING: greedy
+DET_FALLBACK_TO_GT_ON_EMPTY: true
+DET_MAX_PER_FRAME: 80
+DET_FILL_UNMATCHED_WITH_GT: true
+DET_UNKNOWN_SUPERVISION: true
+DET_CACHE_USE: false
+DET_CACHE_WRITE: false
+DET_CACHE_DIR: outputs/det_cache
+DET_CACHE_COMPRESS: true
+DET_CACHE_VERSION: v1
+DET_CACHE_VALIDATE_MTIME: true
+DET_BOX_NOISE_STD: 0.0
+DET_BOX_NOISE_PROB: 0.0
+DET_BOX_NOISE_CLIP: 1.0
+
+ASSERT_BBOX_NORMALIZED: false
+BBOX_NORM_EPS: 0.001
+
+# === Loss Weights ===
+ID_LOSS_WEIGHT: 1.0
+USE_FOCAL_LOSS: false
+
+# Label Smoothing (NEW - Top Conference Strategy)
+LABEL_SMOOTHING: 0.1
+
+# Frequency Loss Weights
+FREQ_ORTHO_LOSS_WEIGHT: 0.3
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.1
+FREQ_ENERGY_BALANCE_WEIGHT: 0.0
+FREQ_ORTHO_LOSS_WEIGHT_SCHEDULE:
+- start: 0
+  end: 20
+  weight: 0.3
+- start: 21
+  end: 60
+  weight: 0.5
+- start: 61
+  end: 99
+  weight: 0.3
+FREQ_CONSISTENCY_LOSS_WEIGHT_SCHEDULE:
+- start: 0
+  end: 20
+  weight: 0.1
+- start: 21
+  end: 60
+  weight: 0.2
+- start: 61
+  end: 99
+  weight: 0.15
+FREQ_FEATURE_ORTHO_WEIGHT: 0.1
+
+# === NEW: TripletLoss Configuration (from FairMOT/FastReID) ===
+USE_TRIPLET_LOSS: true
+TRIPLET_LOSS_WEIGHT: 0.1
+TRIPLET_MARGIN: 0.3
+TRIPLET_DISTANCE: cosine
+TRIPLET_HARD_MINING: true
+TRIPLET_NORMALIZE: true
+
+# === NEW: TP Drop / FP Insert (from MeMOTR) ===
+USE_TP_DROP_FP_INSERT: true
+TP_DROP_RATIO: 0.1
+FP_INSERT_RATIO: 0.3
+
+# === NEW: Memory Bank (from MeMOTR) ===
+USE_MEMORY_BANK: false
+MEMORY_LAMBDA: 0.9
+MEMORY_UPDATE_THRESHOLD: 0.5
+
+# === Temperature Scheduling ===
+USE_IMPORTANCE_TAU_SCHEDULE: true
+IMPORTANCE_TAU_START: 2.0
+IMPORTANCE_TAU_END: 1.0
+
+# === Checkpoint & Evaluation ===
+SAVE_CHECKPOINT_PER_EPOCH: 5
+USE_DECODER_CHECKPOINT: false
+RESUME_MODEL: null
+RESUME_OPTIMIZER: false
+RESUME_SCHEDULER: false
+EVAL_EVERY_EPOCH: true
+EVAL_ONLY_VAL: true
+RUN_TRACKEVAL: true
+EVAL_MIN_TRACK_LEN: 1
+EVAL_METRICS:
+- HOTA
+- CLEAR
+
+# Newborn Penalty
+NEWBORN_PENALTY_WEIGHT: 0.25
+NEWBORN_PENALTY_MARGIN: 0.0
+NEWBORN_PENALTY_WARMUP_EPOCHS: 10
+
+# === Inference Configuration ===
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+INFERENCE_MAX_LONGER: 1280
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.25
+AREA_THRESH: 0
+MISS_TOLERANCE: 30
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.3
+ASSOC_ID_WEIGHT: 0.7
+ASSOC_IOU_WEIGHT: 0.3
+ASSOC_USE_KALMAN: true
+ASSOC_LOGIT_TEMP: 1.0
+ASSOC_USE_DET_SCORE: false
+
+# Diagnostics
+LOG_FREQ_STATS: false
+LOG_OCCLUSION_STATS: false
+LOG_CALIB_STATS: false
+
+# === NEW: Advanced Strategies ===
+# Frequency-Aware Confidence Calibration
+USE_CONFIDENCE_CALIBRATION: true
+CALIBRATION_STRENGTH: 0.5
+MIN_CONFIDENCE: 0.1
+
+# Frequency-Guided Occlusion Recovery
+USE_OCCLUSION_RECOVERY: true
+OCCLUSION_RECOVERY_RATIO: 0.3
+
+# Adaptive Band Selection
+USE_ADAPTIVE_BANDS: true
+MIN_BANDS: 2
+MAX_BANDS: 8
+SOFT_BAND_TEMP: 1.0
+
+# Track Interpolation (Post-processing)
+USE_TRACK_INTERPOLATION: false
+INTERPOLATION_MAX_GAP: 10
+INTERPOLATION_MIN_LENGTH: 3
+INTERPOLATION_METHOD: linear
+
+# Test-Time Augmentation
+USE_TTA: false
+TTA_SCALES: [0.8, 1.0, 1.2]
+TTA_FLIP: true
+TTA_FUSION: average

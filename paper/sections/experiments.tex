@@ -1,0 +1,159 @@
+\section{Experiments}
+\subsection{Datasets and Metrics}
+We evaluate on MOT17 \cite{milan2016mot16} and MOT20 \cite{dendorfer2020mot20}. Following standard MOT protocol, we report HOTA \cite{luiten2020hota}, MOTA, IDF1, DetA, AssA, ID switches (IDSW), and fragmentation (Frag). Since LTRA is designed for association, our primary metrics are HOTA, AssA, IDF1, IDSW, and Frag.
+
+\subsection{Baseline and Protocol}
+Our main carrier is a BoT-SORT style tracker with standard motion, camera-motion compensation, and ReID matching \cite{aharon2022botsort}. We keep the detector, ReID encoder, and tracker hyperparameters fixed, and change only the primary appearance-aware association rule. This allows a fair \emph{same-base} comparison between the baseline tracker and \textbf{BoT-SORT-LTRA}. We use an off-the-shelf FastReID SBS-S50 encoder for appearance features; the encoder is not retrained in the main LTRA pipeline.
+
+\subsection{Evaluation Structure}
+We organize experiments into four groups.
+\begin{itemize}
+  \item \textbf{Main benchmark comparison:} official MOT17/MOT20 submissions, used to position our tracker against recent public methods.
+  \item \textbf{Same-base comparison:} the strongest evidence in the paper. All detector, ReID, motion, and tracker settings are fixed; only LTRA is toggled on or off.
+  \item \textbf{Ablations:} tests that distinguish LTRA from simple history averaging and single-scale smoothing.
+  \item \textbf{Plug-in transfer:} base versus base+LTRA on a second tracker family to verify that the method is not specific to one implementation.
+\end{itemize}
+
+\subsection{Current Proof-of-Concept Result}
+Before running the full benchmark campaign, we first validate the main claim on a held-out proxy split. The current proxy protocol is intentionally narrow: by default it evaluates only MOT17-02/13 with FRCNN detections. Table~\ref{tab:proxy_ltra} therefore serves only as a quick diagnostic, not as the main validation result. The gains concentrate on association-sensitive metrics: AssA and IDF1 improve, while IDSW decreases substantially. This is exactly the behavior expected from a reliability module that decides when appearance should influence matching.
+
+\begin{table}[t]
+\centering
+\caption{Proxy comparison on MOT17-02/13 (same tracker, same detector, same ReID, only LTRA on/off).}
+\label{tab:proxy_ltra}
+\begin{tabular}{lccccc}
+\toprule
+Variant & HOTA & AssA & IDF1 & IDSW & Frag \\
+\midrule
+Baseline & 65.53 & 57.71 & 74.54 & 223 & 291 \\
+Baseline + LTRA & \textbf{67.47} & \textbf{60.60} & \textbf{76.97} & \textbf{167} & \textbf{289} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Main Benchmark Tables}
+The final paper will contain two benchmark views.
+
+\begin{table}[t]
+\centering
+\caption{Official MOT17 \emph{public-detection} benchmark context. We compare against representative entries from the current official leaderboard.}
+\label{tab:mot17_context}
+\begin{tabular}{lcccccc}
+\toprule
+Method & HOTA & MOTA & IDF1 & DetA & AssA & IDSW \\
+\midrule
+FastTracker (2025) & \textbf{66.4} & \textbf{81.8} & \textbf{82.0} & \textbf{66.3} & \textbf{66.9} & 885 \\
+IOF-Tracker (2025) & 64.9 & 80.5 & 79.9 & 64.9 & 65.1 & 1370 \\
+FeatureSORT (2025) & 63.0 & 79.6 & 77.2 & 64.4 & 62.0 & 2269 \\
+ByteTrack \cite{zhang2021bytetrack} & 56.1 & 67.4 & 70.0 & 54.9 & 57.5 & 1331 \\
+OC-SORTpublic \cite{cao2022ocsort} & 52.4 & 58.2 & 65.1 & 47.8 & 57.6 & \textbf{784} \\
+BoT-SORT-LTRA (ours) & -- & -- & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Official MOT20 \emph{public-detection} benchmark context. We compare against representative entries from the current official leaderboard.}
+\label{tab:mot20_context}
+\begin{tabular}{lcccccc}
+\toprule
+Method & HOTA & MOTA & IDF1 & DetA & AssA & IDSW \\
+\midrule
+FastTracker (2025) & \textbf{65.7} & \textbf{77.9} & \textbf{81.0} & \textbf{64.2} & \textbf{67.5} & 684 \\
+IOF-Tracker (2025) & 62.0 & 77.7 & 75.0 & 63.8 & 60.4 & 1530 \\
+FeatureSORT (2025) & 61.3 & 76.6 & 75.1 & 62.7 & 60.1 & 1081 \\
+ByteTrack \cite{zhang2021bytetrack} & 56.4 & 67.0 & 70.2 & 54.8 & 58.3 & 680 \\
+OC-SORTpublic \cite{cao2022ocsort} & 54.3 & 59.9 & 67.0 & 49.7 & 59.5 & \textbf{554} \\
+BoT-SORT-LTRA (ours) & -- & -- & -- & -- & -- & -- \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These leaderboard tables provide benchmark context only. Because our main claim is about association quality rather than detector redesign, the decisive evidence in the paper remains the \emph{same-base} and \emph{plug-in transfer} comparisons, where detector, ReID, motion, and matching settings are held fixed.
+
+\begin{table}[t]
+\centering
+\caption{Core same-base comparison. Detector, ReID, motion, and matching thresholds are fixed; only LTRA is toggled. For MOT17 val, the strongest setting uses the full LTRA configuration; for MOT20 val, the strongest current setting uses a mean-history prototype with reliability fusion.}
+\label{tab:same_base}
+\begin{tabular}{llccccc}
+\toprule
+Benchmark & Method & HOTA & AssA & IDF1 & IDSW & Frag \\
+\midrule
+MOT17 val & BoT-SORT & 78.446 & 76.952 & 86.113 & 555 & 1032 \\
+MOT17 val & BoT-SORT + LTRA & \textbf{78.749} & \textbf{77.554} & \textbf{86.435} & \textbf{537} & 1044 \\
+MOT20 val & BoT-SORT & 77.772 & 75.011 & 89.414 & 768 & 1595 \\
+MOT20 val & BoT-SORT + LTRA & \textbf{78.060} & \textbf{75.546} & \textbf{89.980} & \textbf{759} & \textbf{1583} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Ablations}
+The main ablation question is whether LTRA truly contributes temporal reliability, rather than acting as simple history smoothing. We therefore use the ablation ladder in Table~\ref{tab:ablation_full}, where each step adds only one ingredient.
+
+\begin{table}[t]
+\centering
+\caption{Minimal ablation ladder for LTRA.}
+\label{tab:ablation_full}
+\begin{tabular}{llcccc}
+\toprule
+Benchmark & Variant & HOTA & AssA & IDF1 & IDSW \\
+\midrule
+MOT17 val & Baseline & 78.446 & 76.952 & 86.113 & 555 \\
+MOT17 val & + Mean history prototype & 78.567 & 77.111 & 86.278 & 555 \\
+MOT17 val & + Mean history + reliability & 78.700 & 77.441 & 86.533 & 522 \\
+MOT17 val & + Single-scale prototype & 78.474 & 77.043 & 85.950 & 570 \\
+MOT17 val & + Multi-scale signature, no reliability & 78.474 & 77.043 & 85.950 & 570 \\
+MOT17 val & + Full LTRA & \textbf{78.749} & \textbf{77.554} & 86.435 & 537 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The ablation ladder shows that simple history aggregation already helps slightly, but the main gain comes from reliability-aware fusion. Notably, adding reliability to a stable mean prototype already yields strong gains, while the full LTRA configuration achieves the best HOTA and AssA on MOT17 val. On MOT20 val, a more conservative prototype is preferable: the best current result comes from \emph{mean prototype + reliability} (HOTA 78.060, AssA 75.546, IDF1 89.980, IDSW 759), which outperforms both the plain mean-history variant and the full multi-scale version. This suggests that the key contribution is temporal reliability, while prototype choice becomes regime-dependent under extreme crowding.
+
+\subsection{Plug-in Transfer}
+To show that LTRA is not overfitted to a single codebase, we additionally evaluate it as a plug-in on a second tracker family. Table~\ref{tab:transfer} is reserved for this transfer study. The key goal is not leaderboard ranking, but consistent improvement in association metrics under fixed base settings.
+
+\begin{table}[t]
+\centering
+\caption{Plug-in transfer under fixed base settings.}
+\label{tab:transfer}
+\begin{tabular}{llccccc}
+\toprule
+Tracker & Benchmark & HOTA & AssA & IDF1 & IDSW & Frag \\
+\midrule
+StrongSORT & MOT17 val & 69.581 & 73.370 & 82.275 & 233 & \textbf{526} \\
+StrongSORT + LTRA & MOT17 val & \textbf{69.757} & \textbf{73.662} & \textbf{82.818} & \textbf{203} & 535 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Reliability Analysis}
+Because our core claim is about \emph{trusting appearance}, the paper includes reliability-oriented analysis beyond aggregate benchmark metrics. We will report: (i) HOTA decomposition into DetA and AssA; (ii) sequence-level performance on crowded sequences; (iii) IDSW and Frag changes; and (iv) calibration-style analysis showing whether higher reliability corresponds to a higher probability of correct matching.
+
+\begin{table}[t]
+\centering
+\caption{Current reliability-oriented analysis summary from pair-level logs.}
+\label{tab:reliability}
+\begin{tabular}{lp{1.3cm}p{1.3cm}p{6.2cm}}
+\toprule
+Case & MOT17 & MOT20 & Interpretation \\
+\midrule
+Chosen true rate, rel $0.9$--$1.0$ & 95.6\% & 94.3\% & High reliability is strongly predictive on both datasets. \\
+Correct rate, gap $=1$ & 94.5\% & 92.8\% & Reliability works best for recent, well-conditioned matches. \\
+Correct rate, gap $\ge 11$ & 0.0\% & 13.8\% & Long-gap re-appearance remains hard despite moderate-to-high reliability. \\
+Avg. reliability, gap $\ge 11$ & 0.846 & 0.809 & Both regimes remain overconfident on stale tracks. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+These pair-level statistics clarify the dataset difference between MOT17 and MOT20. Reliability is well calibrated in the aggregate, but long-gap cases remain overconfident on both datasets. Under the heavier crowding of MOT20, a more stable mean-history prototype combined with reliability yields better overall identity quality than the default multi-scale configuration. This is why we frame the paper around \emph{temporal reliability} as the central contribution, while treating the choice of temporal prototype as a regime-dependent design factor rather than the main claim.
+
+Sequence-level inspection shows that the gains are not uniformly distributed. On MOT17 val, the largest improvements appear on MOT17-09 and MOT17-11, while MOT17-05 and MOT17-13 remain essentially unchanged. On MOT20 val, the clearest gains appear on MOT20-03 and MOT20-05, whereas MOT20-02 slightly degrades. This pattern is consistent with our reliability interpretation: LTRA is most helpful when appearance is informative but temporally unstable, and less helpful when history itself is heavily contaminated.
+
+\begin{figure}[t]
+\centering
+\fbox{\parbox[c][0.22\textheight][c]{0.9\linewidth}{\centering Placeholder for qualitative figure}}
+\caption{Qualitative comparison between the baseline tracker and BoT-SORT-LTRA. Typical examples will highlight fewer ID switches after occlusion and more stable identity recovery in crowded scenes.}
+\label{fig:qual}
+\end{figure}

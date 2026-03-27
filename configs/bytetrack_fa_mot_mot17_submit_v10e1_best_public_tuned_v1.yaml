@@ -1,0 +1,37 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6.yaml
+
+# Tuned MOT17 Codabench submission config (PUBLIC detections: det/det.txt).
+#
+# Key fix vs the original public config:
+# - NEWBORN_THRESH is tied to DET_THRESH to avoid silently dropping kept detections
+#   (public det score scales differ, especially DPM).
+#
+# NOTE: Codabench competition 10049 requires ALL sequences (01..14) × (DPM/FRCNN/SDP) = 42 txt files in zip root.
+# This config is meant to be used by scripts/make_mot17_full_submission_bytetrack.py which runs both train+test splits.
+
+EXP_NAME: submit_mot17_full_v10e1_best_public_tuned_v1
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+# No GT for test split; disable TrackEval during submission generation.
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Use MOTChallenge public detections from {seq}/det/det.txt
+BYTETRACK_DET_SOURCE: public
+
+# Public det scores are not calibrated probabilities (DPM can be negative/>1); keep them as-is.
+USE_CONFIDENCE_CALIBRATION: false
+
+# === Inference thresholds (tuned on MOT17 train/val sequences with public det) ===
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+
+# Association params
+ID_THRESH: 0.004
+ASSOC_IOU_GATE: 0.35
+
+# Safety: don't cap per-frame detections (MOT17-03-DPM has up to 78 dets/frame).
+DET_MAX_PER_FRAME: 0
+

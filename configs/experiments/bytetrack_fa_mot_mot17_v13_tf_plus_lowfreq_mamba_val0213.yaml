@@ -1,0 +1,35 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v12_align_detft_nooverlap_detonly_val0213.yaml
+
+# v13 (ablation): Transformer-dominant + Mamba low-frequency assistance
+# Goal:
+# - Keep Transformer as the main interaction/matching backbone
+# - Let Mamba model only the lowest-frequency band temporal dynamics (ordered sequence over time)
+# - Keep ID-decoder self-attention as Transformer (avoid unordered-token Mamba)
+
+EXP_NAME: bytetrack_fa_mot_mot17_v13_tf_plus_lowfreq_mamba_val0213
+
+# --- Architecture switches ---
+# FTT: enable Mamba ONLY for band0 (low frequency).
+USE_MAMBA_FOR_LOWFREQ: true
+# ID decoder: keep Transformer self-attention.
+USE_MAMBA_IN_ID_DECODER: false
+# Disable global mamba smoothing for now (we can add a gated residual later if helpful).
+USE_GLOBAL_MAMBA: false
+
+# --- Validation/inference mode ---
+ASSOC_MODE: hybrid
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+# NOTE:
+# - `softmax` normalizes each detection's scores across *all* active tracks, so the absolute score depends on
+#   how many tracks are alive (and can easily fall below `ID_THRESH`, causing every frame to "rebirth" IDs).
+# - `raw` keeps scores in [0, 1] (cosine-sim mapped to [0, 1]) and is much less sensitive to active track count.
+ASSOC_FEAT_SCORE_MODE: raw
+# For `raw` score mode, keep tau at 1.0 so cosine similarities stay in [-1, 1] before mapping to [0, 1].
+# (Small taus like 0.05 are intended for softmax temperature and will saturate raw scores.)
+ASSOC_FEAT_TAU: 1.0
+ID_THRESH: 0.08
+
+ASSOC_ID_WEIGHT: 1.0
+ASSOC_FEAT_WEIGHT: 1.0
+ASSOC_IOU_WEIGHT: 0.0

@@ -1,0 +1,10 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+EXP_NAME: bytetrack_fa_mot_mot17_v13_tf_only_val0213
+
+# Continue training from the already-finished epoch-0 checkpoint.
+# Important: override RESUME_ONLY_WEIGHTS to keep epoch/global_step continuity.
+RESUME_MODEL: outputs/bytetrack_fa_mot_mot17_v13_tf_only_val0213/checkpoint_0.pth
+RESUME_OPTIMIZER: true
+RESUME_SCHEDULER: true
+RESUME_ONLY_WEIGHTS: false
+RESUME_SKIP_YOLOX: true

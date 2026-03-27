@@ -1,0 +1,75 @@
+\section{Method}
+\subsection{Problem Setup}
+Given detections $\mathcal{D}_t=\{(b_i, s_i, f_i)\}_{i=1}^{N_t}$ at frame $t$, where $b_i$ is the bounding box, $s_i$ is the detector confidence, and $f_i \in \mathbb{R}^{d}$ is an off-the-shelf ReID embedding, online MOT estimates a set of trajectories $\mathcal{T}_{t-1}$ and matches them to current detections. We assume a standard tracking-by-detection baseline with motion prediction, appearance similarity, and Hungarian matching. Our goal is to improve only the \emph{primary appearance-aware association} step.
+
+\subsection{Overview}
+We instantiate our method on top of a BoT-SORT style tracker \cite{aharon2022botsort}. The detector, motion model, camera-motion compensation, ReID encoder, and track management remain standard components. We only replace the fixed appearance-matching rule with \textbf{Laplace-Guided Temporal Reliability Association (LTRA)}.
+
+For each existing track, LTRA constructs a small set of temporally decayed appearance prototypes. A current detection is compared both to the track's instantaneous appearance state and to these temporal prototypes. Instead of using a hand-crafted fusion weight, we learn a tiny \emph{trust calibrator} that predicts two scalars for each detection-track pair: (i) how to mix spatial and temporal appearance evidence, and (ii) how much to trust appearance relative to motion in the current association.
+
+\subsection{Laplace Temporal Signatures}
+Consider a track $\tau$ with normalized historical appearance features
+\begin{equation}
+\mathcal{H}_{\tau}=\{\mathbf{h}_{\tau}^{(1)}, \dots, \mathbf{h}_{\tau}^{(L)}\}, \quad \mathbf{h}_{\tau}^{(l)} \in \mathbb{R}^{d}.
+\end{equation}
+For each temporal scale $\alpha_k \in \mathcal{A}$, we form an exponentially decayed prototype
+\begin{equation}
+\mathbf{p}_{\tau,k}=\frac{\sum_{l=1}^{L}\exp\!\left(-\frac{L-l}{\alpha_k}\right)\mathbf{h}_{\tau}^{(l)}}{\sum_{l=1}^{L}\exp\!\left(-\frac{L-l}{\alpha_k}\right)}.
+\end{equation}
+We use a small multi-scale set $\mathcal{A}=\{1,2,4\}$ in practice. These prototypes serve as \emph{Laplace-inspired temporal signatures}: short scales emphasize recent identity evidence, while larger scales summarize longer-term appearance consistency. We do not claim an exact Laplace transform; rather, we use exponentially decayed temporal probes as a compact and interpretable temporal basis.
+
+Given a detection embedding $\mathbf{f}_i$, we define the temporal similarity between detection $i$ and track $\tau$ as the average cosine similarity over all scales:
+\begin{equation}
+S^{\text{lap}}_{i,\tau}=\frac{1}{|\mathcal{A}|}\sum_{k}\phi(\mathbf{f}_i,\mathbf{p}_{\tau,k}),
+\end{equation}
+where $\phi(\cdot,\cdot)$ denotes cosine similarity mapped to $[0,1]$.
+
+\subsection{Stability and Coherence}
+The temporal signatures become useful only if the track history itself is trustworthy. We therefore derive two scalar track descriptors from the same history.
+
+\paragraph{Coherence.}
+Let $\mathbf{h}_{\tau}^{(L)}$ be the most recent valid feature. We measure how consistent the temporal signatures are with the latest observation:
+\begin{equation}
+\kappa_{\tau}=\frac{1}{|\mathcal{A}|}\sum_{k}\phi(\mathbf{p}_{\tau,k}, \mathbf{h}_{\tau}^{(L)}).
+\end{equation}
+High coherence means the track's recent appearance is compatible with its temporally aggregated history.
+
+\paragraph{Stability.}
+We estimate curvature in the feature trajectory through the second-order finite difference,
+\begin{equation}
+\Delta^2 \mathbf{h}_{\tau}^{(l)} = \mathbf{h}_{\tau}^{(l+2)} - 2\mathbf{h}_{\tau}^{(l+1)} + \mathbf{h}_{\tau}^{(l)},
+\end{equation}
+and convert the mean curvature to a bounded stability score
+\begin{equation}
+\sigma_{\tau}=\exp\!\left(-\frac{1}{L-2}\sum_l \|\Delta^2 \mathbf{h}_{\tau}^{(l)}\|_2\right).
+\end{equation}
+Stable tracks preserve identity cues over time and should trust appearance more than unstable tracks.
+
+\subsection{Learned Trust Calibration}
+For each candidate detection-track pair $(i,\tau)$, the baseline tracker already provides a spatial appearance similarity $S^{\text{spa}}_{i,\tau}$ and a motion similarity $S^{\text{mot}}_{i,\tau}$. LTRA adds a temporal agreement term
+\begin{equation}
+A_{i,\tau}=1-\left|S^{\text{spa}}_{i,\tau}-S^{\text{lap}}_{i,\tau}\right|,
+\end{equation}
+which is high when instantaneous appearance agrees with the Laplace temporal signatures. We additionally expose simple track-state context to the calibrator, including stability, coherence, history length, association gap, detector confidence, and candidate ambiguity margins.
+
+Rather than fixing the fusion weights by hand, we predict two pairwise scalars, $\alpha_{i,\tau}\in[0,1]$ and $r_{i,\tau}\in[0,1]$, with a lightweight MLP. The first controls how spatial and temporal appearance are mixed:
+\begin{equation}
+\alpha_{i,\tau} = g_\alpha(\mathbf{z}_{i,\tau}), \qquad
+S^{\text{app}}_{i,\tau}=(1-\alpha_{i,\tau})S^{\text{spa}}_{i,\tau}+\alpha_{i,\tau}S^{\text{lap}}_{i,\tau},
+\end{equation}
+where $\mathbf{z}_{i,\tau}$ denotes the pairwise context features. The second scalar predicts whether the current association should trust appearance or motion:
+\begin{equation}
+r_{i,\tau}=g_r(\mathbf{z}_{i,\tau}), \qquad
+S^{\text{fuse}}_{i,\tau}=r_{i,\tau}S^{\text{app}}_{i,\tau}+\left(1-r_{i,\tau}\right)S^{\text{mot}}_{i,\tau}.
+\end{equation}
+The final association cost passed to Hungarian matching is
+\begin{equation}
+C_{i,\tau}=1-S^{\text{fuse}}_{i,\tau}.
+\end{equation}
+This formulation makes the role of LTRA explicit: $\alpha_{i,\tau}$ decides how to build the appearance cue, while $r_{i,\tau}$ decides when appearance should dominate motion. We also keep a non-parametric heuristic fusion as a lower-bound ablation, but the main paper focuses on the learned calibrator.
+
+\subsection{Integration into the Baseline Tracker}
+LTRA is inserted only in the \emph{primary appearance-aware association stage}. The low-score recovery stage, unconfirmed-track stage, and track management logic remain unchanged in the main setting. We do not retrain the detector or the ReID encoder. As a result, all same-base comparisons can keep detector outputs, ReID features, motion settings, and matching thresholds fixed while toggling only the LTRA module.
+
+\subsection{Training and Complexity}
+Only the trust calibrator is trained. Detector weights, ReID weights, motion prediction, and matching remain frozen. Training samples are constructed from candidate association groups on labeled training splits, and the calibrator is supervised with candidate-set classification together with lightweight ranking and trust-consistency losses. This keeps the evidence chain clean: improvements can be attributed to association-time calibration rather than to detector or representation changes. The computational overhead remains small, since the calibrator operates on a low-dimensional pairwise feature vector after the standard detector and ReID encoder have already run.

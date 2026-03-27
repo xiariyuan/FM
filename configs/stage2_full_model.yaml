@@ -1,0 +1,196 @@
+# ============================================================================
+# Stage 2: Full Model Training (Detection + Association)
+# 第二阶段：完整模型训练（检测+关联）
+#
+# 注意：需要先完成第一阶段训练，然后用第一阶段的checkpoint
+# ============================================================================
+
+SUPER_CONFIG_PATH:
+
+SEED: 42
+NUM_WORKERS: 4
+PREFETCH_FACTOR: 4
+DEVICE: cuda
+
+# Data
+DATA_ROOT: /gemini/code/datasets
+DATASETS: [MOT17]
+DATASET_SPLITS: [train]
+VAL_SEQUENCES: [MOT17-02, MOT17-10]
+
+SAMPLE_STEPS: [0]
+SAMPLE_LENGTHS: [30]
+SAMPLE_INTERVALS: [4]
+LENGTH_PER_ITERATION:
+
+# 数据增强 - 第二阶段稍微减弱，让关联模块学习
+AUG_RESIZE_SCALES: [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+AUG_MAX_SIZE: 1440
+AUG_RANDOM_RESIZE: [400, 500, 600]
+AUG_RANDOM_CROP_MIN: 384
+AUG_RANDOM_CROP_MAX: 600
+AUG_MAX_SHIFT_RATIO: 0.08
+AUG_OVERFLOW_BBOX: False
+AUG_BRIGHTNESS: 0.4
+AUG_CONTRAST: 0.4
+AUG_SATURATION: 0.4
+AUG_HUE: 0.2
+AUG_COLOR_JITTER_V2: True
+AUG_NUM_GROUPS: 6
+AUG_TRAJECTORY_OCCLUSION_PROB: 0.3    # 降低，避免破坏关联学习
+AUG_TRAJECTORY_SWITCH_PROB: 0.3       # 降低
+
+# BBox噪声 - 保持适度
+BBOX_POSITION_NOISE: 0.02
+BBOX_SIZE_NOISE: 0.03
+BBOX_DROP_PROB: 0.03
+BBOX_AUG_PROB: 0.5
+
+# ============================================================================
+# 关键：完整模型训练
+# ============================================================================
+ONLY_DETR: False
+
+NUM_CLASSES: 80
+NUM_ID_VOCABULARY: 50
+DETR_FRAMEWORK: dino
+
+FEATURE_DIM: 256
+FFN_DIM_RATIO: 2
+ID_DIM: 256
+HEAD_DIM: 32
+NUM_ID_DECODER_LAYERS: 6
+
+ID_LOSS_WEIGHT: 1.0
+REL_PE_LENGTH: 30
+USE_AUX_LOSS: True
+USE_SHARED_AUX_HEAD: True
+USE_FOCAL_LOSS: False
+
+# 频率模块
+USE_FREQ_AWARE: True
+USE_FREQ_DECODER_V2: True
+USE_LEARNABLE_FUSION: True
+NUM_FREQ_BANDS: 4
+FREQ_KERNEL_SIZE: 7
+USE_MULTISCALE_FREQ: False
+NUM_FREQ_SCALES: 3
+NUM_FREQ_TEMPORAL_LAYERS: 2
+FREQ_TEMPORAL_HEADS: 8
+USE_MAMBA_FOR_LOWFREQ: True
+FREQ_DROPOUT: 0.15             # 适中的dropout
+USE_FREQ_GUIDED_ASSOC: True
+USE_OCCLUSION_AWARE: True
+FREQ_ORTHO_LOSS_WEIGHT: 0.1
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.05
+USE_FREQ_ADAPTER: False
+
+# DINO检测器
+BACKBONE: resnet50
+DILATION: False
+DETR_NUM_QUERIES: 900
+DETR_NUM_FEATURE_LEVELS: 5
+DETR_AUX_LOSS: True
+DETR_WITH_BOX_REFINE: True
+DETR_TWO_STAGE: True
+DETR_HIDDEN_DIM: 256
+DETR_MASKS: False
+DETR_POSITION_EMBEDDING: sine
+DETR_NUM_HEADS: 8
+DETR_ENC_LAYERS: 6
+DETR_DEC_LAYERS: 6
+DETR_DIM_FEEDFORWARD: 2048
+DETR_DROPOUT: 0.15             # 适中的dropout
+DETR_DEC_N_POINTS: 4
+DETR_ENC_N_POINTS: 4
+DETR_CLS_LOSS_COEF: 2.0
+DETR_BBOX_LOSS_COEF: 5.0
+DETR_GIOU_LOSS_COEF: 2.0
+DETR_FOCAL_ALPHA: 0.25
+DETR_SET_COST_CLASS: 2.0
+DETR_SET_COST_BBOX: 5.0
+DETR_SET_COST_GIOU: 2.0
+DETR_CRITERION_BATCH_LEN: 10
+
+DINO_CONFIG_PATH: ./config/DINO/DINO_5scale.py
+DINO_TWO_STAGE_TYPE: standard
+DINO_NUM_SELECT: 300
+DINO_NMS_IOU_THRESHOLD: -1
+DINO_DEC_PRED_CLASS_EMBED_SHARE: True
+DINO_DEC_PRED_BBOX_EMBED_SHARE: True
+DINO_TWO_STAGE_BBOX_EMBED_SHARE: False
+DINO_TWO_STAGE_CLASS_EMBED_SHARE: False
+DINO_DECODER_SA_TYPE: sa
+DINO_NUM_PATTERNS: 0
+DINO_USE_DN: False
+DINO_DN_NUMBER: 100
+DINO_LABEL_NOISE_RATIO: 0.5
+DINO_BOX_NOISE_SCALE: 0.4
+DINO_LABELBOOK_SIZE: 80
+
+# ============================================================================
+# 训练设置 - 第二阶段（更少轮数，更低学习率）
+# ============================================================================
+BATCH_SIZE: 1
+LR: 5.0e-5                     # 更低的学习率
+LR_BACKBONE_NAMES: [backbone.0]
+LR_BACKBONE_SCALE: 0.05        # backbone学习率更低，保护检测能力
+LR_LINEAR_PROJ_NAMES: [reference_points, sampling_offsets]
+LR_LINEAR_PROJ_SCALE: 0.05
+LR_DICTIONARY_NAMES: [word_to_embed, embed_to_word]
+LR_DICTIONARY_SCALE: 1.0
+LR_FREQ_NAMES: [freq_decomposition, freq_temporal_transformer, freq_association, freq_fusion, fusion_weight]
+LR_FREQ_SCALE: 1.0
+
+LR_WARMUP_EPOCHS: 1
+WEIGHT_DECAY: 0.005            # 适中的权重衰减
+MAX_CLIP_NORM: 0.1
+EPOCHS: 18                     # 第二阶段18轮
+SCHEDULER_MILESTONES: [10, 14]
+SCHEDULER_GAMMA: 0.1
+DETR_NUM_TRAIN_FRAMES: 4
+DETR_NUM_CHECKPOINT_FRAMES: 0
+USE_DECODER_CHECKPOINT: True
+ACCUMULATE_STEPS: 2
+SEPARATE_CLIP_NORM: True
+USE_ACCELERATE_CLIP_NORM: True
+
+# ============================================================================
+# 从第一阶段checkpoint继续
+# 注意：需要手动修改为实际的checkpoint路径
+# ============================================================================
+DETR_PRETRAIN: ./weight/checkpoint0089.pth
+RESUME_MODEL: ./outputs/stage1_detection/checkpoint_best.pth  # 使用第一阶段最好的checkpoint
+RESUME_OPTIMIZER: False        # 不继承优化器状态，重新开始
+RESUME_SCHEDULER: False
+RESUME_STATES: False
+
+# Inference
+INFERENCE_MODEL:
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+INFERENCE_MODE: evaluate
+INFERENCE_GROUP: default
+INFERENCE_MAX_LONGER: 1440
+INFERENCE_DTYPE: FP32
+ASSIGNMENT_PROTOCOL: object-max
+MISS_TOLERANCE: 30
+DET_THRESH: 0.3
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.2
+AREA_THRESH: 0
+MIN_TRACK_LEN: 0
+IOU_THRESH: 0.1
+INFERENCE_ONLY_DETR:
+
+# Output
+OUTPUTS_DIR: ./outputs/stage2_full_model
+USE_WANDB: False
+EXP_OWNER: research
+EXP_PROJECT: FA-MOT
+EXP_GROUP:
+EXP_NAME: stage2_full_model_anti_overfit
+GIT_VERSION:
+SAVE_CHECKPOINT_PER_EPOCH: 1
+MULTI_LAST_CHECKPOINTS: 5
+USE_PREVIOUS_CHECKPOINT: False

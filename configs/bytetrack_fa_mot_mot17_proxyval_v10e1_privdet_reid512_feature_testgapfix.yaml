@@ -1,0 +1,55 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Proxy evaluation config for tuning inference hyperparameters on MOT17/train (has GT).
+# - Uses private detections (YOLOX) + external ReID embeddings (OSNet-AIN) in feature-only association.
+# - RUN_TRACKEVAL=true so scripts/sweep_assoc_params.py can parse pedestrian_summary.txt.
+#
+# Typical usage:
+#   python scripts/sweep_assoc_params.py \
+#     --config-path configs/bytetrack_fa_mot_mot17_proxyval_v10e1_privdet_reid512_feature_testgapfix.yaml \
+#     --checkpoint outputs/.../checkpoint_epoch_1.pth \
+#     --data-root /gemini/code/datasets --dataset MOT17 --split train \
+#     --det-source model --detector-filter FRCNN \
+#     --eval-only-val --val-sequences MOT17-02,MOT17-13 \
+#     --tie-newborn-to-det ...
+
+EXP_NAME: proxyval_mot17_train_v10e1_privdet_reid512_feature_testgapfix
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+
+RUN_TRACKEVAL: true
+EVAL_ONLY_VAL: false
+
+# Use private detections from the built-in YOLOX (ByteTrack) detector.
+BYTETRACK_DET_SOURCE: model
+
+# Baseline params (will usually be overridden by sweep script)
+DET_THRESH: 0.20
+NEWBORN_THRESH: 0.20
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 50
+
+ASSOC_MODE: feature
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.25
+ID_THRESH: 0.06
+
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.05
+ASSOC_FEAT_AGG: last
+ASSOC_FEAT_K: 5
+
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+ASSOC_REID_PRETRAINED: false
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_BATCH_SIZE: 128
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_DIM: 512
+
+USE_TRACK_INTERPOLATION: false
+

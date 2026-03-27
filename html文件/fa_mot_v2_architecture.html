@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FA-MOT V2 模型架构可视化</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e8e8e8;
+        }
+        .container { max-width: 1800px; margin: 0 auto; }
+        .header {
+            text-align: center; padding: 40px 20px;
+            background: rgba(255,255,255,0.05); border-radius: 20px;
+            margin-bottom: 30px; backdrop-filter: blur(10px);
+        }
+        .header h1 {
+            font-size: 2.8em;
+            background: linear-gradient(135deg, #00d9ff, #00ff88);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 15px;
+        }
+        .header .subtitle { font-size: 1.2em; color: #aaa; }
+        .config-badge {
+            display: inline-block; background: rgba(0,217,255,0.2);
+            border: 1px solid #00d9ff; padding: 8px 16px;
+            border-radius: 20px; margin: 5px; font-size: 0.9em;
+        }
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px; }
+        @media (max-width: 1200px) { .main-grid { grid-template-columns: 1fr; } }
+        .card {
+            background: rgba(255,255,255,0.05); border-radius: 16px; padding: 25px;
+            backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+        .card-header {
+            display: flex; align-items: center; gap: 15px; margin-bottom: 20px;
+            padding-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .card-icon {
+            width: 50px; height: 50px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center; font-size: 1.5em;
+        }
+        .card-title { font-size: 1.4em; font-weight: 600; }
+        .card-subtitle { font-size: 0.9em; color: #888; }
+        .param-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+        .param-item { background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border-left: 3px solid #00d9ff; }
+        .param-label { font-size: 0.8em; color: #888; margin-bottom: 4px; }
+        .param-value { font-size: 1.1em; font-weight: 600; color: #00ff88; }
+        .flow-diagram { background: rgba(0,0,0,0.3); border-radius: 12px; padding: 20px; margin-top: 15px; }
+        .flow-step { display: flex; align-items: center; margin-bottom: 12px; }
+        .flow-num {
+            width: 28px; height: 28px; background: linear-gradient(135deg, #00d9ff, #00ff88);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #1a1a2e; margin-right: 12px; flex-shrink: 0;
+        }
+        .flow-text { font-size: 0.95em; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>FA-MOT V2 模型架构</h1>
+        <p class="subtitle">频率感知多目标跟踪 - 双分支ID解码器</p>
+        <div style="margin-top: 20px;">
+            <span class="config-badge">ResNet-50 骨干网络</span>
+            <span class="config-badge">DINO 4尺度检测器</span>
+            <span class="config-badge">4频带分解</span>
+            <span class="config-badge">Mamba 状态空间</span>
+            <span class="config-badge">6层ID解码器</span>
+            <span class="config-badge">可学习融合</span>
+        </div>
+    </div>
+
+    <!-- 架构流程图 SVG -->
+    <div class="card" style="margin-bottom: 30px;">
+        <div class="card-header">
+            <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #feca57);">🏗️</div>
+            <div>
+                <div class="card-title">整体架构流程图</div>
+                <div class="card-subtitle">端到端流程: 输入 → 检测 → 频率分解 → ID预测 → 输出</div>
+            </div>
+        </div>
+        <svg viewBox="0 0 1200 400" style="width: 100%; height: auto; background: rgba(0,0,0,0.2); border-radius: 12px;">
+            <!-- 输入 -->
+            <rect x="20" y="160" width="100" height="80" rx="8" fill="#4facfe" opacity="0.8"/>
+            <text x="70" y="195" text-anchor="middle" fill="white" font-size="12" font-weight="bold">视频输入</text>
+            <text x="70" y="215" text-anchor="middle" fill="white" font-size="10">T×H×W×3</text>
+            <path d="M125 200 L155 200" stroke="#00d9ff" stroke-width="2" marker-end="url(#arrow)"/>
+
+            <!-- DINO检测器 -->
+            <rect x="160" y="140" width="140" height="120" rx="10" fill="#00f2fe" opacity="0.7"/>
+            <text x="230" y="170" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold">DINO 检测器</text>
+            <text x="230" y="190" text-anchor="middle" fill="#1a1a2e" font-size="10">ResNet-50 + 6层编码</text>
+            <text x="230" y="205" text-anchor="middle" fill="#1a1a2e" font-size="10">+ 6层解码 (4尺度)</text>
+            <text x="230" y="225" text-anchor="middle" fill="#1a1a2e" font-size="10">900查询 → 256维特征</text>
+            <path d="M305 200 L335 200" stroke="#00d9ff" stroke-width="2"/>
+
+            <!-- 频率分解 -->
+            <rect x="340" y="120" width="150" height="160" rx="10" fill="#ff9800" opacity="0.7"/>
+            <text x="415" y="150" text-anchor="middle" fill="#1a1a2e" font-size="13" font-weight="bold">频率分解模块</text>
+            <text x="415" y="175" text-anchor="middle" fill="#1a1a2e" font-size="10">4个频率带</text>
+            <rect x="355" y="185" width="30" height="20" rx="3" fill="#ff5722"/>
+            <text x="370" y="199" text-anchor="middle" fill="white" font-size="8">高频</text>
+            <rect x="390" y="185" width="30" height="20" rx="3" fill="#ff7043"/>
+            <text x="405" y="199" text-anchor="middle" fill="white" font-size="8">中高</text>
+            <rect x="425" y="185" width="30" height="20" rx="3" fill="#ffab91"/>
+            <text x="440" y="199" text-anchor="middle" fill="white" font-size="8">中低</text>
+            <rect x="460" y="185" width="30" height="20" rx="3" fill="#ffccbc"/>
+            <text x="475" y="199" text-anchor="middle" fill="#1a1a2e" font-size="8">低频</text>
+            <text x="415" y="230" text-anchor="middle" fill="#1a1a2e" font-size="10">Conv1d 核=7</text>
+            <text x="415" y="250" text-anchor="middle" fill="#1a1a2e" font-size="10">+ 层归一化</text>
+            <path d="M495 200 L525 200" stroke="#00d9ff" stroke-width="2"/>
+
+            <!-- 时序建模 -->
+            <rect x="530" y="100" width="160" height="200" rx="10" fill="#9c27b0" opacity="0.7"/>
+            <text x="610" y="130" text-anchor="middle" fill="white" font-size="13" font-weight="bold">时序建模</text>
+            <rect x="545" y="145" width="130" height="50" rx="5" fill="#673ab7"/>
+            <text x="610" y="165" text-anchor="middle" fill="white" font-size="10" font-weight="bold">Mamba 状态空间</text>
+            <text x="610" y="182" text-anchor="middle" fill="white" font-size="9">低频 O(L)复杂度</text>
+            <rect x="545" y="205" width="130" height="50" rx="5" fill="#7c4dff"/>
+            <text x="610" y="225" text-anchor="middle" fill="white" font-size="10" font-weight="bold">频率-时序TF</text>
+            <text x="610" y="242" text-anchor="middle" fill="white" font-size="9">2层×8头 (高频)</text>
+            <text x="610" y="280" text-anchor="middle" fill="white" font-size="10">跨频带注意力</text>
+            <path d="M695 200 L725 200" stroke="#00d9ff" stroke-width="2"/>
+
+            <!-- ID解码器V2 -->
+            <rect x="730" y="80" width="180" height="240" rx="10" fill="#e91e63" opacity="0.7"/>
+            <text x="820" y="110" text-anchor="middle" fill="white" font-size="13" font-weight="bold">ID解码器 V2</text>
+            <rect x="745" y="125" width="70" height="80" rx="5" fill="#c2185b"/>
+            <text x="780" y="145" text-anchor="middle" fill="white" font-size="9" font-weight="bold">标准分支</text>
+            <text x="780" y="160" text-anchor="middle" fill="white" font-size="8">6层解码器</text>
+            <text x="780" y="175" text-anchor="middle" fill="white" font-size="8">Mamba自注意</text>
+            <text x="780" y="190" text-anchor="middle" fill="white" font-size="8">交叉注意力</text>
+            <rect x="825" y="125" width="70" height="80" rx="5" fill="#ad1457"/>
+            <text x="860" y="145" text-anchor="middle" fill="white" font-size="9" font-weight="bold">频率分支</text>
+            <text x="860" y="160" text-anchor="middle" fill="white" font-size="8">4频带预测</text>
+            <text x="860" y="175" text-anchor="middle" fill="white" font-size="8">置信度估计</text>
+            <text x="860" y="190" text-anchor="middle" fill="white" font-size="8">加权融合</text>
+            <rect x="765" y="215" width="110" height="40" rx="5" fill="#880e4f"/>
+            <text x="820" y="235" text-anchor="middle" fill="white" font-size="10" font-weight="bold">注意力融合</text>
+            <text x="820" y="250" text-anchor="middle" fill="white" font-size="8">可学习权重α</text>
+            <text x="820" y="285" text-anchor="middle" fill="white" font-size="10">→ ID预测 (51类)</text>
+            <text x="820" y="300" text-anchor="middle" fill="white" font-size="9">50个ID + 未知</text>
+            <path d="M915 200 L945 200" stroke="#00d9ff" stroke-width="2"/>
+
+            <!-- 输出 -->
+            <rect x="950" y="140" width="120" height="120" rx="10" fill="#4caf50" opacity="0.7"/>
+            <text x="1010" y="175" text-anchor="middle" fill="white" font-size="13" font-weight="bold">跟踪输出</text>
+            <text x="1010" y="200" text-anchor="middle" fill="white" font-size="10">跟踪结果</text>
+            <text x="1010" y="220" text-anchor="middle" fill="white" font-size="10">边界框 + ID</text>
+            <text x="1010" y="240" text-anchor="middle" fill="white" font-size="9">(cx,cy,w,h,id)</text>
+
+            <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#00d9ff"/></marker></defs>
+
+            <!-- 损失标注 -->
+            <text x="230" y="290" text-anchor="middle" fill="#ff6b6b" font-size="9">检测损失</text>
+            <text x="230" y="305" text-anchor="middle" fill="#aaa" font-size="8">分类+边框+GIoU</text>
+            <text x="415" y="310" text-anchor="middle" fill="#ff6b6b" font-size="9">频率损失</text>
+            <text x="415" y="325" text-anchor="middle" fill="#aaa" font-size="8">正交+一致性</text>
+            <text x="820" y="340" text-anchor="middle" fill="#ff6b6b" font-size="9">ID损失</text>
+            <text x="820" y="355" text-anchor="middle" fill="#aaa" font-size="8">交叉熵+辅助层</text>
+        </svg>
+    </div>
+
+    <!-- 模块卡片网格 -->
+    <div class="main-grid">
+        <!-- DINO检测器卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">🔍</div>
+                <div>
+                    <div class="card-title">DINO 检测器</div>
+                    <div class="card-subtitle">基于改进去噪锚框的DETR检测器</div>
+                </div>
+            </div>
+            <div class="param-list">
+                <div class="param-item"><div class="param-label">骨干网络</div><div class="param-value">ResNet-50</div></div>
+                <div class="param-item"><div class="param-label">特征尺度</div><div class="param-value">4尺度</div></div>
+                <div class="param-item"><div class="param-label">编码器层数</div><div class="param-value">6</div></div>
+                <div class="param-item"><div class="param-label">解码器层数</div><div class="param-value">6</div></div>
+                <div class="param-item"><div class="param-label">查询数量</div><div class="param-value">900</div></div>
+                <div class="param-item"><div class="param-label">隐藏维度</div><div class="param-value">256</div></div>
+                <div class="param-item"><div class="param-label">FFN维度</div><div class="param-value">2048</div></div>
+                <div class="param-item"><div class="param-label">注意力头数</div><div class="param-value">8</div></div>
+                <div class="param-item"><div class="param-label">采样点数</div><div class="param-value">4</div></div>
+                <div class="param-item"><div class="param-label">两阶段模式</div><div class="param-value">标准</div></div>
+                <div class="param-item"><div class="param-label">预训练</div><div class="param-value">COCO</div></div>
+                <div class="param-item"><div class="param-label">Dropout</div><div class="param-value">0.1</div></div>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: (B×T, 3, H, W) 视频帧</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">ResNet-50 → 4尺度特征 [P3, P4, P5, P6]</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">可变形编码器 (6层) → 增强特征</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">可变形解码器 (6层) → 900个目标查询</div></div>
+                <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">输出: 分类logits + 边界框 + 256维特征</div></div>
+            </div>
+        </div>
+
+        <!-- 频率分解卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #ff9800, #ff5722);">📊</div>
+                <div>
+                    <div class="card-title">可学习频率分解</div>
+                    <div class="card-subtitle">多频带轨迹特征提取</div>
+                </div>
+            </div>
+            <div class="param-list">
+                <div class="param-item"><div class="param-label">频率带数</div><div class="param-value">4</div></div>
+                <div class="param-item"><div class="param-label">卷积核大小</div><div class="param-value">7</div></div>
+                <div class="param-item"><div class="param-label">输入维度</div><div class="param-value">256</div></div>
+                <div class="param-item"><div class="param-label">输出维度</div><div class="param-value">4 × 256</div></div>
+                <div class="param-item"><div class="param-label">卷积类型</div><div class="param-value">深度卷积</div></div>
+                <div class="param-item"><div class="param-label">归一化</div><div class="param-value">层归一化</div></div>
+                <div class="param-item"><div class="param-label">固定拉普拉斯</div><div class="param-value">否</div></div>
+                <div class="param-item"><div class="param-label">多尺度</div><div class="param-value">否</div></div>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: 轨迹特征 (B, G, T=30, N, 256)</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">4× Conv1d(k=7, groups=256) → 频率带</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">层归一化 + Dropout(0.1) 每个频带</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">输出: [高频, 中高频, 中低频, 低频]</div></div>
+            </div>
+        </div>
+
+        <!-- Mamba卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #9c27b0, #673ab7);">🐍</div>
+                <div>
+                    <div class="card-title">Mamba 状态空间模型</div>
+                    <div class="card-subtitle">低频轨迹的线性复杂度时序建模</div>
+                </div>
+            </div>
+            <div class="param-list">
+                <div class="param-item"><div class="param-label">模型维度</div><div class="param-value">256</div></div>
+                <div class="param-item"><div class="param-label">状态维度</div><div class="param-value">16</div></div>
+                <div class="param-item"><div class="param-label">卷积维度</div><div class="param-value">4</div></div>
+                <div class="param-item"><div class="param-label">扩展因子</div><div class="param-value">2</div></div>
+                <div class="param-item"><div class="param-label">复杂度</div><div class="param-value">O(L)</div></div>
+                <div class="param-item"><div class="param-label">激活函数</div><div class="param-value">SiLU</div></div>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: 低频带特征</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">选择性扫描 (双向)</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">状态更新: h(t) = Ah(t-1) + Bx(t)</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">输出: y(t) = Ch(t) + Dx(t) + 残差</div></div>
+            </div>
+        </div>
+
+        <!-- 频率-时序Transformer卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #4caf50, #8bc34a);">⚡</div>
+                <div>
+                    <div class="card-title">频率-时序 Transformer</div>
+                    <div class="card-subtitle">高频带的跨频率注意力机制</div>
+                </div>
+            </div>
+            <div class="param-list">
+                <div class="param-item"><div class="param-label">层数</div><div class="param-value">2</div></div>
+                <div class="param-item"><div class="param-label">注意力头数</div><div class="param-value">8</div></div>
+                <div class="param-item"><div class="param-label">特征维度</div><div class="param-value">256</div></div>
+                <div class="param-item"><div class="param-label">FFN维度</div><div class="param-value">512</div></div>
+                <div class="param-item"><div class="param-label">头维度</div><div class="param-value">32</div></div>
+                <div class="param-item"><div class="param-label">Dropout</div><div class="param-value">0.1</div></div>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: 高频带特征</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">频带内自注意力</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">跨频带交叉注意力</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">FFN (256→512→256) + 层归一化</div></div>
+            </div>
+        </div>
+
+        <!-- 频率引导关联卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">🎯</div>
+                <div>
+                    <div class="card-title">频率引导关联</div>
+                    <div class="card-subtitle">自适应多频带特征融合用于ID匹配</div>
+                </div>
+            </div>
+            <div class="param-list">
+                <div class="param-item"><div class="param-label">频带数</div><div class="param-value">4</div></div>
+                <div class="param-item"><div class="param-label">可学习融合</div><div class="param-value">是</div></div>
+                <div class="param-item"><div class="param-label">遮挡感知</div><div class="param-value">是</div></div>
+                <div class="param-item"><div class="param-label">置信度估计</div><div class="param-value">每频带MLP</div></div>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: 4个频率带特征</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">每频带置信度估计 (MLP→Sigmoid)</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">基于注意力的加权融合</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">门控残差: x + gate × enhanced</div></div>
+            </div>
+        </div>
+
+        <!-- ID解码器V2卡片 -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-icon" style="background: linear-gradient(135deg, #e91e63, #f44336);">🆔</div>
+                <div>
+                    <div class="card-title">ID解码器 V2 (双分支)</div>
+                    <div class="card-subtitle">标准分支 + 频率分支 + 可学习融合</div>
+                </div>
+            </div>
+            <div class="param-list">
+                <div class="param-item"><div class="param-label">解码器层数</div><div class="param-value">6</div></div>
+                <div class="param-item"><div class="param-label">注意力头数</div><div class="param-value">8</div></div>
+                <div class="param-item"><div class="param-label">头维度</div><div class="param-value">32</div></div>
+                <div class="param-item"><div class="param-label">特征维度</div><div class="param-value">256</div></div>
+                <div class="param-item"><div class="param-label">ID维度</div><div class="param-value">256</div></div>
+                <div class="param-item"><div class="param-label">ID词汇表</div><div class="param-value">50 + 1</div></div>
+                <div class="param-item"><div class="param-label">相对位置长度</div><div class="param-value">30</div></div>
+                <div class="param-item"><div class="param-label">辅助损失</div><div class="param-value">是</div></div>
+            </div>
+            <div class="flow-diagram">
+                <div class="flow-step"><div class="flow-num">1</div><div class="flow-text">输入: 轨迹(已知ID) + 未知目标特征</div></div>
+                <div class="flow-step"><div class="flow-num">2</div><div class="flow-text">标准分支: 6层 (Mamba自注意 + 交叉注意 + FFN)</div></div>
+                <div class="flow-step"><div class="flow-num">3</div><div class="flow-text">频率分支: 4频带预测 + 置信度融合</div></div>
+                <div class="flow-step"><div class="flow-num">4</div><div class="flow-text">注意力融合: α×标准 + (1-α)×频率</div></div>
+                <div class="flow-step"><div class="flow-num">5</div><div class="flow-text">输出: ID预测 (51类)</div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 训练配置 -->
+    <div class="card" style="margin-top: 25px;">
+        <div class="card-header">
+            <div class="card-icon" style="background: linear-gradient(135deg, #00b894, #00cec9);">⚙️</div>
+            <div>
+                <div class="card-title">训练配置 (MOT17)</div>
+                <div class="card-subtitle">当前 FA-MOT V2 训练设置</div>
+            </div>
+        </div>
+        <div class="param-list">
+            <div class="param-item"><div class="param-label">数据集</div><div class="param-value">MOT17</div></div>
+            <div class="param-item"><div class="param-label">检测器过滤</div><div class="param-value">FRCNN</div></div>
+            <div class="param-item"><div class="param-label">验证序列</div><div class="param-value">02, 10</div></div>
+            <div class="param-item"><div class="param-label">训练轮数</div><div class="param-value">12</div></div>
+            <div class="param-item"><div class="param-label">批次大小</div><div class="param-value">1</div></div>
+            <div class="param-item"><div class="param-label">学习率</div><div class="param-value">1e-4</div></div>
+            <div class="param-item"><div class="param-label">骨干网络学习率</div><div class="param-value">0.1×</div></div>
+            <div class="param-item"><div class="param-label">线性投影学习率</div><div class="param-value">0.05×</div></div>
+            <div class="param-item"><div class="param-label">权重衰减</div><div class="param-value">0.001</div></div>
+            <div class="param-item"><div class="param-label">预热轮数</div><div class="param-value">1</div></div>
+            <div class="param-item"><div class="param-label">里程碑</div><div class="param-value">[8, 10]</div></div>
+            <div class="param-item"><div class="param-label">衰减系数</div><div class="param-value">0.1</div></div>
+            <div class="param-item"><div class="param-label">训练帧数</div><div class="param-value">4</div></div>
+            <div class="param-item"><div class="param-label">采样长度</div><div class="param-value">30</div></div>
+            <div class="param-item"><div class="param-label">采样间隔</div><div class="param-value">4</div></div>
+            <div class="param-item"><div class="param-label">梯度裁剪</div><div class="param-value">0.1</div></div>
+        </div>
+    </div>
+
+    <!-- 损失函数 -->
+    <div class="card" style="margin-top: 25px;">
+        <div class="card-header">
+            <div class="card-icon" style="background: linear-gradient(135deg, #fd79a8, #e84393);">📉</div>
+            <div>
+                <div class="card-title">损失函数</div>
+                <div class="card-subtitle">多任务学习目标</div>
+            </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                <h4 style="color: #00d9ff; margin-bottom: 10px;">DETR 检测损失</h4>
+                <div style="font-size: 0.9em; line-height: 1.8;">
+                    <div>• 分类损失: <span style="color: #00ff88;">2.0 × Focal Loss</span></div>
+                    <div>• 边框L1: <span style="color: #00ff88;">5.0 × L1 Loss</span></div>
+                    <div>• GIoU: <span style="color: #00ff88;">2.0 × GIoU Loss</span></div>
+                    <div>• 辅助损失: <span style="color: #00ff88;">全部6层</span></div>
+                </div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                <h4 style="color: #00d9ff; margin-bottom: 10px;">ID 预测损失</h4>
+                <div style="font-size: 0.9em; line-height: 1.8;">
+                    <div>• ID损失权重: <span style="color: #00ff88;">1.0</span></div>
+                    <div>• 损失类型: <span style="color: #00ff88;">交叉熵</span></div>
+                    <div>• 辅助损失: <span style="color: #00ff88;">是 (6层)</span></div>
+                    <div>• 共享辅助头: <span style="color: #00ff88;">是</span></div>
+                </div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 15px; border-radius: 10px;">
+                <h4 style="color: #00d9ff; margin-bottom: 10px;">频率正则化损失</h4>
+                <div style="font-size: 0.9em; line-height: 1.8;">
+                    <div>• 正交性: <span style="color: #00ff88;">0.1 × ||F^T F - I||</span></div>
+                    <div>• 一致性: <span style="color: #00ff88;">0.05 × 时序平滑</span></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部统计 -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 30px; text-align: center;">
+        <div class="card" style="padding: 20px;">
+            <div style="font-size: 2em; font-weight: 700; color: #00d9ff;">~47M</div>
+            <div style="color: #888; font-size: 0.9em;">总参数量</div>
+        </div>
+        <div class="card" style="padding: 20px;">
+            <div style="font-size: 2em; font-weight: 700; color: #00ff88;">~52GB</div>
+            <div style="color: #888; font-size: 0.9em;">显存占用</div>
+        </div>
+        <div class="card" style="padding: 20px;">
+            <div style="font-size: 2em; font-weight: 700; color: #feca57;">~10秒</div>
+            <div style="color: #888; font-size: 0.9em;">每次迭代</div>
+        </div>
+        <div class="card" style="padding: 20px;">
+            <div style="font-size: 2em; font-weight: 700; color: #ff6b6b;">30</div>
+            <div style="color: #888; font-size: 0.9em;">历史帧数</div>
+        </div>
+        <div class="card" style="padding: 20px;">
+            <div style="font-size: 2em; font-weight: 700; color: #a29bfe;">12</div>
+            <div style="color: #888; font-size: 0.9em;">训练轮数</div>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div style="text-align: center; padding: 30px; color: #666; font-size: 0.9em;">
+        FA-MOT V2 架构可视化 | 生成日期: 2026-01-12 | 配置文件: r50_dino_fa_mot_v2_mot17.yaml
+    </div>
+</div>
+</body>
+</html>

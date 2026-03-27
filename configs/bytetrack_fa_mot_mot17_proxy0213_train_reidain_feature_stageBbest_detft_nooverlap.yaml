@@ -1,0 +1,55 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Proxy evaluation config on MOT17/train (02 & 13, FRCNN) with TrackEval enabled.
+# Mirrors the StageB-best submission settings but runs on train split (GT available).
+
+EXP_NAME: proxy_mot17_train0213_stageBbest_privdet_reidain_detft_nooverlap
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+
+RUN_TRACKEVAL: true
+EVAL_ONLY_VAL: true
+VAL_SEQUENCES: [MOT17-02, MOT17-13]
+DETECTOR_FILTER: [FRCNN]
+
+# Disable BYTETRACK profile injection so BYTETRACK_CKPT below is not overwritten
+# by the SUPER_CONFIG's BYTETRACK_PROFILES.
+BYTETRACK_PROFILES: {}
+BYTETRACK_PROFILE_BY_DATASET: {}
+BYTETRACK_PROFILE: null
+
+BYTETRACK_DET_SOURCE: model
+BYTETRACK_CKPT: outputs/detector/det_yolox_mixdet_nooverlap_20260224_022553/best_ckpt.pth.tar
+# Speed/memory: avoid extracting features for hundreds of ultra-low score boxes.
+BYTETRACK_CONF_THRE: 0.10
+
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 70
+
+ASSOC_MODE: feature
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.35
+ID_THRESH: 0.08
+
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.05
+ASSOC_FEAT_AGG: mean
+ASSOC_FEAT_K: 5
+
+# ReID encoder (torchreid OSNet-AIN, local weights)
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+ASSOC_REID_PRETRAINED: false
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_BATCH_SIZE: 128
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_DIM: 512
+
+USE_TRACK_INTERPOLATION: false
+

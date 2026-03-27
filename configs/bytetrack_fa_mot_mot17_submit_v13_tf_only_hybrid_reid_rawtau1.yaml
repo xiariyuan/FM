@@ -1,0 +1,61 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+
+# MOT17 Codabench/MOTChallenge-style submission config (full 42 files via scripts/make_mot17_full_submission_bytetrack.py)
+#
+# Key points:
+# - Private detections (ByteTrack/YOLOX) are used for inference: run the pack script with `--det-source model`.
+# - Association uses HYBRID + external ReID embeddings, but with `raw` feature scoring to avoid score collapse
+#   when many tracks are active (softmax is sensitive to track count and can trigger mass "newborn" IDs).
+# - TrackEval is disabled here because MOT17/test has no GT locally; the pack script only needs txt outputs.
+
+EXP_NAME: submit_mot17_full_v13_tf_only_hybrid_reid_rawtau1
+
+# Submission packaging needs all sequences; do not restrict to VAL_SEQUENCES.
+EVAL_ONLY_VAL: false
+RUN_TRACKEVAL: false
+
+# Avoid implicit filtering unless explicitly passed via CLI (the pack script uses --detector-filter when reusing).
+DETECTOR_FILTER: []
+
+# --- Inference thresholds (start from the validated raw+tau=1.0 settings) ---
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+ID_THRESH: 0.08
+MISS_TOLERANCE: 50
+DET_MAX_PER_FRAME: 40
+
+# --- Association ---
+ASSOC_MODE: hybrid
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.25
+ASSOC_ID_WEIGHT: 1.0
+ASSOC_FEAT_WEIGHT: 1.0
+ASSOC_IOU_WEIGHT: 0.0
+
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: raw
+ASSOC_FEAT_TAU: 1.0
+ASSOC_FEAT_AGG: mean
+ASSOC_FEAT_K: 3
+
+# --- Freq-guided geometry cue (ours, opt-in) ---
+# Add a bbox-distance similarity term to association and (optionally) weight it dynamically
+# by the model's own reliability estimate `cal_factor` (derived from freq-band consistency + entropy).
+# This is NOT a new heavy module; it's a lightweight fusion that becomes more geometry-driven when
+# the model is uncertain, and trusts learned ID/ReID more when the model is confident.
+ASSOC_BBOX_DIST_WEIGHT: 0.0
+ASSOC_BBOX_DIST_TAU: 1.0
+ASSOC_BBOX_DIST_USE_CAL_FACTOR: true
+
+# --- Optional two-stage matching baseline (opt-in) ---
+# Stage-1: your normal matching (logit/hybrid/feature).
+# Stage-2: try to recover remaining matches using bbox-distance (and optional IoU gate).
+ASSOC_TWO_STAGE: false
+ASSOC_STAGE2_ID_THRESH: 0.30
+ASSOC_STAGE2_IOU_GATE: 0.0
+ASSOC_STAGE2_BBOX_WEIGHT: 1.0
+
+# Keep these aligned with your training/eval settings (can be tuned later).
+ASSOC_USE_KALMAN: true
+ASSOC_USE_DET_SCORE: false

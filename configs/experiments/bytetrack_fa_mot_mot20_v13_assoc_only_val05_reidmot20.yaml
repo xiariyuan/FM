@@ -1,0 +1,5 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot20_v13_assoc_only_val05.yaml
+
+# v13 architecture + MOT20-only ReID weights (A/B against older ReID weights)
+EXP_NAME: bytetrack_fa_mot_mot20_v13_assoc_only_val05_reidmot20
+ASSOC_REID_WEIGHTS: outputs/reid_mot20_only_osnetain_20260304_203842/reid_best.pth

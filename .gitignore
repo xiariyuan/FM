@@ -1,0 +1,72 @@
+# Root gitignore file
+
+# IDE / editor
+.idea/
+.vscode/
+.claude/
+
+# Python / build
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+build/
+dist/
+.ipynb_checkpoints/
+
+# Local environments
+.venv/
+venv/
+env/
+
+# OS / misc
+.DS_Store
+nohup.out
+*.pid
+download.log
+
+# Datasets / generated data
+data/
+datasets/
+TrackEval/data/
+third_party/ByteTrack/datasets/
+
+# Training / evaluation outputs
+outputs/**
+!outputs/experiment_registry.csv
+log/
+logs/
+backups/
+tmp_runtime_replay_smoke2/
+pack/
+third_party/ByteTrack/YOLOX_outputs/
+
+# Weights / checkpoints / pretrained artifacts
+weight/
+external/**/pretrained/
+*.pth
+*.pt
+*.pth.tar
+*.ckpt
+*.onnx
+*.engine
+
+# Array / shard / archive artifacts
+*.npz
+*.npy
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+*.whl
+
+# Local media / generated reports
+*.png
+*.jpg
+*.jpeg
+*.pdf
+
+# Large bundled demo assets
+external/BoT-SORT-main/assets/
+third_party/ByteTrack/assets/
+third_party/ByteTrack/videos/

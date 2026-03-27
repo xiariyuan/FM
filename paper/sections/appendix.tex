@@ -1,0 +1,29 @@
+\section{Appendix}
+\subsection{Default LTRA Hyperparameters}
+Unless otherwise stated, the default LTRA settings are:
+\begin{itemize}
+  \item Temporal scales: $\{1, 2, 4\}$.
+  \item Minimum history length to activate temporal prototypes: $3$.
+  \item Appearance blend coefficient $\beta$: $0.35$.
+  \item Reliability factors: stability, coherence, and spatial-temporal agreement.
+  \item Detector confidence modulation: enabled.
+\end{itemize}
+
+\subsection{Baseline Components}
+The following components are treated as standard and are held fixed in same-base comparisons:
+\begin{itemize}
+  \item Detector checkpoint.
+  \item ReID encoder and its pretrained weights.
+  \item Motion model and Kalman filter settings.
+  \item Hungarian matching.
+  \item Two-stage association logic of the carrier tracker.
+\end{itemize}
+
+\subsection{Planned Additional Material}
+The final appendix will include:
+\begin{itemize}
+  \item sensitivity to temporal scales and blend coefficient,
+  \item additional sequence-level breakdowns,
+  \item runtime overhead,
+  \item a brief note on an explored trainable extension that is not part of the main method.
+\end{itemize}

@@ -1,0 +1,7 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v14_ctrl_base_reid_da_val0213.yaml
+EXP_NAME: bytetrack_fa_mot_mot17_v15_laplace_reid_da_val0213
+
+ASSOC_USE_LAPLACE: true
+ASSOC_LAPLACE_WEIGHT: 0.35
+ASSOC_LAPLACE_DECAY_SCALES: [1.0, 2.0, 4.0]
+ASSOC_LAPLACE_HIDDEN_DIM: 16

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="${REPO_ROOT:-/gemini/code/FMtrack-main/FM-Track}"
+
+export HACA_LABEL="${HACA_LABEL:-haca_v2}"
+export HACA_VERSION="${HACA_VERSION:-haca_v2}"
+export SCRIPT_NAME="${SCRIPT_NAME:-scripts/train_haca_v2_mot17.sh}"
+export VARIANT_NAME="${VARIANT_NAME:-haca_v2_train}"
+
+export DISABLE_SET_ENCODER="${DISABLE_SET_ENCODER:-1}"
+export DISABLE_BACKGROUND="${DISABLE_BACKGROUND:-0}"
+export DISABLE_HIST_GATE="${DISABLE_HIST_GATE:-0}"
+export DISABLE_OOD_GATE="${DISABLE_OOD_GATE:-0}"
+
+export LOSS_SHIFT_WEIGHT="${LOSS_SHIFT_WEIGHT:-0.15}"
+export SHIFT_BATCH_PROB="${SHIFT_BATCH_PROB:-0.5}"
+export HIST_GATE_HIDDEN="${HIST_GATE_HIDDEN:-8}"
+export OOD_SCALE="${OOD_SCALE:-6.0}"
+export OOD_QUANTILE="${OOD_QUANTILE:-0.95}"
+export CORRUPT_FEAT_NOISE="${CORRUPT_FEAT_NOISE:-0.03}"
+export CORRUPT_SCORE_NOISE="${CORRUPT_SCORE_NOISE:-0.08}"
+export CORRUPT_HISTORY_MIN_RATIO="${CORRUPT_HISTORY_MIN_RATIO:-0.35}"
+
+exec "${REPO_ROOT}/scripts/train_haca_v1_mot17.sh"

@@ -1,0 +1,68 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# MOT17 submission config (ByteTrack runtime, private detections via YOLOX).
+#
+# This config is tuned on the MOT17-02/13 (FRCNN) proxy split using the v12 aligned checkpoint:
+#   outputs/bytetrack_fa_mot_mot17_v12_align_detft_nooverlap_detonly_val0213_run2/checkpoint_2.pth
+#
+# Key fixes:
+# - ReID encoder is fully offline (local weights), so it won't silently disable on servers without internet.
+# - Association is feature-only matching with ReID (ASSOC_MODE=feature).
+#
+# StageB-best params (02/13 proxy):
+#   DET_THRESH=NEWBORN_THRESH=0.25, ID_THRESH=0.08, ASSOC_FEAT_TAU=0.05
+#   ASSOC_IOU_GATE=0.35, MISS_TOLERANCE=70
+
+EXP_NAME: submit_mot17_full_v12ckpt2_privdet_reidain_feature_stageBbest
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Disable BYTETRACK profile injection so our finetuned detector ckpt is not overwritten
+# by the SUPER_CONFIG's BYTETRACK_PROFILES (which default to weight/bytetrack_x_mot17.pth.tar).
+BYTETRACK_PROFILES: {}
+BYTETRACK_PROFILE_BY_DATASET: {}
+BYTETRACK_PROFILE: null
+
+# Private detections from the built-in YOLOX (ByteTrack) detector.
+BYTETRACK_DET_SOURCE: model
+
+# Use finetuned detector weights (must match BYTETRACK_EXP_FILE model arch).
+BYTETRACK_CKPT: outputs/detector/det_yolox_mixdet_nooverlap_20260224_022553/best_ckpt.pth.tar
+# Speed/memory: avoid extracting features for hundreds of ultra-low score boxes.
+BYTETRACK_CONF_THRE: 0.10
+
+# Detection / track management (proxy-tuned)
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 70
+
+# Association: ReID feature-only matching
+ASSOC_MODE: feature
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.35
+ID_THRESH: 0.08
+
+# Use external ReID embeddings for association.
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.05
+ASSOC_FEAT_AGG: mean
+ASSOC_FEAT_K: 5
+
+# ReID encoder (torchreid OSNet-AIN, local weights)
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+ASSOC_REID_PRETRAINED: false
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_BATCH_SIZE: 128
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_DIM: 512
+
+USE_TRACK_INTERPOLATION: false

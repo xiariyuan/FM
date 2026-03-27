@@ -1,0 +1,36 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Local evaluation config (uses TrackEval on MOT17/train with GT).
+# Intended for quick, high-ROI inference tuning without Codabench uploads.
+#
+# Notes:
+# - Uses internal YOLOX detections + ROIs (det_source=model).
+# - Filters to FRCNN sequences only to reduce runtime (train has 21 variants total).
+# - Override thresholds via submit_bytetrack.py CLI as needed.
+
+EXP_NAME: eval_mot17_train_v10e1_privdet_frcnn
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+
+RUN_TRACKEVAL: true
+EVAL_ONLY_VAL: false
+
+# Speed: only evaluate the 7 FRCNN variants in MOT17/train.
+DETECTOR_FILTER: ["FRCNN"]
+
+BYTETRACK_DET_SOURCE: model
+
+# Default inference params (baseline; override via CLI when sweeping)
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.003
+ASSOC_IOU_GATE: 0.35
+DET_MAX_PER_FRAME: 60
+MISS_TOLERANCE: 30
+
+# Optional post-processing (keep off by default for fair comparison)
+USE_TRACK_INTERPOLATION: false
+INTERPOLATION_MAX_GAP: 10
+INTERPOLATION_MIN_LENGTH: 3
+INTERPOLATION_METHOD: linear

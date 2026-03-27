@@ -1,0 +1,22 @@
+# ============================================================================
+# FA-MOT V2 Full Enhancement Config
+#
+# 包含所有增强：BBox 噪声 + 增强的正则化
+# 基于 review_claude_suggestions.md 的建议
+# ============================================================================
+
+SUPER_CONFIG_PATH: ./configs/r50_dino_fa_mot_v2_mot17.yaml
+
+# BBox 噪声增强 (保守参数，减少训练-测试差距)
+BBOX_POSITION_NOISE: 0.02      # 位置噪声比例
+BBOX_SIZE_NOISE: 0.03          # 尺寸噪声比例
+BBOX_DROP_PROB: 0.02           # 随机丢弃概率
+BBOX_AUG_PROB: 0.5             # 应用概率
+
+# 增强的正则化参数
+WEIGHT_DECAY: 0.001            # 原值 0.0005
+DETR_DROPOUT: 0.1              # 原值 0.0
+
+# 输出目录
+OUTPUTS_DIR: ./outputs/fa_mot_v2_enhanced
+EXP_NAME: fa_mot_v2_enhanced

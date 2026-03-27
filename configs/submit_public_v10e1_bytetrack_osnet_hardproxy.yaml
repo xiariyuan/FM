@@ -1,0 +1,34 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Evaluate v10 e1 using the PUBLIC runtime tracker with:
+# - ByteTrack detections (det_source=bytetrack)
+# - External ReID embeddings (torchreid OSNet-AIN)
+#
+# This is a quick proxy to test whether stronger per-box appearance embeddings
+# can improve association on hard sequences (MOT17-02/10 FRCNN variants).
+
+EXP_NAME: eval_public_runtime_v10e1_bytetrack_osnet_hardproxy
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+INFERENCE_MODE: evaluate
+INFERENCE_MODEL: null
+
+# Use ByteTrack detector for boxes, and external ReID for embeddings.
+DET_SOURCE: bytetrack
+USE_PUBLIC_REID: true
+
+# External ReID encoder config (torchreid).
+PUBLIC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+PUBLIC_REID_PRETRAINED: false
+PUBLIC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+PUBLIC_REID_PROJ_SEED: 12345
+PUBLIC_REID_INPUT_H: 256
+PUBLIC_REID_INPUT_W: 128
+PUBLIC_REID_BATCH_SIZE: 64
+PUBLIC_REID_L2_NORM: true
+
+# Only run the hard proxy sequences for fast iteration.
+VAL_SEQUENCES:
+  - MOT17-02-FRCNN
+  - MOT17-10-FRCNN

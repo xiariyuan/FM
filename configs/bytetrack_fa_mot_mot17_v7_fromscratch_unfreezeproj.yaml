@@ -1,0 +1,11 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v7_fromscratch_fixloss.yaml
+
+# Fresh training run (epoch 0) with unfreezed feature projection
+EXP_NAME: bytetrack_fa_mot_mot17_v7_fromscratch_unfreezeproj
+
+# Critical fix: unfreeze projection layer
+FREEZE_FEATURE_PROJ: false
+
+# Keep triplet signal sufficiently strong from the beginning
+TRIPLET_LOSS_WEIGHT: 0.5
+TRIPLET_MARGIN: 0.0

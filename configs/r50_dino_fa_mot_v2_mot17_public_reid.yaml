@@ -1,0 +1,21 @@
+SUPER_CONFIG_PATH: configs/r50_dino_fa_mot_v2_mot17.yaml
+
+USE_PUBLIC_REID: True
+
+# Option A (default): torchvision backbone (ImageNet pretrained)
+# PUBLIC_REID_BACKBONE: torchvision_resnet50
+# PUBLIC_REID_PRETRAINED: True
+# PUBLIC_REID_WEIGHTS:
+
+# Option B (stronger ReID): torchreid OSNet-AIN + local weights
+PUBLIC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+PUBLIC_REID_PRETRAINED: False
+PUBLIC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+
+PUBLIC_REID_PROJ_SEED: 12345
+PUBLIC_REID_INPUT_H: 256
+PUBLIC_REID_INPUT_W: 128
+PUBLIC_REID_BATCH_SIZE: 64
+PUBLIC_REID_L2_NORM: True
+
+EXP_NAME: fa_mot_v2_mot17_public_reid

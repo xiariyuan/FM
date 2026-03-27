@@ -1,0 +1,33 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# Local evaluation config: MOT17/train (TrackEval) with private detections (YOLOX)
+# using the v10 e1 checkpoint, evaluated on all FRCNN sequences.
+#
+# Purpose: provide an apples-to-apples baseline against ReID feature-only association
+# on the same split/sequences.
+
+EXP_NAME: eval_mot17_train_v10e1_privdet_logit_full_frcnn
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+
+RUN_TRACKEVAL: true
+EVAL_ONLY_VAL: false
+
+DETECTOR_FILTER: ["FRCNN"]
+BYTETRACK_DET_SOURCE: model
+
+# Detection / track management (tuned)
+DET_THRESH: 0.25
+DET_MAX_PER_FRAME: 60
+MISS_TOLERANCE: 15
+NEWBORN_THRESH: 0.7
+
+# Association (logits)
+ASSOC_MODE: logit
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.35
+ID_THRESH: 0.003
+
+USE_TRACK_INTERPOLATION: false
+

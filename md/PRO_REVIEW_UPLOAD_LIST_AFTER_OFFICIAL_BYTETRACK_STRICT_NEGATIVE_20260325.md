@@ -1,0 +1,61 @@
+# Pro Review Upload List (2026-03-25, Official ByteTrack Strict Negative)
+
+这份清单对应:
+
+- `md/PRO_REVIEW_SEND_TO_PRO_AFTER_OFFICIAL_BYTETRACK_STRICT_NEGATIVE_20260325.md`
+
+建议至少携带下面这些文件。不要只发提示词而不发上下文。
+
+## 1. 必带上下文文档
+
+- `md/PRO_REVIEW_CANONICAL_CONTEXT_20260324.md`
+- `md/PRO_REVIEW_LATEST_DELTA_20260324.md`
+- `md/PRO_REVIEW_LATEST_DELTA_20260325_BASELINE_PIVOT.md`
+- `md/PRO_REVIEW_LATEST_DELTA_20260325_OFFICIAL_BYTETRACK_STRICT_NEGATIVE.md`
+- `md/PRO_REVIEW_EXPERIMENT_CHAIN_INDEX_20260325.md`
+- `md/PRO_REVIEW_INTERACTION_LOG.md`
+- `md/PRO_REVIEW_SEND_TO_PRO_AFTER_OFFICIAL_BYTETRACK_STRICT_NEGATIVE_20260325.md`
+
+## 2. 必带关键结果文件
+
+- `outputs/official_bytetrack_local_conflict_halfval_pair_20260325_184000/result.csv`
+- `outputs/official_bytetrack_local_conflict_halfval_pair_20260325_184000/summary.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/summary.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/result.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/01_stage1/summary.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/01_stage1/metrics.jsonl`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/02_official_halfval_pair/result.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/02_official_halfval_pair/summary.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/02_official_halfval_pair/01_host_plus_plugin/summary.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/cluster_set_predictor_data/summary.json`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/cluster_set_predictor_data/sequence_cluster_summary.csv`
+
+## 3. 必带代码锚点
+
+- `third_party/ByteTrack/yolox/tracker/byte_tracker_local_conflict.py`
+- `third_party/ByteTrack/tools/track.py`
+- `third_party/ByteTrack/yolox/evaluators/mot_evaluator.py`
+- `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
+- `scripts/run_official_bytetrack_local_conflict_stage1_trainhalf.py`
+- `scripts/build_local_conflict_set_predictor_dataset.py`
+- `scripts/train_local_conflict_set_predictor.py`
+- `models/local_conflict_set_predictor.py`
+
+## 4. 可选但建议带上
+
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/pipeline.log`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/source_manifest.csv`
+- `outputs/official_bytetrack_local_conflict_stage1_trainhalf_20260325_195300/labeled_replay.summary.json`
+
+## 5. 当前不需要带的内容
+
+当前这次提问不需要再重点带:
+
+- `base_reid_da` 的老 positive 结果全套工件
+- `v15` host migration 那套 runner 细节
+- baseline selection 之前的全量争论材料
+
+理由:
+
+- 这些问题已经被收束过了；
+- 这次问题不是“选 baseline”，而是“official ByteTrack strict negative 之后，下一步怎么 redesign”。

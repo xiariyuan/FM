@@ -1,0 +1,221 @@
+# ByteTrack 特征训练配置 - MOT17 (优化版)
+# 针对早期MOTA/IDF1偏低问题的优化配置
+# 优化要点:
+#   1. 延长纯GT阶段，更平滑的GT->DET过渡
+#   2. 降低频率损失权重，避免干扰主任务
+#   3. 增大学习率和batch size
+#   4. 更有代表性的验证集
+#   5. 调整Newborn阈值增加召回
+
+# ============ 基础设置 ============
+SEED: 42
+DEVICE: cuda
+NUM_WORKERS: 4
+PREFETCH_FACTOR: 2
+
+# ============ 实验设置 ============
+EXP_NAME: bytetrack_fa_mot_mot17_optimized
+EXP_OWNER: fmtrack
+EXP_PROJECT: fmtrack
+EXP_GROUP: bytetrack_feature_optimized
+OUTPUTS_DIR: null
+USE_WANDB: False
+
+# ============ 数据设置 ============
+DATA_ROOT: /gemini/code/datasets
+DATASETS:
+  - MOT17
+DATASET_SPLITS:
+  - train
+DETECTOR_FILTER:
+  - FRCNN
+# [优化1] 更有代表性的验证集（覆盖不同难度）
+VAL_SEQUENCES:
+  - MOT17-02
+  - MOT17-05
+  - MOT17-10
+  - MOT17-11
+# [优化2] 多尺度时序采样
+SAMPLE_STEPS:
+  - 0
+  - 0
+SAMPLE_LENGTHS:
+  - 18
+  - 24
+SAMPLE_INTERVALS:
+  - 3
+  - 4
+LENGTH_PER_ITERATION: null
+MIN_LEGAL_RATIO: 1.0
+
+# ============ 数据增强 ============
+AUG_RANDOM_SHIFT: 0.05
+AUG_RANDOM_FLIP: 0.0
+AUG_RANDOM_RESIZE:
+  - 400
+  - 500
+  - 600
+AUG_RESIZE_SCALES:
+  - 480
+  - 512
+  - 544
+  - 576
+  - 608
+  - 640
+AUG_MAX_SIZE: 1280
+AUG_MAX_SHIFT_RATIO: 0.05
+AUG_OVERFLOW_BBOX: False
+AUG_RANDOM_CROP_MIN: 384
+AUG_RANDOM_CROP_MAX: 600
+AUG_BRIGHTNESS: 0.4
+AUG_CONTRAST: 0.4
+AUG_SATURATION: 0.4
+AUG_HUE: 0.2
+AUG_COLOR_JITTER_V2: False
+# [优化3] 增加训练多样性
+AUG_NUM_GROUPS: 3
+AUG_TRAJECTORY_AUGMENTATION: True
+AUG_TRAJECTORY_SWITCH_PROB: 0.1
+AUG_TRAJECTORY_OCCLUSION_PROB: 0.1
+AUG_TRAJECTORY_ID_DROP_PROB: 0.05
+AUG_TRAJECTORY_NOISE_SCALE: 0.02
+GT_BOX_NOISE_SCALE: 0.02
+FREEZE_FEATURE_PROJ: True
+AUG_DISABLE_RANDOM_CROP: True
+
+# ============ ByteTrack 检测器设置 ============
+BYTETRACK_EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_det.py
+BYTETRACK_CKPT: weight/bytetrack_x_mot17.pth.tar
+BYTETRACK_FP16: True
+BYTETRACK_TEST_SIZE: null
+BYTETRACK_CONF_THRE: 0.01
+BYTETRACK_NMS_THRE: 0.7
+BYTETRACK_USE_AUG_IMAGES: True
+
+# ============ 特征设置 ============
+FEATURE_DIM: 256
+NUM_ID_VOCABULARY: 500
+ID_DIM: 256
+HEAD_DIM: 32
+REL_PE_LENGTH: 30
+
+# ============ 频域轨迹建模设置 ============
+USE_FREQ_AWARE: True
+NUM_BANDS: 4
+FREQ_KERNEL_SIZE: 7
+USE_FIXED_LAPLACIAN: False
+FREQ_ORTHO_METRIC: dot
+USE_MULTISCALE_FREQ: False
+NUM_FREQ_SCALES: 3
+NUM_TEMPORAL_LAYERS: 2
+TEMPORAL_NUM_HEADS: 8
+MAX_SEQ_LEN: 36
+USE_MAMBA_FOR_LOWFREQ: True
+FFN_DIM_RATIO: 2
+DROPOUT: 0.1
+
+# ============ ID 解码器设置 ============
+USE_FREQ_DECODER_V2: True
+NUM_ID_DECODER_LAYERS: 6
+USE_AUX_LOSS: True
+USE_SHARED_AUX_HEAD: True
+USE_FREQ_GUIDED_ASSOC: True
+USE_LEARNABLE_FUSION: True
+# [优化4] 降低频率分支权重
+FREQ_LOSS_WEIGHT: 0.5
+FUSION_LOSS_WEIGHT: 1.0
+
+# ============ 训练设置 ============
+EPOCHS: 50
+# [优化5] 利用充足显存
+BATCH_SIZE: 4
+ACCUMULATE_STEPS: 1
+# [优化6] 增大初始学习率
+LR: 2.0e-4
+WEIGHT_DECAY: 1.0e-4
+LR_WARMUP_EPOCHS: 5
+# [优化7] 更平滑的学习率衰减
+SCHEDULER_MILESTONES:
+  - 25
+  - 35
+  - 45
+SCHEDULER_GAMMA: 0.2
+MAX_CLIP_NORM: 0.1
+LOG_EXCEPTION_TRACE: False
+DEBUG_RAISE_EXCEPTIONS: False
+
+# ============ 训练框来源（GT/DET）============
+# [优化8] 延长GT阶段，更平滑的过渡
+TRAIN_BOX_SOURCE: mix
+TRAIN_BOX_SOURCE_SCHEDULE:
+  - {start: 0, end: 8, source: gt, prob: 0.0}
+  - {start: 9, end: 15, source: mix, prob: 0.2}
+  - {start: 16, end: 22, source: mix, prob: 0.4}
+  - {start: 23, end: 30, source: mix, prob: 0.6}
+  - {start: 31, end: 38, source: mix, prob: 0.8}
+  - {start: 39, end: 49, source: mix, prob: 0.9}
+DET_TRAIN_START_EPOCH: 0
+DET_TRAIN_PROB: 0.5
+DET_TRAIN_PROB_SCHEDULE: False
+DET_TRAIN_PROB_START: 0.2
+DET_TRAIN_PROB_END: 0.8
+DET_MATCH_IOU_THRESH: 0.5
+DET_MATCHING: greedy
+DET_FALLBACK_TO_GT_ON_EMPTY: True
+DET_MAX_PER_FRAME: 60
+DET_FILL_UNMATCHED_WITH_GT: True
+DET_UNKNOWN_SUPERVISION: True
+DET_CACHE_USE: False
+DET_CACHE_WRITE: False
+DET_CACHE_DIR: outputs/det_cache
+DET_CACHE_COMPRESS: True
+DET_CACHE_VERSION: v1
+DET_CACHE_VALIDATE_MTIME: True
+ASSERT_BBOX_NORMALIZED: False
+BBOX_NORM_EPS: 0.001
+
+# ============ 损失权重 ============
+ID_LOSS_WEIGHT: 1.0
+USE_FOCAL_LOSS: False
+# [优化9] 降低频率损失权重
+FREQ_ORTHO_LOSS_WEIGHT: 0.3
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.05
+
+# ============ LFD 参数调度 ============
+USE_IMPORTANCE_TAU_SCHEDULE: True
+IMPORTANCE_TAU_START: 2.0
+IMPORTANCE_TAU_END: 0.5
+
+# ============ 检查点设置 ============
+SAVE_CHECKPOINT_PER_EPOCH: 2
+USE_DECODER_CHECKPOINT: False
+RESUME_MODEL: null
+RESUME_OPTIMIZER: False
+RESUME_SCHEDULER: False
+
+# ============ 验证设置 ============
+EVAL_EVERY_EPOCH: True
+EVAL_ONLY_VAL: True
+RUN_TRACKEVAL: True
+EVAL_MIN_TRACK_LEN: 1
+EVAL_METRICS: ["HOTA", "CLEAR"]
+# [优化10] 调整Newborn惩罚
+NEWBORN_PENALTY_WEIGHT: 0.4
+NEWBORN_PENALTY_MARGIN: 0.3
+NEWBORN_PENALTY_WARMUP_EPOCHS: 8
+
+# ============ 推理设置（用于训练时验证）============
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+INFERENCE_MAX_LONGER: 1280
+DET_THRESH: 0.3
+# [优化11] 降低Newborn阈值
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.2
+AREA_THRESH: 0
+MISS_TOLERANCE: 30
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.2
+ASSOC_ID_WEIGHT: 0.7
+ASSOC_IOU_WEIGHT: 0.3
+ASSOC_USE_KALMAN: True

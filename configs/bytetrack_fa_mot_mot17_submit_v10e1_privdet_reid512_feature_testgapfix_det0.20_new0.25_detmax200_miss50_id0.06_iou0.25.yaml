@@ -1,0 +1,51 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# MOT17 test submission config (private detections via YOLOX, ReID feature association).
+# This is a "test-gap fix" candidate aiming to recover recall on MOT17-test (01/03/06/07/08/12/14)
+# without exploding false newborn tracks.
+#
+# Key idea: decouple DET_THRESH (low) and NEWBORN_THRESH (high) to mimic ByteTrack's low/high threshold usage:
+# - Keep more low-confidence detections for matching (DET_THRESH)
+# - Only allow high-confidence detections to start a new track (NEWBORN_THRESH)
+#
+# Recommended usage:
+#   scripts/make_mot17_full_submission_bytetrack.py --skip-train --det-source model --reuse-across-detectors
+
+EXP_NAME: submit_mot17_test_v10e1_privdet_reid512_feature_testgapfix_det0.20_new0.25_detmax200_miss50_id0.06_iou0.25
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+BYTETRACK_DET_SOURCE: model
+
+# Detection / lifecycle
+DET_THRESH: 0.20
+NEWBORN_THRESH: 0.25
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 50
+
+# Association (ReID feature-only)
+ASSOC_MODE: feature
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.25
+ID_THRESH: 0.06
+
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.05
+
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+ASSOC_REID_PRETRAINED: false
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_BATCH_SIZE: 128
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_DIM: 512
+
+USE_TRACK_INTERPOLATION: false
+

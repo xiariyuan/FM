@@ -1,0 +1,11 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v8_fromscratch_unfreezeproj_longcurr.yaml
+
+# Fresh from-scratch run after P0/P1 correctness fixes:
+# - Triplet supervision ignores newborn label explicitly
+# - Inference loads MemoryBank weights from checkpoint (if enabled)
+# - Runtime vocab-id mapping is consistent and collision-safe
+EXP_NAME: bytetrack_fa_mot_mot17_v9_fromscratch_unfreezeproj_longcurr_p0fix
+
+# Paper hygiene: make newborn filtering explicit (code default is already True)
+TRIPLET_IGNORE_NEWBORN: true
+

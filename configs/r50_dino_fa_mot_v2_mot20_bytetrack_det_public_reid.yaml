@@ -1,0 +1,22 @@
+SUPER_CONFIG_PATH: configs/r50_dino_fa_mot_v2_mot17_public_reid.yaml
+
+# Override inference dataset to MOT20 (the SUPER config defaults to MOT17).
+INFERENCE_DATASET: MOT20
+
+# Use ByteTrack detector instead of MOT public det.txt
+DET_SOURCE: bytetrack
+BYTETRACK_EXP_FILE: third_party/ByteTrack/exps/example/mot/yolox_x_mix_mot20_ch.py
+BYTETRACK_CKPT: weight/bytetrack_x_mot20.pth.tar
+BYTETRACK_FP16: True
+BYTETRACK_CONF_THRE: 0.01
+BYTETRACK_NMS_THRE: 0.7
+BYTETRACK_CLASS_AGNOSTIC_NMS: True
+
+# (optional) override test size; otherwise use exp.test_size
+# BYTETRACK_TEST_SIZE: [800, 1440]
+
+# Optional: cache private detections to MOT det.txt format
+CACHE_PRIVATE_DET: True
+CACHE_PRIVATE_DET_DIR: outputs/private_det_cache
+
+EXP_NAME: fa_mot_v2_mot20_bytetrack_det_public_reid

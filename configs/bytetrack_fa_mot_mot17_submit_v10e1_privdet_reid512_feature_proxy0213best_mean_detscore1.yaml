@@ -1,0 +1,63 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# MOT17 full submission config (ByteTrack runtime, private detections via YOLOX).
+# Association uses external ReID embeddings (OSNet-AIN) in feature-only mode.
+#
+# This config is tuned on MOT17/train proxy validation (02 & 13, FRCNN) and is meant to reduce ID switches
+# on hard test sequences (07/08/14) without sacrificing detection quality.
+#
+# Best proxy(02/13) setting found by sweep:
+#   DET_THRESH=0.25, NEWBORN_THRESH=0.25, MISS_TOLERANCE=50, DET_MAX_PER_FRAME=200
+#   ASSOC_IOU_GATE=0.25, ID_THRESH=0.08, ASSOC_FEAT_TAU=0.05
+#   ASSOC_FEAT_AGG=mean, ASSOC_USE_DET_SCORE=true
+#
+# Usage:
+#   python scripts/make_mot17_full_submission_bytetrack.py \
+#     --config-path configs/bytetrack_fa_mot_mot17_submit_v10e1_privdet_reid512_feature_proxy0213best_mean_detscore1.yaml \
+#     --checkpoint outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/checkpoint_epoch_1.pth \
+#     --det-source model --reuse-across-detectors --reuse-detector FRCNN
+
+EXP_NAME: submit_mot17_full_v10e1_privdet_reid512_feature_proxy0213best_mean_detscore1
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Private detections from the built-in YOLOX (ByteTrack) detector.
+BYTETRACK_DET_SOURCE: model
+
+# Detection / track management (proxy-tuned)
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 50
+
+# Association: ReID feature-only matching
+ASSOC_MODE: feature
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.25
+ID_THRESH: 0.08
+ASSOC_USE_DET_SCORE: true
+
+# Use external ReID embeddings for association.
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.05
+ASSOC_FEAT_AGG: mean
+ASSOC_FEAT_K: 5
+
+# ReID encoder (torchreid OSNet-AIN, local weights)
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+ASSOC_REID_PRETRAINED: false
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_BATCH_SIZE: 128
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_DIM: 512
+
+USE_TRACK_INTERPOLATION: false
+

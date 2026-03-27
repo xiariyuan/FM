@@ -1,0 +1,21 @@
+# ============================================================================
+# FA-MOT V2 Ablation Baseline (No BBox Noise, Original Regularization)
+#
+# 用于消融实验的基线配置，不包含任何新增的增强或正则化
+# ============================================================================
+
+SUPER_CONFIG_PATH: ./configs/r50_dino_fa_mot_v2_mot17.yaml
+
+# 关闭 BBox 噪声增强
+BBOX_POSITION_NOISE: 0.0
+BBOX_SIZE_NOISE: 0.0
+BBOX_DROP_PROB: 0.0
+BBOX_AUG_PROB: 0.0
+
+# 恢复原始正则化参数
+WEIGHT_DECAY: 0.0005
+DETR_DROPOUT: 0.0
+
+# 输出目录
+OUTPUTS_DIR: ./outputs/ablation_baseline
+EXP_NAME: fa_mot_v2_ablation_baseline

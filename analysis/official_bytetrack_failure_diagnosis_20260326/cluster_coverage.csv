@@ -1,0 +1,9 @@
+scope,slice_name,count,covered_count,covered_ratio
+all_sequences,positive_groups,46050,3224,0.07001085776330077
+all_sequences,ambiguous_groups,286,42,0.14685314685314685
+all_sequences,recoverable_groups,145,33,0.22758620689655173
+all_sequences,top1_error_groups,145,33,0.22758620689655173
+cluster_sequences,positive_groups,8432,3224,0.38235294117647056
+cluster_sequences,ambiguous_groups,110,42,0.38181818181818183
+cluster_sequences,recoverable_groups,68,33,0.4852941176470588
+cluster_sequences,top1_error_groups,68,33,0.4852941176470588

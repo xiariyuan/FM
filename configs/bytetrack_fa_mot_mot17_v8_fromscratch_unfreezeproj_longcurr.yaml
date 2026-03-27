@@ -1,0 +1,9 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v7_fromscratch_unfreezeproj.yaml
+
+# Official mainline run (from scratch) with curriculum for longer temporal context
+EXP_NAME: bytetrack_fa_mot_mot17_v8_fromscratch_unfreezeproj_longcurr
+
+# Curriculum sampling for stronger long-range association learning
+SAMPLE_STEPS: [0, 20, 50]
+SAMPLE_LENGTHS: [12, 18, 24]
+SAMPLE_INTERVALS: [3, 5, 7]

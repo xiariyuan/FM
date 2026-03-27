@@ -1,0 +1,60 @@
+SUPER_CONFIG_PATH: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/config_effective.yaml
+
+# MOT17 submission config (ByteTrack runtime, private detections via YOLOX)
+# Goal: reduce the huge val(04/05)-to-test gap by prioritizing DET recall and long-occlusion continuity.
+#
+# This is a *starting point* for test-time tuning. Recommended to run a small sweep on MOT17/train
+# across DET_THRESH / NEWBORN_THRESH / DET_MAX_PER_FRAME / MISS_TOLERANCE and pick the best.
+#
+# Intended usage:
+#   scripts/make_mot17_full_submission_bytetrack.py --det-source model --reuse-across-detectors
+#
+# Notes:
+# - RUN_TRACKEVAL must be false for test split (no GT).
+# - If you want the smaller official MOT17 test submission, use:
+#     scripts/make_mot17_full_submission_bytetrack.py --skip-train --precheck-profile mot17_test_public_21
+
+EXP_NAME: submit_mot17_full_v10e1_privdet_reid512_feature_testgapfix
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: test
+
+RUN_TRACKEVAL: false
+EVAL_ONLY_VAL: false
+
+# Use private detections from the built-in YOLOX (ByteTrack) detector.
+BYTETRACK_DET_SOURCE: model
+
+# Detection / lifecycle (test-gap oriented)
+# - Lower DET/NEWBORN thresholds to recover recall on hard sequences (e.g., 14/08).
+# - Increase DET_MAX_PER_FRAME to avoid hard-capping crowded scenes (e.g., 03).
+DET_THRESH: 0.20
+NEWBORN_THRESH: 0.20
+DET_MAX_PER_FRAME: 200
+MISS_TOLERANCE: 50
+
+# Association: ReID feature-only matching
+ASSOC_MODE: feature
+ASSOC_MATCHING: hungarian
+ASSOC_IOU_GATE: 0.25
+ID_THRESH: 0.06
+
+# Use external ReID embeddings for association.
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.05
+ASSOC_FEAT_AGG: last
+ASSOC_FEAT_K: 5
+
+# ReID encoder (torchreid OSNet-AIN, local weights)
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+ASSOC_REID_PRETRAINED: false
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_BATCH_SIZE: 128
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_DIM: 512
+
+USE_TRACK_INTERPOLATION: false

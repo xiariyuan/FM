@@ -1,0 +1,72 @@
+# ============================================================================
+# FA-MOT V3 Robust Config (for Public Detection Training)
+#
+# 基于 review_claude_suggestions.md 和 fm_track_public_det_修复与检查记录.md
+# 专注于减少训练-测试差距，提升 public detection 性能
+# ============================================================================
+
+SUPER_CONFIG_PATH: ./configs/r50_dino_fa_mot_v2_mot17.yaml
+
+# Data settings (Linux云服务器路径)
+DATA_ROOT: /gemini/code/datasets
+
+# ============================================================================
+# Train/Val Split (从训练集中划分验证集)
+# ============================================================================
+# 验证序列列表 (base names，会匹配所有检测器变体)
+# MOT17-02: 静态相机，行人
+# MOT17-05: 移动相机，步行
+# MOT17-09: 静态相机，行人
+VAL_SEQUENCES: [MOT17-02, MOT17-05, MOT17-09]
+
+# ============================================================================
+# BBox Noise Augmentation (核心改进：模拟检测器噪声)
+# ============================================================================
+BBOX_POSITION_NOISE: 0.02      # 位置噪声比例 (相对于bbox宽高)
+BBOX_SIZE_NOISE: 0.03          # 尺寸噪声比例 (相对于bbox宽高)
+BBOX_DROP_PROB: 0.02           # 随机丢弃检测框概率 (模拟漏检)
+BBOX_AUG_PROB: 0.5             # 应用噪声增强的整体概率
+
+# ============================================================================
+# Regularization (增强正则化，防止过拟合)
+# ============================================================================
+WEIGHT_DECAY: 0.001            # 原值 0.0005
+DETR_DROPOUT: 0.1              # 原值 0.0
+
+# ============================================================================
+# Training Settings (80GB GPU 优化设置)
+# ============================================================================
+EPOCHS: 20
+BATCH_SIZE: 1
+ACCUMULATE_STEPS: 1            # 可提高到2以增大有效batch size
+DETR_NUM_TRAIN_FRAMES: 2       # 从4降到2，减少显存占用
+
+# 训练样本设置 (减少clip长度以节省显存)
+SAMPLE_LENGTHS: [15, ]         # 从30降到15
+SAMPLE_INTERVALS: [4, ]
+
+# Trajectory Augmentation (第一阶段可降低，第二阶段再提高)
+AUG_TRAJECTORY_OCCLUSION_PROB: 0.3  # 保守起步
+AUG_TRAJECTORY_SWITCH_PROB: 0.3     # 保守起步
+
+# ============================================================================
+# Inference Settings (Public Detection 评估)
+# ============================================================================
+# 注意：MOT17 没有 val 目录，评估时使用 train split + VAL_SEQUENCES 过滤
+INFERENCE_SPLIT: train         # 使用 train 目录（VAL_SEQUENCES 会在评估时过滤）
+INFERENCE_MODE: evaluate
+
+# 推理阈值 (保召回设置)
+DET_THRESH: 0.2                # 低阈值保留更多检测
+NEWBORN_THRESH: -1             # 关闭 newborn 二次砍框
+ID_THRESH: 0.1                 # ID 关联阈值
+IOU_THRESH: 0.2                # IoU 阈值
+AREA_THRESH: 0
+MIN_TRACK_LEN: 0
+
+# ============================================================================
+# Output Settings
+# ============================================================================
+OUTPUTS_DIR: ./outputs/fa_mot_v3_robust
+EXP_NAME: fa_mot_v3_robust
+USE_WANDB: False

@@ -1,0 +1,27 @@
+{
+  "description": "Protocol-locked private-det MOT17 control heuristic association using FRCNN primary-det packaging with SBS_S50 appearance.",
+  "settings": {
+    "benchmark": "MOT17",
+    "split_to_eval": "test",
+    "exp_file": "./yolox/exps/example/mot/yolox_x_mix_det.py",
+    "ckpt": "./pretrained/bytetrack_x_mot17.pth.tar",
+    "mot17_detector_exts": [
+      "FRCNN"
+    ],
+    "with_reid": true,
+    "fast_reid_config": "fast_reid/configs/MOT17/sbs_S50.yml",
+    "fast_reid_weights": "pretrained/mot17_sbs_S50.pth",
+    "cmc_method": "file",
+    "fuse": true,
+    "track_high_thresh": 0.6,
+    "track_low_thresh": 0.1,
+    "new_track_thresh": 0.7,
+    "track_buffer": 30,
+    "match_thresh": 0.8,
+    "proximity_thresh": 0.5,
+    "appearance_thresh": 0.25,
+    "laplace_assoc": true,
+    "laplace_assoc_mode": "heuristic",
+    "laplace_primary_only": true
+  }
+}

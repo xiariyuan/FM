@@ -1,0 +1,17 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+
+# Evaluation helper config:
+# - Disables MemoryBank (to improve robustness under detector shift).
+# - Enables light track interpolation (to reduce Frag / improve continuity).
+#
+# Use this config for sweeps (MOT17 full7, MOT20 train) where GT is available.
+
+EXP_NAME: bytetrack_fa_mot_mot17_v13_tf_only_val0213_nomem_interp
+
+USE_MEMORY_BANK: false
+
+USE_TRACK_INTERPOLATION: true
+INTERPOLATION_MAX_GAP: 10
+INTERPOLATION_MIN_LENGTH: 3
+INTERPOLATION_METHOD: linear
+

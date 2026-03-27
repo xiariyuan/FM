@@ -1,0 +1,6 @@
+\section{Limitations}
+LTRA is intentionally narrow: it improves association reliability but does not solve weak detection, missed detections, or severe localization errors on its own. As a result, absolute HOTA still depends on the quality of the detector and on the underlying tracker. Our design choice is to isolate association gains under fixed detector and ReID settings, but this also means our method does not claim a full end-to-end SOTA system by itself.
+
+Another limitation is that the current learned LTRA module still uses hand-crafted temporal signatures and a very small calibrator, rather than a richer temporal basis or end-to-end representation learning. We view this as a deliberate design choice because it keeps the method interpretable and easy to plug into strong baselines. However, the compact calibrator may still be less flexible than a larger supervised temporal reasoning module.
+
+Finally, the strongest current evidence is still proxy and same-base evidence. The final manuscript therefore needs full MOT17/MOT20 benchmark runs, same-base BoT-SORT comparisons, and at least one transfer experiment on a second tracker family to fully validate the generality of the module.

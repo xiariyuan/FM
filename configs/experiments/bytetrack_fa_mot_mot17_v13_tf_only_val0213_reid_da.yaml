@@ -1,0 +1,25 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213.yaml
+
+# v13 + ReID domain adaptation (fine-tuned on MOT17+MOT20 GT IDs).
+# This keeps the tracker architecture unchanged and only swaps the external ReID weights.
+
+EXP_NAME: bytetrack_fa_mot_mot17_v13_tf_only_val0213_reid_da
+
+# Do not inherit stale resume settings from older control chains.
+RESUME_MODEL:
+RESUME_OPTIMIZER: false
+RESUME_SCHEDULER: false
+RESUME_ONLY_WEIGHTS: false
+RESUME_SKIP_YOLOX: false
+
+# Use the fine-tuned weights produced by scripts/train_reid_mot.py
+ASSOC_USE_REID: true
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: outputs/reid_da_mot17mot20_osnetain_jitter/reid_best.pth
+ASSOC_REID_PRETRAINED: false
+
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_DIM: 512
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_BATCH_SIZE: 128

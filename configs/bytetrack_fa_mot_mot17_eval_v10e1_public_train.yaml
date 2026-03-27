@@ -1,0 +1,24 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6.yaml
+
+# Local evaluation config: MOT17 train split using PUBLIC detections (det/det.txt).
+# Purpose: tune inference thresholds/association params to reduce train→test gap for public-det submissions.
+EXP_NAME: eval_mot17_train_v10e1_public
+
+INFERENCE_DATASET: MOT17
+INFERENCE_SPLIT: train
+RUN_TRACKEVAL: true
+EVAL_ONLY_VAL: false
+VAL_SEQUENCES: []
+
+# Public detections: use MOTChallenge det/det.txt files.
+BYTETRACK_DET_SOURCE: public
+
+# Default association params (can be overridden by CLI sweep scripts).
+ID_THRESH: 0.004
+ASSOC_IOU_GATE: 0.35
+DET_MAX_PER_FRAME: 60
+
+# Public det scores (especially DPM) are not calibrated to [0,1]. Disable score calibration by default
+# during tuning; if needed we can re-enable later and sweep its hyperparams.
+USE_CONFIDENCE_CALIBRATION: false
+

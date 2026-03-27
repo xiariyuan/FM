@@ -1,0 +1,220 @@
+# ============================================================================
+# FA-MOT (Frequency-Aware MOT) Configuration
+# 
+# 基于MOTIP，增加频率感知模块用于多目标追踪
+# ============================================================================
+
+SUPER_CONFIG_PATH:
+
+# Seed:
+SEED: 42
+
+# System Settings:
+NUM_WORKERS: 0
+PREFETCH_FACTOR: 6
+DEVICE: cuda
+
+# Data settings:
+DATA_ROOT: /path/to/datasets/
+DATASETS: [MOT17]
+DATASET_SPLITS: [train]
+SAMPLE_STEPS: [0, ]
+SAMPLE_LENGTHS: [30, ]
+SAMPLE_INTERVALS: [4, ]
+LENGTH_PER_ITERATION:
+
+# Data augmentation settings:
+AUG_RESIZE_SCALES: [480, 512, 544, 576, 608, 640, 672, 704, 736, 768, 800]
+AUG_MAX_SIZE: 1440
+AUG_RANDOM_RESIZE: [400, 500, 600]
+AUG_RANDOM_CROP_MIN: 384
+AUG_RANDOM_CROP_MAX: 600
+AUG_MAX_SHIFT_RATIO: 0.06
+AUG_OVERFLOW_BBOX: False
+AUG_BRIGHTNESS: 0.4
+AUG_CONTRAST: 0.4
+AUG_SATURATION: 0.4
+AUG_HUE: 0.2
+AUG_COLOR_JITTER_V2: False
+AUG_NUM_GROUPS: 6
+AUG_TRAJECTORY_OCCLUSION_PROB: 0.5
+AUG_TRAJECTORY_SWITCH_PROB: 0.5
+
+# ============================================================================
+# Model settings
+# ============================================================================
+
+ONLY_DETR: False
+NUM_CLASSES: 80
+NUM_ID_VOCABULARY: 50
+DETR_FRAMEWORK: dino
+
+# Feature dimensions
+FEATURE_DIM: 256
+FFN_DIM_RATIO: 2
+ID_DIM: 256
+HEAD_DIM: 32
+NUM_ID_DECODER_LAYERS: 6
+
+# Loss settings
+ID_LOSS_WEIGHT: 1.0
+REL_PE_LENGTH: 30
+USE_AUX_LOSS: False
+USE_SHARED_AUX_HEAD: True
+USE_FOCAL_LOSS: False
+
+# ============================================================================
+# 频率感知模块设置 (FA-MOT核心配置)
+# ============================================================================
+
+# 是否启用频率感知模块
+USE_FREQ_AWARE: True
+
+# 频率分解设置
+NUM_FREQ_BANDS: 4              # 频带数量 (适当控制显存)
+FREQ_KERNEL_SIZE: 7            # 频率滤波器核大小
+USE_FIXED_LAPLACIAN: False
+USE_MULTISCALE_FREQ: False     # 是否使用多尺度频率分解
+NUM_FREQ_SCALES: 3             # 多尺度时的尺度数量
+# 频率-时序建模设置
+NUM_FREQ_TEMPORAL_LAYERS: 2    # 频率-时序Transformer层数
+FREQ_TEMPORAL_HEADS: 8
+USE_MAMBA_FOR_LOWFREQ: True
+FREQ_DROPOUT: 0.1
+# 频率引导关联设置
+USE_FREQ_GUIDED_ASSOCIATION: True   # 是否使用频率引导的ID关联
+USE_FREQ_GUIDED_ASSOC: True
+USE_OCCLUSION_AWARE: True           # 是否使用遮挡感知
+
+# 频率损失权重
+FREQ_ORTHO_LOSS_WEIGHT: 0.1
+FREQ_CONSISTENCY_LOSS_WEIGHT: 0.1
+# 旧的频率适配器设�?(保持兼容性，建议使用新模�?
+USE_FREQ_ADAPTER: False
+
+# ============================================================================
+# DINO Detector settings
+# ============================================================================
+
+BACKBONE: resnet50
+DILATION: False
+DETR_NUM_QUERIES: 900
+DETR_NUM_FEATURE_LEVELS: 5
+DETR_AUX_LOSS: True
+DETR_WITH_BOX_REFINE: True
+DETR_TWO_STAGE: True
+DETR_HIDDEN_DIM: 256
+DETR_MASKS: False
+DETR_POSITION_EMBEDDING: sine
+DETR_NUM_HEADS: 8
+DETR_ENC_LAYERS: 6
+DETR_DEC_LAYERS: 6
+DETR_DIM_FEEDFORWARD: 2048
+DETR_DROPOUT: 0.0
+DETR_DEC_N_POINTS: 4
+DETR_ENC_N_POINTS: 4
+DETR_CLS_LOSS_COEF: 2.0
+DETR_BBOX_LOSS_COEF: 5.0
+DETR_GIOU_LOSS_COEF: 2.0
+DETR_FOCAL_ALPHA: 0.25
+DETR_SET_COST_CLASS: 2.0
+DETR_SET_COST_BBOX: 5.0
+DETR_SET_COST_GIOU: 2.0
+DETR_CRITERION_BATCH_LEN: 10
+
+# DINO specific
+DINO_CONFIG_PATH: ./config/DINO/DINO_5scale.py
+DINO_TWO_STAGE_TYPE: standard
+DINO_NUM_SELECT: 300
+DINO_NMS_IOU_THRESHOLD: -1
+DINO_DEC_PRED_CLASS_EMBED_SHARE: True
+DINO_DEC_PRED_BBOX_EMBED_SHARE: True
+DINO_TWO_STAGE_BBOX_EMBED_SHARE: False
+DINO_TWO_STAGE_CLASS_EMBED_SHARE: False
+DINO_DECODER_SA_TYPE: sa
+DINO_NUM_PATTERNS: 0
+DINO_USE_DN: False
+DINO_DN_NUMBER: 100
+DINO_LABEL_NOISE_RATIO: 0.5
+DINO_BOX_NOISE_SCALE: 0.4
+DINO_LABELBOOK_SIZE: 80
+
+# ============================================================================
+# Training settings
+# ============================================================================
+
+BATCH_SIZE: 1
+LR: 1.0e-4
+LR_BACKBONE_NAMES: [backbone.0]
+LR_BACKBONE_SCALE: 0.1
+LR_LINEAR_PROJ_NAMES: [reference_points, sampling_offsets]
+LR_LINEAR_PROJ_SCALE: 0.05
+LR_DICTIONARY_NAMES: [word_to_embed, embed_to_word]
+LR_DICTIONARY_SCALE: 1.0
+# 频率模块的学习率设置
+LR_FREQ_NAMES: [freq_decomposition, freq_temporal_transformer, freq_association]
+LR_FREQ_SCALE: 1.0
+
+LR_WARMUP_EPOCHS: 1
+WEIGHT_DECAY: 0.0005
+MAX_CLIP_NORM: 0.1
+EPOCHS: 40
+SCHEDULER_MILESTONES: [20, 30]
+SCHEDULER_GAMMA: 0.1
+DETR_NUM_TRAIN_FRAMES: 4
+DETR_NUM_CHECKPOINT_FRAMES: 0
+USE_DECODER_CHECKPOINT: False
+ACCUMULATE_STEPS: 1
+SEPARATE_CLIP_NORM: True
+USE_ACCELERATE_CLIP_NORM: True
+
+# ============================================================================
+# Resume and Pretrain
+# ============================================================================
+
+DETR_PRETRAIN: ./weight/checkpoint0089.pth
+RESUME_MODEL: ./outputs/checkpoint_9.pth
+RESUME_OPTIMIZER: True
+RESUME_SCHEDULER: True
+RESUME_STATES: True
+
+# ============================================================================
+# Inference settings
+# ============================================================================
+
+INFERENCE_MODEL:
+INFERENCE_DATASET:
+INFERENCE_SPLIT:
+INFERENCE_MODE:
+INFERENCE_GROUP:
+INFERENCE_MAX_LONGER: 1440
+INFERENCE_DTYPE: FP32
+ASSIGNMENT_PROTOCOL: object-max
+MISS_TOLERANCE: 30
+DET_THRESH: 0.3
+NEWBORN_THRESH: 0.6
+ID_THRESH: 0.2
+AREA_THRESH: 0
+INFERENCE_ONLY_DETR:
+
+# ============================================================================
+# Output settings
+# ============================================================================
+
+OUTPUTS_DIR:
+USE_WANDB: False
+EXP_OWNER: research
+EXP_PROJECT: FA-MOT
+EXP_GROUP:
+EXP_NAME: fa_mot_mot17
+GIT_VERSION:
+SAVE_CHECKPOINT_PER_EPOCH: 1
+MULTI_LAST_CHECKPOINTS: 0
+USE_PREVIOUS_CHECKPOINT: False
+
+USE_FREQ_AWARE: True
+USE_FREQ_GUIDED_ASSOC: True
+NUM_FREQ_BANDS: 4
+NUM_FREQ_TEMPORAL_LAYERS: 2
+FREQ_TEMPORAL_HEADS: 8
+USE_MAMBA_FOR_LOWFREQ: True

@@ -1,0 +1,19 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_fromscratch_unfreezeproj_longcurr_p0fix_matchloss.yaml
+
+# v10 tune config (fix22): hold out MOT17-04/05 for a *real* in-domain validation signal.
+# This config is identical to `bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet.yaml`,
+# except EXP_NAME is different so outputs won't overwrite prior runs.
+EXP_NAME: bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix22
+
+# Use all public detection variants (DPM/FRCNN/SDP) for the MOT17 folder layout.
+# Note: when DET_SOURCE=model, these variants often share identical detections; keep for consistency.
+DETECTOR_FILTER: null
+
+# Standard MOT17 train/val split used in many trackers.
+VAL_SEQUENCES: [MOT17-04, MOT17-05]
+
+# Best known association threshold from sweep (used for eval/selection).
+ID_THRESH: 0.003
+
+# Optional: make logging frequency explicit.
+LOGGING_INTERVAL: 20

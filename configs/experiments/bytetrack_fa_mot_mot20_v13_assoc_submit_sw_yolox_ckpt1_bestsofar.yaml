@@ -1,0 +1,33 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot20_v13_assoc_submit_sw_yolox.yaml
+
+# MOT20 test submission config using the current best-so-far sweep result
+# from checkpoint_epoch_1 on MOT20-05 validation.
+
+EXP_NAME: bytetrack_fa_mot_mot20_v13_assoc_submit_sw_yolox_ckpt1_bestsofar
+
+# Use MOT20-only adapted ReID weights
+ASSOC_REID_WEIGHTS: outputs/reid_mot20_only_osnetain_20260304_203842/reid_best.pth
+
+# Current best-so-far sweep result on MOT20-05
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+MISS_TOLERANCE: 50
+ID_THRESH: 0.02
+ASSOC_IOU_GATE: 0.30
+
+ASSOC_ID_WEIGHT: 2.0
+ASSOC_FEAT_WEIGHT: 0.3
+ASSOC_IOU_WEIGHT: 0.05
+
+ASSOC_FEAT_SCORE_MODE: raw
+ASSOC_USE_DET_SCORE: true
+ASSOC_TWO_STAGE: true
+ASSOC_STAGE2_ID_THRESH: 0.22
+ASSOC_STAGE2_IOU_GATE: 0.15
+ASSOC_STAGE2_BBOX_WEIGHT: 1.0
+
+ASSOC_BBOX_DIST_WEIGHT: 0.1
+ASSOC_BBOX_DIST_TAU: 0.7
+ASSOC_BBOX_DIST_USE_CAL_FACTOR: false
+
+DET_MAX_PER_FRAME: 160

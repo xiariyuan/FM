@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FMtrack 模型结构详细可视化</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 0;
+            min-height: 800px;
+        }
+
+        .sidebar {
+            background: #f8f9fa;
+            border-right: 2px solid #dee2e6;
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+
+        .sidebar h3 {
+            margin-bottom: 15px;
+            color: #2d3436;
+            font-size: 1.2em;
+        }
+
+        .module-list {
+            list-style: none;
+        }
+
+        .module-item {
+            margin-bottom: 10px;
+        }
+
+        .module-button {
+            width: 100%;
+            padding: 12px 16px;
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .module-button:hover {
+            border-color: #667eea;
+            background: #f0f4ff;
+            transform: translateX(5px);
+        }
+
+        .module-button.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .module-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .detail-panel {
+            padding: 30px;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+
+        .detail-panel h2 {
+            font-size: 2em;
+            margin-bottom: 10px;
+            color: #2d3436;
+        }
+
+        .detail-panel .subtitle {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #2d3436;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .param-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .param-card .label {
+            font-size: 0.85em;
+            color: #6c757d;
+            margin-bottom: 5px;
+        }
+
+        .param-card .value {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .layer-structure {
+            margin-top: 20px;
+        }
+
+        .layer {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .layer:hover {
+            border-color: #667eea;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+        }
+
+        .layer-header {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .layer-header:hover {
+            background: #e9ecef;
+        }
+
+        .layer-title {
+            font-weight: 600;
+            font-size: 1.05em;
+            color: #2d3436;
+        }
+
+        .layer-badge {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .layer-content {
+            padding: 20px;
+            display: none;
+            background: #fafbfc;
+        }
+
+        .layer-content.expanded {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .layer-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .layer-detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .layer-detail-item .key {
+            font-size: 0.9em;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .layer-detail-item .val {
+            font-size: 1em;
+            color: #2d3436;
+            font-weight: 600;
+        }
+
+        .code-block {
+            background: #2d3436;
+            color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        .code-block .comment {
+            color: #95a5a6;
+        }
+
+        .code-block .keyword {
+            color: #3498db;
+        }
+
+        .code-block .param {
+            color: #e74c3c;
+        }
+
+        .expand-all {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .expand-all:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        }
+
+        .data-flow-diagram {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .flow-step-number {
+            width: 30px;
+            height: 30px;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .flow-step-content {
+            flex: 1;
+        }
+
+        .flow-step-title {
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 5px;
+        }
+
+        .flow-step-desc {
+            color: #6c757d;
+            font-size: 0.95em;
+        }
+
+        .stats-bar {
+            background: #f8f9fa;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state svg {
+            width: 120px;
+            height: 120px;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+        }
+
+        .note-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .note-content {
+            color: #856404;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 FMtrack 模型结构详细可视化</h1>
+            <p>Frequency-Aware Multi-Object Tracking - 点击左侧模块查看详细层结构</p>
+        </div>
+
+        <div class="main-content">
+            <aside class="sidebar">
+                <h3>📦 模块列表</h3>
+                <ul class="module-list">
+                    <li class="module-item">
+                        <button class="module-button active" data-module="dino">
+                            <div class="module-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);"></div>
+                            <span>DINO 检测器</span>
+                        </button>
+                    </li>
+                    <li class="module-item">
+                        <button class="module-button" data-module="freq-decomp">
+                            <div class="module-icon" style="background: linear-gradient(135deg, #ff9800 0%, #ff5722 100%);"></div>
+                            <span>频率分解模块</span>
+                        </button>
+                    </li>
+                    <li class="module-item">
+                        <button class="module-button" data-module="mamba">
+                            <div class="module-icon" style="background: linear-gradient(135deg, #9c27b0 0%, #673ab7 100%);"></div>
+                            <span>Mamba 模块</span>
+                        </button>
+                    </li>
+                    <li class="module-item">
+                        <button class="module-button" data-module="temporal">
+                            <div class="module-icon" style="background: linear-gradient(135deg, #4caf50 0%, #8bc34a 100%);"></div>
+                            <span>时序 Transformer</span>
+                        </button>
+                    </li>
+                    <li class="module-item">
+                        <button class="module-button" data-module="freq-assoc">
+                            <div class="module-icon" style="background: linear-gradient(135deg, #e91e63 0%, #f44336 100%);"></div>
+                            <span>频率引导关联</span>
+                        </button>
+                    </li>
+                    <li class="module-item">
+                        <button class="module-button" data-module="id-decoder">
+                            <div class="module-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);"></div>
+                            <span>ID Decoder V2</span>
+                        </button>
+                    </li>
+                </ul>
+            </aside>
+
+            <main class="detail-panel" id="detailPanel">
+                <!-- Content will be dynamically loaded here -->
+            </main>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">~35M</div>
+                <div class="stat-label">总参数量</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">39GB</div>
+                <div class="stat-label">显存占用</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">~7s</div>
+                <div class="stat-label">训练速度/batch</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">30</div>
+                <div class="stat-label">历史帧数</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const moduleData = {
+            'dino': {
+                title: 'DINO 检测器',
+                subtitle: 'DETR with Improved deNoising anchOr boxes',
+                description: 'COCO预训练的端到端目标检测器，提供高质量的检测特征',
+                params: [
+                    { label: 'Backbone', value: 'ResNet-50' },
+                    { label: '预训练数据集', value: 'COCO (80类)' },
+                    { label: 'Feature Levels', value: '5个多尺度特征' },
+                    { label: 'Queries', value: '900个目标查询' },
+                    { label: 'Hidden Dim', value: '256' },
+                    { label: 'Two-stage', value: 'Standard模式' },
+                ],
+                dataFlow: [
+                    { title: '输入图像', desc: '(B*T, 3, H, W) → ResNet-50提取多尺度特征' },
+                    { title: 'Encoder编码', desc: '6层Deformable Transformer，跨尺度特征融合' },
+                    { title: 'Decoder解码', desc: '6层解码器，900个queries预测目标' },
+                    { title: '输出检测', desc: '分类logits + 边界框坐标 (cx, cy, w, h)' },
+                ],
+                layers: [
+                    {
+                        name: 'ResNet-50 Backbone',
+                        type: '特征提取',
+                        details: {
+                            '架构': 'ResNet-50 (COCO预训练)',
+                            '输出层': 'conv3, conv4, conv5',
+                            '输出通道': '[512, 1024, 2048]',
+                            '下采样率': '[8x, 16x, 32x]',
+                        },
+                        code: `# ResNet-50 特征提取
+backbone = ResNet50(pretrained=True)
+features = {
+    'conv3': (B*T, 512, H/8, W/8),    # 低层特征
+    'conv4': (B*T, 1024, H/16, W/16), # 中层特征
+    'conv5': (B*T, 2048, H/32, W/32)  # 高层特征
+}`
+                    },
+                    {
+                        name: '多尺度特征投影',
+                        type: '特征处理',
+                        details: {
+                            '输入尺度': '5个 (3个backbone + 2个下采样)',
+                            '投影维度': '统一到256维',
+                            '位置编码': 'Sine位置编码',
+                            '实现': 'Conv2d(in_ch, 256, 1)',
+                        },
+                        code: `# 多尺度特征投影
+input_proj = nn.ModuleList([
+    nn.Conv2d(512, 256, kernel_size=1),   # conv3
+    nn.Conv2d(1024, 256, kernel_size=1),  # conv4
+    nn.Conv2d(2048, 256, kernel_size=1),  # conv5
+    nn.Conv2d(2048, 256, kernel_size=3, stride=2, padding=1),  # P6
+    nn.Conv2d(256, 256, kernel_size=3, stride=2, padding=1),   # P7
+])`
+                    },
+                    {
+                        name: 'Deformable Transformer Encoder',
+                        type: 'Encoder',
+                        details: {
+                            '层数': '6层',
+                            '注意力头数': '8头',
+                            '采样点数': '4个/头/尺度',
+                            'FFN维度': '2048 (8×hidden_dim)',
+                            'Dropout': '0.1',
+                        },
+                        code: `# Encoder Layer
+class DeformableEncoderLayer:
+    # Multi-scale Deformable Attention
+    self_attn = MSDeformAttn(
+        d_model=256, n_levels=5, n_heads=8, n_points=4
+    )
+    # Feed-forward Network
+    ffn = FFN(d_model=256, d_ffn=2048)
+
+# 输出: (B*T, sum(H*W), 256)`
+                    },
+                    {
+                        name: 'Deformable Transformer Decoder',
+                        type: 'Decoder',
+                        details: {
+                            '层数': '6层',
+                            '注意力头数': '8头',
+                            'Queries数量': '900个',
+                            'Self-Attention': '标准多头注意力',
+                            'Cross-Attention': 'Deformable注意力',
+                        },
+                        code: `# Decoder Layer
+class DeformableDecoderLayer:
+    # Self-attention (query间交互)
+    self_attn = MultiheadAttention(
+        embed_dim=256, num_heads=8
+    )
+    # Cross-attention (query <-> encoder特征)
+    cross_attn = MSDeformAttn(
+        d_model=256, n_levels=5, n_heads=8, n_points=4
+    )
+    # Feed-forward
+    ffn = FFN(d_model=256, d_ffn=2048)`
+                    },
+                    {
+                        name: '预测头 (Prediction Heads)',
+                        type: '输出层',
+                        details: {
+                            '分类头': 'Linear(256, num_classes)',
+                            '回归头': 'MLP(256→256→4)',
+                            '输出格式': '(cls_logits, bbox_coords)',
+                            'Bbox格式': '(cx, cy, w, h) 归一化',
+                            '辅助损失': '每层都有输出',
+                        },
+                        code: `# 预测头
+class_embed = nn.Linear(256, num_classes)  # 1类
+bbox_embed = MLP(256, 256, 4, 3)  # 3层MLP
+
+# 输出
+outputs = {
+    'pred_logits': (B*T, 900, 1),  # 分类
+    'pred_boxes': (B*T, 900, 4),   # 边界框
+    'outputs': (B*T, 900, 256)     # 特征(用于tracking)
+}`
+                    }
+                ],
+                note: {
+                    title: '关键特性',
+                    content: '1. COCO预训练提供强大的检测基础能力\n2. Deformable Attention降低计算复杂度\n3. Two-stage设计提升小目标检测性能\n4. 输出的256维特征用于后续的轨迹建模'
+                }
+            },
+            'freq-decomp': {
+                title: '频率分解模块',
+                subtitle: 'Learnable Frequency Decomposition',
+                description: '将轨迹特征分解为多个频率带，捕捉不同时间尺度的运动模式',
+                params: [
+                    { label: '频率带数量', value: '4个' },
+                    { label: '卷积核大小', value: '7×7' },
+                    { label: '输入维度', value: '256' },
+                    { label: '输出维度', value: '4 × 256' },
+                    { label: 'Dropout', value: '0.1' },
+                    { label: '多尺度', value: 'False (单尺度)' },
+                ],
+                dataFlow: [
+                    { title: '输入特征', desc: '轨迹特征 (B, G, T=30, N, C=256)' },
+                    { title: '可学习滤波', desc: '4个频率带的卷积核分别提取不同频率成分' },
+                    { title: '频率分解', desc: '高频(快速运动) + 中频(正常) + 低频(慢速/遮挡)' },
+                    { title: '输出频带', desc: '4个频带特征，每个 (B, G, T, N, 256)' },
+                ],
+                layers: [
+                    {
+                        name: '频带卷积核',
+                        type: '可学习滤波器',
+                        details: {
+                            '卷积层数': '4个独立卷积',
+                            '卷积核大小': '7 (时间维度)',
+                            'Padding': '3 (保持序列长度)',
+                            '分组卷积': 'groups=256 (深度卷积)',
+                            '参数共享': 'False (每个频带独立)',
+                        },
+                        code: `# 频带卷积
+self.band_convs = nn.ModuleList([
+    nn.Conv1d(
+        in_channels=256,
+        out_channels=256,
+        kernel_size=7,
+        padding=3,
+        groups=256  # 深度卷积
+    ) for _ in range(4)  # 4个频带
+])`
+                    },
+                    {
+                        name: '频带归一化',
+                        type: 'Normalization',
+                        details: {
+                            '归一化类型': 'LayerNorm',
+                            '归一化维度': '256',
+                            '数量': '4个 (每个频带一个)',
+                            '位置': '卷积后立即归一化',
+                        },
+                        code: `# 每个频带的归一化
+self.band_norms = nn.ModuleList([
+    nn.LayerNorm(256) for _ in range(4)
+])`
+                    },
+                    {
+                        name: 'Dropout正则化',
+                        type: '正则化',
+                        details: {
+                            'Dropout率': '0.1',
+                            '应用位置': '每个频带输出后',
+                            '训练/推理': '训练时启用，推理时关闭',
+                        },
+                        code: `# Dropout
+self.dropout = nn.Dropout(0.1)
+
+# 使用
+for i, conv in enumerate(self.band_convs):
+    band_i = conv(features)
+    band_i = self.band_norms[i](band_i)
+    band_i = self.dropout(band_i)`
+                    },
+                    {
+                        name: '频带特征融合',
+                        type: '特征聚合',
+                        details: {
+                            '融合方式': '加权求和',
+                            '权重学习': '可学习融合权重',
+                            '输出': '融合后的整体特征',
+                            '辅助输出': '各频带独立特征',
+                        },
+                        code: `# 可选：频带融合
+self.fusion_weights = nn.Parameter(
+    torch.ones(4) / 4  # 初始化为均匀权重
+)
+
+fused_features = sum(
+    w * band for w, band in zip(
+        self.fusion_weights.softmax(0),
+        band_features
+    )
+)`
+                    }
+                ],
+                note: {
+                    title: '设计理念',
+                    content: '不同频率捕捉不同运动模式：\n• 高频：快速移动的目标\n• 中频：正常速度的轨迹\n• 低频：慢速移动或遮挡恢复\n每个频带可以专注学习特定的时间尺度模式'
+                }
+            },
+            'mamba': {
+                title: 'Mamba 状态空间模型',
+                subtitle: 'Selective State Space Model for Low-Frequency',
+                description: '用于低频轨迹的长期时序建模，线性复杂度处理长序列',
+                params: [
+                    { label: '状态维度', value: '256' },
+                    { label: 'D_state', value: '16 (默认)' },
+                    { label: 'D_conv', value: '4' },
+                    { label: 'Expand', value: '2' },
+                    { label: '用途', value: '低频轨迹建模' },
+                    { label: '复杂度', value: 'O(L) 线性' },
+                ],
+                dataFlow: [
+                    { title: '输入低频特征', desc: '从频率分解得到的低频带特征' },
+                    { title: '选择性扫描', desc: 'Selective Scan机制处理时序依赖' },
+                    { title: '状态更新', desc: '状态空间模型捕捉长期依赖' },
+                    { title: '输出增强特征', desc: '具有长期时序信息的低频特征' },
+                ],
+                layers: [
+                    {
+                        name: 'Mamba Block',
+                        type: '状态空间模型',
+                        details: {
+                            '输入维度': '256',
+                            '状态维度': '16',
+                            '扩展因子': '2 (中间512维)',
+                            '卷积维度': '4',
+                            '激活函数': 'SiLU',
+                        },
+                        code: `# Mamba Block
+from mamba_ssm import Mamba
+
+self.mamba = Mamba(
+    d_model=256,      # 模型维度
+    d_state=16,       # SSM状态维度
+    d_conv=4,         # 局部卷积窗口
+    expand=2          # 扩展因子
+)`
+                    },
+                    {
+                        name: '选择性扫描机制',
+                        type: 'Selective Scan',
+                        details: {
+                            '扫描方向': '双向（前向+后向）',
+                            '选择机制': '输入依赖的选择性',
+                            '时间复杂度': 'O(L) 线性',
+                            '并行化': 'GPU优化扫描',
+                        },
+                        code: `# 选择性扫描（Mamba内部）
+# 前向扫描
+h_forward = selective_scan(
+    x, delta, A, B, C, D
+)
+# 后向扫描
+h_backward = selective_scan(
+    x.flip(1), delta, A, B, C, D
+).flip(1)
+# 融合
+output = h_forward + h_backward`
+                    },
+                    {
+                        name: 'LayerNorm',
+                        type: '归一化',
+                        details: {
+                            '归一化类型': 'LayerNorm',
+                            '归一化维度': '256',
+                            '位置': 'Mamba输出后',
+                        },
+                        code: `# Normalization
+self.norm = nn.LayerNorm(256)
+
+# 使用
+x = self.mamba(x)
+x = self.norm(x)`
+                    },
+                    {
+                        name: '残差连接',
+                        type: 'Skip Connection',
+                        details: {
+                            '连接方式': 'x + Mamba(x)',
+                            '作用': '稳定训练，梯度流动',
+                        },
+                        code: `# 残差连接
+def forward(self, x, padding_mask=None):
+    if padding_mask is not None:
+        x = x.masked_fill(padding_mask.unsqueeze(-1), 0)
+
+    residual = x
+    x = self.mamba(x)
+    x = self.norm(x)
+    return residual + x  # 残差`
+                    }
+                ],
+                note: {
+                    title: '优势',
+                    content: '相比Transformer的O(L²)复杂度，Mamba只需O(L):\n• 高效处理长序列（30帧历史）\n• 选择性机制动态关注重要信息\n• 特别适合低频轨迹的长期依赖建模\n• GPU优化的并行扫描算法'
+                }
+            },
+            'temporal': {
+                title: '时序 Transformer',
+                subtitle: 'Frequency-Temporal Transformer',
+                description: '在频域进行时序建模，融合多频带的时间依赖',
+                params: [
+                    { label: '层数', value: '2层' },
+                    { label: '注意力头数', value: '8头' },
+                    { label: '特征维度', value: '256' },
+                    { label: 'FFN维度', value: '512 (2×256)' },
+                    { label: 'Head维度', value: '32 (256/8)' },
+                    { label: 'Dropout', value: '0.1' },
+                ],
+                dataFlow: [
+                    { title: '多频带输入', desc: '4个频带特征 [(B,G,T,N,256), ...]' },
+                    { title: '频内时序建模', desc: '每个频带内的自注意力' },
+                    { title: '频间交互', desc: '跨频带的信息交换' },
+                    { title: '时序融合输出', desc: '增强的多频带时序特征' },
+                ],
+                layers: [
+                    {
+                        name: 'Multi-Head Self-Attention',
+                        type: '自注意力',
+                        details: {
+                            '头数': '8个',
+                            'Head维度': '32',
+                            '总维度': '256',
+                            'QKV投影': 'Linear(256, 256×3)',
+                            '注意力机制': 'Scaled Dot-Product',
+                        },
+                        code: `# Self-Attention
+self.self_attn = nn.MultiheadAttention(
+    embed_dim=256,
+    num_heads=8,
+    dropout=0.1,
+    batch_first=True
+)
+
+# 使用
+attn_output, _ = self.self_attn(
+    query=x,  # (B*G, T*N, 256)
+    key=x,
+    value=x,
+    attn_mask=temporal_mask  # 时序因果mask
+)`
+                    },
+                    {
+                        name: '频间Cross-Attention',
+                        type: '跨频带注意力',
+                        details: {
+                            '作用': '不同频带间信息交换',
+                            '实现': '低频query × 高频key/value',
+                            '头数': '8个',
+                            '选择性': '可选模块',
+                        },
+                        code: `# 频间注意力
+# 低频query关注高频信息
+cross_attn_output = self.cross_attn(
+    query=low_freq_features,   # (B*G, T*N, 256)
+    key=high_freq_features,
+    value=high_freq_features
+)
+
+# 融合
+low_freq_enhanced = low_freq_features + cross_attn_output`
+                    },
+                    {
+                        name: 'Feed-Forward Network',
+                        type: 'FFN',
+                        details: {
+                            '结构': 'Linear → GELU → Linear',
+                            '中间维度': '512 (2× feature_dim)',
+                            '激活函数': 'GELU',
+                            'Dropout': '0.1',
+                        },
+                        code: `# FFN
+self.ffn = nn.Sequential(
+    nn.Linear(256, 512),
+    nn.GELU(),
+    nn.Dropout(0.1),
+    nn.Linear(512, 256),
+    nn.Dropout(0.1)
+)
+
+# 使用
+x = x + self.ffn(self.norm(x))  # 残差+归一化`
+                    },
+                    {
+                        name: 'LayerNorm × 2',
+                        type: '归一化',
+                        details: {
+                            '数量': '每层2个',
+                            '位置1': 'Attention后',
+                            '位置2': 'FFN后',
+                            '类型': 'Pre-LN (Attention前归一化)',
+                        },
+                        code: `# Transformer Layer
+def forward(self, x):
+    # Self-Attention + Residual
+    residual = x
+    x = self.norm1(x)
+    x, _ = self.self_attn(x, x, x)
+    x = residual + x
+
+    # FFN + Residual
+    residual = x
+    x = self.norm2(x)
+    x = self.ffn(x)
+    x = residual + x
+    return x`
+                    },
+                    {
+                        name: '时序位置编码',
+                        type: '位置信息',
+                        details: {
+                            '类型': 'Learnable',
+                            '维度': '(max_seq_len=30, 256)',
+                            '作用': '编码时间顺序信息',
+                        },
+                        code: `# 时序位置编码
+self.temporal_pos_embed = nn.Parameter(
+    torch.zeros(1, 30, 256)
+)
+
+# 添加位置信息
+x = x + self.temporal_pos_embed[:, :T, :]`
+                    }
+                ],
+                note: {
+                    title: '设计要点',
+                    content: '• 在每个频带内独立进行时序建模\n• 频间Cross-Attention实现不同频率的信息交互\n• Pre-LN架构提升训练稳定性\n• 2层足够捕捉30帧内的时序依赖'
+                }
+            },
+            'freq-assoc': {
+                title: '频率引导关联',
+                subtitle: 'Frequency-Guided Association',
+                description: '利用频率信息指导目标关联，提升遮挡场景的跟踪性能',
+                params: [
+                    { label: '频带数量', value: '4个' },
+                    { label: '可学习融合', value: 'True' },
+                    { label: '特征维度', value: '256' },
+                    { label: '置信度加权', value: 'True' },
+                    { label: '融合策略', value: 'Attention-based' },
+                ],
+                dataFlow: [
+                    { title: '频带特征输入', desc: '4个频带的轨迹特征' },
+                    { title: '置信度估计', desc: '每个频带的可靠性评分' },
+                    { title: '注意力融合', desc: '基于置信度的自适应融合' },
+                    { title: '关联特征输出', desc: '用于ID预测的增强特征' },
+                ],
+                layers: [
+                    {
+                        name: '频带特征增强',
+                        type: '特征处理',
+                        details: {
+                            '输入': '4个频带concat (256×4=1024)',
+                            '中间维度': '512',
+                            '输出维度': '256',
+                            '激活函数': 'GELU',
+                        },
+                        code: `# 特征增强
+self.freq_feature_enhance = nn.Sequential(
+    nn.Linear(256 * 4, 512),  # 4频带concat
+    nn.GELU(),
+    nn.Linear(512, 256)
+)
+
+# 使用
+concat_bands = torch.cat(freq_band_features, dim=-1)
+enhanced_features = self.freq_feature_enhance(concat_bands)`
+                    },
+                    {
+                        name: '门控机制',
+                        type: 'Gating',
+                        details: {
+                            '输入': 'trajectory_features + enhanced',
+                            '门控': 'Sigmoid激活',
+                            '输出': '自适应融合权重',
+                            '作用': '控制频率信息的使用强度',
+                        },
+                        code: `# 门控融合
+self.freq_gate = nn.Sequential(
+    nn.Linear(256 * 2, 256),  # [原始; 增强]
+    nn.Sigmoid()
+)
+
+gate = self.freq_gate(
+    torch.cat([trajectory_features, enhanced], dim=-1)
+)
+output = trajectory_features + gate * enhanced`
+                    },
+                    {
+                        name: '置信度估计',
+                        type: '可靠性评分',
+                        details: {
+                            '每频带MLP': '256 → 128 → 1',
+                            '激活': 'ReLU → Sigmoid',
+                            '输出': '各频带的置信度分数',
+                            '归一化': 'Softmax跨频带',
+                        },
+                        code: `# 置信度估计网络
+self.confidence_nets = nn.ModuleList([
+    nn.Sequential(
+        nn.Linear(256, 128),
+        nn.ReLU(),
+        nn.Linear(128, 1),
+        nn.Sigmoid()
+    ) for _ in range(4)
+])
+
+# 计算置信度
+confidences = [
+    net(band_feat) for net, band_feat
+    in zip(self.confidence_nets, band_features)
+]
+confidences = torch.stack(confidences, dim=-1)
+confidences = F.softmax(confidences, dim=-1)`
+                    },
+                    {
+                        name: '注意力融合',
+                        type: '自适应融合',
+                        details: {
+                            'Query': '目标特征',
+                            'Key/Value': '各频带特征',
+                            '权重': '置信度 × 注意力分数',
+                            '输出': '融合后的关联特征',
+                        },
+                        code: `# Attention-based Fusion
+class AttentionFusion(nn.Module):
+    def __init__(self, feature_dim, num_bands):
+        self.query_proj = nn.Linear(feature_dim, feature_dim)
+        self.key_proj = nn.Linear(feature_dim, feature_dim)
+        self.value_proj = nn.Linear(feature_dim, feature_dim)
+
+    def forward(self, target_feat, band_features, confidences):
+        Q = self.query_proj(target_feat)
+        K = [self.key_proj(b) for b in band_features]
+        V = [self.value_proj(b) for b in band_features]
+
+        # Attention scores × confidence
+        attn_weights = [
+            F.softmax(Q @ k.T / sqrt(d), dim=-1) * conf
+            for k, conf in zip(K, confidences)
+        ]
+
+        # Weighted sum
+        output = sum(w @ v for w, v in zip(attn_weights, V))
+        return output`
+                    }
+                ],
+                note: {
+                    title: '核心思想',
+                    content: '不同场景下不同频率的可靠性不同：\n• 正常场景：高频最可靠\n• 遮挡场景：低频更稳定\n• 快速运动：中高频更重要\n通过自适应融合，动态选择最可靠的频带进行关联'
+                }
+            },
+            'id-decoder': {
+                title: 'ID Decoder V2',
+                subtitle: 'Frequency-Aware ID Decoder with Dual Branches',
+                description: '双分支ID解码器：标准分支 + 频率分支，联合预测目标ID',
+                params: [
+                    { label: '解码器层数', value: '6层' },
+                    { label: '注意力头数', value: '8头 (32维/头)' },
+                    { label: '相对位置编码', value: '30帧' },
+                    { label: 'ID词汇表', value: '50 + 1(unknown)' },
+                    { label: '特征维度', value: '256' },
+                    { label: 'ID维度', value: '256' },
+                ],
+                dataFlow: [
+                    { title: '输入特征', desc: 'trajectory (已知ID) + unknown (待预测)' },
+                    { title: '标准分支', desc: '6层Transformer解码器 → ID logits' },
+                    { title: '频率分支', desc: '4频带独立预测 → 融合' },
+                    { title: '注意力融合', desc: '双分支结果自适应融合 → 最终ID' },
+                ],
+                layers: [
+                    {
+                        name: 'ID词汇表嵌入',
+                        type: 'Embedding',
+                        details: {
+                            '词汇表大小': '51 (50 IDs + 1 unknown)',
+                            '嵌入维度': '256',
+                            '实现': 'Linear(51, 256)',
+                            '用途': 'ID标签 → ID嵌入向量',
+                        },
+                        code: `# ID嵌入
+self.word_to_embed = nn.Linear(51, 256, bias=False)
+
+# ID → One-hot → Embedding
+id_labels = F.one_hot(trajectory_id_labels, 51).float()
+id_embeds = self.word_to_embed(id_labels)  # (B,G,T,N,256)`
+                    },
+                    {
+                        name: '相对位置编码',
+                        type: 'Positional Encoding',
+                        details: {
+                            '维度': '(6层, 30帧, 8头)',
+                            '类型': 'Learnable',
+                            '作用': '编码时序相对位置关系',
+                            '使用': 'Cross-Attention时添加',
+                        },
+                        code: `# 相对位置编码
+self.rel_pos_embeds = nn.Parameter(
+    torch.zeros(6, 30, 8)  # (layers, T, heads)
+)
+
+# 计算相对位置
+curr_t, traj_t = meshgrid(t_idxs, t_idxs)
+rel_pos_idx = curr_t - traj_t  # 时间差
+rel_pos_idx = rel_pos_idx.clamp(0, 29)
+
+# 获取位置bias
+rel_bias = self.rel_pos_embeds[layer, rel_pos_idx, :]`
+                    },
+                    {
+                        name: 'Mamba Self-Attention (层0-4)',
+                        type: '自注意力',
+                        details: {
+                            '层数': '5层 (除最后一层)',
+                            '实现': 'Mamba SSM',
+                            '维度': '512 (256特征+256ID)',
+                            '作用': 'unknown间的信息交互',
+                        },
+                        code: `# Mamba Self-Attention
+self.self_mamba_layers = nn.ModuleList([
+    MambaBlock(d_model=512)
+    for _ in range(5)  # 层0-4
+])
+
+# 使用
+x = self.self_mamba_layers[layer](x)
+x = self.self_attn_norm_layers[layer](x)`
+                    },
+                    {
+                        name: 'Cross-Attention (全部6层)',
+                        type: '交叉注意力',
+                        details: {
+                            '层数': '6层',
+                            'Query': 'unknown特征+ID嵌入',
+                            'Key/Value': 'trajectory特征+ID嵌入',
+                            '注意力头': '8头',
+                            '位置bias': '相对位置编码',
+                        },
+                        code: `# Cross-Attention
+self.cross_attn_layers = nn.ModuleList([
+    nn.MultiheadAttention(
+        embed_dim=512,    # 256特征+256ID
+        num_heads=8,
+        dropout=0.0,
+        batch_first=True,
+        add_zero_attn=True
+    ) for _ in range(6)
+])
+
+# 使用
+attn_out, _ = self.cross_attn_layers[layer](
+    query=unknown_embeds,         # (B*G, T*NU, 512)
+    key=trajectory_embeds,        # (B*G, T*N, 512)
+    value=trajectory_embeds,
+    key_padding_mask=traj_mask,
+    attn_mask=time_mask + rel_pos_bias
+)`
+                    },
+                    {
+                        name: 'Feed-Forward Network',
+                        type: 'FFN',
+                        details: {
+                            '层数': '6层',
+                            '输入维度': '512',
+                            'FFN维度': '1024 (2×512)',
+                            '激活函数': 'GELU',
+                        },
+                        code: `# FFN
+self.ffn_layers = nn.ModuleList([
+    nn.Sequential(
+        nn.Linear(512, 1024),
+        nn.GELU(),
+        nn.Linear(1024, 512)
+    ) for _ in range(6)
+])
+
+# 使用
+x = x + self.ffn_layers[layer](
+    self.ffn_norm_layers[layer](x)
+)`
+                    },
+                    {
+                        name: 'ID预测头 (标准分支)',
+                        type: '输出层',
+                        details: {
+                            '每层一个': '6个预测头',
+                            '输入': 'ID维度 256',
+                            '输出': 'vocab_size 51',
+                            '损失': '每层辅助损失',
+                        },
+                        code: `# ID预测头
+self.embed_to_word_layers = nn.ModuleList([
+    nn.Linear(256, 51, bias=False)
+    for _ in range(6)
+])
+
+# 预测
+id_logits = self.embed_to_word_layers[layer](
+    id_embeds  # 从512维提取后256维
+)  # (B, G, TU, NU, 51)`
+                    },
+                    {
+                        name: '频率分支',
+                        type: '辅助预测',
+                        details: {
+                            '输入': '4个频带特征',
+                            '每频带MLP': '256 → 128 → 51',
+                            '融合': 'Attention + Confidence',
+                            '输出': '频率分支的ID logits',
+                        },
+                        code: `# 频率分支
+class FrequencyBranch(nn.Module):
+    def __init__(self, feature_dim, num_bands, vocab_size):
+        # 每个频带的预测头
+        self.band_predictors = nn.ModuleList([
+            nn.Sequential(
+                nn.Linear(256, 128),
+                nn.GELU(),
+                nn.Linear(128, 51)
+            ) for _ in range(4)
+        ])
+
+    def forward(self, band_features):
+        # 各频带独立预测
+        band_logits = [
+            pred(feat) for pred, feat
+            in zip(self.band_predictors, band_features)
+        ]  # 4 × (B,G,TU,NU,51)
+
+        # 置信度加权融合
+        weights = self.confidence_estimator(band_features)
+        fused_logits = sum(w * l for w, l in zip(weights, band_logits))
+        return fused_logits`
+                    },
+                    {
+                        name: '双分支融合',
+                        type: 'Attention Fusion',
+                        details: {
+                            '标准分支': '第6层输出',
+                            '频率分支': '频率融合输出',
+                            '融合': 'Query-Key-Value注意力',
+                            '最终输出': '联合预测的ID logits',
+                        },
+                        code: `# 双分支注意力融合
+class AttentionFusion(nn.Module):
+    def forward(self, standard_logits, freq_logits):
+        # Softmax to probability
+        std_prob = F.softmax(standard_logits, dim=-1)
+        freq_prob = F.softmax(freq_logits, dim=-1)
+
+        # Cross-attention
+        attn_scores = (std_prob @ freq_prob.transpose(-2,-1)) / sqrt(d)
+        attn_weights = F.softmax(attn_scores, dim=-1)
+
+        # Fused probability
+        fused_prob = (attn_weights @ freq_prob + std_prob) / 2
+
+        # Back to logits
+        fused_logits = torch.log(fused_prob + 1e-8)
+        return fused_logits`
+                    }
+                ],
+                note: {
+                    title: '训练策略',
+                    content: '• 标准分支：每层都有辅助损失\n• 频率分支：独立的ID损失\n• 融合损失：鼓励两分支一致性\n• 推理时：只用融合后的最终输出\n总损失 = std_loss + freq_loss + consistency_loss'
+                }
+            }
+        };
+
+        const detailPanel = document.getElementById('detailPanel');
+        const moduleButtons = document.querySelectorAll('.module-button');
+
+        function renderModuleDetail(moduleName) {
+            const data = moduleData[moduleName];
+            if (!data) return;
+
+            let layersHTML = '';
+            if (data.layers) {
+                layersHTML = `
+                    <div class="section">
+                        <h3>🔧 层结构详情</h3>
+                        <button class="expand-all" onclick="toggleAllLayers()">展开/折叠全部</button>
+                        <div class="layer-structure">
+                            ${data.layers.map((layer, idx) => `
+                                <div class="layer">
+                                    <div class="layer-header" onclick="toggleLayer(${idx})">
+                                        <span class="layer-title">${idx + 1}. ${layer.name}</span>
+                                        <span class="layer-badge">${layer.type}</span>
+                                    </div>
+                                    <div class="layer-content" id="layer-${idx}">
+                                        <div class="layer-details">
+                                            ${Object.entries(layer.details).map(([key, value]) => `
+                                                <div class="layer-detail-item">
+                                                    <span class="key">${key}</span>
+                                                    <span class="val">${value}</span>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                        ${layer.code ? `
+                                            <div class="code-block">${layer.code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            detailPanel.innerHTML = `
+                <h2>${data.title}</h2>
+                <p class="subtitle">${data.subtitle}</p>
+                <p>${data.description}</p>
+
+                <div class="section">
+                    <h3>⚙️ 核心参数</h3>
+                    <div class="param-grid">
+                        ${data.params.map(param => `
+                            <div class="param-card">
+                                <div class="label">${param.label}</div>
+                                <div class="value">${param.value}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+
+                ${data.dataFlow ? `
+                    <div class="section">
+                        <h3>🔄 数据流</h3>
+                        <div class="data-flow-diagram">
+                            ${data.dataFlow.map((step, idx) => `
+                                <div class="flow-step">
+                                    <div class="flow-step-number">${idx + 1}</div>
+                                    <div class="flow-step-content">
+                                        <div class="flow-step-title">${step.title}</div>
+                                        <div class="flow-step-desc">${step.desc}</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                ` : ''}
+
+                ${layersHTML}
+
+                ${data.note ? `
+                    <div class="note">
+                        <div class="note-title">💡 ${data.note.title}</div>
+                        <div class="note-content">${data.note.content.replace(/\n/g, '<br>')}</div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        window.toggleLayer = function(idx) {
+            const content = document.getElementById(`layer-${idx}`);
+            if (content) {
+                content.classList.toggle('expanded');
+            }
+        };
+
+        window.toggleAllLayers = function() {
+            const allContents = document.querySelectorAll('.layer-content');
+            const anyExpanded = Array.from(allContents).some(c => c.classList.contains('expanded'));
+
+            allContents.forEach(content => {
+                if (anyExpanded) {
+                    content.classList.remove('expanded');
+                } else {
+                    content.classList.add('expanded');
+                }
+            });
+        };
+
+        moduleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                moduleButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                const moduleName = button.dataset.module;
+                renderModuleDetail(moduleName);
+            });
+        });
+
+        // Load first module by default
+        renderModuleDetail('dino');
+    </script>
+</body>
+</html>

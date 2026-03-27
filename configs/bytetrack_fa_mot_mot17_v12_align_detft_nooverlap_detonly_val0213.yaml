@@ -1,0 +1,79 @@
+SUPER_CONFIG_PATH: configs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6.yaml
+
+# v12: Detector-aligned fine-tune (keeps the FA-MOT architecture unchanged)
+# Goal:
+# - Load the best v10 tracker weights (trajectory_modeling / id_decoder / feature_proj)
+# - Switch the frozen detector to the finetuned YOLOX checkpoint (no val leakage)
+# - Train with detector boxes (det-only) to reduce train->test gap
+# - Validate on MOT17-02/13 (more representative of test behavior than 04/05)
+
+EXP_NAME: bytetrack_fa_mot_mot17_v12_align_detft_nooverlap_detonly_val0213
+
+# Disable BYTETRACK profile injection so our finetuned detector ckpt is not overwritten.
+BYTETRACK_PROFILES: {}
+BYTETRACK_PROFILE_BY_DATASET: {}
+BYTETRACK_PROFILE: null
+
+# Use a single detector version to avoid triplicating identical frames in MOT17.
+DETECTOR_FILTER: [FRCNN]
+
+# Validation on MOT17 train sequences (no overlap with training by build_dataset()).
+VAL_SEQUENCES: [MOT17-02, MOT17-13]
+
+# --- Use the finetuned detector weights (frozen during tracker training) ---
+BYTETRACK_CKPT: outputs/detector/det_yolox_mixdet_nooverlap_20260224_022553/best_ckpt.pth.tar
+BYTETRACK_FP16: true
+# Speed/memory: avoid extracting features for hundreds of ultra-low score boxes.
+BYTETRACK_CONF_THRE: 0.10
+
+# --- Resume tracker weights, but do NOT overwrite detector weights ---
+RESUME_MODEL: outputs/bytetrack_fa_mot_mot17_v10_tune_matchloss_val0405_allDet_fix27_longseq_len6/checkpoint_1.pth
+RESUME_ONLY_WEIGHTS: true
+RESUME_SKIP_YOLOX: true
+
+# --- Fine-tune schedule (short + stable) ---
+EPOCHS: 12
+LR: 0.00005
+LR_WARMUP_EPOCHS: 1
+BATCH_SIZE: 2
+ACCUMULATE_STEPS: 3
+
+# --- Detector-aligned training input ---
+# Always use detector boxes/features when possible.
+TRAIN_BOX_SOURCE: det
+TRAIN_BOX_SOURCE_SCHEDULE: null
+DET_TRAIN_START_EPOCH: 0
+DET_TRAIN_PROB: 1.0
+
+# Keep training stable while still exposing the model to detector-derived features.
+DET_MATCH_IOU_THRESH: 0.5
+DET_MATCHING: greedy
+DET_FALLBACK_TO_GT_ON_EMPTY: true
+DET_FILL_UNMATCHED_WITH_GT: true
+DET_UNKNOWN_SUPERVISION: true
+DET_MAX_PER_FRAME: 60
+
+# --- Make validation match your tuned inference (ReID-based association) ---
+ASSOC_MODE: feature
+ASSOC_USE_REID: true
+ASSOC_FEAT_SOURCE: reid
+ASSOC_FEAT_SCORE_MODE: softmax
+ASSOC_FEAT_TAU: 0.05
+ID_THRESH: 0.08
+
+# ReID encoder (offline, no network download).
+# Use local MSMT17-pretrained OSNet-AIN weights to avoid failing on servers without internet.
+ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
+ASSOC_REID_PRETRAINED: false
+ASSOC_REID_INPUT_H: 256
+ASSOC_REID_INPUT_W: 128
+ASSOC_REID_BATCH_SIZE: 128
+ASSOC_REID_L2_NORM: true
+ASSOC_REID_DIM: 512
+
+DET_THRESH: 0.25
+NEWBORN_THRESH: 0.25
+DET_MAX_PER_FRAME: 60
+MISS_TOLERANCE: 50
+ASSOC_IOU_GATE: 0.25
