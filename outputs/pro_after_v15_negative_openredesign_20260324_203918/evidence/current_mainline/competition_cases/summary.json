@@ -1,0 +1,19 @@
+{
+  "action_keep": 15005,
+  "action_null": 9563,
+  "action_rerank": 4751,
+  "ambiguous_groups": 19756,
+  "ambiguous_rate": 0.6738292574780859,
+  "background_groups": 9563,
+  "bridge_rate_among_positive": 0.03801376796922454,
+  "continuity_bridge": 751,
+  "group_jsonl": "/gemini/code/FMtrack-main/FM-Track/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/labeled_replay_top8.groups.jsonl",
+  "groups": 29319,
+  "hard_case_groups": 19756,
+  "hard_case_rate": 0.6738292574780859,
+  "horizon": 16,
+  "positive_groups": 19756,
+  "recoverable_groups": 4751,
+  "recoverable_rate_among_positive": 0.24048390362421543,
+  "rerank_rate_among_positive": 0.24048390362421543
+}

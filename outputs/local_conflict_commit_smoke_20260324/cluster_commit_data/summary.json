@@ -1,0 +1,52 @@
+{
+  "group_jsonl": "/gemini/code/FMtrack-main/FM-Track/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/labeled_replay_top8.groups.jsonl",
+  "cases_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/competition_cases/competition_cases.csv",
+  "out_dir": "/gemini/code/FMtrack-main/FM-Track/outputs/local_conflict_commit_smoke_20260324/cluster_commit_data",
+  "topk": 8,
+  "min_detections": 2,
+  "min_committed_matches": 2,
+  "max_detections": 8,
+  "max_tracks": 32,
+  "det_feature_names": [
+    "det_score",
+    "row_degree",
+    "row_top1_minus_top2",
+    "row_entropy"
+  ],
+  "track_feature_names": [
+    "track_gap",
+    "track_hist_len",
+    "col_degree"
+  ],
+  "edge_feature_names": [
+    "base_score",
+    "refined_score",
+    "motion_score",
+    "track_gap",
+    "track_hist_len",
+    "track_rank_frac"
+  ],
+  "cluster_feature_names": [
+    "num_dets",
+    "num_tracks",
+    "num_edges",
+    "mean_row_degree",
+    "max_row_degree",
+    "mean_col_degree",
+    "max_col_degree"
+  ],
+  "frames": 1348,
+  "frames_with_eligible_clusters": 286,
+  "raw_components": 1354,
+  "eligible_clusters": 286,
+  "skipped_large_clusters": 1064,
+  "trigger_pass_clusters": 214,
+  "trigger_fail_clusters": 72,
+  "committed_matches": 656,
+  "detections": 1456,
+  "tracks": 3817,
+  "edges": 11453,
+  "avg_detections": 5.090909090909091,
+  "avg_tracks": 13.346153846153847,
+  "avg_edges": 40.04545454545455
+}

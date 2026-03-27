@@ -1,0 +1,6 @@
+name,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,dataset_split,run_dir
+base_eval,78.446,80.396,76.952,86.113,90.803,555,1032,botsort_mot17_val_base,outputs/botsort_ltra_stage2/MOT17/base_eval
+meanhist_eval,78.567,80.474,77.111,86.278,90.807,555,1038,botsort_mot17_val_meanhist,outputs/botsort_ltra_stage2/MOT17/meanhist_eval
+single_eval,78.474,80.356,77.043,85.95,90.766,570,1044,botsort_mot17_val_single,outputs/botsort_ltra_stage2/MOT17/single_eval
+multinorel_eval,78.474,80.356,77.043,85.95,90.77,570,1044,botsort_mot17_val_multinorel,outputs/botsort_ltra_stage2/MOT17/multinorel_eval
+full_eval,78.749,80.38,77.554,86.435,90.805,537,1044,botsort_mot17_val_full,outputs/botsort_ltra_stage2/MOT17/full_eval

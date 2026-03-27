@@ -1,0 +1,19 @@
+{
+  "action_keep": 92051,
+  "action_null": 13339,
+  "action_rerank": 1823,
+  "ambiguous_groups": 9909,
+  "ambiguous_rate": 0.09242349341964128,
+  "background_groups": 13339,
+  "bridge_rate_among_positive": 0.9949506785691459,
+  "continuity_bridge": 93400,
+  "group_jsonl": "/gemini/code/FMtrack-main/FM-Track/outputs/runtime_replay_labeled_sw_yolox_base_full7_20260318_full_learned_basefull7_fixreview/labeled_replay_allcand.groups.jsonl",
+  "groups": 107213,
+  "hard_case_groups": 93555,
+  "hard_case_rate": 0.8726087321500191,
+  "horizon": 16,
+  "positive_groups": 93874,
+  "recoverable_groups": 1823,
+  "recoverable_rate_among_positive": 0.019419647612757527,
+  "rerank_rate_among_positive": 0.019419647612757527
+}

@@ -1,0 +1,7 @@
+seq,split_tag,frames_with_eligible_clusters,eligible_clusters,detections,tracks,edges,trigger_pass_clusters,committed_matches
+MOT17-02-FRCNN,val,4,4,16,33,119,1,4
+MOT17-05-FRCNN,train,483,483,3048,6967,24260,469,1973
+MOT17-09-FRCNN,train,175,175,1205,1808,9381,175,1029
+MOT17-10-FRCNN,train,4,4,16,50,128,1,6
+MOT17-11-FRCNN,train,155,155,1184,2197,9450,155,1034
+MOT17-13-FRCNN,val,282,282,1440,3784,11334,213,652

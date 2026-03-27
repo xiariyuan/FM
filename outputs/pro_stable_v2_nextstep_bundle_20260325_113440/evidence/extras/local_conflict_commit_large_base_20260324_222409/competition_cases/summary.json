@@ -1,0 +1,19 @@
+{
+  "action_keep": 56929,
+  "action_null": 27099,
+  "action_rerank": 20943,
+  "ambiguous_groups": 77444,
+  "ambiguous_rate": 0.737765668613236,
+  "background_groups": 27099,
+  "bridge_rate_among_positive": 0.024784261351962194,
+  "continuity_bridge": 1930,
+  "group_jsonl": "/gemini/code/FMtrack-main/FM-Track/outputs/local_conflict_commit_large_base_20260324_222409/labeled_replay_top8.groups.jsonl",
+  "groups": 104971,
+  "hard_case_groups": 77448,
+  "hard_case_rate": 0.7378037743757799,
+  "horizon": 16,
+  "positive_groups": 77872,
+  "recoverable_groups": 20943,
+  "recoverable_rate_among_positive": 0.26894133963427164,
+  "rerank_rate_among_positive": 0.26894133963427164
+}

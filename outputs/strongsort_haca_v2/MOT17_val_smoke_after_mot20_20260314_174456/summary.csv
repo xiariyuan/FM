@@ -1,0 +1,2 @@
+name,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,dataset_split,run_dir
+haca_eval,48.906,47.88,50.786,58.755,53.249,118,192,strongsort_mot17_val_haca_v2,/gemini/code/FMtrack-main/FM-Track/outputs/strongsort_haca_v2/MOT17_val_smoke_after_mot20_20260314_174456/haca_eval

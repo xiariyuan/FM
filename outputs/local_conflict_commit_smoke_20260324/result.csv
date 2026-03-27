@@ -1,0 +1,2 @@
+exp_name,data_jsonl,checkpoint,train_examples,val_examples,val_sequences,epochs,hidden_dim,dropout,best_epoch,train_loss,val_loss,train_row_acc,val_row_acc,val_commit_precision,val_commit_recall,status
+local_conflict_commit_stage1,/gemini/code/FMtrack-main/FM-Track/outputs/local_conflict_commit_smoke_20260324/cluster_commit_data/cluster_examples.jsonl,/gemini/code/FMtrack-main/FM-Track/outputs/local_conflict_commit_smoke_20260324/best.pt,4,282,MOT17-13-FRCNN,1,128,0.1,1,2.013353779911995,1.9957898861288816,0.375,0.5770833333333333,0.0,0.0,ok

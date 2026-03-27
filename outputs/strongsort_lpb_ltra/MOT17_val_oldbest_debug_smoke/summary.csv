@@ -1,0 +1,4 @@
+name,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,dataset_split,run_dir
+base_eval,69.581,66.416,73.37,82.275,77.105,233,526,strongsort_mot17_val_base,/gemini/code/FMtrack-main/FM-Track/outputs/strongsort_ltra/MOT17_val/base_eval
+laplace_eval,69.757,66.489,73.662,82.818,77.215,203,535,strongsort_mot17_val_laplace,/gemini/code/FMtrack-main/FM-Track/outputs/strongsort_ltra/MOT17_val/laplace_eval
+learned_eval,40.632,47.34,35.637,47.784,51.579,221,239,strongsort_mot17_val_lpb_learned,/gemini/code/FMtrack-main/FM-Track/outputs/strongsort_lpb_ltra/MOT17_val_oldbest_debug_smoke/learned_eval

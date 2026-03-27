@@ -1,0 +1,4 @@
+seq,split_tag,frames_with_eligible_clusters,eligible_clusters,detections,tracks,edges,trigger_pass_clusters,committed_matches,cluster_should_intervene_clusters,cluster_utility_gain,cluster_edit_gain,cluster_edit_cost,cluster_edit_utility_gain,host_equals_oracle_clusters,host_committed_matches,oracle_committed_matches,delta_committed_matches,edit_committed_matches,edit_rows,add_commit_rows,reassign_rows,force_defer_rows
+MOT17-05-FRCNN,train,285,285,1809,2851,14230,285,22,96,186.10000000000002,190.5,4.400000000000001,186.10000000000002,107,1792,1456,22,22,359,1,21,337
+MOT17-09-FRCNN,train,173,173,1153,1356,8753,173,1,9,38.8,39.0,0.2,38.8,106,1151,1075,1,1,77,0,1,76
+MOT17-11-FRCNN,val,99,99,727,1033,5816,99,1,8,18.3,18.5,0.2,18.3,72,727,692,1,1,36,0,1,35

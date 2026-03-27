@@ -33,7 +33,18 @@ third_party/ByteTrack/datasets/
 
 # Training / evaluation outputs
 outputs/**
+!outputs/
+!outputs/**/
 !outputs/experiment_registry.csv
+!outputs/**/summary.csv
+!outputs/**/result.csv
+!outputs/**/metrics.csv
+!outputs/**/metrics.jsonl
+!outputs/**/*.metrics.jsonl
+!outputs/**/report.md
+!outputs/**/summary.json
+!outputs/**/sequence_cluster_summary.csv
+!outputs/**/family_runs.csv
 log/
 logs/
 backups/

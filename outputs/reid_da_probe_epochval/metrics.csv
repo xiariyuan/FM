@@ -1,0 +1,2 @@
+epoch,train_loss,val_rank1,val_map,val_num,val_valid_queries,lr,best_map,best_rank1,no_improve_epochs
+1,10.566564,0.0000,0.0500,2000,2000,0.00000000e+00,0.0500,0.0000,0

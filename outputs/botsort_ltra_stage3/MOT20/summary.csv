@@ -1,0 +1,10 @@
+name,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,dataset_split,run_dir
+base_eval,77.772,80.709,75.011,89.414,93.417,768,1595,botsort_mot20_val_base,outputs/botsort_ltra_stage2/MOT20/base_eval
+meanhist_eval,78.027,80.729,75.484,89.796,93.418,770,1595,botsort_mot20_val_meanhist,outputs/botsort_ltra_stage2/MOT20/meanhist_eval
+full_eval,77.875,80.705,75.211,89.652,93.405,756,1577,botsort_mot20_val_full,outputs/botsort_ltra_stage2/MOT20/full_eval
+nodetscore_eval,77.817,80.725,75.083,89.406,93.38,791,1590,botsort_mot20_val_nodetscore,outputs/botsort_ltra_stage3/MOT20/nodetscore_eval
+rel075_eval,77.684,80.681,74.866,89.527,93.395,763,1578,botsort_mot20_val_rel075,outputs/botsort_ltra_stage3/MOT20/rel075_eval
+rel050_eval,77.661,80.672,74.831,89.586,93.393,771,1593,botsort_mot20_val_rel050,outputs/botsort_ltra_stage3/MOT20/rel050_eval
+nodetscore_rel075_eval,77.654,80.712,74.78,89.37,93.405,761,1578,botsort_mot20_val_nodetscore_rel075,outputs/botsort_ltra_stage3/MOT20/nodetscore_rel075_eval
+weight025_eval,77.805,80.69,75.091,89.556,93.407,755,1570,botsort_mot20_val_weight025,outputs/botsort_ltra_stage3/MOT20/weight025_eval
+slowhist_eval,77.795,80.694,75.068,89.534,93.405,759,1574,botsort_mot20_val_slowhist,outputs/botsort_ltra_stage3/MOT20/slowhist_eval

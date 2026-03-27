@@ -1,0 +1,3 @@
+seq,eligible_clusters,frames_with_eligible_clusters,detections,tracks,edges,trigger_pass_clusters,committed_matches,avg_detections,avg_tracks,avg_edges
+MOT17-02-FRCNN,4,4,16,33,119,1,4,4.0,8.25,29.75
+MOT17-13-FRCNN,282,282,1440,3784,11334,213,652,5.1063829787234045,13.418439716312056,40.191489361702125

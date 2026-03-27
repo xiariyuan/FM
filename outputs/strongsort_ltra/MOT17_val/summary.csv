@@ -1,0 +1,3 @@
+name,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,dataset_split,run_dir
+base_eval,69.581,66.416,73.37,82.275,77.105,233,526,strongsort_mot17_val_base,outputs/strongsort_ltra/MOT17_val/base_eval
+laplace_eval,69.757,66.489,73.662,82.818,77.215,203,535,strongsort_mot17_val_laplace,outputs/strongsort_ltra/MOT17_val/laplace_eval

@@ -1,0 +1,1 @@
+{"epoch": 1, "train_loss": 2.013353779911995, "train_row_acc": 0.375, "train_commit_acc": 0.4375, "val_loss": 1.9957898861288816, "val_row_acc": 0.5770833333333333, "val_commit_acc": 0.5770833333333333, "val_commit_precision": 0.0, "val_commit_recall": 0.0}

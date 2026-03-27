@@ -1,0 +1,21 @@
+{
+  "cases_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/competition_cases/competition_cases.csv",
+  "group_jsonl": "/gemini/code/FMtrack-main/FM-Track/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/labeled_replay_top8.groups.jsonl",
+  "clusters": 1350,
+  "recoverable_clusters": 991,
+  "bridge_clusters": 517,
+  "multi_detection_clusters": 1348,
+  "multi_track_clusters": 1350,
+  "recoverable_groups_total": 4751,
+  "recoverable_groups_in_multi_detection_clusters": 4751,
+  "recoverable_groups_multi_detection_share": 1.0,
+  "recoverable_cluster_avg_detections": 22.891019172552976,
+  "recoverable_cluster_avg_tracks": 37.921291624621595,
+  "recoverable_multi_detection_cluster_share": 1.0,
+  "bridge_groups_total": 751,
+  "bridge_groups_in_multi_detection_clusters": 751,
+  "bridge_groups_multi_detection_share": 1.0,
+  "bridge_cluster_avg_detections": 26.74468085106383,
+  "bridge_cluster_avg_tracks": 43.24371373307544,
+  "bridge_multi_detection_cluster_share": 1.0
+}

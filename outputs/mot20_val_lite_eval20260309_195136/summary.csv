@@ -1,0 +1,3 @@
+name,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,dataset_split,run_dir
+meanrel_eval,0,0,0,0,0,0,0,botsort_mot20_val_meanrel_ltralite,outputs/mot20_val_lite_eval20260309_195136/meanrel_eval
+weight025_eval,0,0,0,0,0,0,0,botsort_mot20_val_weight025_ltralite,outputs/mot20_val_lite_eval20260309_195136/weight025_eval
