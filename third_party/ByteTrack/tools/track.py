@@ -172,6 +172,25 @@ def make_parser():
         default=0.0,
         help="Minimum refined score required for a dumped candidate row.",
     )
+    parser.add_argument(
+        "--use-posthost-oracle-edit",
+        dest="use_posthost_oracle_edit",
+        default=False,
+        action="store_true",
+        help="Enable post-host one-edit oracle ceiling after official ByteTrack first-stage matching.",
+    )
+    parser.add_argument(
+        "--posthost-oracle-data-root",
+        type=str,
+        default="",
+        help="Dataset root used to load MOT17 half-val GT for post-host oracle evaluation.",
+    )
+    parser.add_argument(
+        "--posthost-oracle-min-iou",
+        type=float,
+        default=0.5,
+        help="Minimum IoU required to attach a detection to GT for post-host oracle evaluation.",
+    )
     return parser
 
 

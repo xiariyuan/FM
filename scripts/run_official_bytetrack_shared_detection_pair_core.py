@@ -69,6 +69,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--exp-file", required=True)
     parser.add_argument("--ckpt", required=True)
+    parser.add_argument("--data-root", default="/gemini/code/datasets")
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--devices", type=int, default=1)
     parser.add_argument("--seed", type=int, default=42)
@@ -81,7 +82,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fp16", action="store_true", default=False)
     parser.add_argument("--fuse", action="store_true", default=False)
     parser.add_argument("--host-variant", default="official_bytetrack")
-    parser.add_argument("--graph-ckpt", required=True)
+    parser.add_argument("--plugin-mode", choices=["learned_commit", "posthost_one_edit_oracle"], default="learned_commit")
+    parser.add_argument("--graph-ckpt", default="")
     parser.add_argument("--graph-topk", type=int, default=8)
     parser.add_argument("--graph-min-detections", type=int, default=2)
     parser.add_argument("--graph-min-committed-matches", type=int, default=1)
@@ -94,6 +96,8 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph-replacement-budget-ratio", type=float, default=0.05)
     parser.add_argument("--graph-max-replaced-clusters", type=int, default=0)
     parser.add_argument("--graph-min-commit-margin", type=float, default=0.05)
+    parser.add_argument("--posthost-oracle-data-root", default="")
+    parser.add_argument("--posthost-oracle-min-iou", type=float, default=0.5)
     return parser.parse_args()
 
 
@@ -121,8 +125,11 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
     tracker_args = copy.deepcopy(args)
     tracker_args.mot20 = False
     if plugin:
-        tracker_args.use_local_conflict = True
-        tracker_args.local_conflict_checkpoint = str(Path(args.graph_ckpt).resolve())
+        tracker_args.use_local_conflict = str(args.plugin_mode) == "learned_commit"
+        tracker_args.use_posthost_oracle_edit = str(args.plugin_mode) == "posthost_one_edit_oracle"
+        tracker_args.local_conflict_checkpoint = (
+            str(Path(args.graph_ckpt).resolve()) if str(args.plugin_mode) == "learned_commit" else ""
+        )
         tracker_args.local_conflict_topk = int(args.graph_topk)
         tracker_args.local_conflict_min_detections = int(args.graph_min_detections)
         tracker_args.local_conflict_min_committed_matches = int(args.graph_min_committed_matches)
@@ -139,8 +146,11 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.local_conflict_dump_dir = ""
         tracker_args.local_conflict_dump_topk = int(args.graph_topk)
         tracker_args.local_conflict_dump_min_score = 0.0
+        tracker_args.posthost_oracle_data_root = str(args.posthost_oracle_data_root or args.data_root)
+        tracker_args.posthost_oracle_min_iou = float(args.posthost_oracle_min_iou)
     else:
         tracker_args.use_local_conflict = False
+        tracker_args.use_posthost_oracle_edit = False
         tracker_args.local_conflict_checkpoint = ""
         tracker_args.local_conflict_topk = int(args.graph_topk)
         tracker_args.local_conflict_min_detections = int(args.graph_min_detections)
@@ -158,6 +168,8 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.local_conflict_dump_dir = ""
         tracker_args.local_conflict_dump_topk = int(args.graph_topk)
         tracker_args.local_conflict_dump_min_score = 0.0
+        tracker_args.posthost_oracle_data_root = ""
+        tracker_args.posthost_oracle_min_iou = float(args.posthost_oracle_min_iou)
     return tracker_args
 
 
@@ -208,7 +220,7 @@ def main() -> int:
         raise FileNotFoundError(f"Missing exp file: {args.exp_file}")
     if not Path(args.ckpt).is_file():
         raise FileNotFoundError(f"Missing checkpoint: {args.ckpt}")
-    if not Path(args.graph_ckpt).is_file():
+    if str(args.plugin_mode) == "learned_commit" and not Path(args.graph_ckpt).is_file():
         raise FileNotFoundError(f"Missing graph checkpoint: {args.graph_ckpt}")
 
     out_dir = Path(args.out_dir).resolve()
@@ -345,6 +357,7 @@ def main() -> int:
 
     summary = {
         "status": "success",
+        "plugin_mode": str(args.plugin_mode),
         "host_results_dir": str((out_dir / "00_host_only" / "track_results").resolve()),
         "plugin_results_dir": str((out_dir / "01_host_plus_plugin" / "track_results").resolve()),
         "plugin_diagnostics_dir": str((out_dir / "01_host_plus_plugin" / "diagnostics").resolve()),

@@ -18,6 +18,7 @@ If the reader has no prior context, read these files in this order:
 5. `outputs/legacy_module_forensic_audit_20260327_161709/report.md`
 6. `outputs/local_conflict_set_predictor_large_base_stable_20260325_023500/summary.csv`
 7. `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
+8. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
 
 That list is the current "minimal complete context" path.
 
@@ -30,11 +31,13 @@ These are the current repository-wide conclusions as of the latest indexed exper
 - Specialist-only reference carrier: `strongsort_base`
 - Strongest internal positive line: `base_reid_da + set_predictor_v2`
 - Current official ByteTrack learned pre-Hungarian line: stop-gated
+- Current official ByteTrack post-host oracle ceiling: executable and globally positive on HOTA / AssA / IDF1, but not yet switch-safe
 
 The important nuance is:
 
 - learned local operators are not globally disproven across all hosts
 - but the current `set_predictor_v2` family has not yet produced executable online commits under the frozen `official_bytetrack` pre-Hungarian partial-commit contract
+- after changing the contract to a post-host one-edit oracle, executable local correction headroom does appear
 
 ## 3. Question-oriented navigation
 
@@ -113,7 +116,24 @@ Answer:
 - the gate can open
 - but the assignment head still does not produce executable bridge commits under the frozen official ByteTrack runtime contract
 
-### Q6. Were the older frequency and Laplace idea families actually untested?
+### Q6. What happened after the contract was changed to post-host one-edit?
+
+Read:
+
+- `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327.md`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/result.csv`
+
+Answer:
+
+- the line is no longer an execution-level no-op
+- the post-host oracle performs real edits on the official carrier
+- global half-val paired deltas are positive on `HOTA`, `AssA`, and `IDF1`
+- most profitable edits are `swap` or `defer`, not additive bridge commits
+- the direction has real headroom, but still needs switch-risk control on official-favorable slices such as `MOT17-02`
+
+### Q7. Were the older frequency and Laplace idea families actually untested?
 
 Read:
 
@@ -151,11 +171,14 @@ Core records:
 - `outputs/official_bytetrack_bridgecommit_smoke_dataset_20260327_1/summary.csv`
 - `outputs/official_bytetrack_bridgecommit_smoke_train_20260327_3/summary.csv`
 - `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/summary.csv`
 
 Current state:
 
 - diagnosis complete enough to justify stop-gating the current learned family
-- not enough evidence yet for a positive learned plugin under the strict official contract
+- a post-host oracle ceiling confirms executable edit headroom under a changed contract
+- not enough evidence yet for a safe learned plugin under that new contract
 
 ### botsort_base
 
@@ -258,6 +281,36 @@ Outcome:
 
 - exact online no-op
 - oversampling did not rescue execution-level behavior
+
+### Phase D. Official ByteTrack bridge smoke stop decision
+
+Representative records:
+
+- `outputs/official_bytetrack_bridgecommit_smoke_dataset_20260327_1/summary.csv`
+- `outputs/official_bytetrack_bridgecommit_smoke_train_20260327_3/summary.csv`
+- `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
+
+Outcome:
+
+- the teacher became dense enough
+- the gate could open
+- executable commits still stayed at zero
+- the learned pre-Hungarian line was stopped under the frozen contract
+
+### Phase E. Post-host one-edit oracle ceiling
+
+Representative records:
+
+- `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
+
+Outcome:
+
+- contract change produced real executable edits
+- global paired `HOTA / AssA / IDF1` moved positive
+- dominant profitable action type is `swap` or `defer`, not `add`
+- the new direction still needs switch-risk control before any learned successor is justified
 
 ### Phase D. Official ByteTrack bridge-commit redesign
 

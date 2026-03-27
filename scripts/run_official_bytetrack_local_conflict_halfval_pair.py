@@ -40,6 +40,7 @@ SUMMARY_FIELDS = [
     "official_checkpoint",
     "official_experiment_name",
     "host_variant",
+    "plugin_mode",
     "tracker_mode",
     "graph_checkpoint",
     "graph_topk",
@@ -54,6 +55,7 @@ SUMMARY_FIELDS = [
     "graph_replacement_budget_ratio",
     "graph_max_replaced_clusters",
     "graph_min_commit_margin",
+    "posthost_oracle_min_iou",
     "seed",
     "track_thresh",
     "track_buffer",
@@ -81,6 +83,10 @@ SUMMARY_FIELDS = [
     "all_defer_clusters",
     "empty_pair_candidate_clusters",
     "post_filter_empty_clusters",
+    "posthost_selected_clusters",
+    "posthost_swap_clusters",
+    "posthost_add_clusters",
+    "posthost_defer_clusters",
     "HOTA",
     "AssA",
     "IDF1",
@@ -96,6 +102,7 @@ DELTA_FIELDS = [
     "official_exp_file",
     "official_checkpoint",
     "host_variant",
+    "plugin_mode",
     "graph_checkpoint",
     "host_only_dir",
     "host_plus_plugin_dir",
@@ -122,6 +129,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--experiment-name", default="official_bytetrack_local_conflict_halfval_pair")
     parser.add_argument("--protocol-tag", default="official_bytetrack_x_mot17_valhalf_pair")
     parser.add_argument("--host-variant", default="official_bytetrack_x_mot17_valhalf")
+    parser.add_argument("--plugin-mode", choices=["learned_commit", "posthost_one_edit_oracle"], default="learned_commit")
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--devices", type=int, default=1)
     parser.add_argument("--seed", type=int, default=42)
@@ -147,6 +155,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph-replacement-budget-ratio", type=float, default=0.05)
     parser.add_argument("--graph-max-replaced-clusters", type=int, default=0)
     parser.add_argument("--graph-min-commit-margin", type=float, default=0.05)
+    parser.add_argument("--posthost-oracle-min-iou", type=float, default=0.5)
     parser.add_argument("--registry-csv", default=str(REGISTRY_CSV))
     return parser.parse_args()
 
@@ -165,7 +174,12 @@ def write_single_row(path: Path, fieldnames: List[str], row: Dict[str, Any]) -> 
 
 
 def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str, arm_dir: Path) -> Dict[str, Any]:
-    graph_ckpt = str(Path(args.graph_ckpt).resolve()) if tracker_mode == "host_plus_plugin" else ""
+    plugin_enabled = str(tracker_mode) != "host_only"
+    graph_ckpt = (
+        str(Path(args.graph_ckpt).resolve())
+        if plugin_enabled and str(args.plugin_mode) == "learned_commit" and str(args.graph_ckpt).strip()
+        else ""
+    )
     return {
         "arm": arm,
         "run_dir": str(arm_dir.resolve()),
@@ -175,28 +189,30 @@ def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str
         "official_checkpoint": str(Path(args.ckpt).resolve()),
         "official_experiment_name": "",
         "host_variant": args.host_variant,
+        "plugin_mode": args.plugin_mode if plugin_enabled else "",
         "tracker_mode": tracker_mode,
         "graph_checkpoint": graph_ckpt,
-        "graph_topk": args.graph_topk if tracker_mode == "host_plus_plugin" else "",
-        "graph_min_detections": args.graph_min_detections if tracker_mode == "host_plus_plugin" else "",
+        "graph_topk": args.graph_topk if plugin_enabled else "",
+        "graph_min_detections": args.graph_min_detections if plugin_enabled else "",
         "graph_min_committed_matches": (
-            args.graph_min_committed_matches if tracker_mode == "host_plus_plugin" else ""
+            args.graph_min_committed_matches if plugin_enabled else ""
         ),
-        "graph_max_detections": args.graph_max_detections if tracker_mode == "host_plus_plugin" else "",
-        "graph_max_tracks": args.graph_max_tracks if tracker_mode == "host_plus_plugin" else "",
-        "graph_cluster_gate_thresh": args.graph_cluster_gate_thresh if tracker_mode == "host_plus_plugin" else "",
-        "graph_cluster_gate_temp": args.graph_cluster_gate_temp if tracker_mode == "host_plus_plugin" else "",
-        "graph_cluster_gate_bias": args.graph_cluster_gate_bias if tracker_mode == "host_plus_plugin" else "",
+        "graph_max_detections": args.graph_max_detections if plugin_enabled else "",
+        "graph_max_tracks": args.graph_max_tracks if plugin_enabled else "",
+        "graph_cluster_gate_thresh": args.graph_cluster_gate_thresh if plugin_enabled else "",
+        "graph_cluster_gate_temp": args.graph_cluster_gate_temp if plugin_enabled else "",
+        "graph_cluster_gate_bias": args.graph_cluster_gate_bias if plugin_enabled else "",
         "graph_max_commits_per_cluster": (
-            args.graph_max_commits_per_cluster if tracker_mode == "host_plus_plugin" else ""
+            args.graph_max_commits_per_cluster if plugin_enabled else ""
         ),
         "graph_replacement_budget_ratio": (
-            args.graph_replacement_budget_ratio if tracker_mode == "host_plus_plugin" else ""
+            args.graph_replacement_budget_ratio if plugin_enabled else ""
         ),
         "graph_max_replaced_clusters": (
-            args.graph_max_replaced_clusters if tracker_mode == "host_plus_plugin" else ""
+            args.graph_max_replaced_clusters if plugin_enabled else ""
         ),
-        "graph_min_commit_margin": args.graph_min_commit_margin if tracker_mode == "host_plus_plugin" else "",
+        "graph_min_commit_margin": args.graph_min_commit_margin if plugin_enabled else "",
+        "posthost_oracle_min_iou": args.posthost_oracle_min_iou if plugin_enabled else "",
         "seed": args.seed,
         "track_thresh": args.track_thresh,
         "track_buffer": args.track_buffer,
@@ -207,7 +223,11 @@ def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str
         "log_path": str((arm_dir / "run.log").resolve()),
         "eligible_clusters": "",
         "replaced_clusters": "",
+        "host_same_commit_clusters": "",
+        "delta_replaced_clusters": "",
         "matched_dets": "",
+        "delta_commit_pairs": "",
+        "delta_drop_pairs": "",
         "deferred_dets": "",
         "blocked_tracks": "",
         "gate_pass_clusters": "",
@@ -220,6 +240,10 @@ def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str
         "all_defer_clusters": "",
         "empty_pair_candidate_clusters": "",
         "post_filter_empty_clusters": "",
+        "posthost_selected_clusters": "",
+        "posthost_swap_clusters": "",
+        "posthost_add_clusters": "",
+        "posthost_defer_clusters": "",
         "HOTA": "",
         "AssA": "",
         "IDF1": "",
@@ -237,7 +261,12 @@ def initial_delta_row(args: argparse.Namespace, out_dir: Path) -> Dict[str, Any]
         "official_exp_file": str(Path(args.exp_file).resolve()),
         "official_checkpoint": str(Path(args.ckpt).resolve()),
         "host_variant": args.host_variant,
-        "graph_checkpoint": str(Path(args.graph_ckpt).resolve()),
+        "plugin_mode": args.plugin_mode,
+        "graph_checkpoint": (
+            str(Path(args.graph_ckpt).resolve())
+            if str(args.plugin_mode) == "learned_commit" and str(args.graph_ckpt).strip()
+            else ""
+        ),
         "host_only_dir": str((out_dir / "00_host_only").resolve()),
         "host_plus_plugin_dir": str((out_dir / "01_host_plus_plugin").resolve()),
         "delta_HOTA": "",
@@ -384,6 +413,10 @@ def aggregate_diagnostics(diag_dir: Path) -> Dict[str, int]:
         "all_defer_clusters": 0,
         "empty_pair_candidate_clusters": 0,
         "post_filter_empty_clusters": 0,
+        "posthost_selected_clusters": 0,
+        "posthost_swap_clusters": 0,
+        "posthost_add_clusters": 0,
+        "posthost_defer_clusters": 0,
     }
     if not diag_dir.is_dir():
         return totals
@@ -411,6 +444,8 @@ def run_shared_pair_core(args: argparse.Namespace, *, out_dir: Path) -> Path:
         str(Path(args.exp_file).resolve()),
         "--ckpt",
         str(Path(args.ckpt).resolve()),
+        "--data-root",
+        str(Path(args.data_root).resolve()),
         "--batch-size",
         str(args.batch_size),
         "--devices",
@@ -431,8 +466,8 @@ def run_shared_pair_core(args: argparse.Namespace, *, out_dir: Path) -> Path:
         str(args.min_box_area),
         "--host-variant",
         str(args.host_variant),
-        "--graph-ckpt",
-        str(Path(args.graph_ckpt).resolve()),
+        "--plugin-mode",
+        str(args.plugin_mode),
         "--graph-topk",
         str(args.graph_topk),
         "--graph-min-detections",
@@ -457,7 +492,18 @@ def run_shared_pair_core(args: argparse.Namespace, *, out_dir: Path) -> Path:
         str(args.graph_max_replaced_clusters),
         "--graph-min-commit-margin",
         str(args.graph_min_commit_margin),
+        "--posthost-oracle-data-root",
+        str(Path(args.data_root).resolve()),
+        "--posthost-oracle-min-iou",
+        str(args.posthost_oracle_min_iou),
     ]
+    if str(args.plugin_mode) == "learned_commit":
+        cmd.extend(
+            [
+                "--graph-ckpt",
+                str(Path(args.graph_ckpt).resolve()),
+            ]
+        )
     if args.fp16:
         cmd.append("--fp16")
     if args.fuse:
@@ -520,7 +566,7 @@ def evaluate_arm_outputs(
             sequences=sequences,
         )
         metrics = parse_trackeval_summary(eval_dir)
-        diagnostics = aggregate_diagnostics(diagnostics_dir) if tracker_mode == "host_plus_plugin" else {}
+        diagnostics = aggregate_diagnostics(diagnostics_dir) if tracker_mode != "host_only" else {}
         arm_summary.update(
             {
                 "official_experiment_name": official_experiment_name,
@@ -556,8 +602,12 @@ def evaluate_arm_outputs(
             "all_defer_clusters",
             "empty_pair_candidate_clusters",
             "post_filter_empty_clusters",
+            "posthost_selected_clusters",
+            "posthost_swap_clusters",
+            "posthost_add_clusters",
+            "posthost_defer_clusters",
         ]:
-            arm_summary[key] = diagnostics.get(key, 0) if tracker_mode == "host_plus_plugin" else 0
+            arm_summary[key] = diagnostics.get(key, 0) if tracker_mode != "host_only" else 0
     except Exception as exc:
         arm_summary.update(
             {
@@ -602,11 +652,12 @@ def append_registry(args: argparse.Namespace, *, out_dir: Path, status: str) -> 
         "--checkpoint",
         str(Path(args.ckpt).resolve()),
         "--notes",
-        "official ByteTrack half-val paired host-only vs local-conflict plugin",
+        f"official ByteTrack half-val paired host-only vs {args.plugin_mode}",
         "--extra",
         f"protocol_tag={args.protocol_tag}",
         f"host_variant={args.host_variant}",
-        f"graph_checkpoint={str(Path(args.graph_ckpt).resolve())}",
+        f"plugin_mode={args.plugin_mode}",
+        f"graph_checkpoint={(str(Path(args.graph_ckpt).resolve()) if str(args.plugin_mode) == 'learned_commit' and str(args.graph_ckpt).strip() else '')}",
     ]
     subprocess.run(cmd, check=True, cwd=REPO_ROOT)
 
@@ -620,7 +671,7 @@ def main() -> None:
         raise FileNotFoundError(f"Missing exp file: {args.exp_file}")
     if not Path(args.ckpt).is_file():
         raise FileNotFoundError(f"Missing checkpoint: {args.ckpt}")
-    if not Path(args.graph_ckpt).is_file():
+    if str(args.plugin_mode) == "learned_commit" and not Path(args.graph_ckpt).is_file():
         raise FileNotFoundError(f"Missing graph checkpoint: {args.graph_ckpt}")
 
     host_only_row = initial_summary_row(
@@ -647,8 +698,14 @@ def main() -> None:
         "protocol_tag": args.protocol_tag,
         "official_exp_file": str(Path(args.exp_file).resolve()),
         "official_checkpoint": str(Path(args.ckpt).resolve()),
-        "graph_checkpoint": str(Path(args.graph_ckpt).resolve()),
+        "graph_checkpoint": (
+            str(Path(args.graph_ckpt).resolve())
+            if str(args.plugin_mode) == "learned_commit" and str(args.graph_ckpt).strip()
+            else ""
+        ),
         "host_variant": args.host_variant,
+        "plugin_mode": args.plugin_mode,
+        "posthost_oracle_min_iou": float(args.posthost_oracle_min_iou),
         "tracker_modes": ["host_only", "host_plus_plugin"],
         "eval_mode": "shared_detection_pair",
         "status": "running",

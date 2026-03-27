@@ -136,6 +136,7 @@ class MOTEvaluator:
             ByteTrackerLocalConflict
             if (
                 getattr(self.args, "use_local_conflict", False)
+                or getattr(self.args, "use_posthost_oracle_edit", False)
                 or str(getattr(self.args, "local_conflict_dump_dir", "") or "").strip()
             )
             else BYTETracker
