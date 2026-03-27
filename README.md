@@ -1,82 +1,120 @@
-# FM-Track (FA-MOT) - Reproducible Training & Evaluation
+# FM-Track Research Repository
 
-This repository contains the FM-Track codebase for frequency-aware multi-object tracking.
-Below is a minimal, reviewer-friendly quickstart to reproduce training and evaluation.
+This repository is not just a generic training codebase. It is the working research repository for a sequence of multi-object tracking experiments, diagnosis reports, and redesign decisions around local intervention operators on top of standard MOT trackers.
 
-## 1) Environment
+If you are a human reviewer or a GitHub-connected GPT, do **not** start from the old generic training entrypoints alone. Start from the project navigation docs below.
 
-Python 3.9+ is recommended. Install dependencies:
+## Start Here
 
-```bash
-pip install -r requirements.txt
-```
+Primary reading entrypoints:
 
-Notes:
-- If you use the non-frequency-aware path, `mamba_ssm` is optional.
-- For the frequency-aware decoder, `mamba_ssm` is required.
-
-## 2) Data Preparation
-
-Prepare datasets following the dataset structure used in this repo. Typical MOT datasets:
-- MOT17 / MOT20 (train/val/test splits)
-- CrowdHuman / additional detection data (optional)
-
-Please ensure the dataset root paths are consistent with your config YAML.
-
-## 3) Training (Standard / DINO-based)
-
-```bash
-python train.py --config_path configs/r50_dino_fa_mot_v2_mot17.yaml
-```
-
-Key configs live under `configs/`. Adjust:
-- `DATA_ROOT`, `DATASETS`, `SPLITS`
-- `BATCH_SIZE`, `MAX_EPOCH`, `LR`
-- Frequency-aware switches: `USE_FREQ_AWARE`, `USE_FREQ_DECODER_V2`
-
-## 4) Training (ByteTrack Feature Extractor)
-
-```bash
-python train_bytetrack.py --config_path configs/bytetrack_fa_mot_mot17.yaml
-```
-
-Make sure ByteTrack is available under `third_party/ByteTrack` and weights are set:
-- `BYTETRACK_EXP_FILE`
-- `BYTETRACK_CKPT`
-
-## 5) Inference / Submission
-
-```bash
-python submit_bytetrack.py --config_path configs/bytetrack_fa_mot_mot17.yaml
-```
-
-Other submission scripts:
-- `submit_public.py`
-- `submit_and_evaluate.py`
-
-## 6) Evaluation (TrackEval)
-
-TrackEval is included under `TrackEval/`. Follow its official instructions
-to evaluate your submission files.
-
-## 7) Experiment Evidence
-
-If you want the shortest path through the diagnosis and experiment history, start with:
-
+- `docs/github_reader_guide.md`
 - `docs/experiment_index.md`
 - `outputs/experiment_registry.csv`
 
-This repository intentionally keeps lightweight structured experiment records in git
-while excluding heavy artifacts such as checkpoints, shard dumps, and raw dataset
-outputs.
+These three files are the intended shortest path for reconstructing:
 
-Useful helper scripts:
+- which baseline families were audited
+- which learned directions were stopped
+- which carrier is canonical
+- what the current active line is
+- where the relevant code and structured experiment records live
 
-- `scripts/git_stage_experiment_records.sh`
-- `scripts/git_sync_experiment_records.sh`
+## Current Research Status
 
----
+As of `2026-03-28`, the repository-wide state is:
 
-If you run into issues, check:
-- `log/` for runtime logs
-- `outputs/` for checkpoints and submission outputs
+- canonical paper carrier: `official_bytetrack`
+- transfer carrier: `botsort_base`
+- specialist reference carrier: `strongsort_base`
+- strongest internal positive line: `base_reid_da + set_predictor_v2`
+- learned `pre-Hungarian` official ByteTrack line: stopped
+- current active official ByteTrack line: `post-host one-edit`
+- current best learned family on that changed contract: `hierarchical post-host one-edit scorer`
+
+Important nuance:
+
+- the old `set_predictor_v2` direction was not globally disproven
+- it did produce real positives on an internal host
+- but under the frozen official ByteTrack `pre-Hungarian` contract it failed and was stop-gated
+- after changing the contract to a `post-host one-edit` intervention, executable oracle headroom became positive
+- the latest offline learned smoke says a hierarchical family is the first plausible learned continuation on that new contract
+
+## Reader Guide
+
+If you need full context without prior conversation history:
+
+1. Read `docs/github_reader_guide.md`
+2. Read `docs/experiment_index.md`
+3. Follow the linked `report.md`, `summary.csv`, and `result.csv` files in `outputs/`
+
+## Important Code Paths
+
+There are two different kinds of code in this repository:
+
+1. historical / archived research lines
+2. current mainline code paths
+
+If you want the **current mainline** for the official ByteTrack direction, start here:
+
+- `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
+- `scripts/run_official_bytetrack_shared_detection_pair_core.py`
+- `third_party/ByteTrack/yolox/tracker/byte_tracker_local_conflict.py`
+- `third_party/ByteTrack/tools/track.py`
+- `third_party/ByteTrack/exps/example/mot/yolox_x_mix_det_valhalf.py`
+- `scripts/build_posthost_one_edit_dataset.py`
+- `scripts/train_posthost_one_edit_hierarchical.py`
+- `models/posthost_one_edit_hierarchical.py`
+
+If you want the **stopped historical official ByteTrack pre-Hungarian line**, start here:
+
+- `scripts/build_local_conflict_set_predictor_dataset.py`
+- `scripts/train_local_conflict_set_predictor.py`
+- `scripts/run_official_bytetrack_local_conflict_stage1_trainhalf.py`
+- `models/local_conflict_set_predictor.py`
+
+## Experiment Records
+
+This repository intentionally stores lightweight structured experiment evidence in git.
+
+Typical tracked artifacts include:
+
+- `summary.csv`
+- `result.csv`
+- `metrics.jsonl`
+- `report.md`
+- `outputs/experiment_registry.csv`
+
+Heavy artifacts are intentionally excluded from git:
+
+- checkpoints
+- dataset dumps
+- raw logs
+- large runtime shards
+- packaged archives
+
+This is deliberate. The goal is to keep the repository readable by both humans and GitHub-connected GPT systems while still preserving experiment traceability.
+
+## Environment and Reproduction Notes
+
+This repository includes multiple tracker families and historical branches, so there is no single one-line reproduction command that explains the whole project.
+
+For current official ByteTrack work, the most useful reproduction-related files are:
+
+- `third_party/ByteTrack/exps/example/mot/yolox_x_mix_det_valhalf.py`
+- `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
+- `scripts/build_posthost_one_edit_dataset.py`
+- `scripts/train_posthost_one_edit_hierarchical.py`
+
+Weights and datasets are expected to exist locally and are **not** fully vendored in git.
+
+## Legacy / Broad Training Entry Points
+
+Older broad entrypoints remain in the repo for historical completeness:
+
+- `train.py`
+- `train_bytetrack.py`
+- `submit_bytetrack.py`
+- `submit_public.py`
+
+They should not be treated as the main explanation of the current research state.

@@ -125,7 +125,6 @@ Answer:
 
 Read:
 
-- `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327.md`
 - `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
 - `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/summary.csv`
 - `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/result.csv`
@@ -388,24 +387,7 @@ Outcome:
 - useful `swap` coverage is retained without collapsing exact action quality as badly as the flat swap-focused scorer
 - the next step is conservative online integration smoke
 
-### Phase D. Official ByteTrack bridge-commit redesign
-
-Representative records:
-
-- `outputs/official_bytetrack_bridgecommit_smoke_dataset_20260327_1/summary.csv`
-- `outputs/official_bytetrack_bridgecommit_smoke_train_20260327_1/summary.csv`
-- `outputs/official_bytetrack_bridgecommit_smoke_train_20260327_2/summary.csv`
-- `outputs/official_bytetrack_bridgecommit_smoke_train_20260327_3/summary.csv`
-- `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
-
-Outcome:
-
-- dataset target density became healthy enough
-- gate stopped being totally dead
-- assignment still failed to produce executable commits
-- line stop-gated before expensive full paired evaluation
-
-### Phase E. Legacy idea forensic audit
+### Phase H. Legacy idea forensic audit
 
 Representative records:
 
@@ -416,15 +398,42 @@ Outcome:
 - `frequency` and `laplace` were not "forgotten"
 - their failure modes and partial successes are now explicitly documented
 
-## 6. Current code paths for the latest official-ByteTrack redesign
+## 6. Current code paths
 
-If the reader wants the latest implementation that led to the current stop decision, start here:
+This section distinguishes the current mainline from archived-but-important historical paths.
+
+### Current official ByteTrack mainline
+
+If the reader wants the latest active implementation path, start here:
+
+- `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
+- `scripts/run_official_bytetrack_shared_detection_pair_core.py`
+- `third_party/ByteTrack/yolox/tracker/byte_tracker_local_conflict.py`
+- `third_party/ByteTrack/tools/track.py`
+- `third_party/ByteTrack/yolox/evaluators/mot_evaluator.py`
+- `third_party/ByteTrack/exps/example/mot/yolox_x_mix_det_valhalf.py`
+- `scripts/build_posthost_one_edit_dataset.py`
+- `scripts/train_posthost_one_edit_hierarchical.py`
+- `models/posthost_one_edit_hierarchical.py`
+- `models/posthost_one_edit_scorer.py`
+
+Interpretation:
+
+- the current runtime carrier remains `official_bytetrack`
+- the stopped `pre-Hungarian` learned line is no longer the active implementation focus
+- the active learned continuation is the `post-host one-edit` path
+- the latest learned offline family is hierarchical
+
+### Archived but still important official ByteTrack pre-Hungarian path
+
+If the reader needs to understand why the earlier learned line was stop-gated, read these files:
 
 - `scripts/build_local_conflict_set_predictor_dataset.py`
 - `scripts/train_local_conflict_set_predictor.py`
 - `scripts/run_official_bytetrack_local_conflict_stage1_trainhalf.py`
 - `scripts/queue_official_bytetrack_possampler_followup.py`
 - `models/local_conflict_set_predictor.py`
+- `models/local_conflict_graph_common.py`
 - `third_party/ByteTrack/yolox/tracker/byte_tracker_local_conflict.py`
 
 ## 7. Record format policy
