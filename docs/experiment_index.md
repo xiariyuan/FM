@@ -20,6 +20,7 @@ If the reader has no prior context, read these files in this order:
 7. `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
 8. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
 9. `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
+10. `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
 
 That list is the current "minimal complete context" path.
 
@@ -34,12 +35,14 @@ These are the current repository-wide conclusions as of the latest indexed exper
 - Current official ByteTrack learned pre-Hungarian line: stop-gated
 - Current official ByteTrack post-host oracle ceiling: executable and globally positive on HOTA / AssA / IDF1, but not yet switch-safe
 - Current official ByteTrack offline post-host learned smoke: coarse `keep` vs `edit` is learnable, but flat exact action ranking is still weak
+- Current official ByteTrack best learned post-host family: hierarchical one-edit scorer
 
 The important nuance is:
 
 - learned local operators are not globally disproven across all hosts
 - but the current `set_predictor_v2` family has not yet produced executable online commits under the frozen `official_bytetrack` pre-Hungarian partial-commit contract
 - after changing the contract to a post-host one-edit oracle, executable local correction headroom does appear
+- and the first hierarchical offline learner is now the strongest learned family under that changed contract
 
 ## 3. Question-oriented navigation
 
@@ -157,6 +160,8 @@ Read:
 - `outputs/official_bytetrack_posthost_one_edit_scorer_smoke_20260327_234041/summary.csv`
 - `outputs/official_bytetrack_posthost_one_edit_scorer_swapfocus_20260327_234816/summary.csv`
 - `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_20260328_000238/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
 
 Answer:
 
@@ -165,6 +170,20 @@ Answer:
 - the base scorer collapses rare `swap` to `defer`
 - aggressive swap reweighting recovers `swap` recall but damages defer precision and exact candidate ranking
 - the next learned family should therefore be hierarchical, not a single flat softmax over all candidates
+
+### Q9. Did the hierarchical post-host learner actually improve over the flat learned baselines?
+
+Read:
+
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_20260328_000238/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
+
+Answer:
+
+- yes
+- it is the first learned post-host family that avoids the flat tradeoff between zero-`swap` collapse and over-aggressive swap oversampling
+- it reaches `val_action_type_acc = 0.7363`, `val_keep_vs_edit_acc = 1.0000`, `val_swap_action_recall = 0.7647`, and `val_exact_top1_acc = 0.3363`
+- it does not yet fully solve candidate-level defer ranking, so the next step is conservative online integration rather than further flat offline sweeps
 
 ## 4. Baseline map
 
@@ -196,13 +215,16 @@ Core records:
 - `outputs/official_bytetrack_posthost_one_edit_scorer_smoke_20260327_234041/summary.csv`
 - `outputs/official_bytetrack_posthost_one_edit_scorer_swapfocus_20260327_234816/summary.csv`
 - `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_20260328_000238/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
 
 Current state:
 
 - diagnosis complete enough to justify stop-gating the current learned family
 - a post-host oracle ceiling confirms executable edit headroom under a changed contract
-- not enough evidence yet for a safe learned plugin under that new contract
-- first offline learned smokes show the contract is learnable, but a flat one-stage scorer is not yet the right architecture
+- the flat one-stage scorer is not the right learned architecture
+- the hierarchical one-edit scorer is now the best learned offline family on this contract
+- the next step is conservative online learned integration smoke
 
 ### botsort_base
 
@@ -351,6 +373,20 @@ Outcome:
 - the dominant `defer` action family is learnable
 - rare `swap` actions require explicit treatment
 - a flat one-stage softmax over all candidates is not yet adequate
+
+### Phase G. Hierarchical post-host learned smoke
+
+Representative records:
+
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_20260328_000238/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
+
+Outcome:
+
+- hierarchical decomposition resolves the flat-family tradeoff much better
+- `keep` vs `edit` is preserved perfectly on the validation split
+- useful `swap` coverage is retained without collapsing exact action quality as badly as the flat swap-focused scorer
+- the next step is conservative online integration smoke
 
 ### Phase D. Official ByteTrack bridge-commit redesign
 
