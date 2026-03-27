@@ -19,6 +19,7 @@ If the reader has no prior context, read these files in this order:
 6. `outputs/local_conflict_set_predictor_large_base_stable_20260325_023500/summary.csv`
 7. `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
 8. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
+9. `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
 
 That list is the current "minimal complete context" path.
 
@@ -32,6 +33,7 @@ These are the current repository-wide conclusions as of the latest indexed exper
 - Strongest internal positive line: `base_reid_da + set_predictor_v2`
 - Current official ByteTrack learned pre-Hungarian line: stop-gated
 - Current official ByteTrack post-host oracle ceiling: executable and globally positive on HOTA / AssA / IDF1, but not yet switch-safe
+- Current official ByteTrack offline post-host learned smoke: coarse `keep` vs `edit` is learnable, but flat exact action ranking is still weak
 
 The important nuance is:
 
@@ -147,6 +149,23 @@ Answer:
 - `frequency` was run and failed first through optimization instability, then through semantic collapse
 - `laplace` had a real positive proxy regime, but its learned gate version regressed
 
+### Q8. What did the first learned post-host offline smoke show?
+
+Read:
+
+- `outputs/official_bytetrack_posthost_one_edit_dataset_20260327_234041/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_scorer_smoke_20260327_234041/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_scorer_swapfocus_20260327_234816/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
+
+Answer:
+
+- the post-host action dataset is dense enough and dominated by `defer`, with a small `swap` tail
+- a flat one-stage scorer already learns `keep` vs `edit`
+- the base scorer collapses rare `swap` to `defer`
+- aggressive swap reweighting recovers `swap` recall but damages defer precision and exact candidate ranking
+- the next learned family should therefore be hierarchical, not a single flat softmax over all candidates
+
 ## 4. Baseline map
 
 This section groups the repository by baseline family and role.
@@ -173,12 +192,17 @@ Core records:
 - `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
 - `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
 - `outputs/official_bytetrack_posthost_one_edit_oracle_halfval_20260327_215036/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_dataset_20260327_234041/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_scorer_smoke_20260327_234041/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_scorer_swapfocus_20260327_234816/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
 
 Current state:
 
 - diagnosis complete enough to justify stop-gating the current learned family
 - a post-host oracle ceiling confirms executable edit headroom under a changed contract
 - not enough evidence yet for a safe learned plugin under that new contract
+- first offline learned smokes show the contract is learnable, but a flat one-stage scorer is not yet the right architecture
 
 ### botsort_base
 
@@ -311,6 +335,22 @@ Outcome:
 - global paired `HOTA / AssA / IDF1` moved positive
 - dominant profitable action type is `swap` or `defer`, not `add`
 - the new direction still needs switch-risk control before any learned successor is justified
+
+### Phase F. Post-host offline learned smoke
+
+Representative records:
+
+- `outputs/official_bytetrack_posthost_one_edit_dataset_20260327_234041/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_scorer_smoke_20260327_234041/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_scorer_swapfocus_20260327_234816/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
+
+Outcome:
+
+- the coarse `keep` vs `edit` decision is learnable
+- the dominant `defer` action family is learnable
+- rare `swap` actions require explicit treatment
+- a flat one-stage softmax over all candidates is not yet adequate
 
 ### Phase D. Official ByteTrack bridge-commit redesign
 
