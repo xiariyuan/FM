@@ -56,6 +56,10 @@ SUMMARY_FIELDS = [
     "graph_max_replaced_clusters",
     "graph_min_commit_margin",
     "posthost_oracle_min_iou",
+    "posthost_hierarchical_keep_thresh",
+    "posthost_hierarchical_swap_thresh",
+    "posthost_hierarchical_candidate_min_refined_score",
+    "posthost_hierarchical_host_summary_prior_alpha",
     "seed",
     "track_thresh",
     "track_buffer",
@@ -129,7 +133,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--experiment-name", default="official_bytetrack_local_conflict_halfval_pair")
     parser.add_argument("--protocol-tag", default="official_bytetrack_x_mot17_valhalf_pair")
     parser.add_argument("--host-variant", default="official_bytetrack_x_mot17_valhalf")
-    parser.add_argument("--plugin-mode", choices=["learned_commit", "posthost_one_edit_oracle"], default="learned_commit")
+    parser.add_argument(
+        "--plugin-mode",
+        choices=["learned_commit", "posthost_one_edit_oracle", "posthost_one_edit_hierarchical"],
+        default="learned_commit",
+    )
     parser.add_argument("--batch-size", type=int, default=1)
     parser.add_argument("--devices", type=int, default=1)
     parser.add_argument("--seed", type=int, default=42)
@@ -156,6 +164,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph-max-replaced-clusters", type=int, default=0)
     parser.add_argument("--graph-min-commit-margin", type=float, default=0.05)
     parser.add_argument("--posthost-oracle-min-iou", type=float, default=0.5)
+    parser.add_argument("--posthost-hierarchical-keep-thresh", type=float, default=0.5)
+    parser.add_argument("--posthost-hierarchical-swap-thresh", type=float, default=0.5)
+    parser.add_argument("--posthost-hierarchical-candidate-min-refined-score", type=float, default=0.10)
+    parser.add_argument("--posthost-hierarchical-host-summary-prior-alpha", type=float, default=0.0)
     parser.add_argument("--registry-csv", default=str(REGISTRY_CSV))
     return parser.parse_args()
 
@@ -177,7 +189,9 @@ def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str
     plugin_enabled = str(tracker_mode) != "host_only"
     graph_ckpt = (
         str(Path(args.graph_ckpt).resolve())
-        if plugin_enabled and str(args.plugin_mode) == "learned_commit" and str(args.graph_ckpt).strip()
+        if plugin_enabled
+        and str(args.plugin_mode) in {"learned_commit", "posthost_one_edit_hierarchical"}
+        and str(args.graph_ckpt).strip()
         else ""
     )
     return {
@@ -213,6 +227,18 @@ def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str
         ),
         "graph_min_commit_margin": args.graph_min_commit_margin if plugin_enabled else "",
         "posthost_oracle_min_iou": args.posthost_oracle_min_iou if plugin_enabled else "",
+        "posthost_hierarchical_keep_thresh": (
+            args.posthost_hierarchical_keep_thresh if plugin_enabled else ""
+        ),
+        "posthost_hierarchical_swap_thresh": (
+            args.posthost_hierarchical_swap_thresh if plugin_enabled else ""
+        ),
+        "posthost_hierarchical_candidate_min_refined_score": (
+            args.posthost_hierarchical_candidate_min_refined_score if plugin_enabled else ""
+        ),
+        "posthost_hierarchical_host_summary_prior_alpha": (
+            args.posthost_hierarchical_host_summary_prior_alpha if plugin_enabled else ""
+        ),
         "seed": args.seed,
         "track_thresh": args.track_thresh,
         "track_buffer": args.track_buffer,
@@ -264,7 +290,7 @@ def initial_delta_row(args: argparse.Namespace, out_dir: Path) -> Dict[str, Any]
         "plugin_mode": args.plugin_mode,
         "graph_checkpoint": (
             str(Path(args.graph_ckpt).resolve())
-            if str(args.plugin_mode) == "learned_commit" and str(args.graph_ckpt).strip()
+            if str(args.plugin_mode) in {"learned_commit", "posthost_one_edit_hierarchical"} and str(args.graph_ckpt).strip()
             else ""
         ),
         "host_only_dir": str((out_dir / "00_host_only").resolve()),
@@ -496,8 +522,16 @@ def run_shared_pair_core(args: argparse.Namespace, *, out_dir: Path) -> Path:
         str(Path(args.data_root).resolve()),
         "--posthost-oracle-min-iou",
         str(args.posthost_oracle_min_iou),
+        "--posthost-hierarchical-keep-thresh",
+        str(args.posthost_hierarchical_keep_thresh),
+        "--posthost-hierarchical-swap-thresh",
+        str(args.posthost_hierarchical_swap_thresh),
+        "--posthost-hierarchical-candidate-min-refined-score",
+        str(args.posthost_hierarchical_candidate_min_refined_score),
+        "--posthost-hierarchical-host-summary-prior-alpha",
+        str(args.posthost_hierarchical_host_summary_prior_alpha),
     ]
-    if str(args.plugin_mode) == "learned_commit":
+    if str(args.plugin_mode) in {"learned_commit", "posthost_one_edit_hierarchical"}:
         cmd.extend(
             [
                 "--graph-ckpt",

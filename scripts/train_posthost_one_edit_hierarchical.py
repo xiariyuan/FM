@@ -54,11 +54,17 @@ SUMMARY_FIELDS = [
     "train_keep_vs_edit_acc",
     "train_swap_action_recall",
     "train_exact_top1_acc",
+    "train_nonkeep_exact_top1_acc",
+    "train_swap_exact_top1_acc",
+    "train_defer_exact_top1_acc",
     "val_gate_acc",
     "val_action_type_acc",
     "val_keep_vs_edit_acc",
     "val_swap_action_recall",
     "val_exact_top1_acc",
+    "val_nonkeep_exact_top1_acc",
+    "val_swap_exact_top1_acc",
+    "val_defer_exact_top1_acc",
     "checkpoint",
     "metrics_jsonl",
     "status",
@@ -81,6 +87,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--swap-oversample", type=float, default=8.0)
     parser.add_argument("--gate-positive-weight", type=float, default=2.0)
     parser.add_argument("--swap-selector-weight", type=float, default=8.0)
+    parser.add_argument(
+        "--best-metric",
+        choices=[
+            "exact_top1_acc",
+            "nonkeep_exact_top1_acc",
+            "swap_exact_top1_acc",
+            "swap_focus",
+            "balanced_gate_swap",
+        ],
+        default="swap_focus",
+    )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num-workers", type=int, default=0)
     parser.add_argument("--registry-csv", default=str(REGISTRY_CSV))
@@ -300,8 +317,13 @@ def evaluate_hierarchical(
     action_type_correct = 0
     keep_vs_edit_correct = 0
     exact_top1_correct = 0
+    nonkeep_total = 0
+    nonkeep_exact_top1_correct = 0
     target_swap = 0
     correct_swap_action = 0
+    swap_exact_top1_correct = 0
+    target_defer = 0
+    defer_exact_top1_correct = 0
     for row in rows:
         pred = hierarchical_predict(model, row, device=device)
         target_index = int(row["target_index"])
@@ -310,16 +332,51 @@ def evaluate_hierarchical(
         action_type_correct += int(str(pred["pred_action_type"]) == target_action)
         keep_vs_edit_correct += int((int(pred["pred_index"] > 0)) == int(row["gate_target"]))
         exact_top1_correct += int(int(pred["pred_index"]) == target_index)
+        if target_index > 0:
+            nonkeep_total += 1
+            nonkeep_exact_top1_correct += int(int(pred["pred_index"]) == target_index)
         if target_action == "swap":
             target_swap += 1
             correct_swap_action += int(str(pred["pred_action_type"]) == "swap")
+            swap_exact_top1_correct += int(int(pred["pred_index"]) == target_index)
+        if target_action == "defer":
+            target_defer += 1
+            defer_exact_top1_correct += int(int(pred["pred_index"]) == target_index)
     return {
         "gate_acc": float(gate_correct / max(total, 1)),
         "action_type_acc": float(action_type_correct / max(total, 1)),
         "keep_vs_edit_acc": float(keep_vs_edit_correct / max(total, 1)),
         "swap_action_recall": float(correct_swap_action / max(target_swap, 1)),
         "exact_top1_acc": float(exact_top1_correct / max(total, 1)),
+        "nonkeep_exact_top1_acc": float(nonkeep_exact_top1_correct / max(nonkeep_total, 1)),
+        "swap_exact_top1_acc": float(swap_exact_top1_correct / max(target_swap, 1)),
+        "defer_exact_top1_acc": float(defer_exact_top1_correct / max(target_defer, 1)),
     }
+
+
+def select_metric_value(metrics: Dict[str, float], *, best_metric: str) -> float:
+    name = str(best_metric)
+    if name == "exact_top1_acc":
+        return float(metrics["exact_top1_acc"])
+    if name == "nonkeep_exact_top1_acc":
+        return float(metrics["nonkeep_exact_top1_acc"])
+    if name == "swap_exact_top1_acc":
+        return float(metrics["swap_exact_top1_acc"])
+    if name == "swap_focus":
+        return float(
+            0.50 * float(metrics["swap_exact_top1_acc"])
+            + 0.35 * float(metrics["nonkeep_exact_top1_acc"])
+            + 0.15 * float(metrics["swap_action_recall"])
+        )
+    if name == "balanced_gate_swap":
+        # Online behavior depends on both opening the right clusters and ranking swaps safely.
+        return float(
+            0.40 * float(metrics["gate_acc"])
+            + 0.30 * float(metrics["swap_exact_top1_acc"])
+            + 0.20 * float(metrics["nonkeep_exact_top1_acc"])
+            + 0.10 * float(metrics["swap_action_recall"])
+        )
+    raise ValueError(f"Unsupported best metric: {best_metric}")
 
 
 def append_registry(args: argparse.Namespace, *, out_dir: Path, checkpoint: Path, status: str) -> None:
@@ -360,6 +417,7 @@ def append_registry(args: argparse.Namespace, *, out_dir: Path, checkpoint: Path
         f"swap_oversample={float(args.swap_oversample)}",
         f"gate_positive_weight={float(args.gate_positive_weight)}",
         f"swap_selector_weight={float(args.swap_selector_weight)}",
+        f"best_metric={str(args.best_metric)}",
     ]
     subprocess.run(cmd, check=True, cwd=REPO_ROOT)
 
@@ -515,7 +573,7 @@ def main() -> int:
 
                 train_metrics = evaluate_hierarchical(model, train_rows, device=device)
                 val_metrics = evaluate_hierarchical(model, val_rows, device=device)
-                current_metric = float(val_metrics["exact_top1_acc"])
+                current_metric = select_metric_value(val_metrics, best_metric=str(args.best_metric))
                 if current_metric > best_metric:
                     best_metric = current_metric
                     best_epoch = int(epoch)
@@ -524,7 +582,7 @@ def main() -> int:
                         checkpoint_path,
                         extra={
                             "epoch": int(epoch),
-                            "best_metric_name": "exact_top1_acc",
+                            "best_metric_name": str(args.best_metric),
                             "best_metric_value": float(best_metric),
                             "train_metrics": dict(train_metrics),
                             "val_metrics": dict(val_metrics),
@@ -540,12 +598,18 @@ def main() -> int:
                             "train_keep_vs_edit_acc": float(train_metrics["keep_vs_edit_acc"]),
                             "train_swap_action_recall": float(train_metrics["swap_action_recall"]),
                             "train_exact_top1_acc": float(train_metrics["exact_top1_acc"]),
+                            "train_nonkeep_exact_top1_acc": float(train_metrics["nonkeep_exact_top1_acc"]),
+                            "train_swap_exact_top1_acc": float(train_metrics["swap_exact_top1_acc"]),
+                            "train_defer_exact_top1_acc": float(train_metrics["defer_exact_top1_acc"]),
                             "val_gate_acc": float(val_metrics["gate_acc"]),
                             "val_action_type_acc": float(val_metrics["action_type_acc"]),
                             "val_keep_vs_edit_acc": float(val_metrics["keep_vs_edit_acc"]),
                             "val_swap_action_recall": float(val_metrics["swap_action_recall"]),
                             "val_exact_top1_acc": float(val_metrics["exact_top1_acc"]),
-                            "best_metric_name": "exact_top1_acc",
+                            "val_nonkeep_exact_top1_acc": float(val_metrics["nonkeep_exact_top1_acc"]),
+                            "val_swap_exact_top1_acc": float(val_metrics["swap_exact_top1_acc"]),
+                            "val_defer_exact_top1_acc": float(val_metrics["defer_exact_top1_acc"]),
+                            "best_metric_name": str(args.best_metric),
                             "best_metric_value_so_far": float(best_metric),
                             "is_best": int(epoch == best_epoch),
                         },
@@ -561,18 +625,24 @@ def main() -> int:
         summary_row.update(
             {
                 "best_epoch": int(best_epoch),
-                "best_metric_name": "exact_top1_acc",
+                "best_metric_name": str(args.best_metric),
                 "best_metric_value": float(best_metric),
                 "train_gate_acc": float(best_metrics["train"]["gate_acc"]),
                 "train_action_type_acc": float(best_metrics["train"]["action_type_acc"]),
                 "train_keep_vs_edit_acc": float(best_metrics["train"]["keep_vs_edit_acc"]),
                 "train_swap_action_recall": float(best_metrics["train"]["swap_action_recall"]),
                 "train_exact_top1_acc": float(best_metrics["train"]["exact_top1_acc"]),
+                "train_nonkeep_exact_top1_acc": float(best_metrics["train"]["nonkeep_exact_top1_acc"]),
+                "train_swap_exact_top1_acc": float(best_metrics["train"]["swap_exact_top1_acc"]),
+                "train_defer_exact_top1_acc": float(best_metrics["train"]["defer_exact_top1_acc"]),
                 "val_gate_acc": float(best_metrics["val"]["gate_acc"]),
                 "val_action_type_acc": float(best_metrics["val"]["action_type_acc"]),
                 "val_keep_vs_edit_acc": float(best_metrics["val"]["keep_vs_edit_acc"]),
                 "val_swap_action_recall": float(best_metrics["val"]["swap_action_recall"]),
                 "val_exact_top1_acc": float(best_metrics["val"]["exact_top1_acc"]),
+                "val_nonkeep_exact_top1_acc": float(best_metrics["val"]["nonkeep_exact_top1_acc"]),
+                "val_swap_exact_top1_acc": float(best_metrics["val"]["swap_exact_top1_acc"]),
+                "val_defer_exact_top1_acc": float(best_metrics["val"]["defer_exact_top1_acc"]),
                 "status": "success",
                 "error": "",
             }

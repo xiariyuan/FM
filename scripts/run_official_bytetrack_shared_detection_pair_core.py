@@ -82,7 +82,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fp16", action="store_true", default=False)
     parser.add_argument("--fuse", action="store_true", default=False)
     parser.add_argument("--host-variant", default="official_bytetrack")
-    parser.add_argument("--plugin-mode", choices=["learned_commit", "posthost_one_edit_oracle"], default="learned_commit")
+    parser.add_argument(
+        "--plugin-mode",
+        choices=["learned_commit", "posthost_one_edit_oracle", "posthost_one_edit_hierarchical"],
+        default="learned_commit",
+    )
     parser.add_argument("--graph-ckpt", default="")
     parser.add_argument("--graph-topk", type=int, default=8)
     parser.add_argument("--graph-min-detections", type=int, default=2)
@@ -98,6 +102,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph-min-commit-margin", type=float, default=0.05)
     parser.add_argument("--posthost-oracle-data-root", default="")
     parser.add_argument("--posthost-oracle-min-iou", type=float, default=0.5)
+    parser.add_argument("--posthost-hierarchical-keep-thresh", type=float, default=0.5)
+    parser.add_argument("--posthost-hierarchical-swap-thresh", type=float, default=0.5)
+    parser.add_argument("--posthost-hierarchical-candidate-min-refined-score", type=float, default=0.10)
+    parser.add_argument("--posthost-hierarchical-host-summary-prior-alpha", type=float, default=0.0)
     return parser.parse_args()
 
 
@@ -127,8 +135,11 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
     if plugin:
         tracker_args.use_local_conflict = str(args.plugin_mode) == "learned_commit"
         tracker_args.use_posthost_oracle_edit = str(args.plugin_mode) == "posthost_one_edit_oracle"
+        tracker_args.use_posthost_hierarchical_edit = str(args.plugin_mode) == "posthost_one_edit_hierarchical"
         tracker_args.local_conflict_checkpoint = (
-            str(Path(args.graph_ckpt).resolve()) if str(args.plugin_mode) == "learned_commit" else ""
+            str(Path(args.graph_ckpt).resolve())
+            if str(args.plugin_mode) in {"learned_commit", "posthost_one_edit_hierarchical"}
+            else ""
         )
         tracker_args.local_conflict_topk = int(args.graph_topk)
         tracker_args.local_conflict_min_detections = int(args.graph_min_detections)
@@ -148,9 +159,18 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.local_conflict_dump_min_score = 0.0
         tracker_args.posthost_oracle_data_root = str(args.posthost_oracle_data_root or args.data_root)
         tracker_args.posthost_oracle_min_iou = float(args.posthost_oracle_min_iou)
+        tracker_args.posthost_hierarchical_keep_thresh = float(args.posthost_hierarchical_keep_thresh)
+        tracker_args.posthost_hierarchical_swap_thresh = float(args.posthost_hierarchical_swap_thresh)
+        tracker_args.posthost_hierarchical_candidate_min_refined_score = float(
+            args.posthost_hierarchical_candidate_min_refined_score
+        )
+        tracker_args.posthost_hierarchical_host_summary_prior_alpha = float(
+            args.posthost_hierarchical_host_summary_prior_alpha
+        )
     else:
         tracker_args.use_local_conflict = False
         tracker_args.use_posthost_oracle_edit = False
+        tracker_args.use_posthost_hierarchical_edit = False
         tracker_args.local_conflict_checkpoint = ""
         tracker_args.local_conflict_topk = int(args.graph_topk)
         tracker_args.local_conflict_min_detections = int(args.graph_min_detections)
@@ -170,6 +190,14 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.local_conflict_dump_min_score = 0.0
         tracker_args.posthost_oracle_data_root = ""
         tracker_args.posthost_oracle_min_iou = float(args.posthost_oracle_min_iou)
+        tracker_args.posthost_hierarchical_keep_thresh = float(args.posthost_hierarchical_keep_thresh)
+        tracker_args.posthost_hierarchical_swap_thresh = float(args.posthost_hierarchical_swap_thresh)
+        tracker_args.posthost_hierarchical_candidate_min_refined_score = float(
+            args.posthost_hierarchical_candidate_min_refined_score
+        )
+        tracker_args.posthost_hierarchical_host_summary_prior_alpha = float(
+            args.posthost_hierarchical_host_summary_prior_alpha
+        )
     return tracker_args
 
 
@@ -220,7 +248,7 @@ def main() -> int:
         raise FileNotFoundError(f"Missing exp file: {args.exp_file}")
     if not Path(args.ckpt).is_file():
         raise FileNotFoundError(f"Missing checkpoint: {args.ckpt}")
-    if str(args.plugin_mode) == "learned_commit" and not Path(args.graph_ckpt).is_file():
+    if str(args.plugin_mode) in {"learned_commit", "posthost_one_edit_hierarchical"} and not Path(args.graph_ckpt).is_file():
         raise FileNotFoundError(f"Missing graph checkpoint: {args.graph_ckpt}")
 
     out_dir = Path(args.out_dir).resolve()

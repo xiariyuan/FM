@@ -180,6 +180,13 @@ def make_parser():
         help="Enable post-host one-edit oracle ceiling after official ByteTrack first-stage matching.",
     )
     parser.add_argument(
+        "--use-posthost-hierarchical-edit",
+        dest="use_posthost_hierarchical_edit",
+        default=False,
+        action="store_true",
+        help="Enable learned post-host hierarchical one-edit plugin after official ByteTrack first-stage matching.",
+    )
+    parser.add_argument(
         "--posthost-oracle-data-root",
         type=str,
         default="",
@@ -190,6 +197,30 @@ def make_parser():
         type=float,
         default=0.5,
         help="Minimum IoU required to attach a detection to GT for post-host oracle evaluation.",
+    )
+    parser.add_argument(
+        "--posthost-hierarchical-keep-thresh",
+        type=float,
+        default=0.5,
+        help="Probability threshold for keep-vs-edit gate in learned post-host hierarchical mode.",
+    )
+    parser.add_argument(
+        "--posthost-hierarchical-swap-thresh",
+        type=float,
+        default=0.5,
+        help="Probability threshold for choosing swap over defer in learned post-host hierarchical mode.",
+    )
+    parser.add_argument(
+        "--posthost-hierarchical-candidate-min-refined-score",
+        type=float,
+        default=0.10,
+        help="Minimum refined score required for non-host add/swap candidates in learned post-host hierarchical mode.",
+    )
+    parser.add_argument(
+        "--posthost-hierarchical-host-summary-prior-alpha",
+        type=float,
+        default=0.0,
+        help="Weak prior coefficient applied to runtime host-summary positive_count/score in learned post-host hierarchical mode.",
     )
     return parser
 

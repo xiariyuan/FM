@@ -21,6 +21,7 @@ If the reader has no prior context, read these files in this order:
 8. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
 9. `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
 10. `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
+11. `outputs/official_bytetrack_posthost_one_edit_hierarchical_followup_decision_20260328/report.md`
 
 That list is the current "minimal complete context" path.
 
@@ -43,6 +44,8 @@ The important nuance is:
 - but the current `set_predictor_v2` family has not yet produced executable online commits under the frozen `official_bytetrack` pre-Hungarian partial-commit contract
 - after changing the contract to a post-host one-edit oracle, executable local correction headroom does appear
 - and the first hierarchical offline learner is now the strongest learned family under that changed contract
+- the latest hierarchical online follow-up cycle shows the line can be tuned into either exact no-op or sparse-but-negative execution
+- so threshold-only rescue is close to exhausted and the next redesign question is candidate utility / ranking quality
 
 ## 3. Question-oriented navigation
 
@@ -183,6 +186,25 @@ Answer:
 - it is the first learned post-host family that avoids the flat tradeoff between zero-`swap` collapse and over-aggressive swap oversampling
 - it reaches `val_action_type_acc = 0.7363`, `val_keep_vs_edit_acc = 1.0000`, `val_swap_action_recall = 0.7647`, and `val_exact_top1_acc = 0.3363`
 - it does not yet fully solve candidate-level defer ranking, so the next step is conservative online integration rather than further flat offline sweeps
+
+### Q10. What did the first hierarchical online follow-up cycle actually prove?
+
+Read:
+
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_followup_decision_20260328/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_swap_priority_halfval_smoke_20260328_102900/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_swap_priority_halfval_smoke_keep097_20260328_110500/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_balanced_gate_swap_20260328_131500/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_balanced_gate_swap_halfval_smoke_keep0988_20260328_131900/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_balanced_gate_swap_halfval_smoke_keep097_20260328_142200/result.csv`
+
+Answer:
+
+- the online hierarchical line is no longer blocked by pure execution failure
+- but it still does not have a useful safe operating window
+- tighter gate gives exact no-op
+- looser gate gives one or two executed `swap`s but still negative paired outcome
+- therefore the next bottleneck is candidate utility / ranking quality, not threshold calibration alone
 
 ## 4. Baseline map
 
@@ -387,7 +409,25 @@ Outcome:
 - useful `swap` coverage is retained without collapsing exact action quality as badly as the flat swap-focused scorer
 - the next step is conservative online integration smoke
 
-### Phase H. Legacy idea forensic audit
+### Phase H. Hierarchical online follow-up and threshold exhaustion
+
+Representative records:
+
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_followup_decision_20260328/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_swap_priority_halfval_smoke_20260328_102900/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_swap_priority_halfval_smoke_keep097_20260328_110500/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_balanced_gate_swap_20260328_131500/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_balanced_gate_swap_halfval_smoke_keep0988_20260328_131900/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_balanced_gate_swap_halfval_smoke_keep097_20260328_142200/result.csv`
+
+Outcome:
+
+- online execution is now possible, so the line is no longer a pure wiring no-op
+- however the main tradeoff became exact no-op versus sparse-but-negative execution
+- the hard official slices are still not being improved in a useful way
+- the next redesign question is candidate utility / ranking quality, not another broad threshold sweep
+
+### Phase I. Legacy idea forensic audit
 
 Representative records:
 

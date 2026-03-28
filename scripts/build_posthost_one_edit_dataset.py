@@ -23,6 +23,11 @@ SUMMARY_FIELDS = [
     "dataset_name",
     "source_cluster_jsonl",
     "candidate_min_refined_score",
+    "host_summary_mode",
+    "host_summary_prior_alpha",
+    "swap_utility_bonus",
+    "add_utility_bonus",
+    "defer_utility_penalty",
     "clusters",
     "train_clusters",
     "val_clusters",
@@ -60,6 +65,15 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--dataset-name", default="official_bytetrack_posthost_one_edit_dataset")
     parser.add_argument("--candidate-min-refined-score", type=float, default=0.10)
+    parser.add_argument(
+        "--host-summary-mode",
+        choices=["gt_oracle", "runtime_safe_zero", "runtime_prior_alpha"],
+        default="gt_oracle",
+    )
+    parser.add_argument("--host-summary-prior-alpha", type=float, default=0.0)
+    parser.add_argument("--swap-utility-bonus", type=float, default=0.0)
+    parser.add_argument("--add-utility-bonus", type=float, default=0.0)
+    parser.add_argument("--defer-utility-penalty", type=float, default=0.0)
     parser.add_argument("--registry-csv", default=str(REGISTRY_CSV))
     return parser.parse_args()
 
@@ -145,6 +159,49 @@ def action_one_hot(action_type: str) -> list[float]:
         1.0 if action == "swap" else 0.0,
         1.0 if action == "defer" else 0.0,
     ]
+
+
+def adapt_host_summary(
+    host_summary: Dict[str, float],
+    *,
+    mode: str,
+    prior_alpha: float,
+) -> Dict[str, float]:
+    adapted = dict(host_summary)
+    pair_count = float(adapted.get("pair_count", 0.0))
+    if mode == "gt_oracle":
+        return adapted
+    if mode == "runtime_safe_zero":
+        adapted["positive_count"] = 0.0
+        adapted["negative_count"] = 0.0
+        adapted["score"] = 0.0
+        return adapted
+    if mode == "runtime_prior_alpha":
+        alpha = max(0.0, min(float(prior_alpha), 1.0))
+        adapted["positive_count"] = float(alpha * pair_count)
+        adapted["negative_count"] = 0.0
+        adapted["score"] = float(alpha * pair_count)
+        return adapted
+    raise ValueError(f"Unsupported host_summary_mode: {mode}")
+
+
+def adjusted_candidate_utility(
+    *,
+    raw_utility: float,
+    action_type: str,
+    swap_utility_bonus: float,
+    add_utility_bonus: float,
+    defer_utility_penalty: float,
+) -> float:
+    adjusted = float(raw_utility)
+    action = str(action_type)
+    if action == "swap":
+        adjusted += float(swap_utility_bonus)
+    elif action == "add":
+        adjusted += float(add_utility_bonus)
+    elif action == "defer":
+        adjusted -= float(defer_utility_penalty)
+    return float(adjusted)
 
 
 def build_candidate_feature(
@@ -257,6 +314,11 @@ def enumerate_candidates(
     sample: Dict[str, Any],
     *,
     candidate_min_refined_score: float,
+    host_summary_mode: str,
+    host_summary_prior_alpha: float,
+    swap_utility_bonus: float,
+    add_utility_bonus: float,
+    defer_utility_penalty: float,
 ) -> Tuple[List[Dict[str, Any]], int]:
     host_pairs = {tuple(int(v) for v in pair) for pair in sample.get("host_pairs_local_runtime", [])}
     gt_by_pair = {
@@ -268,6 +330,11 @@ def enumerate_candidates(
     host_summary["pair_count"] = float(len(host_pairs))
     host_summary["positive_count"] = float(host_summary["correct"])
     host_summary["negative_count"] = float(host_summary["wrong"])
+    feature_host_summary = adapt_host_summary(
+        host_summary,
+        mode=str(host_summary_mode),
+        prior_alpha=float(host_summary_prior_alpha),
+    )
 
     host_det_to_track = {int(det_idx): int(track_idx) for det_idx, track_idx in host_pairs}
     host_track_to_det = {int(track_idx): int(det_idx) for det_idx, track_idx in host_pairs}
@@ -278,11 +345,12 @@ def enumerate_candidates(
             "add_pair": None,
             "remove_pair": None,
             "utility_delta": 0.0,
+            "adjusted_utility_delta": 0.0,
             "new_correct": float(host_summary["correct"]),
             "new_wrong": float(host_summary["wrong"]),
             "candidate_features": build_candidate_feature(
                 sample=sample,
-                host_summary=host_summary,
+                host_summary=feature_host_summary,
                 action_type="keep",
                 add_pair=None,
                 remove_pair=None,
@@ -312,17 +380,25 @@ def enumerate_candidates(
             final_pairs.add((int(det_idx), int(track_idx)))
             new_summary = score_pair_set(final_pairs, gt_by_pair)
             utility_delta = float(new_summary["score"] - host_summary["score"])
+            adjusted_utility = adjusted_candidate_utility(
+                raw_utility=utility_delta,
+                action_type=action_type,
+                swap_utility_bonus=float(swap_utility_bonus),
+                add_utility_bonus=float(add_utility_bonus),
+                defer_utility_penalty=float(defer_utility_penalty),
+            )
             candidates.append(
                 {
                     "action_type": action_type,
                     "add_pair": [int(det_idx), int(track_idx)],
                     "remove_pair": [int(remove_pair[0]), int(remove_pair[1])] if remove_pair is not None else None,
                     "utility_delta": utility_delta,
+                    "adjusted_utility_delta": adjusted_utility,
                     "new_correct": float(new_summary["correct"]),
                     "new_wrong": float(new_summary["wrong"]),
                     "candidate_features": build_candidate_feature(
                         sample=sample,
-                        host_summary=host_summary,
+                        host_summary=feature_host_summary,
                         action_type=action_type,
                         add_pair=(int(det_idx), int(track_idx)),
                         remove_pair=remove_pair,
@@ -337,17 +413,25 @@ def enumerate_candidates(
         final_pairs.discard((det_idx, track_idx))
         new_summary = score_pair_set(final_pairs, gt_by_pair)
         utility_delta = float(new_summary["score"] - host_summary["score"])
+        adjusted_utility = adjusted_candidate_utility(
+            raw_utility=utility_delta,
+            action_type="defer",
+            swap_utility_bonus=float(swap_utility_bonus),
+            add_utility_bonus=float(add_utility_bonus),
+            defer_utility_penalty=float(defer_utility_penalty),
+        )
         candidates.append(
             {
                 "action_type": "defer",
                 "add_pair": None,
                 "remove_pair": [det_idx, track_idx],
                 "utility_delta": utility_delta,
+                "adjusted_utility_delta": adjusted_utility,
                 "new_correct": float(new_summary["correct"]),
                 "new_wrong": float(new_summary["wrong"]),
                 "candidate_features": build_candidate_feature(
                     sample=sample,
-                    host_summary=host_summary,
+                    host_summary=feature_host_summary,
                     action_type="defer",
                     add_pair=None,
                     remove_pair=(det_idx, track_idx),
@@ -357,25 +441,23 @@ def enumerate_candidates(
         )
 
     best_index = 0
-    best_key = (
-        float(candidates[0]["utility_delta"]),
-        0.0,
-        0.0,
-        0,
-    )
+    best_key = None
     action_priority = {"keep": 0, "defer": 1, "add": 2, "swap": 3}
     for idx, candidate in enumerate(candidates):
+        raw_utility = float(candidate["utility_delta"])
+        adjusted_utility = float(candidate.get("adjusted_utility_delta", raw_utility))
+        if raw_utility <= 0.0 or adjusted_utility <= 0.0:
+            continue
         key = (
-            float(candidate["utility_delta"]),
+            adjusted_utility,
+            raw_utility,
             float(candidate["new_correct"]),
             -float(candidate["new_wrong"]),
             int(action_priority.get(str(candidate["action_type"]), -1)),
         )
-        if key > best_key:
+        if best_key is None or key > best_key:
             best_key = key
             best_index = int(idx)
-    if float(candidates[best_index]["utility_delta"]) <= 0.0:
-        best_index = 0
     return candidates, int(best_index)
 
 
@@ -383,10 +465,20 @@ def build_dataset_row(
     sample: Dict[str, Any],
     *,
     candidate_min_refined_score: float,
+    host_summary_mode: str,
+    host_summary_prior_alpha: float,
+    swap_utility_bonus: float,
+    add_utility_bonus: float,
+    defer_utility_penalty: float,
 ) -> Dict[str, Any]:
     candidates, target_index = enumerate_candidates(
         sample,
         candidate_min_refined_score=float(candidate_min_refined_score),
+        host_summary_mode=str(host_summary_mode),
+        host_summary_prior_alpha=float(host_summary_prior_alpha),
+        swap_utility_bonus=float(swap_utility_bonus),
+        add_utility_bonus=float(add_utility_bonus),
+        defer_utility_penalty=float(defer_utility_penalty),
     )
     target = candidates[int(target_index)]
     candidate_types = [str(candidate["action_type"]) for candidate in candidates]
@@ -407,9 +499,15 @@ def build_dataset_row(
         "candidate_add_pairs": [candidate["add_pair"] for candidate in candidates],
         "candidate_remove_pairs": [candidate["remove_pair"] for candidate in candidates],
         "candidate_utility_deltas": [float(candidate["utility_delta"]) for candidate in candidates],
+        "candidate_adjusted_utility_deltas": [
+            float(candidate.get("adjusted_utility_delta", candidate["utility_delta"])) for candidate in candidates
+        ],
+        "feature_host_summary_mode": str(host_summary_mode),
+        "feature_host_summary_prior_alpha": float(host_summary_prior_alpha),
         "target_index": int(target_index),
         "target_action_type": str(target["action_type"]),
         "target_utility_delta": float(target["utility_delta"]),
+        "target_adjusted_utility_delta": float(target.get("adjusted_utility_delta", target["utility_delta"])),
         "target_add_pair": target["add_pair"],
         "target_remove_pair": target["remove_pair"],
         "target_is_nonkeep": int(int(target_index) != 0),
@@ -450,6 +548,11 @@ def append_registry(args: argparse.Namespace, *, out_dir: Path, status: str) -> 
         "--extra",
         f"source_cluster_jsonl={str(Path(args.cluster_jsonl).resolve())}",
         f"candidate_min_refined_score={float(args.candidate_min_refined_score)}",
+        f"host_summary_mode={str(args.host_summary_mode)}",
+        f"host_summary_prior_alpha={float(args.host_summary_prior_alpha)}",
+        f"swap_utility_bonus={float(args.swap_utility_bonus)}",
+        f"add_utility_bonus={float(args.add_utility_bonus)}",
+        f"defer_utility_penalty={float(args.defer_utility_penalty)}",
     ]
     import subprocess
 
@@ -465,6 +568,11 @@ def main() -> int:
         "dataset_name": args.dataset_name,
         "source_cluster_jsonl": str(Path(args.cluster_jsonl).resolve()),
         "candidate_min_refined_score": float(args.candidate_min_refined_score),
+        "host_summary_mode": str(args.host_summary_mode),
+        "host_summary_prior_alpha": float(args.host_summary_prior_alpha),
+        "swap_utility_bonus": float(args.swap_utility_bonus),
+        "add_utility_bonus": float(args.add_utility_bonus),
+        "defer_utility_penalty": float(args.defer_utility_penalty),
         "status": "running",
         "error": "",
     }
@@ -485,6 +593,11 @@ def main() -> int:
                 row = build_dataset_row(
                     sample,
                     candidate_min_refined_score=float(args.candidate_min_refined_score),
+                    host_summary_mode=str(args.host_summary_mode),
+                    host_summary_prior_alpha=float(args.host_summary_prior_alpha),
+                    swap_utility_bonus=float(args.swap_utility_bonus),
+                    add_utility_bonus=float(args.add_utility_bonus),
+                    defer_utility_penalty=float(args.defer_utility_penalty),
                 )
                 dataset_rows.append(row)
                 split_tag = str(row.get("split_tag", "train"))
