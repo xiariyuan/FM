@@ -537,6 +537,10 @@ class FrequencyAwareIDDecoderV3(nn.Module):
         self.calibration_strength = float(calibration_strength)
         self.use_newborn_head = bool(use_newborn_head)
         self.newborn_head_dim = int(newborn_head_dim)
+        # Optional inference-time calibration head. Keep the attribute defined for
+        # all code paths so older checkpoints / partial feature toggles do not hit
+        # an AttributeError during forward().
+        self.confidence_calibrator = None
         
         vocab_size = num_id_vocabulary + 1
         
@@ -927,12 +931,13 @@ class FrequencyAwareIDDecoderV3(nn.Module):
         # ============ 置信度校准（可选） ============
         # Calibration is an inference-time post-processing step. Applying it during training changes the
         # logits scale/nonlinearly and can destabilize optimization. Keep training on raw logits.
-        if (not self.training) and self.use_confidence_calibration and self.confidence_calibrator is not None:
+        confidence_calibrator = getattr(self, "confidence_calibrator", None)
+        if (not self.training) and self.use_confidence_calibration and confidence_calibrator is not None:
             band_logits = None
             if isinstance(freq_branch_info, dict):
                 band_logits = freq_branch_info.get("band_logits", None)
             if isinstance(band_logits, list) and len(band_logits) > 0:
-                calibration_factor = self.confidence_calibrator.compute_calibration_factor(
+                calibration_factor = confidence_calibrator.compute_calibration_factor(
                     band_logits=band_logits,
                     fused_logits=fused_logits,
                 )

@@ -56,10 +56,22 @@ SUMMARY_FIELDS = [
     "graph_max_replaced_clusters",
     "graph_min_commit_margin",
     "posthost_oracle_min_iou",
+    "posthost_oracle_allowed_actions",
     "posthost_hierarchical_keep_thresh",
     "posthost_hierarchical_swap_thresh",
     "posthost_hierarchical_candidate_min_refined_score",
     "posthost_hierarchical_host_summary_prior_alpha",
+    "posthost_rule_large_only",
+    "posthost_rule_defer_refined_max",
+    "posthost_rule_defer_iou_max",
+    "posthost_rule_defer_row_margin_max",
+    "posthost_rule_defer_track_hist_max",
+    "posthost_rule_require_second_stage_rescue",
+    "posthost_rule_second_stage_iou_min",
+    "posthost_rule_unconfirmed_fuse_min",
+    "posthost_rule_scorecard_json",
+    "posthost_rule_score_thresh",
+    "posthost_rule_use_legacy_prefilter",
     "seed",
     "track_thresh",
     "track_buffer",
@@ -135,7 +147,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--host-variant", default="official_bytetrack_x_mot17_valhalf")
     parser.add_argument(
         "--plugin-mode",
-        choices=["learned_commit", "posthost_one_edit_oracle", "posthost_one_edit_hierarchical"],
+        choices=["learned_commit", "posthost_one_edit_oracle", "posthost_one_edit_hierarchical", "posthost_one_edit_rule"],
         default="learned_commit",
     )
     parser.add_argument("--batch-size", type=int, default=1)
@@ -164,10 +176,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph-max-replaced-clusters", type=int, default=0)
     parser.add_argument("--graph-min-commit-margin", type=float, default=0.05)
     parser.add_argument("--posthost-oracle-min-iou", type=float, default=0.5)
-    parser.add_argument("--posthost-hierarchical-keep-thresh", type=float, default=0.5)
+    parser.add_argument("--posthost-oracle-allowed-actions", default="all")
+    parser.add_argument("--posthost-hierarchical-keep-thresh", type=float, default=0.97)
     parser.add_argument("--posthost-hierarchical-swap-thresh", type=float, default=0.5)
     parser.add_argument("--posthost-hierarchical-candidate-min-refined-score", type=float, default=0.10)
     parser.add_argument("--posthost-hierarchical-host-summary-prior-alpha", type=float, default=0.0)
+    parser.add_argument("--posthost-rule-large-only", dest="posthost_rule_large_only", action="store_true", default=True)
+    parser.add_argument("--posthost-rule-allow-small", dest="posthost_rule_large_only", action="store_false")
+    parser.add_argument("--posthost-rule-defer-refined-max", type=float, default=0.35)
+    parser.add_argument("--posthost-rule-defer-iou-max", type=float, default=0.55)
+    parser.add_argument("--posthost-rule-defer-row-margin-max", type=float, default=0.15)
+    parser.add_argument("--posthost-rule-defer-track-hist-max", type=float, default=4.2)
+    parser.add_argument("--posthost-rule-require-second-stage-rescue", dest="posthost_rule_require_second_stage_rescue", action="store_true", default=False)
+    parser.add_argument("--posthost-rule-second-stage-iou-min", type=float, default=0.5)
+    parser.add_argument("--posthost-rule-unconfirmed-fuse-min", type=float, default=0.0)
+    parser.add_argument("--posthost-rule-scorecard-json", default="")
+    parser.add_argument("--posthost-rule-score-thresh", type=float, default=0.0)
+    parser.add_argument("--posthost-rule-use-legacy-prefilter", dest="posthost_rule_use_legacy_prefilter", action="store_true", default=True)
+    parser.add_argument("--posthost-rule-no-legacy-prefilter", dest="posthost_rule_use_legacy_prefilter", action="store_false")
     parser.add_argument("--registry-csv", default=str(REGISTRY_CSV))
     return parser.parse_args()
 
@@ -227,6 +253,9 @@ def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str
         ),
         "graph_min_commit_margin": args.graph_min_commit_margin if plugin_enabled else "",
         "posthost_oracle_min_iou": args.posthost_oracle_min_iou if plugin_enabled else "",
+        "posthost_oracle_allowed_actions": (
+            args.posthost_oracle_allowed_actions if plugin_enabled else ""
+        ),
         "posthost_hierarchical_keep_thresh": (
             args.posthost_hierarchical_keep_thresh if plugin_enabled else ""
         ),
@@ -238,6 +267,39 @@ def initial_summary_row(args: argparse.Namespace, *, arm: str, tracker_mode: str
         ),
         "posthost_hierarchical_host_summary_prior_alpha": (
             args.posthost_hierarchical_host_summary_prior_alpha if plugin_enabled else ""
+        ),
+        "posthost_rule_large_only": args.posthost_rule_large_only if plugin_enabled else "",
+        "posthost_rule_defer_refined_max": (
+            args.posthost_rule_defer_refined_max if plugin_enabled else ""
+        ),
+        "posthost_rule_defer_iou_max": (
+            args.posthost_rule_defer_iou_max if plugin_enabled else ""
+        ),
+        "posthost_rule_defer_row_margin_max": (
+            args.posthost_rule_defer_row_margin_max if plugin_enabled else ""
+        ),
+        "posthost_rule_defer_track_hist_max": (
+            args.posthost_rule_defer_track_hist_max if plugin_enabled else ""
+        ),
+        "posthost_rule_require_second_stage_rescue": (
+            args.posthost_rule_require_second_stage_rescue if plugin_enabled else ""
+        ),
+        "posthost_rule_second_stage_iou_min": (
+            args.posthost_rule_second_stage_iou_min if plugin_enabled else ""
+        ),
+        "posthost_rule_unconfirmed_fuse_min": (
+            args.posthost_rule_unconfirmed_fuse_min if plugin_enabled else ""
+        ),
+        "posthost_rule_scorecard_json": (
+            str(Path(args.posthost_rule_scorecard_json).resolve())
+            if plugin_enabled and str(args.posthost_rule_scorecard_json).strip()
+            else ""
+        ),
+        "posthost_rule_score_thresh": (
+            args.posthost_rule_score_thresh if plugin_enabled else ""
+        ),
+        "posthost_rule_use_legacy_prefilter": (
+            args.posthost_rule_use_legacy_prefilter if plugin_enabled else ""
         ),
         "seed": args.seed,
         "track_thresh": args.track_thresh,
@@ -522,6 +584,8 @@ def run_shared_pair_core(args: argparse.Namespace, *, out_dir: Path) -> Path:
         str(Path(args.data_root).resolve()),
         "--posthost-oracle-min-iou",
         str(args.posthost_oracle_min_iou),
+        "--posthost-oracle-allowed-actions",
+        str(args.posthost_oracle_allowed_actions),
         "--posthost-hierarchical-keep-thresh",
         str(args.posthost_hierarchical_keep_thresh),
         "--posthost-hierarchical-swap-thresh",
@@ -530,7 +594,38 @@ def run_shared_pair_core(args: argparse.Namespace, *, out_dir: Path) -> Path:
         str(args.posthost_hierarchical_candidate_min_refined_score),
         "--posthost-hierarchical-host-summary-prior-alpha",
         str(args.posthost_hierarchical_host_summary_prior_alpha),
+        "--posthost-rule-defer-refined-max",
+        str(args.posthost_rule_defer_refined_max),
+        "--posthost-rule-defer-iou-max",
+        str(args.posthost_rule_defer_iou_max),
+        "--posthost-rule-defer-row-margin-max",
+        str(args.posthost_rule_defer_row_margin_max),
+        "--posthost-rule-defer-track-hist-max",
+        str(args.posthost_rule_defer_track_hist_max),
+        "--posthost-rule-second-stage-iou-min",
+        str(args.posthost_rule_second_stage_iou_min),
+        "--posthost-rule-unconfirmed-fuse-min",
+        str(args.posthost_rule_unconfirmed_fuse_min),
+        "--posthost-rule-score-thresh",
+        str(args.posthost_rule_score_thresh),
     ]
+    if bool(args.posthost_rule_large_only):
+        cmd.append("--posthost-rule-large-only")
+    else:
+        cmd.append("--posthost-rule-allow-small")
+    if bool(args.posthost_rule_require_second_stage_rescue):
+        cmd.append("--posthost-rule-require-second-stage-rescue")
+    if bool(args.posthost_rule_use_legacy_prefilter):
+        cmd.append("--posthost-rule-use-legacy-prefilter")
+    else:
+        cmd.append("--posthost-rule-no-legacy-prefilter")
+    if str(args.posthost_rule_scorecard_json).strip():
+        cmd.extend(
+            [
+                "--posthost-rule-scorecard-json",
+                str(Path(args.posthost_rule_scorecard_json).resolve()),
+            ]
+        )
     if str(args.plugin_mode) in {"learned_commit", "posthost_one_edit_hierarchical"}:
         cmd.extend(
             [
@@ -691,6 +786,7 @@ def append_registry(args: argparse.Namespace, *, out_dir: Path, status: str) -> 
         f"protocol_tag={args.protocol_tag}",
         f"host_variant={args.host_variant}",
         f"plugin_mode={args.plugin_mode}",
+        f"posthost_oracle_allowed_actions={args.posthost_oracle_allowed_actions}",
         f"graph_checkpoint={(str(Path(args.graph_ckpt).resolve()) if str(args.plugin_mode) == 'learned_commit' and str(args.graph_ckpt).strip() else '')}",
     ]
     subprocess.run(cmd, check=True, cwd=REPO_ROOT)
@@ -740,6 +836,7 @@ def main() -> None:
         "host_variant": args.host_variant,
         "plugin_mode": args.plugin_mode,
         "posthost_oracle_min_iou": float(args.posthost_oracle_min_iou),
+        "posthost_oracle_allowed_actions": str(args.posthost_oracle_allowed_actions),
         "tracker_modes": ["host_only", "host_plus_plugin"],
         "eval_mode": "shared_detection_pair",
         "status": "running",

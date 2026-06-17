@@ -1,0 +1,22 @@
+project: fcaa
+dataset: MOT17
+split: train
+pairbank:
+  top_k: 3
+  proximity_thresh: 0.5
+  appearance_thresh: 0.25
+  ambiguity_margin: 0.05
+  min_visibility: 0.0
+  image_height: 128
+  image_width: 64
+train:
+  batch_size: 512
+  epochs: 15
+  lr: 0.001
+  weight_decay: 0.0001
+  positive_weight: 3.0
+  ambiguous_weight: 2.0
+runtime:
+  top_k: 3
+  trigger_margin: 0.05
+  lambda: 0.3

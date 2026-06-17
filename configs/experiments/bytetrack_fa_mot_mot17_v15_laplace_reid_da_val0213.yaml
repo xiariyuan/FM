@@ -1,6 +1,14 @@
 SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v14_ctrl_base_reid_da_val0213.yaml
 EXP_NAME: bytetrack_fa_mot_mot17_v15_laplace_reid_da_val0213
 
+USE_FREQ_AWARE: true
+USE_FREQ_DECODER_V2: true
+USE_MAMBA_FOR_LOWFREQ: false
+USE_MAMBA_IN_ID_DECODER: false
+USE_GLOBAL_MAMBA: false
+NUM_WORKERS: 0
+PREFETCH_FACTOR: 2
+
 ASSOC_USE_LAPLACE: true
 ASSOC_LAPLACE_WEIGHT: 0.35
 ASSOC_LAPLACE_DECAY_SCALES: [1.0, 2.0, 4.0]

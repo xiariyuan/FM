@@ -20,8 +20,8 @@ DETECTOR_FILTER: [FRCNN]
 # Validation on MOT17 train sequences (no overlap with training by build_dataset()).
 VAL_SEQUENCES: [MOT17-02, MOT17-13]
 
-# --- Use the finetuned detector weights (frozen during tracker training) ---
-BYTETRACK_CKPT: outputs/detector/det_yolox_mixdet_nooverlap_20260224_022553/best_ckpt.pth.tar
+# --- Use the local pretrained detector weights (frozen during tracker training) ---
+BYTETRACK_CKPT: weight/bytetrack_x_mot17.pth.tar
 BYTETRACK_FP16: true
 # Speed/memory: avoid extracting features for hundreds of ultra-low score boxes.
 BYTETRACK_CONF_THRE: 0.10

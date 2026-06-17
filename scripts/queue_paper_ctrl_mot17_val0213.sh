@@ -13,9 +13,14 @@ REGISTRY_CSV="${REGISTRY_CSV:-outputs/experiment_registry.csv}"
 EPOCHS="${EPOCHS:-6}"
 BATCH_SIZE="${BATCH_SIZE:-1}"
 ACCUMULATE_STEPS="${ACCUMULATE_STEPS:-6}"
+NUM_WORKERS_OVERRIDE="${NUM_WORKERS_OVERRIDE:-}"
+PREFETCH_FACTOR_OVERRIDE="${PREFETCH_FACTOR_OVERRIDE:-}"
+SAFE_SYNC_MODE="${SAFE_SYNC_MODE:-0}"
+TRAIN_TIMEOUT_SEC="${TRAIN_TIMEOUT_SEC:-0}"
 WATCHDOG_POLL_SEC="${WATCHDOG_POLL_SEC:-60}"
 WATCHDOG_STALL_SEC="${WATCHDOG_STALL_SEC:-2700}"
 WATCHDOG_EXIT_GRACE_SEC="${WATCHDOG_EXIT_GRACE_SEC:-180}"
+WATCHDOG_KILL_ON_STALL="${WATCHDOG_KILL_ON_STALL:-1}"
 
 DEFAULT_CONFIGS=(
   "configs/experiments/bytetrack_fa_mot_mot17_v14_ctrl_base_spatial_val0213.yaml"
@@ -150,6 +155,7 @@ PY
 run_one() {
   local cfg="$1"
   local exp out_dir log_path result_csv best_txt best_epoch best_hota best_ckpt train_pid watchdog_pid watchdog_log train_rc
+  local -a train_cmd
   exp="$(get_exp_name "${cfg}")"
   if [[ -z "${exp}" ]]; then
     echo "[queue] missing EXP_NAME in ${cfg}" >&2
@@ -173,48 +179,70 @@ run_one() {
   write_single_row_csv "${result_csv}" "${exp}" "${cfg}" "${out_dir}" "" "" "" "running"
 
   : > "${watchdog_log}"
-  "${PYTHON_BIN}" -u train_bytetrack.py \
-    --config-path "${cfg}" \
-    --data-root "${DATA_ROOT}" \
-    --outputs-dir "${out_dir}" \
-    --exp-name "${exp}" \
-    --epochs "${EPOCHS}" \
-    --batch-size "${BATCH_SIZE}" \
-    --accumulate-steps "${ACCUMULATE_STEPS}" \
-    > >(tee "${log_path}") 2>&1 &
-  train_pid=$!
-
-  nohup bash "${REPO_ROOT}/scripts/watch_train_activity.sh" \
-    --pid "${train_pid}" \
-    --exp-name "${exp}" \
-    --config-path "${cfg}" \
-    --out-dir "${out_dir}" \
-    --result-csv "${result_csv}" \
-    --summary-csv "${SUMMARY_CSV}" \
-    --registry-csv "${REGISTRY_CSV}" \
-    --log-path "${log_path}" \
-    --script "scripts/queue_paper_ctrl_mot17_val0213.sh" \
-    --dataset "MOT17" \
-    --split "val0213_proxy" \
-    --tracker-family "ByteTrack" \
-    --variant "paper_ctrl_host_control" \
-    --tag "$(basename "${OUT_ROOT}")" \
-    --poll-sec "${WATCHDOG_POLL_SEC}" \
-    --stall-sec "${WATCHDOG_STALL_SEC}" \
-    --exit-grace-sec "${WATCHDOG_EXIT_GRACE_SEC}" \
-    --watchdog-log "${watchdog_log}" >/dev/null 2>&1 &
-  watchdog_pid=$!
-  echo "${watchdog_pid}" > "${out_dir}/watchdog.pid"
-
-  set +e
-  wait "${train_pid}"
-  train_rc=$?
-  set -e
-  if kill -0 "${watchdog_pid}" 2>/dev/null; then
-    kill "${watchdog_pid}" 2>/dev/null || true
-    wait "${watchdog_pid}" 2>/dev/null || true
+  train_cmd=(
+    "${PYTHON_BIN}" -u train_bytetrack.py
+    --config-path "${cfg}"
+    --data-root "${DATA_ROOT}"
+    --outputs-dir "${out_dir}"
+    --exp-name "${exp}"
+    --epochs "${EPOCHS}"
+    --batch-size "${BATCH_SIZE}"
+    --accumulate-steps "${ACCUMULATE_STEPS}"
+  )
+  if [[ -n "${NUM_WORKERS_OVERRIDE}" ]]; then
+    train_cmd+=(--num-workers "${NUM_WORKERS_OVERRIDE}")
   fi
-  rm -f "${out_dir}/watchdog.pid"
+  if [[ -n "${PREFETCH_FACTOR_OVERRIDE}" ]]; then
+    train_cmd+=(--prefetch-factor "${PREFETCH_FACTOR_OVERRIDE}")
+  fi
+  if [[ "${SAFE_SYNC_MODE}" == "1" ]]; then
+    log "safe_sync_mode=1 timeout_sec=${TRAIN_TIMEOUT_SEC}"
+    set +e
+    if [[ "${TRAIN_TIMEOUT_SEC}" =~ ^[0-9]+$ ]] && [[ "${TRAIN_TIMEOUT_SEC}" -gt 0 ]]; then
+      timeout "${TRAIN_TIMEOUT_SEC}" "${train_cmd[@]}" > >(tee "${log_path}") 2>&1
+      train_rc=$?
+    else
+      "${train_cmd[@]}" > >(tee "${log_path}") 2>&1
+      train_rc=$?
+    fi
+    set -e
+  else
+    "${train_cmd[@]}" > >(tee "${log_path}") 2>&1 &
+    train_pid=$!
+
+    nohup bash "${REPO_ROOT}/scripts/watch_train_activity.sh" \
+      --pid "${train_pid}" \
+      --exp-name "${exp}" \
+      --config-path "${cfg}" \
+      --out-dir "${out_dir}" \
+      --result-csv "${result_csv}" \
+      --summary-csv "${SUMMARY_CSV}" \
+      --registry-csv "${REGISTRY_CSV}" \
+      --log-path "${log_path}" \
+      --script "scripts/queue_paper_ctrl_mot17_val0213.sh" \
+      --dataset "MOT17" \
+      --split "val0213_proxy" \
+      --tracker-family "ByteTrack" \
+      --variant "paper_ctrl_host_control" \
+      --tag "$(basename "${OUT_ROOT}")" \
+      --poll-sec "${WATCHDOG_POLL_SEC}" \
+      --stall-sec "${WATCHDOG_STALL_SEC}" \
+      --exit-grace-sec "${WATCHDOG_EXIT_GRACE_SEC}" \
+      --kill-on-stall "${WATCHDOG_KILL_ON_STALL}" \
+      --watchdog-log "${watchdog_log}" >/dev/null 2>&1 &
+    watchdog_pid=$!
+    echo "${watchdog_pid}" > "${out_dir}/watchdog.pid"
+
+    set +e
+    wait "${train_pid}"
+    train_rc=$?
+    set -e
+    if kill -0 "${watchdog_pid}" 2>/dev/null; then
+      kill "${watchdog_pid}" 2>/dev/null || true
+      wait "${watchdog_pid}" 2>/dev/null || true
+    fi
+    rm -f "${out_dir}/watchdog.pid"
+  fi
 
   if [[ "${train_rc}" -ne 0 ]]; then
     log "train failed exp=${exp}"
@@ -245,6 +273,7 @@ run_one() {
 
 log "starting paper-control 4-way proxy training"
 log "epochs=${EPOCHS} batch_size=${BATCH_SIZE} accumulate_steps=${ACCUMULATE_STEPS}"
+log "num_workers_override=${NUM_WORKERS_OVERRIDE:-default} prefetch_override=${PREFETCH_FACTOR_OVERRIDE:-default} safe_sync_mode=${SAFE_SYNC_MODE} train_timeout_sec=${TRAIN_TIMEOUT_SEC} watchdog_stall=${WATCHDOG_STALL_SEC} kill_on_stall=${WATCHDOG_KILL_ON_STALL}"
 
 for cfg in "${CONFIGS[@]}"; do
   if ! run_one "${cfg}"; then

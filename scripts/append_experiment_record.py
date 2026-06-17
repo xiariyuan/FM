@@ -31,7 +31,7 @@ CORE_FIELDS = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Append experiment results to a central CSV registry.")
     parser.add_argument("--csv", required=True, help="Registry CSV path")
-    parser.add_argument("--kind", required=True, choices=["train", "eval", "analysis", "other"])
+    parser.add_argument("--kind", required=True, choices=["train", "eval", "analysis", "queue", "other"])
     parser.add_argument("--status", default="success")
     parser.add_argument("--script", default="")
     parser.add_argument("--dataset", default="")
@@ -135,30 +135,36 @@ def dedupe_key(row: dict[str, str]) -> tuple[str, ...]:
         normalize_pathish(row.get("run_root", "")),
         normalize_pathish(row.get("summary_csv", "")),
         normalize_pathish(row.get("checkpoint", "")),
+        row.get("phase", ""),
         row.get("name", ""),
         normalize_pathish(row.get("run_dir", "")),
     )
 
 
-def merge_unique_rows(existing_rows: list[dict[str, str]], new_rows: list[dict[str, str]]) -> tuple[list[dict[str, str]], int]:
-    seen = set()
-    unique_rows: list[dict[str, str]] = []
+def merge_unique_rows(existing_rows: list[dict[str, str]], new_rows: list[dict[str, str]]) -> tuple[list[dict[str, str]], int, int]:
+    row_by_key: dict[tuple[str, ...], dict[str, str]] = {}
+    order: list[tuple[str, ...]] = []
     for row in existing_rows:
         key = dedupe_key(row)
-        if key in seen:
+        if key in row_by_key:
             continue
-        seen.add(key)
-        unique_rows.append(row)
+        row_by_key[key] = row
+        order.append(key)
 
     appended = 0
+    updated = 0
     for row in new_rows:
         key = dedupe_key(row)
-        if key in seen:
+        if key in row_by_key:
+            row_by_key[key] = row
+            updated += 1
             continue
-        seen.add(key)
-        unique_rows.append(row)
+        row_by_key[key] = row
+        order.append(key)
         appended += 1
-    return unique_rows, appended
+
+    unique_rows = [row_by_key[key] for key in order]
+    return unique_rows, appended, updated
 
 
 def read_existing(csv_path: Path) -> tuple[list[dict[str, str]], list[str]]:
@@ -193,13 +199,13 @@ def main() -> None:
     with lock_path.open("w") as lock_fp:
         fcntl.flock(lock_fp.fileno(), fcntl.LOCK_EX)
         existing_rows, _ = read_existing(csv_path)
-        all_rows, appended = merge_unique_rows(existing_rows, new_rows)
+        all_rows, appended, updated = merge_unique_rows(existing_rows, new_rows)
         fieldnames = ordered_fields(existing_rows, new_rows)
         write_registry(csv_path, all_rows, fieldnames)
         fcntl.flock(lock_fp.fileno(), fcntl.LOCK_UN)
 
-    skipped = len(new_rows) - appended
-    print(f"[registry] appended {appended} row(s), skipped {skipped} duplicate row(s) in {csv_path}")
+    skipped = len(new_rows) - appended - updated
+    print(f"[registry] appended {appended} row(s), updated {updated} row(s), skipped {skipped} duplicate row(s) in {csv_path}")
 
 
 if __name__ == "__main__":

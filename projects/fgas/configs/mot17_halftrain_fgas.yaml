@@ -1,0 +1,53 @@
+project: fgas
+dataset: MOT17
+split: train
+
+blockbank:
+  subset_train: train_half
+  subset_val: val_half
+  seq_group: full7
+  stages:
+    - primary
+    - recovery
+    - unconfirmed
+  max_rows: 3
+  max_cols: 3
+  top_k_per_row: 3
+  proximity_thresh: 0.5
+  appearance_thresh: 0.25
+  ambiguity_margin: 0.05
+  image_height: 128
+  image_width: 64
+  include_quality_tags: true
+
+features:
+  use_reid: true
+  use_frequency: true
+  use_motion: true
+  use_iou: true
+  use_det_score: true
+  use_track_age: true
+  use_time_since_update: true
+  use_box_geometry: true
+  use_quality: true
+
+train:
+  batch_size: 256
+  epochs: 20
+  lr: 0.001
+  weight_decay: 0.0001
+  hidden_dim: 64
+  stage_embed_dim: 8
+  row_ce_weight: 1.0
+  edge_bce_weight: 1.0
+  no_match_weight: 0.5
+  ambiguous_oversample: 2.0
+
+runtime:
+  enabled_stages:
+    - primary
+  trigger_mode: conflict_block
+  trigger_margin: 0.05
+  max_rows: 3
+  max_cols: 3
+  apply_on_top_k: 3

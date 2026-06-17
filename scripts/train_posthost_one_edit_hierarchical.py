@@ -37,6 +37,8 @@ SUMMARY_FIELDS = [
     "swap_oversample",
     "gate_positive_weight",
     "swap_selector_weight",
+    "rank_pairwise_margin",
+    "rank_positive_eps",
     "hidden_dim",
     "num_layers",
     "dropout",
@@ -57,6 +59,10 @@ SUMMARY_FIELDS = [
     "train_nonkeep_exact_top1_acc",
     "train_swap_exact_top1_acc",
     "train_defer_exact_top1_acc",
+    "train_positive_utility_gate_recall",
+    "train_positive_utility_hit_rate",
+    "train_utility_capture",
+    "train_mean_pred_adjusted_utility",
     "val_gate_acc",
     "val_action_type_acc",
     "val_keep_vs_edit_acc",
@@ -65,6 +71,10 @@ SUMMARY_FIELDS = [
     "val_nonkeep_exact_top1_acc",
     "val_swap_exact_top1_acc",
     "val_defer_exact_top1_acc",
+    "val_positive_utility_gate_recall",
+    "val_positive_utility_hit_rate",
+    "val_utility_capture",
+    "val_mean_pred_adjusted_utility",
     "checkpoint",
     "metrics_jsonl",
     "status",
@@ -84,9 +94,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--weight-decay", type=float, default=1e-4)
-    parser.add_argument("--swap-oversample", type=float, default=8.0)
+    parser.add_argument("--swap-oversample", type=float, default=1.0)
     parser.add_argument("--gate-positive-weight", type=float, default=2.0)
-    parser.add_argument("--swap-selector-weight", type=float, default=8.0)
+    parser.add_argument("--swap-selector-weight", type=float, default=2.0)
+    parser.add_argument("--rank-pairwise-margin", type=float, default=0.0)
+    parser.add_argument("--rank-positive-eps", type=float, default=1e-6)
     parser.add_argument(
         "--best-metric",
         choices=[
@@ -95,8 +107,10 @@ def parse_args() -> argparse.Namespace:
             "swap_exact_top1_acc",
             "swap_focus",
             "balanced_gate_swap",
+            "utility_capture",
+            "utility_capture_hit_rate",
         ],
-        default="swap_focus",
+        default="utility_capture_hit_rate",
     )
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num-workers", type=int, default=0)
@@ -163,19 +177,49 @@ def build_cluster_feature(row: Dict[str, Any]) -> list[float]:
 
 def prepare_rows(rows: Sequence[Dict[str, Any]]) -> list[Dict[str, Any]]:
     prepared: list[Dict[str, Any]] = []
+    action_priority = {"keep": 0, "defer": 1, "add": 2, "swap": 3}
     for row in rows:
         candidate_types = list(row["candidate_action_types"])
+        candidate_raw_utilities = [float(x) for x in row.get("candidate_utility_deltas", [])]
+        candidate_adjusted_utilities = [
+            float(x)
+            for x in row.get("candidate_adjusted_utility_deltas", row.get("candidate_utility_deltas", []))
+        ]
         defer_indices = [idx for idx, action in enumerate(candidate_types) if action == "defer"]
         swap_indices = [idx for idx, action in enumerate(candidate_types) if action == "swap"]
-        target_type = str(row["target_action_type"])
+        utility_target_index = 0
+        best_key = None
+        for idx in range(1, len(candidate_types)):
+            adjusted_utility = float(candidate_adjusted_utilities[idx])
+            raw_utility = float(candidate_raw_utilities[idx]) if idx < len(candidate_raw_utilities) else adjusted_utility
+            if adjusted_utility <= 0.0:
+                continue
+            key = (
+                adjusted_utility,
+                raw_utility,
+                int(action_priority.get(str(candidate_types[idx]), -1)),
+            )
+            if best_key is None or key > best_key:
+                best_key = key
+                utility_target_index = int(idx)
+        utility_target_type = str(candidate_types[utility_target_index]) if candidate_types else "keep"
+        best_positive_nonkeep_adjusted_utility = max(
+            0.0,
+            max((float(x) for x in candidate_adjusted_utilities[1:]), default=0.0),
+        )
         prepared.append(
             {
                 **row,
                 "cluster_features_hier": build_cluster_feature(row),
-                "gate_target": int(int(row["target_index"]) > 0),
+                "candidate_utility_deltas": candidate_raw_utilities,
+                "candidate_adjusted_utility_deltas": candidate_adjusted_utilities,
+                "utility_target_index": int(utility_target_index),
+                "utility_target_action_type": str(utility_target_type),
+                "best_positive_nonkeep_adjusted_utility": float(best_positive_nonkeep_adjusted_utility),
+                "gate_target": int(int(utility_target_index) > 0),
                 "defer_indices": defer_indices,
                 "swap_indices": swap_indices,
-                "target_type_id": int(ACTION_TYPE_TO_ID.get(target_type, 0)),
+                "target_type_id": int(ACTION_TYPE_TO_ID.get(utility_target_type, 0)),
             }
         )
     return prepared
@@ -206,25 +250,31 @@ def collate_cluster_batch(batch: Sequence[Dict[str, Any]]) -> Dict[str, torch.Te
 def collate_ranker_batch(batch: Sequence[Dict[str, Any]], action: str) -> Dict[str, torch.Tensor]:
     subset_key = f"{action}_indices"
     candidate_lists = []
+    utility_lists = []
     targets = []
     for row in batch:
         subset = [row["candidate_features"][idx] for idx in row[subset_key]]
-        target_global = int(row["target_index"])
+        utilities = [float(row["candidate_adjusted_utility_deltas"][idx]) for idx in row[subset_key]]
+        target_global = int(row["utility_target_index"])
         target_local = int(row[subset_key].index(target_global))
         candidate_lists.append(subset)
+        utility_lists.append(utilities)
         targets.append(target_local)
     max_candidates = max(len(rows) for rows in candidate_lists)
     feat_dim = len(candidate_lists[0][0])
     features = torch.zeros((len(batch), max_candidates, feat_dim), dtype=torch.float32)
     mask = torch.zeros((len(batch), max_candidates), dtype=torch.bool)
+    utilities = torch.zeros((len(batch), max_candidates), dtype=torch.float32)
     for idx, subset in enumerate(candidate_lists):
         subset_tensor = torch.tensor(subset, dtype=torch.float32)
         count = int(subset_tensor.shape[0])
         features[idx, :count] = subset_tensor
         mask[idx, :count] = True
+        utilities[idx, :count] = torch.tensor(utility_lists[idx], dtype=torch.float32)
     return {
         "candidate_features": features,
         "candidate_mask": mask,
+        "candidate_utilities": utilities,
         "target_index": torch.tensor(targets, dtype=torch.long),
     }
 
@@ -241,6 +291,36 @@ def bce_logits_loss(logits: torch.Tensor, targets: torch.Tensor, positive_weight
         torch.ones_like(targets),
     )
     return nn.functional.binary_cross_entropy_with_logits(logits, targets, weight=weight)
+
+
+def utility_pairwise_ranking_loss(
+    logits: torch.Tensor,
+    utilities: torch.Tensor,
+    mask: torch.Tensor,
+    *,
+    margin: float,
+    positive_eps: float,
+) -> torch.Tensor:
+    total_loss = logits.sum() * 0.0
+    pair_groups = 0
+    valid_mask = mask.to(dtype=torch.bool)
+    for row_logits, row_utilities, row_mask in zip(logits, utilities, valid_mask):
+        active_logits = row_logits[row_mask]
+        active_utilities = row_utilities[row_mask]
+        if int(active_logits.numel()) <= 1:
+            continue
+        utility_diff = active_utilities.unsqueeze(1) - active_utilities.unsqueeze(0)
+        pair_mask = utility_diff > float(positive_eps)
+        if not bool(pair_mask.any().item()):
+            continue
+        score_diff = active_logits.unsqueeze(1) - active_logits.unsqueeze(0)
+        pair_weights = utility_diff[pair_mask].detach().abs().clamp_min(float(positive_eps))
+        pair_loss = nn.functional.softplus(-(score_diff[pair_mask] - float(margin)))
+        total_loss = total_loss + (pair_loss * pair_weights).sum() / pair_weights.sum()
+        pair_groups += 1
+    if pair_groups <= 0:
+        return total_loss
+    return total_loss / float(pair_groups)
 
 
 def load_rows(path: Path) -> list[Dict[str, Any]]:
@@ -324,10 +404,19 @@ def evaluate_hierarchical(
     swap_exact_top1_correct = 0
     target_defer = 0
     defer_exact_top1_correct = 0
+    positive_utility_total = 0
+    positive_utility_gate_recall = 0
+    positive_utility_hit = 0
+    utility_capture_numer = 0.0
+    utility_capture_denom = 0.0
+    pred_adjusted_utility_sum = 0.0
     for row in rows:
         pred = hierarchical_predict(model, row, device=device)
-        target_index = int(row["target_index"])
-        target_action = str(row["target_action_type"])
+        target_index = int(row["utility_target_index"])
+        target_action = str(row["utility_target_action_type"])
+        pred_adjusted_utility = float(row["candidate_adjusted_utility_deltas"][int(pred["pred_index"])])
+        pred_adjusted_utility_sum += pred_adjusted_utility
+        best_positive_utility = float(row.get("best_positive_nonkeep_adjusted_utility", 0.0))
         gate_correct += int(int(pred["gate_pred"]) == int(row["gate_target"]))
         action_type_correct += int(str(pred["pred_action_type"]) == target_action)
         keep_vs_edit_correct += int((int(pred["pred_index"] > 0)) == int(row["gate_target"]))
@@ -342,6 +431,12 @@ def evaluate_hierarchical(
         if target_action == "defer":
             target_defer += 1
             defer_exact_top1_correct += int(int(pred["pred_index"]) == target_index)
+        if best_positive_utility > 0.0:
+            positive_utility_total += 1
+            positive_utility_gate_recall += int(int(pred["gate_pred"]) > 0)
+            positive_utility_hit += int(int(pred["pred_index"]) > 0 and pred_adjusted_utility > 0.0)
+            utility_capture_numer += float(max(pred_adjusted_utility, 0.0))
+            utility_capture_denom += float(best_positive_utility)
     return {
         "gate_acc": float(gate_correct / max(total, 1)),
         "action_type_acc": float(action_type_correct / max(total, 1)),
@@ -351,6 +446,10 @@ def evaluate_hierarchical(
         "nonkeep_exact_top1_acc": float(nonkeep_exact_top1_correct / max(nonkeep_total, 1)),
         "swap_exact_top1_acc": float(swap_exact_top1_correct / max(target_swap, 1)),
         "defer_exact_top1_acc": float(defer_exact_top1_correct / max(target_defer, 1)),
+        "positive_utility_gate_recall": float(positive_utility_gate_recall / max(positive_utility_total, 1)),
+        "positive_utility_hit_rate": float(positive_utility_hit / max(positive_utility_total, 1)),
+        "utility_capture": float(utility_capture_numer / max(utility_capture_denom, 1e-6)),
+        "mean_pred_adjusted_utility": float(pred_adjusted_utility_sum / max(total, 1)),
     }
 
 
@@ -375,6 +474,13 @@ def select_metric_value(metrics: Dict[str, float], *, best_metric: str) -> float
             + 0.30 * float(metrics["swap_exact_top1_acc"])
             + 0.20 * float(metrics["nonkeep_exact_top1_acc"])
             + 0.10 * float(metrics["swap_action_recall"])
+        )
+    if name == "utility_capture":
+        return float(metrics["utility_capture"])
+    if name == "utility_capture_hit_rate":
+        return float(
+            0.70 * float(metrics["utility_capture"])
+            + 0.30 * float(metrics["positive_utility_hit_rate"])
         )
     raise ValueError(f"Unsupported best metric: {best_metric}")
 
@@ -417,6 +523,8 @@ def append_registry(args: argparse.Namespace, *, out_dir: Path, checkpoint: Path
         f"swap_oversample={float(args.swap_oversample)}",
         f"gate_positive_weight={float(args.gate_positive_weight)}",
         f"swap_selector_weight={float(args.swap_selector_weight)}",
+        f"rank_pairwise_margin={float(args.rank_pairwise_margin)}",
+        f"rank_positive_eps={float(args.rank_positive_eps)}",
         f"best_metric={str(args.best_metric)}",
     ]
     subprocess.run(cmd, check=True, cwd=REPO_ROOT)
@@ -436,6 +544,8 @@ def main() -> int:
         "swap_oversample": float(args.swap_oversample),
         "gate_positive_weight": float(args.gate_positive_weight),
         "swap_selector_weight": float(args.swap_selector_weight),
+        "rank_pairwise_margin": float(args.rank_pairwise_margin),
+        "rank_positive_eps": float(args.rank_positive_eps),
         "hidden_dim": int(args.hidden_dim),
         "num_layers": int(args.num_layers),
         "dropout": float(args.dropout),
@@ -459,7 +569,7 @@ def main() -> int:
         if not train_rows or not val_rows:
             raise RuntimeError("Need non-empty train and val splits")
 
-        swap_train = [row for row in train_rows if str(row.get("target_action_type")) == "swap"]
+        swap_train = [row for row in train_rows if str(row.get("utility_target_action_type")) == "swap"]
         swap_repeat = max(int(math.ceil(float(args.swap_oversample))) - 1, 0)
         if swap_repeat > 0 and swap_train:
             train_rows = list(train_rows) + swap_train * swap_repeat
@@ -500,17 +610,33 @@ def main() -> int:
             collate_fn=collate_cluster_batch,
             drop_last=False,
         )
-        edit_rows_train = [row for row in train_rows if int(row["gate_target"]) > 0]
-        action_loader = DataLoader(
-            ClusterDataset(edit_rows_train),
-            batch_size=int(args.batch_size),
-            shuffle=True,
-            num_workers=int(args.num_workers),
-            collate_fn=collate_cluster_batch,
-            drop_last=False,
+        edit_rows_train = [
+            row
+            for row in train_rows
+            if int(row["gate_target"]) > 0 and str(row.get("utility_target_action_type")) in {"defer", "swap"}
+        ]
+        action_loader = (
+            DataLoader(
+                ClusterDataset(edit_rows_train),
+                batch_size=int(args.batch_size),
+                shuffle=True,
+                num_workers=int(args.num_workers),
+                collate_fn=collate_cluster_batch,
+                drop_last=False,
+            )
+            if edit_rows_train
+            else None
         )
-        defer_rows_train = [row for row in train_rows if str(row.get("target_action_type")) == "defer" and row["defer_indices"]]
-        swap_rows_train = [row for row in train_rows if str(row.get("target_action_type")) == "swap" and row["swap_indices"]]
+        defer_rows_train = [
+            row
+            for row in train_rows
+            if str(row.get("utility_target_action_type")) == "defer" and row["defer_indices"]
+        ]
+        swap_rows_train = [
+            row
+            for row in train_rows
+            if str(row.get("utility_target_action_type")) == "swap" and row["swap_indices"]
+        ]
 
         best_epoch = -1
         best_metric = float("-inf")
@@ -530,16 +656,17 @@ def main() -> int:
                     torch.nn.utils.clip_grad_norm_(model.keep_edit_gate.parameters(), max_norm=5.0)
                     gate_opt.step()
 
-                for batch in action_loader:
-                    feats = batch["cluster_features"].to(device)
-                    target_type_id = batch["target_type_id"].to(device)
-                    action_target = (target_type_id == 2).to(dtype=torch.float32)
-                    logits = model.defer_swap_selector(feats)
-                    loss = bce_logits_loss(logits, action_target, positive_weight=float(args.swap_selector_weight))
-                    action_opt.zero_grad(set_to_none=True)
-                    loss.backward()
-                    torch.nn.utils.clip_grad_norm_(model.defer_swap_selector.parameters(), max_norm=5.0)
-                    action_opt.step()
+                if action_loader is not None:
+                    for batch in action_loader:
+                        feats = batch["cluster_features"].to(device)
+                        target_type_id = batch["target_type_id"].to(device)
+                        action_target = (target_type_id == 2).to(dtype=torch.float32)
+                        logits = model.defer_swap_selector(feats)
+                        loss = bce_logits_loss(logits, action_target, positive_weight=float(args.swap_selector_weight))
+                        action_opt.zero_grad(set_to_none=True)
+                        loss.backward()
+                        torch.nn.utils.clip_grad_norm_(model.defer_swap_selector.parameters(), max_norm=5.0)
+                        action_opt.step()
 
                 if defer_rows_train:
                     random.shuffle(defer_rows_train)
@@ -548,9 +675,15 @@ def main() -> int:
                         batch = collate_ranker_batch(batch_rows, action="defer")
                         feats = batch["candidate_features"].to(device)
                         mask = batch["candidate_mask"].to(device)
-                        target = batch["target_index"].to(device)
-                        logits = model.defer_ranker(feats).masked_fill(~mask, float("-inf"))
-                        loss = nn.functional.cross_entropy(logits, target)
+                        utilities = batch["candidate_utilities"].to(device)
+                        logits = model.defer_ranker(feats)
+                        loss = utility_pairwise_ranking_loss(
+                            logits,
+                            utilities,
+                            mask,
+                            margin=float(args.rank_pairwise_margin),
+                            positive_eps=float(args.rank_positive_eps),
+                        )
                         defer_opt.zero_grad(set_to_none=True)
                         loss.backward()
                         torch.nn.utils.clip_grad_norm_(model.defer_ranker.parameters(), max_norm=5.0)
@@ -563,9 +696,15 @@ def main() -> int:
                         batch = collate_ranker_batch(batch_rows, action="swap")
                         feats = batch["candidate_features"].to(device)
                         mask = batch["candidate_mask"].to(device)
-                        target = batch["target_index"].to(device)
-                        logits = model.swap_ranker(feats).masked_fill(~mask, float("-inf"))
-                        loss = nn.functional.cross_entropy(logits, target)
+                        utilities = batch["candidate_utilities"].to(device)
+                        logits = model.swap_ranker(feats)
+                        loss = utility_pairwise_ranking_loss(
+                            logits,
+                            utilities,
+                            mask,
+                            margin=float(args.rank_pairwise_margin),
+                            positive_eps=float(args.rank_positive_eps),
+                        )
                         swap_opt.zero_grad(set_to_none=True)
                         loss.backward()
                         torch.nn.utils.clip_grad_norm_(model.swap_ranker.parameters(), max_norm=5.0)
@@ -601,6 +740,10 @@ def main() -> int:
                             "train_nonkeep_exact_top1_acc": float(train_metrics["nonkeep_exact_top1_acc"]),
                             "train_swap_exact_top1_acc": float(train_metrics["swap_exact_top1_acc"]),
                             "train_defer_exact_top1_acc": float(train_metrics["defer_exact_top1_acc"]),
+                            "train_positive_utility_gate_recall": float(train_metrics["positive_utility_gate_recall"]),
+                            "train_positive_utility_hit_rate": float(train_metrics["positive_utility_hit_rate"]),
+                            "train_utility_capture": float(train_metrics["utility_capture"]),
+                            "train_mean_pred_adjusted_utility": float(train_metrics["mean_pred_adjusted_utility"]),
                             "val_gate_acc": float(val_metrics["gate_acc"]),
                             "val_action_type_acc": float(val_metrics["action_type_acc"]),
                             "val_keep_vs_edit_acc": float(val_metrics["keep_vs_edit_acc"]),
@@ -609,6 +752,10 @@ def main() -> int:
                             "val_nonkeep_exact_top1_acc": float(val_metrics["nonkeep_exact_top1_acc"]),
                             "val_swap_exact_top1_acc": float(val_metrics["swap_exact_top1_acc"]),
                             "val_defer_exact_top1_acc": float(val_metrics["defer_exact_top1_acc"]),
+                            "val_positive_utility_gate_recall": float(val_metrics["positive_utility_gate_recall"]),
+                            "val_positive_utility_hit_rate": float(val_metrics["positive_utility_hit_rate"]),
+                            "val_utility_capture": float(val_metrics["utility_capture"]),
+                            "val_mean_pred_adjusted_utility": float(val_metrics["mean_pred_adjusted_utility"]),
                             "best_metric_name": str(args.best_metric),
                             "best_metric_value_so_far": float(best_metric),
                             "is_best": int(epoch == best_epoch),
@@ -635,6 +782,10 @@ def main() -> int:
                 "train_nonkeep_exact_top1_acc": float(best_metrics["train"]["nonkeep_exact_top1_acc"]),
                 "train_swap_exact_top1_acc": float(best_metrics["train"]["swap_exact_top1_acc"]),
                 "train_defer_exact_top1_acc": float(best_metrics["train"]["defer_exact_top1_acc"]),
+                "train_positive_utility_gate_recall": float(best_metrics["train"]["positive_utility_gate_recall"]),
+                "train_positive_utility_hit_rate": float(best_metrics["train"]["positive_utility_hit_rate"]),
+                "train_utility_capture": float(best_metrics["train"]["utility_capture"]),
+                "train_mean_pred_adjusted_utility": float(best_metrics["train"]["mean_pred_adjusted_utility"]),
                 "val_gate_acc": float(best_metrics["val"]["gate_acc"]),
                 "val_action_type_acc": float(best_metrics["val"]["action_type_acc"]),
                 "val_keep_vs_edit_acc": float(best_metrics["val"]["keep_vs_edit_acc"]),
@@ -643,6 +794,10 @@ def main() -> int:
                 "val_nonkeep_exact_top1_acc": float(best_metrics["val"]["nonkeep_exact_top1_acc"]),
                 "val_swap_exact_top1_acc": float(best_metrics["val"]["swap_exact_top1_acc"]),
                 "val_defer_exact_top1_acc": float(best_metrics["val"]["defer_exact_top1_acc"]),
+                "val_positive_utility_gate_recall": float(best_metrics["val"]["positive_utility_gate_recall"]),
+                "val_positive_utility_hit_rate": float(best_metrics["val"]["positive_utility_hit_rate"]),
+                "val_utility_capture": float(best_metrics["val"]["utility_capture"]),
+                "val_mean_pred_adjusted_utility": float(best_metrics["val"]["mean_pred_adjusted_utility"]),
                 "status": "success",
                 "error": "",
             }

@@ -33,7 +33,7 @@ CORE_FIELDS = [
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Upsert experiment plan/status rows in a central CSV.")
     parser.add_argument("--csv", required=True, help="Plan CSV path")
-    parser.add_argument("--status", required=True, choices=["queued", "running", "completed", "failed", "cancelled"])
+    parser.add_argument("--status", required=True, choices=["queued", "running", "completed", "failed", "cancelled", "interrupted"])
     parser.add_argument("--kind", default="other", choices=["train", "eval", "analysis", "other"])
     parser.add_argument("--script", default="")
     parser.add_argument("--dataset", default="")
@@ -151,6 +151,8 @@ def merge_record(existing: dict[str, str], new_record: dict[str, str]) -> dict[s
     merged = dict(existing)
     merged["updated_at"] = new_record["updated_at"]
     merged["status"] = new_record["status"]
+    if new_record["status"] in {"queued", "running", "completed", "interrupted"}:
+        merged["exit_code"] = ""
     for key, value in new_record.items():
         if key in {"plan_key", "created_at", "updated_at", "status"}:
             continue

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import inspect
+import warnings
 from dataclasses import dataclass
 from typing import Any, Dict
 
@@ -37,6 +39,14 @@ CLUSTER_FEATURE_NAMES = (
     "max_row_degree",
     "mean_col_degree",
     "max_col_degree",
+    "utility_gain",
+    "cost_delta",
+    "baseline_cost",
+    "chosen_cost",
+    "introduced_row_count",
+    "suppressed_row_count",
+    "recent_owner_row_count",
+    "protected_young_active_row_count",
 )
 
 
@@ -132,6 +142,8 @@ class LocalConflictCommitRefiner(nn.Module):
         edge_det_index: torch.Tensor,
         edge_track_index: torch.Tensor,
         cluster_features: torch.Tensor,
+        *,
+        return_context: bool = False,
     ) -> Dict[str, torch.Tensor]:
         det_features = det_features.to(dtype=torch.float32)
         track_features = track_features.to(dtype=torch.float32)
@@ -193,6 +205,18 @@ class LocalConflictCommitRefiner(nn.Module):
         return {
             "edge_logits": edge_logits,
             "defer_logits": defer_logits,
+            **(
+                {
+                    "det_hidden": det_hidden,
+                    "track_hidden": track_hidden,
+                    "edge_hidden": edge_hidden,
+                    "cluster_hidden": cluster_hidden,
+                    "row_ctx": row_ctx,
+                    "col_ctx": col_ctx,
+                }
+                if return_context
+                else {}
+            ),
         }
 
     @staticmethod
@@ -242,7 +266,22 @@ class LocalConflictCommitRefiner(nn.Module):
     ) -> "LocalConflictCommitRefiner":
         checkpoint = torch.load(checkpoint_path, map_location=map_location)
         model_kwargs = dict(checkpoint.get("model_kwargs", {}))
-        model = cls(**model_kwargs)
+        signature = inspect.signature(cls.__init__)
+        valid_kwargs: Dict[str, Any] = {}
+        ignored_kwargs: Dict[str, Any] = {}
+        for key, value in model_kwargs.items():
+            if key in signature.parameters and key != "self":
+                valid_kwargs[key] = value
+            else:
+                ignored_kwargs[key] = value
+        if ignored_kwargs:
+            warnings.warn(
+                "Ignoring legacy checkpoint kwargs for LocalConflictCommitRefiner: "
+                + ", ".join(sorted(ignored_kwargs)),
+                RuntimeWarning,
+                stacklevel=2,
+            )
+        model = cls(**valid_kwargs)
         state = checkpoint.get("model_state", checkpoint)
         model.load_state_dict(state, strict=True)
         model.eval()

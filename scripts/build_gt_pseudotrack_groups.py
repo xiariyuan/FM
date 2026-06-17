@@ -126,9 +126,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--iou-ignore", type=float, default=0.5, help="IoU threshold for ignore GT overlap")
     parser.add_argument("--max-gap", type=int, default=30, help="Maximum allowed frame gap from last GT history")
     parser.add_argument("--max-frames", type=int, default=0, help="Optional limit for quick smoke tests (0 means all frames)")
+    parser.add_argument("--frame-start", type=int, default=0, help="Optional inclusive frame start after split filtering (0 means first frame in split)")
+    parser.add_argument("--frame-end", type=int, default=0, help="Optional inclusive frame end after split filtering (0 means last frame in split)")
     parser.add_argument("--candidate-topk", type=int, default=32, help="Maximum pseudo-track candidates kept per detection")
     parser.add_argument("--max-hard-negatives", type=int, default=4, help="Maximum hard negatives retained per detection group")
     parser.add_argument("--max-random-negatives", type=int, default=2, help="Maximum additional random negatives retained per detection group")
+    parser.add_argument(
+        "--positive-keep-prob",
+        type=float,
+        default=1.0,
+        help="Probability of keeping the true positive candidate when it falls outside the local top-k. Set <1.0 to make candidate groups closer to runtime behavior.",
+    )
     parser.add_argument(
         "--candidate-min-motion",
         type=float,
@@ -391,6 +399,8 @@ def _choose_candidates(
     max_gap: int,
     candidate_topk: int,
     candidate_min_motion: float,
+    positive_keep_prob: float,
+    rng: np.random.Generator,
 ) -> list[tuple[int, float]]:
     active = []
     for gt_id, state in histories.items():
@@ -418,7 +428,8 @@ def _choose_candidates(
         if len(chosen) >= int(candidate_topk):
             break
 
-    if positive_item is not None and all(gt_id != positive_item[0] for gt_id, _ in chosen):
+    keep_positive = bool(float(np.clip(positive_keep_prob, 0.0, 1.0)) >= 1.0 or rng.random() < float(np.clip(positive_keep_prob, 0.0, 1.0)))
+    if keep_positive and positive_item is not None and all(gt_id != positive_item[0] for gt_id, _ in chosen):
         if len(chosen) >= int(candidate_topk) and chosen:
             chosen = chosen[:-1]
         chosen.append(positive_item)
@@ -558,9 +569,17 @@ def main() -> None:
         gt_rows = _read_gt_rows(gt_path)
         seq_histories: Dict[int, PseudoTrackState] = {}
         all_frames = sorted(set(det_rows.keys()) | set(gt_rows.keys()))
+        if int(args.frame_start) > 0:
+            all_frames = [fid for fid in all_frames if fid >= int(args.frame_start)]
+        if int(args.frame_end) > 0:
+            all_frames = [fid for fid in all_frames if fid <= int(args.frame_end)]
         if int(args.max_frames) > 0:
             all_frames = all_frames[: int(args.max_frames)]
-        print(f"[seq] {seq_name} frames={len(all_frames)} det={det_path.name} gt={gt_path.name}", flush=True)
+        print(
+            f"[seq] {seq_name} frames={len(all_frames)} det={det_path.name} gt={gt_path.name} "
+            f"frame_start={args.frame_start} frame_end={args.frame_end}",
+            flush=True,
+        )
 
         for frame in all_frames:
             image_path = _frame_image_path(seq_dir, frame, imext)
@@ -593,6 +612,8 @@ def main() -> None:
                     max_gap=int(args.max_gap),
                     candidate_topk=int(args.candidate_topk),
                     candidate_min_motion=float(args.candidate_min_motion),
+                    positive_keep_prob=float(args.positive_keep_prob),
+                    rng=rng,
                 )
 
                 if not candidates:

@@ -36,10 +36,13 @@ SUMMARY_FIELDS = [
     "target_swap_clusters",
     "target_defer_clusters",
     "target_nonkeep_clusters",
+    "positive_utility_clusters",
     "mean_candidates_per_cluster",
     "max_candidates_per_cluster",
     "mean_nonkeep_candidates_per_cluster",
     "max_nonkeep_candidates_per_cluster",
+    "mean_best_positive_nonkeep_adjusted_utility",
+    "mean_positive_nonkeep_utility_margin_to_second",
     "status",
     "error",
 ]
@@ -52,6 +55,7 @@ SPLIT_FIELDS = [
     "target_swap_clusters",
     "target_defer_clusters",
     "target_nonkeep_clusters",
+    "positive_utility_clusters",
     "mean_candidates_per_cluster",
     "max_candidates_per_cluster",
 ]
@@ -68,7 +72,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--host-summary-mode",
         choices=["gt_oracle", "runtime_safe_zero", "runtime_prior_alpha"],
-        default="gt_oracle",
+        default="runtime_safe_zero",
     )
     parser.add_argument("--host-summary-prior-alpha", type=float, default=0.0)
     parser.add_argument("--swap-utility-bonus", type=float, default=0.0)
@@ -482,6 +486,31 @@ def build_dataset_row(
     )
     target = candidates[int(target_index)]
     candidate_types = [str(candidate["action_type"]) for candidate in candidates]
+    candidate_raw_utilities = [float(candidate["utility_delta"]) for candidate in candidates]
+    candidate_adjusted_utilities = [
+        float(candidate.get("adjusted_utility_delta", candidate["utility_delta"])) for candidate in candidates
+    ]
+    candidate_positive_utility = [int(value > 0.0) for value in candidate_adjusted_utilities]
+    nonkeep_adjusted_utilities = candidate_adjusted_utilities[1:]
+    best_positive_nonkeep_adjusted_utility = max(
+        0.0,
+        max(nonkeep_adjusted_utilities, default=0.0),
+    )
+    sorted_nonkeep_positive = sorted(
+        [float(value) for value in nonkeep_adjusted_utilities if float(value) > 0.0],
+        reverse=True,
+    )
+    positive_nonkeep_utility_margin_to_second = (
+        float(sorted_nonkeep_positive[0] - sorted_nonkeep_positive[1])
+        if len(sorted_nonkeep_positive) >= 2
+        else float(sorted_nonkeep_positive[0] if sorted_nonkeep_positive else 0.0)
+    )
+    sorted_adjusted_utilities = sorted(candidate_adjusted_utilities, reverse=True)
+    second_adjusted_utility = (
+        float(sorted_adjusted_utilities[1])
+        if len(sorted_adjusted_utilities) >= 2
+        else 0.0
+    )
     return {
         "cluster_id": sample["cluster_id"],
         "seq": sample["seq"],
@@ -498,19 +527,29 @@ def build_dataset_row(
         "candidate_features": [candidate["candidate_features"] for candidate in candidates],
         "candidate_add_pairs": [candidate["add_pair"] for candidate in candidates],
         "candidate_remove_pairs": [candidate["remove_pair"] for candidate in candidates],
-        "candidate_utility_deltas": [float(candidate["utility_delta"]) for candidate in candidates],
-        "candidate_adjusted_utility_deltas": [
-            float(candidate.get("adjusted_utility_delta", candidate["utility_delta"])) for candidate in candidates
-        ],
+        "candidate_utility_deltas": candidate_raw_utilities,
+        "candidate_adjusted_utility_deltas": candidate_adjusted_utilities,
+        "candidate_is_positive_utility": candidate_positive_utility,
+        "positive_utility_candidate_count": int(sum(candidate_positive_utility)),
+        "positive_nonkeep_candidate_count": int(sum(candidate_positive_utility[1:])),
         "feature_host_summary_mode": str(host_summary_mode),
         "feature_host_summary_prior_alpha": float(host_summary_prior_alpha),
         "target_index": int(target_index),
         "target_action_type": str(target["action_type"]),
         "target_utility_delta": float(target["utility_delta"]),
         "target_adjusted_utility_delta": float(target.get("adjusted_utility_delta", target["utility_delta"])),
+        "target_is_positive_utility": int(
+            int(target_index) > 0 and float(target.get("adjusted_utility_delta", target["utility_delta"])) > 0.0
+        ),
         "target_add_pair": target["add_pair"],
         "target_remove_pair": target["remove_pair"],
         "target_is_nonkeep": int(int(target_index) != 0),
+        "cluster_has_positive_utility": int(best_positive_nonkeep_adjusted_utility > 0.0),
+        "best_adjusted_utility": float(max(candidate_adjusted_utilities, default=0.0)),
+        "second_adjusted_utility": float(second_adjusted_utility),
+        "utility_margin_to_second": float(max(candidate_adjusted_utilities, default=0.0) - second_adjusted_utility),
+        "best_positive_nonkeep_adjusted_utility": float(best_positive_nonkeep_adjusted_utility),
+        "positive_nonkeep_utility_margin_to_second": float(positive_nonkeep_utility_margin_to_second),
         "source_cluster_should_intervene_edit": int(sample.get("cluster_should_intervene_edit", 0)),
         "source_cluster_should_intervene_soft": int(sample.get("cluster_should_intervene_soft", 0)),
         "source_cluster_should_intervene_bridge": int(sample.get("cluster_should_intervene_bridge", 0)),
@@ -604,6 +643,7 @@ def main() -> int:
                 action_type = str(row["target_action_type"])
                 split_counter[split_tag]["clusters"] += 1
                 split_counter[split_tag][f"target_{action_type}_clusters"] += 1
+                split_counter[split_tag]["positive_utility_clusters"] += int(row["cluster_has_positive_utility"])
                 split_counter[split_tag]["candidate_count_total"] += int(row["candidate_count"])
                 split_counter[split_tag]["candidate_count_max"] = max(
                     int(split_counter[split_tag].get("candidate_count_max", 0)),
@@ -611,6 +651,7 @@ def main() -> int:
                 )
                 target_counter[f"target_{action_type}_clusters"] += 1
                 target_counter["target_nonkeep_clusters"] += int(row["target_is_nonkeep"])
+                target_counter["positive_utility_clusters"] += int(row["cluster_has_positive_utility"])
                 candidate_counter["candidate_count_total"] += int(row["candidate_count"])
                 candidate_counter["candidate_count_max"] = max(
                     int(candidate_counter.get("candidate_count_max", 0)),
@@ -620,6 +661,12 @@ def main() -> int:
                 candidate_counter["nonkeep_candidate_count_max"] = max(
                     int(candidate_counter.get("nonkeep_candidate_count_max", 0)),
                     int(row["nonkeep_candidate_count"]),
+                )
+                candidate_counter["best_positive_nonkeep_adjusted_utility_total"] += float(
+                    row["best_positive_nonkeep_adjusted_utility"]
+                )
+                candidate_counter["positive_nonkeep_utility_margin_to_second_total"] += float(
+                    row["positive_nonkeep_utility_margin_to_second"]
                 )
 
         dataset_jsonl = out_dir / "posthost_action_examples.jsonl"
@@ -648,6 +695,7 @@ def main() -> int:
                         + counter.get("target_swap_clusters", 0)
                         + counter.get("target_defer_clusters", 0)
                     ),
+                    "positive_utility_clusters": int(counter.get("positive_utility_clusters", 0)),
                     "mean_candidates_per_cluster": (
                         float(counter.get("candidate_count_total", 0)) / float(max(clusters, 1))
                     ),
@@ -666,6 +714,7 @@ def main() -> int:
                 "target_swap_clusters": int(target_counter.get("target_swap_clusters", 0)),
                 "target_defer_clusters": int(target_counter.get("target_defer_clusters", 0)),
                 "target_nonkeep_clusters": int(target_counter.get("target_nonkeep_clusters", 0)),
+                "positive_utility_clusters": int(target_counter.get("positive_utility_clusters", 0)),
                 "mean_candidates_per_cluster": (
                     float(candidate_counter.get("candidate_count_total", 0)) / float(max(len(dataset_rows), 1))
                 ),
@@ -674,6 +723,14 @@ def main() -> int:
                     float(candidate_counter.get("nonkeep_candidate_count_total", 0)) / float(max(len(dataset_rows), 1))
                 ),
                 "max_nonkeep_candidates_per_cluster": int(candidate_counter.get("nonkeep_candidate_count_max", 0)),
+                "mean_best_positive_nonkeep_adjusted_utility": (
+                    float(candidate_counter.get("best_positive_nonkeep_adjusted_utility_total", 0.0))
+                    / float(max(len(dataset_rows), 1))
+                ),
+                "mean_positive_nonkeep_utility_margin_to_second": (
+                    float(candidate_counter.get("positive_nonkeep_utility_margin_to_second_total", 0.0))
+                    / float(max(len(dataset_rows), 1))
+                ),
                 "status": "success",
                 "error": "",
             }

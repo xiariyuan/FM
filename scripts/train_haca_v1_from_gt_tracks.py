@@ -115,23 +115,38 @@ def build_batch_slices(group_ids: np.ndarray, batch_groups: int | None) -> list[
 
 
 def load_npz(path: str, batch_groups: int) -> DatasetTensors:
-    z = np.load(path, allow_pickle=True)
-    required = ["det_feat", "hist_feat", "hist_mask", "track_feat", "ctx_feat", "group_id", "label"]
-    missing = [key for key in required if key not in z.files]
-    if missing:
-        raise ValueError(f"Missing required NPZ keys in {path}: {missing}")
-    group_id = np.asarray(z["group_id"], dtype=np.int64)
+    with np.load(path, allow_pickle=True) as z:
+        required = ["det_feat", "hist_feat", "hist_mask", "track_feat", "ctx_feat", "group_id", "label"]
+        missing = [key for key in required if key not in z.files]
+        if missing:
+            raise ValueError(f"Missing required NPZ keys in {path}: {missing}")
+        det_feat = np.asarray(z["det_feat"])
+        hist_feat = np.asarray(z["hist_feat"])
+        hist_mask = np.asarray(z["hist_mask"], dtype=np.float32)
+        track_feat = np.asarray(z["track_feat"], dtype=np.float32)
+        ctx_feat = np.asarray(z["ctx_feat"], dtype=np.float32)
+        group_id = np.asarray(z["group_id"], dtype=np.int64)
+        label = np.asarray(z["label"], dtype=np.float32)
     return DatasetTensors(
         path=str(path),
-        det_feat=np.asarray(z["det_feat"]),
-        hist_feat=np.asarray(z["hist_feat"]),
-        hist_mask=np.asarray(z["hist_mask"], dtype=np.float32),
-        track_feat=np.asarray(z["track_feat"], dtype=np.float32),
-        ctx_feat=np.asarray(z["ctx_feat"], dtype=np.float32),
+        det_feat=det_feat,
+        hist_feat=hist_feat,
+        hist_mask=hist_mask,
+        track_feat=track_feat,
+        ctx_feat=ctx_feat,
         group_id=group_id,
-        label=np.asarray(z["label"], dtype=np.float32),
+        label=label,
         batch_slices=build_batch_slices(group_id, batch_groups),
     )
+
+
+def infer_max_history(paths: Sequence[str]) -> int:
+    if not paths:
+        raise ValueError("No NPZ paths were provided.")
+    with np.load(paths[0], allow_pickle=True) as z:
+        if "hist_feat" not in z.files:
+            raise ValueError(f"Missing required NPZ key in {paths[0]}: hist_feat")
+        return int(np.asarray(z["hist_feat"]).shape[1])
 
 
 def load_datasets(paths: Sequence[str], batch_groups: int, split_name: str) -> list[DatasetTensors]:
@@ -147,6 +162,19 @@ def load_datasets(paths: Sequence[str], batch_groups: int, split_name: str) -> l
             flush=True,
         )
     return datasets
+
+
+def iter_loaded_datasets(paths: Sequence[str], batch_groups: int, split_name: str):
+    print(f"[load] {split_name} shards={len(paths)} stream=1", flush=True)
+    for shard_idx, path in enumerate(paths, start=1):
+        data = load_npz(path, batch_groups=batch_groups)
+        group_count = int(np.unique(data.group_id).shape[0]) if data.group_id.size > 0 else 0
+        print(
+            f"[load] {split_name} {shard_idx}/{len(paths)} path={path} "
+            f"candidates={data.group_id.shape[0]} groups={group_count} batch_slices={len(data.batch_slices)}",
+            flush=True,
+        )
+        yield shard_idx, data
 
 
 def group_segments(group_ids: torch.Tensor) -> list[tuple[int, int]]:
@@ -618,17 +646,27 @@ def shift_fallback_loss(outputs_corr: dict[str, torch.Tensor]) -> torch.Tensor:
 
 def run_dataset(
     model: HACAV1,
-    datasets: Sequence[DatasetTensors],
+    datasets: Sequence[DatasetTensors] | None,
     device: torch.device,
     optimizer: torch.optim.Optimizer | None,
     args: argparse.Namespace,
+    npz_paths: Sequence[str] | None = None,
+    split_name: str | None = None,
 ) -> tuple[float, float]:
     is_train = optimizer is not None
     model.train(mode=is_train)
     losses: list[float] = []
     top1s: list[float] = []
+    if datasets is None:
+        if npz_paths is None or split_name is None:
+            raise ValueError("npz_paths and split_name are required when datasets is None")
+        dataset_iter = iter_loaded_datasets(npz_paths, batch_groups=args.batch_groups, split_name=split_name)
+        total_shards = len(npz_paths)
+    else:
+        dataset_iter = enumerate(datasets, start=1)
+        total_shards = len(datasets)
 
-    for shard_idx, data in enumerate(datasets, start=1):
+    for shard_idx, data in dataset_iter:
         if is_train:
             random.shuffle(data.batch_slices)
         for batch_idx, (start, end) in enumerate(data.batch_slices, start=1):
@@ -699,7 +737,7 @@ def run_dataset(
             top1s.append(float(top1))
 
         print(
-            f"[{'train' if is_train else 'eval'}] shard {shard_idx}/{len(datasets)} "
+            f"[{'train' if is_train else 'eval'}] shard {shard_idx}/{total_shards} "
             f"path={data.path} avg_loss={np.mean(losses):.6f} avg_top1={np.mean(top1s) if top1s else 0.0:.4f}",
             flush=True,
         )
@@ -708,17 +746,30 @@ def run_dataset(
 
 def fit_token_stats(
     model: HACAV1,
-    datasets: Sequence[DatasetTensors],
+    datasets: Sequence[DatasetTensors] | None,
     device: torch.device,
     quantile: float,
+    npz_paths: Sequence[str] | None = None,
+    batch_groups: int = 0,
 ) -> tuple[np.ndarray, np.ndarray, float]:
     total_count = 0
     sum_token = None
     sumsq_token = None
+    if datasets is None:
+        if npz_paths is None:
+            raise ValueError("npz_paths are required when datasets is None")
+
+        def dataset_source(pass_name: str):
+            return iter_loaded_datasets(npz_paths, batch_groups=batch_groups, split_name=pass_name)
+
+    else:
+
+        def dataset_source(pass_name: str):
+            return enumerate(datasets, start=1)
 
     model.eval()
     with torch.no_grad():
-        for data in datasets:
+        for _, data in dataset_source("stats-pass1"):
             for start, end in data.batch_slices:
                 sl = slice(start, end)
                 outputs = model(
@@ -750,7 +801,7 @@ def fit_token_stats(
 
     score_chunks: list[np.ndarray] = []
     with torch.no_grad():
-        for data in datasets:
+        for _, data in dataset_source("stats-pass2"):
             for start, end in data.batch_slices:
                 sl = slice(start, end)
                 outputs = model(
@@ -825,12 +876,12 @@ def main() -> None:
     set_seed(args.seed)
     device = torch.device(args.device if args.device.startswith("cuda") and torch.cuda.is_available() else "cpu")
 
-    train_sets = load_datasets(args.train_npz, batch_groups=args.batch_groups, split_name="train")
-    val_sets = load_datasets(args.val_npz, batch_groups=args.batch_groups, split_name="val") if args.val_npz else []
-    if not train_sets:
+    train_paths = list(args.train_npz)
+    val_paths = list(args.val_npz)
+    if not train_paths:
         raise ValueError("No training shards were provided.")
 
-    inferred_max_history = int(train_sets[0].hist_feat.shape[1])
+    inferred_max_history = infer_max_history(train_paths)
     max_history = int(args.max_history) if int(args.max_history) > 0 else inferred_max_history
 
     use_hist_gate = args.version == "haca_v2" and not args.disable_hist_gate
@@ -858,10 +909,26 @@ def main() -> None:
     bad_epochs = 0
 
     for epoch in range(1, args.epochs + 1):
-        train_loss, train_top1 = run_dataset(model, train_sets, device, optimizer, args)
-        if val_sets:
+        train_loss, train_top1 = run_dataset(
+            model,
+            None,
+            device,
+            optimizer,
+            args,
+            npz_paths=train_paths,
+            split_name="train",
+        )
+        if val_paths:
             with torch.no_grad():
-                val_loss, val_top1 = run_dataset(model, val_sets, device, None, args)
+                val_loss, val_top1 = run_dataset(
+                    model,
+                    None,
+                    device,
+                    None,
+                    args,
+                    npz_paths=val_paths,
+                    split_name="val",
+                )
             metric = val_loss
         else:
             val_loss, val_top1 = train_loss, train_top1
@@ -888,9 +955,11 @@ def main() -> None:
     if model.use_ood_gate:
         token_mean, token_std, ood_threshold = fit_token_stats(
             model=model,
-            datasets=train_sets,
+            datasets=None,
             device=device,
             quantile=args.ood_quantile,
+            npz_paths=train_paths,
+            batch_groups=args.batch_groups,
         )
         model.set_token_stats(token_mean, token_std, ood_threshold)
         print(

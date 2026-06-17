@@ -1,0 +1,36 @@
+SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val0213_reid_da.yaml
+
+EXP_NAME: bytetrack_fa_mot_mot17_v16_laplace_trainable_resume_epoch0_val0213
+
+USE_FREQ_AWARE: true
+USE_FREQ_DECODER_V2: true
+USE_MAMBA_FOR_LOWFREQ: false
+USE_MAMBA_IN_ID_DECODER: false
+USE_GLOBAL_MAMBA: false
+NUM_WORKERS: 0
+PREFETCH_FACTOR: 2
+
+# Resume from the last stable checkpoint of the interrupted run.
+RESUME_MODEL: outputs/bytetrack_fa_mot_mot17_v16_laplace_gate_proxy0213_20260512_200536/checkpoint_0.pth
+RESUME_ONLY_WEIGHTS: false
+RESUME_OPTIMIZER: true
+RESUME_SCHEDULER: true
+
+ASSOC_USE_LAPLACE: true
+ASSOC_LAPLACE_WEIGHT: 0.35
+ASSOC_LAPLACE_DECAY_SCALES: [1.0, 2.0, 4.0]
+ASSOC_LAPLACE_HIDDEN_DIM: 16
+
+# Trainable Laplace gate supervision.
+LAPLACE_LOSS_WEIGHT: 0.50
+LAPLACE_LOSS_TEMPERATURE: 1.0
+LAPLACE_BACKGROUND_WEIGHT: 0.20
+LAPLACE_BBOX_TAU: 1.0
+LAPLACE_MIN_HISTORY: 1
+LAPLACE_LOSS_WEIGHT_SCHEDULE:
+  - {start: 0, end: 0, weight: 0.25}
+  - {start: 1, end: 99, weight: 0.50}
+
+# Keep proxy validation frequent and checkpointing dense while iterating.
+SAVE_CHECKPOINT_PER_EPOCH: 1
+EVAL_EVERY_EPOCH: true

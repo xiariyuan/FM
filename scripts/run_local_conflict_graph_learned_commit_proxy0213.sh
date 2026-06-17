@@ -4,8 +4,9 @@ set -euo pipefail
 REPO_ROOT="${REPO_ROOT:-/gemini/code/FMtrack-main/FM-Track}"
 PYTHON_BIN="${PYTHON_BIN:-/root/miniconda3/bin/python}"
 BASE_CONFIG="${BASE_CONFIG:-${REPO_ROOT}/configs/experiments/bytetrack_fa_mot_mot17_v17_local_conflict_commit_val0213.yaml}"
-BASE_CKPT="${BASE_CKPT:-${REPO_ROOT}/outputs/paper_ctrl_mot17_val0213/bytetrack_fa_mot_mot17_v14_ctrl_base_reid_da_val0213/checkpoint_epoch_0.pth}"
+BASE_CKPT="${BASE_CKPT:-${REPO_ROOT}/outputs/bytetrack_fa_mot_mot17_v16_laplace_gate_proxy0213_20260512_200536/checkpoint_epoch_0.pth}"
 HOST_VARIANT="${HOST_VARIANT:-base_reid_da}"
+REID_WEIGHTS="${REID_WEIGHTS:-/gemini/code/lapmot_assoc_proto/osnet_ain_ms_d_c.pth.tar}"
 
 OUT_DIR="${1:-${REPO_ROOT}/outputs/local_conflict_graph_learned_commit_proxy0213_$(date +%Y%m%d_%H%M%S)}"
 GRAPH_CKPT="${2:-}"
@@ -121,6 +122,7 @@ PY
 
 "${PYTHON_BIN}" - "${PROFILE_PATH}" "${BASE_CONFIG}" "${BASE_CKPT}" "${HOST_VARIANT}" "${RUN_NAME}" "${GRAPH_CKPT}" "${TOPK}" "${MIN_DETECTIONS}" "${MIN_COMMITTED_MATCHES}" "${MAX_DETECTIONS}" "${MAX_TRACKS}" <<'PY'
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -149,6 +151,9 @@ overrides = {
     "ASSOC_LOCAL_CONFLICT_GRAPH_MIN_COMMITTED_MATCHES": min_committed_matches,
     "ASSOC_LOCAL_CONFLICT_GRAPH_MAX_DETECTIONS": max_detections,
     "ASSOC_LOCAL_CONFLICT_GRAPH_MAX_TRACKS": max_tracks,
+    "ASSOC_REID_WEIGHTS": os.environ.get("REID_WEIGHTS", "/gemini/code/lapmot_assoc_proto/osnet_ain_ms_d_c.pth.tar"),
+    "ASSOC_REID_BACKBONE": "torchreid:osnet_ain_x1_0",
+    "ASSOC_REID_PRETRAINED": False,
 }
 
 doc = {

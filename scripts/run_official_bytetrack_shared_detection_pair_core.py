@@ -84,7 +84,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--host-variant", default="official_bytetrack")
     parser.add_argument(
         "--plugin-mode",
-        choices=["learned_commit", "posthost_one_edit_oracle", "posthost_one_edit_hierarchical"],
+        choices=["learned_commit", "posthost_one_edit_oracle", "posthost_one_edit_hierarchical", "posthost_one_edit_rule"],
         default="learned_commit",
     )
     parser.add_argument("--graph-ckpt", default="")
@@ -102,10 +102,24 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--graph-min-commit-margin", type=float, default=0.05)
     parser.add_argument("--posthost-oracle-data-root", default="")
     parser.add_argument("--posthost-oracle-min-iou", type=float, default=0.5)
-    parser.add_argument("--posthost-hierarchical-keep-thresh", type=float, default=0.5)
+    parser.add_argument("--posthost-oracle-allowed-actions", type=str, default="all")
+    parser.add_argument("--posthost-hierarchical-keep-thresh", type=float, default=0.97)
     parser.add_argument("--posthost-hierarchical-swap-thresh", type=float, default=0.5)
     parser.add_argument("--posthost-hierarchical-candidate-min-refined-score", type=float, default=0.10)
     parser.add_argument("--posthost-hierarchical-host-summary-prior-alpha", type=float, default=0.0)
+    parser.add_argument("--posthost-rule-large-only", dest="posthost_rule_large_only", action="store_true", default=True)
+    parser.add_argument("--posthost-rule-allow-small", dest="posthost_rule_large_only", action="store_false")
+    parser.add_argument("--posthost-rule-defer-refined-max", type=float, default=0.35)
+    parser.add_argument("--posthost-rule-defer-iou-max", type=float, default=0.55)
+    parser.add_argument("--posthost-rule-defer-row-margin-max", type=float, default=0.15)
+    parser.add_argument("--posthost-rule-defer-track-hist-max", type=float, default=4.2)
+    parser.add_argument("--posthost-rule-require-second-stage-rescue", dest="posthost_rule_require_second_stage_rescue", action="store_true", default=False)
+    parser.add_argument("--posthost-rule-second-stage-iou-min", type=float, default=0.5)
+    parser.add_argument("--posthost-rule-unconfirmed-fuse-min", type=float, default=0.0)
+    parser.add_argument("--posthost-rule-scorecard-json", default="")
+    parser.add_argument("--posthost-rule-score-thresh", type=float, default=0.0)
+    parser.add_argument("--posthost-rule-use-legacy-prefilter", dest="posthost_rule_use_legacy_prefilter", action="store_true", default=True)
+    parser.add_argument("--posthost-rule-no-legacy-prefilter", dest="posthost_rule_use_legacy_prefilter", action="store_false")
     return parser.parse_args()
 
 
@@ -136,6 +150,7 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.use_local_conflict = str(args.plugin_mode) == "learned_commit"
         tracker_args.use_posthost_oracle_edit = str(args.plugin_mode) == "posthost_one_edit_oracle"
         tracker_args.use_posthost_hierarchical_edit = str(args.plugin_mode) == "posthost_one_edit_hierarchical"
+        tracker_args.use_posthost_rule_edit = str(args.plugin_mode) == "posthost_one_edit_rule"
         tracker_args.local_conflict_checkpoint = (
             str(Path(args.graph_ckpt).resolve())
             if str(args.plugin_mode) in {"learned_commit", "posthost_one_edit_hierarchical"}
@@ -159,6 +174,7 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.local_conflict_dump_min_score = 0.0
         tracker_args.posthost_oracle_data_root = str(args.posthost_oracle_data_root or args.data_root)
         tracker_args.posthost_oracle_min_iou = float(args.posthost_oracle_min_iou)
+        tracker_args.posthost_oracle_allowed_actions = str(args.posthost_oracle_allowed_actions)
         tracker_args.posthost_hierarchical_keep_thresh = float(args.posthost_hierarchical_keep_thresh)
         tracker_args.posthost_hierarchical_swap_thresh = float(args.posthost_hierarchical_swap_thresh)
         tracker_args.posthost_hierarchical_candidate_min_refined_score = float(
@@ -167,10 +183,22 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.posthost_hierarchical_host_summary_prior_alpha = float(
             args.posthost_hierarchical_host_summary_prior_alpha
         )
+        tracker_args.posthost_rule_large_only = bool(args.posthost_rule_large_only)
+        tracker_args.posthost_rule_defer_refined_max = float(args.posthost_rule_defer_refined_max)
+        tracker_args.posthost_rule_defer_iou_max = float(args.posthost_rule_defer_iou_max)
+        tracker_args.posthost_rule_defer_row_margin_max = float(args.posthost_rule_defer_row_margin_max)
+        tracker_args.posthost_rule_defer_track_hist_max = float(args.posthost_rule_defer_track_hist_max)
+        tracker_args.posthost_rule_require_second_stage_rescue = bool(args.posthost_rule_require_second_stage_rescue)
+        tracker_args.posthost_rule_second_stage_iou_min = float(args.posthost_rule_second_stage_iou_min)
+        tracker_args.posthost_rule_unconfirmed_fuse_min = float(args.posthost_rule_unconfirmed_fuse_min)
+        tracker_args.posthost_rule_scorecard_json = str(args.posthost_rule_scorecard_json)
+        tracker_args.posthost_rule_score_thresh = float(args.posthost_rule_score_thresh)
+        tracker_args.posthost_rule_use_legacy_prefilter = bool(args.posthost_rule_use_legacy_prefilter)
     else:
         tracker_args.use_local_conflict = False
         tracker_args.use_posthost_oracle_edit = False
         tracker_args.use_posthost_hierarchical_edit = False
+        tracker_args.use_posthost_rule_edit = False
         tracker_args.local_conflict_checkpoint = ""
         tracker_args.local_conflict_topk = int(args.graph_topk)
         tracker_args.local_conflict_min_detections = int(args.graph_min_detections)
@@ -190,6 +218,7 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.local_conflict_dump_min_score = 0.0
         tracker_args.posthost_oracle_data_root = ""
         tracker_args.posthost_oracle_min_iou = float(args.posthost_oracle_min_iou)
+        tracker_args.posthost_oracle_allowed_actions = str(args.posthost_oracle_allowed_actions)
         tracker_args.posthost_hierarchical_keep_thresh = float(args.posthost_hierarchical_keep_thresh)
         tracker_args.posthost_hierarchical_swap_thresh = float(args.posthost_hierarchical_swap_thresh)
         tracker_args.posthost_hierarchical_candidate_min_refined_score = float(
@@ -198,6 +227,17 @@ def build_tracker_args(args: argparse.Namespace, *, plugin: bool) -> argparse.Na
         tracker_args.posthost_hierarchical_host_summary_prior_alpha = float(
             args.posthost_hierarchical_host_summary_prior_alpha
         )
+        tracker_args.posthost_rule_large_only = bool(args.posthost_rule_large_only)
+        tracker_args.posthost_rule_defer_refined_max = float(args.posthost_rule_defer_refined_max)
+        tracker_args.posthost_rule_defer_iou_max = float(args.posthost_rule_defer_iou_max)
+        tracker_args.posthost_rule_defer_row_margin_max = float(args.posthost_rule_defer_row_margin_max)
+        tracker_args.posthost_rule_defer_track_hist_max = float(args.posthost_rule_defer_track_hist_max)
+        tracker_args.posthost_rule_require_second_stage_rescue = bool(args.posthost_rule_require_second_stage_rescue)
+        tracker_args.posthost_rule_second_stage_iou_min = float(args.posthost_rule_second_stage_iou_min)
+        tracker_args.posthost_rule_unconfirmed_fuse_min = float(args.posthost_rule_unconfirmed_fuse_min)
+        tracker_args.posthost_rule_scorecard_json = str(args.posthost_rule_scorecard_json)
+        tracker_args.posthost_rule_score_thresh = float(args.posthost_rule_score_thresh)
+        tracker_args.posthost_rule_use_legacy_prefilter = bool(args.posthost_rule_use_legacy_prefilter)
     return tracker_args
 
 

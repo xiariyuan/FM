@@ -3,7 +3,14 @@ set -euo pipefail
 
 REPO_ROOT="/gemini/code/FMtrack-main/FM-Track"
 BOT_ROOT="${REPO_ROOT}/external/BoT-SORT-main"
-DATA_ROOT="${DATA_ROOT:-/tmp/DanceTrack_val}"
+DEFAULT_DATA_ROOT="/gemini/code/datasets/DanceTrack/extracted"
+if [[ -z "${DATA_ROOT:-}" ]]; then
+  if [[ -d "${DEFAULT_DATA_ROOT}" ]]; then
+    DATA_ROOT="${DEFAULT_DATA_ROOT}"
+  else
+    DATA_ROOT="/tmp/DanceTrack_val"
+  fi
+fi
 SPLIT="${SPLIT:-val}"
 VARIANT="${1:-base}"
 PYTHON_BIN="${PYTHON_BIN:-/root/miniconda3/bin/python}"

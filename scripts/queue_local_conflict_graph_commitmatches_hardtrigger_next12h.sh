@@ -4,7 +4,7 @@ set -euo pipefail
 REPO_ROOT="${REPO_ROOT:-/gemini/code/FMtrack-main/FM-Track}"
 PYTHON_BIN="${PYTHON_BIN:-/root/miniconda3/bin/python}"
 GENERIC_RUNNER="${REPO_ROOT}/scripts/run_local_conflict_graph_commitmatches_hardtrigger_oracle_generic.sh"
-ORACLE_JSONL="${ORACLE_JSONL:-${REPO_ROOT}/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/labeled_replay_top8.groups.jsonl}"
+ORACLE_JSONL="${ORACLE_JSONL:-${REPO_ROOT}/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/groups.jsonl}"
 QUEUE_ROOT="${1:-${REPO_ROOT}/outputs/local_conflict_graph_commitmatches_hardtrigger_next12h_$(date +%Y%m%d_%H%M%S)}"
 QUEUE_NAME="${2:-local_conflict_graph_commitmatches_hardtrigger_next12h}"
 CONTINUE_ON_FAILURE="${QUEUE_CONTINUE_ON_FAILURE:-1}"

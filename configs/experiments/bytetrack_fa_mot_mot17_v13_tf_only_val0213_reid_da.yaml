@@ -12,11 +12,18 @@ RESUME_SCHEDULER: false
 RESUME_ONLY_WEIGHTS: false
 RESUME_SKIP_YOLOX: false
 
-# Use the fine-tuned weights produced by scripts/train_reid_mot.py
 ASSOC_USE_REID: true
 ASSOC_REID_BACKBONE: torchreid:osnet_ain_x1_0
-ASSOC_REID_WEIGHTS: outputs/reid_da_mot17mot20_osnetain_jitter/reid_best.pth
+# Use the local MSMT17-pretrained weights that are available in this workspace.
+ASSOC_REID_WEIGHTS: weight/osnet_ain_x1_0_msmt17_256x128_amsgrad_ep50_lr0.0015_coslr_b64_fb10_softmax_labsmth_flip_jitter.pth
 ASSOC_REID_PRETRAINED: false
+
+# Make this branch runnable without mamba-ssm in the current environment.
+USE_FREQ_AWARE: true
+USE_FREQ_DECODER_V2: true
+USE_MAMBA_FOR_LOWFREQ: false
+USE_MAMBA_IN_ID_DECODER: false
+USE_GLOBAL_MAMBA: false
 
 ASSOC_REID_INPUT_H: 256
 ASSOC_REID_INPUT_W: 128

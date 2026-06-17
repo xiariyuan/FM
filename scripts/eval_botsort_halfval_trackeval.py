@@ -102,9 +102,20 @@ def prepare_tracker_results_for_seq(
     parser.read(src_ini)
     seq_length = int(parser["Sequence"]["seqLength"])
     start_frame = start_frame_for_half_val(seq_length)
+    new_length = seq_length - start_frame + 1
 
     with src_result.open("r") as f:
         rows = [row.strip().split(",") for row in f if row.strip()]
+
+    if rows:
+        frame_ids = [int(float(row[0])) for row in rows]
+        # Some reused baselines are already indexed in val-half coordinates.
+        # In that case, a second remap would incorrectly drop every row.
+        if min(frame_ids) >= 1 and max(frame_ids) <= new_length:
+            with dst_result.open("w", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerows(rows)
+            return
 
     kept_rows: list[list[str]] = []
     for row in rows:

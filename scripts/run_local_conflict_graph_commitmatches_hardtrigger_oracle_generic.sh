@@ -5,7 +5,14 @@ REPO_ROOT="${REPO_ROOT:-/gemini/code/FMtrack-main/FM-Track}"
 PYTHON_BIN="${PYTHON_BIN:-/root/miniconda3/bin/python}"
 BASE_CONFIG="${REPO_ROOT}/configs/experiments/bytetrack_fa_mot_mot17_v14_ctrl_base_reid_da_val0213.yaml"
 BASE_CKPT="${REPO_ROOT}/outputs/paper_ctrl_mot17_val0213/bytetrack_fa_mot_mot17_v14_ctrl_base_reid_da_val0213/checkpoint_epoch_0.pth"
-ORACLE_JSONL_DEFAULT="${REPO_ROOT}/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/labeled_replay_top8.groups.jsonl"
+ORACLE_JSONL_DEFAULT="${REPO_ROOT}/outputs/competition_assoc_base_reid_da_proxy0213_hybriddumpfix/groups.jsonl"
+
+if [[ ! -f "${BASE_CKPT}" ]]; then
+  FALLBACK_CKPT="${REPO_ROOT}/outputs/bytetrack_fa_mot_mot17_v16_laplace_gate_proxy0213_20260512_200536/checkpoint_epoch_0.pth"
+  if [[ -f "${FALLBACK_CKPT}" ]]; then
+    BASE_CKPT="${FALLBACK_CKPT}"
+  fi
+fi
 
 OUT_DIR="${1:-${REPO_ROOT}/outputs/local_conflict_graph_commitmatches_hardtrigger_oracle_$(date +%Y%m%d_%H%M%S)}"
 RUN_NAME="${2:-local_conflict_graph_commitmatches_hardtrigger_oracle}"

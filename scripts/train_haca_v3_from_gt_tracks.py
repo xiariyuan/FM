@@ -17,7 +17,8 @@ from train_haca_v1_from_gt_tracks import (
     HACAV1,
     apply_shift_corruption,
     group_segments,
-    load_datasets,
+    infer_max_history,
+    iter_loaded_datasets,
     set_seed,
 )
 
@@ -49,6 +50,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-history", type=int, default=0)
     parser.add_argument("--comp-hidden", type=int, default=64)
     parser.add_argument("--comp-topk", type=int, default=3)
+    parser.add_argument(
+        "--positive-injection-prob",
+        type=float,
+        default=1.0,
+        help="During training only, probability of forcing the positive candidate into the selected top-k when it falls outside. Set <1.0 to reduce the train/inference gap.",
+    )
     parser.add_argument("--comp-margin-quantile", type=float, default=0.35)
     parser.add_argument("--comp-margin-temperature", type=float, default=0.03)
     parser.add_argument("--comp-delta-scale", type=float, default=1.0)
@@ -158,6 +165,7 @@ class ATCRModel(nn.Module):
         comp_margin_threshold: float,
         comp_margin_temperature: float,
         comp_delta_scale: float,
+        positive_injection_prob: float,
     ) -> None:
         super().__init__()
         self.base = base_model
@@ -166,6 +174,7 @@ class ATCRModel(nn.Module):
         self.comp_margin_threshold = float(comp_margin_threshold)
         self.comp_margin_temperature = float(comp_margin_temperature)
         self.comp_delta_scale = float(comp_delta_scale)
+        self.positive_injection_prob = float(np.clip(positive_injection_prob, 0.0, 1.0))
 
         duel_dim = len(HACA_PAIR_TOKEN_NAMES) * 3 + DUEL_EXTRA_DIMS
         comp_in_dim = len(HACA_PAIR_TOKEN_NAMES) + self.comp_hidden + DUEL_EXTRA_DIMS
@@ -214,12 +223,13 @@ class ATCRModel(nn.Module):
         self,
         logits: torch.Tensor,
         labels: torch.Tensor | None,
+        force_positive: bool,
     ) -> torch.Tensor:
         k = min(max(int(self.comp_topk), 1), int(logits.numel()))
         if k <= 0:
             return torch.empty((0,), device=logits.device, dtype=torch.long)
         topk = torch.topk(logits, k=k).indices
-        if labels is not None and labels.numel() > 0 and bool(torch.any(labels > 0.5)):
+        if force_positive and labels is not None and labels.numel() > 0 and bool(torch.any(labels > 0.5)):
             pos_idx = int(torch.argmax(labels).item())
             if not bool(torch.any(topk == pos_idx)):
                 if topk.numel() == 1:
@@ -264,7 +274,8 @@ class ATCRModel(nn.Module):
             logits_g = base_logits[start:end]
             scores_g = base_prebg[start:end]
             labels_g = labels[start:end] if labels is not None else None
-            topk_idx = self._select_topk(logits_g, labels_g)
+            force_positive = bool(self.training and random.random() < self.positive_injection_prob)
+            topk_idx = self._select_topk(logits_g, labels_g, force_positive=force_positive)
             abs_idx = torch.arange(start, end, device=logits_g.device, dtype=torch.long)
             topk_abs = abs_idx[topk_idx]
             if topk_idx.numel() == 0:
@@ -368,14 +379,23 @@ class ATCRModel(nn.Module):
 
 def fit_margin_threshold(
     model: ATCRModel,
-    datasets: Sequence[DatasetTensors],
+    datasets: Sequence[DatasetTensors] | None,
     device: torch.device,
     quantile: float,
+    npz_paths: Sequence[str] | None = None,
+    batch_groups: int = 0,
 ) -> float:
     margins: list[float] = []
+    if datasets is None:
+        if npz_paths is None:
+            raise ValueError("npz_paths are required when datasets is None")
+        dataset_iter = iter_loaded_datasets(npz_paths, batch_groups=batch_groups, split_name="margin")
+    else:
+        dataset_iter = enumerate(datasets, start=1)
+
     model.eval()
     with torch.no_grad():
-        for data in datasets:
+        for _, data in dataset_iter:
             for start, end in data.batch_slices:
                 sl = slice(start, end)
                 labels = torch.from_numpy(data.label[sl]).to(device=device, dtype=torch.float32)
@@ -461,17 +481,27 @@ def atcr_shift_fallback_loss(outputs_corr: dict[str, torch.Tensor]) -> torch.Ten
 
 def run_dataset(
     model: ATCRModel,
-    datasets: Sequence[DatasetTensors],
+    datasets: Sequence[DatasetTensors] | None,
     device: torch.device,
     optimizer: torch.optim.Optimizer | None,
     args: argparse.Namespace,
+    npz_paths: Sequence[str] | None = None,
+    split_name: str | None = None,
 ) -> tuple[float, float]:
     is_train = optimizer is not None
     model.train(mode=is_train)
     losses: list[float] = []
     top1s: list[float] = []
+    if datasets is None:
+        if npz_paths is None or split_name is None:
+            raise ValueError("npz_paths and split_name are required when datasets is None")
+        dataset_iter = iter_loaded_datasets(npz_paths, batch_groups=args.batch_groups, split_name=split_name)
+        total_shards = len(npz_paths)
+    else:
+        dataset_iter = enumerate(datasets, start=1)
+        total_shards = len(datasets)
 
-    for shard_idx, data in enumerate(datasets, start=1):
+    for shard_idx, data in dataset_iter:
         if is_train:
             random.shuffle(data.batch_slices)
         for start, end in data.batch_slices:
@@ -540,7 +570,7 @@ def run_dataset(
             top1s.append(float(top1))
 
         print(
-            f"[{'train' if is_train else 'eval'}] shard {shard_idx}/{len(datasets)} "
+            f"[{'train' if is_train else 'eval'}] shard {shard_idx}/{total_shards} "
             f"path={data.path} avg_loss={np.mean(losses):.6f} avg_top1={np.mean(top1s) if top1s else 0.0:.4f}",
             flush=True,
         )
@@ -580,10 +610,11 @@ def main() -> None:
     set_seed(args.seed)
     device = torch.device(args.device if args.device.startswith("cuda") and torch.cuda.is_available() else "cpu")
 
-    train_sets = load_datasets(args.train_npz, batch_groups=args.batch_groups, split_name="train")
-    val_sets = load_datasets(args.val_npz, batch_groups=args.batch_groups, split_name="val") if args.val_npz else []
-    if not train_sets:
+    train_paths = list(args.train_npz)
+    val_paths = list(args.val_npz)
+    if not train_paths:
         raise ValueError("No training shards were provided.")
+    infer_max_history(train_paths)
 
     base_model, base_data, _ = _load_base_model(args.base_npz, device=device)
     print(
@@ -603,10 +634,13 @@ def main() -> None:
             comp_margin_threshold=0.10,
             comp_margin_temperature=args.comp_margin_temperature,
             comp_delta_scale=args.comp_delta_scale,
+            positive_injection_prob=args.positive_injection_prob,
         ).to(device),
-        datasets=train_sets,
+        datasets=None,
         device=device,
         quantile=args.comp_margin_quantile,
+        npz_paths=train_paths,
+        batch_groups=args.batch_groups,
     )
     print(f"[margin-threshold] quantile={args.comp_margin_quantile:.3f} threshold={margin_threshold:.6f}", flush=True)
 
@@ -617,6 +651,7 @@ def main() -> None:
         comp_margin_threshold=margin_threshold,
         comp_margin_temperature=args.comp_margin_temperature,
         comp_delta_scale=args.comp_delta_scale,
+        positive_injection_prob=args.positive_injection_prob,
     ).to(device)
     optimizer = torch.optim.AdamW(
         [param for param in model.parameters() if param.requires_grad],
@@ -629,10 +664,26 @@ def main() -> None:
     bad_epochs = 0
 
     for epoch in range(1, args.epochs + 1):
-        train_loss, train_top1 = run_dataset(model, train_sets, device, optimizer, args)
-        if val_sets:
+        train_loss, train_top1 = run_dataset(
+            model,
+            None,
+            device,
+            optimizer,
+            args,
+            npz_paths=train_paths,
+            split_name="train",
+        )
+        if val_paths:
             with torch.no_grad():
-                val_loss, val_top1 = run_dataset(model, val_sets, device, None, args)
+                val_loss, val_top1 = run_dataset(
+                    model,
+                    None,
+                    device,
+                    None,
+                    args,
+                    npz_paths=val_paths,
+                    split_name="val",
+                )
             metric = val_loss
         else:
             val_loss, val_top1 = train_loss, train_top1

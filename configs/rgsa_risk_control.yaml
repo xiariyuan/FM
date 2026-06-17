@@ -1,0 +1,49 @@
+# RGSA Risk Control Configuration
+# Monitors three failure modes during training and evaluation.
+
+failure_modes:
+
+  no_op:
+    description: "Defer rate too high, no meaningful edits executed"
+    thresholds:
+      defer_rate_max: 0.90
+      min_executed_edits: 1
+    action: "abort and report"
+
+  idsw_explosion:
+    description: "Too many harmful rewrites causing ID switch increase"
+    thresholds:
+      rewrite_rate_max: 0.30
+      idsw_increase_pct_max: 0.50
+      false_rewrite_rate_max: 0.10
+    action: "abort and report"
+
+  distribution_shift:
+    description: "Train-time label distribution diverges from runtime"
+    thresholds:
+      accept_rate_drift_max: 0.15
+      defer_rate_drift_max: 0.15
+      reject_rate_drift_max: 0.10
+    action: "warn and recalibrate"
+
+# Monitoring metrics (reported every eval batch)
+monitoring:
+  metrics:
+    - defer_rate
+    - reject_rate
+    - rewrite_rate
+    - recovery_rate
+    - false_rewrite_count
+    - false_recovery_count
+    - accept_precision
+    - accept_recall
+    - action_type_accuracy
+
+# Training guards
+training:
+  max_epochs_stage1: 50
+  max_epochs_stage2: 50
+  patience: 5
+  grad_clip: 5.0
+  min_val_improvement: 0.001
+  early_stop_metric: val_action_accuracy

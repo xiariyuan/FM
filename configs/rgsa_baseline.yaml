@@ -1,0 +1,75 @@
+# RGSA Baseline Configuration
+# Frozen reference for all RGSA experiments.
+# Primary carrier: BoT-SORT + HACA v3 on MOT17.
+
+# --- HACA v3 Checkpoint ---
+# Will be filled after Phase 0.2 re-training completes
+haca_version: haca_v3
+haca_checkpoint: outputs/haca_v3_rgsa_light_20260605/mot17_haca_v3_light_20260605.npz
+calibrator_npz: ""   # no external calibrator in lightweight baseline
+
+# --- Dataset ---
+dataset: MOT17
+train_seqs: [MOT17-02-FRCNN, MOT17-04-FRCNN, MOT17-05-FRCNN, MOT17-09-FRCNN]
+val_seqs: [MOT17-10-FRCNN, MOT17-11-FRCNN, MOT17-13-FRCNN]
+split_protocol: train_half  # first 50% frames per sequence for training
+detector_ext: FRCNN
+
+# --- HACA Parameters (from train_haca_v3_mot17.sh) ---
+laplace_decay_scales: [1, 2, 4]
+laplace_min_history: 3
+laplace_proto_mode: multi
+laplace_primary_only: true
+haca_disable_set_encoder: true
+haca_disable_background: true
+haca_delta_scale: 1.0
+
+# --- Competition head (HACA v3 specific) ---
+comp_hidden: 64
+comp_topk: 3
+comp_margin_quantile: 0.35
+comp_margin_temperature: 0.03
+comp_delta_scale: 1.0
+duel_margin: 0.20
+
+# --- ByteTrack / BoT-SORT base parameters ---
+track_high_thresh: 0.6
+track_low_thresh: 0.1
+new_track_thresh: 0.7
+track_buffer: 30
+match_thresh: 0.7
+proximity_thresh: 0.5
+appearance_thresh: 0.25
+
+# --- ReID ---
+fast_reid_config: fast_reid/configs/MOT17/sbs_S50.yml
+fast_reid_weights: pretrained/mot17_sbs_S50.pth
+bytetrack_ckpt: pretrained/bytetrack_x_mot17.pth.tar
+yolox_exp: ./yolox/exps/example/mot/yolox_x_mix_det.py
+
+# --- RGSA Stage 1 ---
+rgsa_stage1_enabled: false
+rgsa_stage1_checkpoint: ""
+rgsa_stage1_lambda_defer: 0.3
+rgsa_stage1_lambda_reject: 0.8
+
+# --- RGSA Stage 2 ---
+rgsa_stage2_enabled: false
+rgsa_stage2_checkpoint: ""
+rgsa_stage2_topk: 5
+
+# --- RGSA Stage 3 ---
+rgsa_stage3_enabled: false
+rgsa_stage3_recovery_threshold: 0.60
+rgsa_stage3_max_gap: 30
+rgsa_stage3_app_weight: 0.55
+rgsa_stage3_iou_weight: 0.25
+rgsa_stage3_score_weight: 0.10
+rgsa_stage3_gap_weight: 0.10
+
+# --- Experiment tracking ---
+experiment_registry: outputs/experiment_registry.csv
+experiment_plan: outputs/experiment_plan.csv
+
+# --- Known baseline results (from registry) ---
+# HOTA=78.714, DetA=80.379, AssA=77.487, IDF1=86.453, MOTA=90.794, IDSW=180, Frag=347

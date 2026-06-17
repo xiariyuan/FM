@@ -8,7 +8,6 @@ import torch.nn.functional as F
 from fast_reid.fastreid.config import get_cfg
 from fast_reid.fastreid.modeling.meta_arch import build_model
 from fast_reid.fastreid.utils.checkpoint import Checkpointer
-from fast_reid.fastreid.engine import DefaultTrainer, default_argument_parser, default_setup, launch
 
 # cudnn.benchmark = True
 
@@ -69,7 +68,7 @@ class FastReIDInterface:
         if self.device != 'cpu':
             self.model = self.model.eval().to(device='cuda').half()
         else:
-            self.model = self.model.eval()
+            self.model = self.model.eval().to(device='cpu')
 
         self.pH, self.pW = self.cfg.INPUT.SIZE_TEST
 
@@ -103,7 +102,11 @@ class FastReIDInterface:
 
             # Make shape with a new batch dimension which is adapted for network input
             patch = torch.as_tensor(patch.astype("float32").transpose(2, 0, 1))
-            patch = patch.to(device=self.device).half()
+            patch = patch.to(device=self.device)
+            if self.device != 'cpu':
+                patch = patch.half()
+            else:
+                patch = patch.float()
 
             patches.append(patch)
 

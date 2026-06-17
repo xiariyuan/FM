@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 import math
 import os
 import sys
@@ -43,6 +44,61 @@ from models.posthost_one_edit_hierarchical import (  # noqa: E402
     PosthostOneEditHierarchical,
 )
 
+POSTHOST_CANDIDATE_FEATURE_NAMES = [
+    "is_keep",
+    "is_add",
+    "is_swap",
+    "is_defer",
+    "num_detections",
+    "num_tracks",
+    "num_edges",
+    "is_large_component",
+    "host_pair_count",
+    "host_positive_count",
+    "host_negative_count",
+    "host_score",
+    "add_refined",
+    "add_base",
+    "add_iou",
+    "add_bbox_dist",
+    "add_row_degree",
+    "add_row_margin",
+    "add_row_entropy",
+    "add_col_degree",
+    "add_track_gap",
+    "add_track_hist",
+    "add_delta_cx",
+    "add_delta_cy",
+    "add_delta_log_w",
+    "add_delta_log_h",
+    "remove_refined",
+    "remove_base",
+    "remove_iou",
+    "remove_bbox_dist",
+    "remove_row_degree",
+    "remove_row_margin",
+    "remove_row_entropy",
+    "remove_col_degree",
+    "remove_track_gap",
+    "remove_track_hist",
+    "remove_delta_cx",
+    "remove_delta_cy",
+    "remove_delta_log_w",
+    "remove_delta_log_h",
+    "delta_refined",
+    "delta_base",
+    "delta_iou",
+    "delta_bbox_dist",
+    "delta_row_margin",
+    "delta_row_entropy",
+    "delta_track_gap",
+    "delta_track_hist",
+    "has_remove",
+]
+POSTHOST_CANDIDATE_FEATURE_INDEX = {
+    name: idx for idx, name in enumerate(POSTHOST_CANDIDATE_FEATURE_NAMES)
+}
+
 
 def _tlbr_array_to_cxcywh(tlbr_list: Sequence[np.ndarray]) -> torch.Tensor:
     if not tlbr_list:
@@ -63,6 +119,7 @@ class ByteTrackerLocalConflict(BYTETracker):
         self.use_local_conflict = bool(getattr(args, "use_local_conflict", False))
         self.use_posthost_oracle_edit = bool(getattr(args, "use_posthost_oracle_edit", False))
         self.use_posthost_hierarchical_edit = bool(getattr(args, "use_posthost_hierarchical_edit", False))
+        self.use_posthost_rule_edit = bool(getattr(args, "use_posthost_rule_edit", False))
         self.local_conflict_checkpoint = str(getattr(args, "local_conflict_checkpoint", "") or "")
         self.local_conflict_topk = max(int(getattr(args, "local_conflict_topk", 8)), 1)
         self.local_conflict_min_detections = max(int(getattr(args, "local_conflict_min_detections", 2)), 2)
@@ -95,6 +152,9 @@ class ByteTrackerLocalConflict(BYTETracker):
         ).strip() or "official_bytetrack"
         self.posthost_oracle_data_root = str(getattr(args, "posthost_oracle_data_root", "") or "").strip()
         self.posthost_oracle_min_iou = float(getattr(args, "posthost_oracle_min_iou", 0.5))
+        self.posthost_oracle_allowed_actions = str(
+            getattr(args, "posthost_oracle_allowed_actions", "all") or "all"
+        ).strip().lower() or "all"
         self.posthost_hierarchical_keep_thresh = float(
             getattr(args, "posthost_hierarchical_keep_thresh", 0.5)
         )
@@ -107,6 +167,40 @@ class ByteTrackerLocalConflict(BYTETracker):
         self.posthost_hierarchical_host_summary_prior_alpha = float(
             getattr(args, "posthost_hierarchical_host_summary_prior_alpha", 0.0)
         )
+        self.posthost_rule_large_only = bool(getattr(args, "posthost_rule_large_only", True))
+        self.posthost_rule_defer_refined_max = float(
+            getattr(args, "posthost_rule_defer_refined_max", 0.35)
+        )
+        self.posthost_rule_defer_iou_max = float(
+            getattr(args, "posthost_rule_defer_iou_max", 0.55)
+        )
+        self.posthost_rule_defer_row_margin_max = float(
+            getattr(args, "posthost_rule_defer_row_margin_max", 0.15)
+        )
+        self.posthost_rule_defer_track_hist_max = float(
+            getattr(args, "posthost_rule_defer_track_hist_max", 4.2)
+        )
+        self.posthost_rule_require_second_stage_rescue = bool(
+            getattr(args, "posthost_rule_require_second_stage_rescue", False)
+        )
+        self.posthost_rule_second_stage_iou_min = float(
+            getattr(args, "posthost_rule_second_stage_iou_min", 0.5)
+        )
+        self.posthost_rule_unconfirmed_fuse_min = float(
+            getattr(args, "posthost_rule_unconfirmed_fuse_min", 0.0)
+        )
+        self.posthost_rule_scorecard_json = str(
+            getattr(args, "posthost_rule_scorecard_json", "") or ""
+        ).strip()
+        self.posthost_rule_score_thresh = float(
+            getattr(args, "posthost_rule_score_thresh", 0.0)
+        )
+        self.posthost_rule_use_legacy_prefilter = bool(
+            getattr(args, "posthost_rule_use_legacy_prefilter", True)
+        )
+        self.posthost_rule_scorecard = self._load_posthost_rule_scorecard(
+            self.posthost_rule_scorecard_json
+        )
         self.local_conflict_dump_dir = str(getattr(args, "local_conflict_dump_dir", "") or "").strip()
         self.local_conflict_dump_topk = max(int(getattr(args, "local_conflict_dump_topk", 8)), 0)
         self.local_conflict_dump_min_score = float(getattr(args, "local_conflict_dump_min_score", 0.0))
@@ -114,6 +208,8 @@ class ByteTrackerLocalConflict(BYTETracker):
         self._local_conflict_dump_file = None
         self._local_conflict_dump_writer = None
         self._oracle_gt_cache_by_sequence: Dict[str, Dict[int, List[Dict[str, Any]]]] = {}
+        self._posthost_hierarchical_trace_rows: List[Dict[str, Any]] = []
+        self._posthost_rule_trace_rows: List[Dict[str, Any]] = []
 
         self.local_conflict_model: HostConditionedLocalConflictSetPredictor | None = None
         self.posthost_hierarchical_model: PosthostOneEditHierarchical | None = None
@@ -122,7 +218,12 @@ class ByteTrackerLocalConflict(BYTETracker):
         self.local_conflict_host_vocab = ["unknown"]
         self._local_conflict_stats_total = self._empty_local_conflict_stats()
 
-        enabled_modes = int(self.use_local_conflict) + int(self.use_posthost_oracle_edit) + int(self.use_posthost_hierarchical_edit)
+        enabled_modes = (
+            int(self.use_local_conflict)
+            + int(self.use_posthost_oracle_edit)
+            + int(self.use_posthost_hierarchical_edit)
+            + int(self.use_posthost_rule_edit)
+        )
         if enabled_modes > 1:
             raise RuntimeError("Official ByteTrack tracker supports only one plugin mode at a time")
         if self.use_local_conflict:
@@ -171,6 +272,8 @@ class ByteTrackerLocalConflict(BYTETracker):
             return
         self.close_local_conflict_dump()
         self.sequence_name = seq
+        self._posthost_hierarchical_trace_rows = []
+        self._posthost_rule_trace_rows = []
 
     def close_local_conflict_dump(self) -> None:
         if self._local_conflict_dump_file is not None:
@@ -340,12 +443,23 @@ class ByteTrackerLocalConflict(BYTETracker):
             graph_mode = "posthost_one_edit_oracle"
         elif self.use_posthost_hierarchical_edit:
             graph_mode = "posthost_one_edit_hierarchical"
+        elif self.use_posthost_rule_edit:
+            graph_mode = "posthost_one_edit_rule"
         else:
             graph_mode = "disabled"
         return {
-            "enabled": bool(self.use_local_conflict or self.use_posthost_oracle_edit),
+            "enabled": bool(
+                self.use_local_conflict
+                or self.use_posthost_oracle_edit
+                or self.use_posthost_hierarchical_edit
+                or self.use_posthost_rule_edit
+            ),
             "graph_mode": graph_mode,
-            "graph_checkpoint": self.local_conflict_checkpoint if self.use_local_conflict else "",
+            "graph_checkpoint": (
+                self.local_conflict_checkpoint
+                if (self.use_local_conflict or self.use_posthost_hierarchical_edit)
+                else ""
+            ),
             "graph_topk": int(self.local_conflict_topk),
             "graph_min_detections": int(self.local_conflict_min_detections),
             "graph_min_committed_matches": int(self.local_conflict_min_committed_matches),
@@ -360,6 +474,7 @@ class ByteTrackerLocalConflict(BYTETracker):
             "graph_min_commit_margin": float(self.local_conflict_min_commit_margin),
             "host_variant": self.local_conflict_host_variant,
             "posthost_oracle_min_iou": float(self.posthost_oracle_min_iou),
+            "posthost_oracle_allowed_actions": str(self.posthost_oracle_allowed_actions),
             "posthost_hierarchical_keep_thresh": float(self.posthost_hierarchical_keep_thresh),
             "posthost_hierarchical_swap_thresh": float(self.posthost_hierarchical_swap_thresh),
             "posthost_hierarchical_candidate_min_refined_score": float(
@@ -368,14 +483,54 @@ class ByteTrackerLocalConflict(BYTETracker):
             "posthost_hierarchical_host_summary_prior_alpha": float(
                 self.posthost_hierarchical_host_summary_prior_alpha
             ),
+            "posthost_rule_large_only": bool(self.posthost_rule_large_only),
+            "posthost_rule_defer_refined_max": float(self.posthost_rule_defer_refined_max),
+            "posthost_rule_defer_iou_max": float(self.posthost_rule_defer_iou_max),
+            "posthost_rule_defer_row_margin_max": float(self.posthost_rule_defer_row_margin_max),
+            "posthost_rule_defer_track_hist_max": float(self.posthost_rule_defer_track_hist_max),
+            "posthost_rule_require_second_stage_rescue": bool(self.posthost_rule_require_second_stage_rescue),
+            "posthost_rule_second_stage_iou_min": float(self.posthost_rule_second_stage_iou_min),
+            "posthost_rule_unconfirmed_fuse_min": float(self.posthost_rule_unconfirmed_fuse_min),
+            "posthost_rule_scorecard_json": str(self.posthost_rule_scorecard_json),
+            "posthost_rule_score_thresh": float(self.posthost_rule_score_thresh),
+            "posthost_rule_use_legacy_prefilter": bool(self.posthost_rule_use_legacy_prefilter),
             "model_family": self.local_conflict_model_family,
             "feature_version": self.local_conflict_feature_version,
+            "posthost_hierarchical_trace_rows": list(self._posthost_hierarchical_trace_rows),
+            "posthost_rule_trace_rows": list(self._posthost_rule_trace_rows),
             **{key: int(value) for key, value in self._local_conflict_stats_total.items()},
         }
 
     def _accumulate_local_conflict_stats(self, stats: Dict[str, Any]) -> None:
         for key in self._local_conflict_stats_total.keys():
             self._local_conflict_stats_total[key] += int(stats.get(key, 0) or 0)
+
+    def _append_posthost_hierarchical_trace(self, payload: Dict[str, Any]) -> None:
+        if len(self._posthost_hierarchical_trace_rows) >= 256:
+            return
+        self._posthost_hierarchical_trace_rows.append(dict(payload))
+
+    def _append_posthost_rule_trace(self, payload: Dict[str, Any]) -> None:
+        if len(self._posthost_rule_trace_rows) >= 256:
+            return
+        self._posthost_rule_trace_rows.append(dict(payload))
+
+    def _compute_replacement_budget_limit(self, eligible_cluster_count: int) -> int:
+        if eligible_cluster_count <= 0:
+            return 0
+        budget_limit = 0
+        if float(self.local_conflict_replacement_budget_ratio) > 0.0:
+            budget_limit = max(
+                int(math.ceil(float(self.local_conflict_replacement_budget_ratio) * float(eligible_cluster_count))),
+                1,
+            )
+        if int(self.local_conflict_max_replaced_clusters) > 0:
+            budget_limit = (
+                min(int(self.local_conflict_max_replaced_clusters), budget_limit)
+                if budget_limit > 0
+                else int(self.local_conflict_max_replaced_clusters)
+            )
+        return int(budget_limit)
 
     @staticmethod
     def _posthost_zero_pair_stats() -> Dict[str, float]:
@@ -678,6 +833,12 @@ class ByteTrackerLocalConflict(BYTETracker):
             "decision": "keep",
             "gate_prob": 0.0,
             "swap_prob": 0.0,
+            "candidate_count": 0,
+            "active_candidate_count": 0,
+            "selected_candidate_index": -1,
+            "rank_score": None,
+            "rank_second_score": None,
+            "rank_margin": None,
         }
         if self.posthost_hierarchical_model is None:
             return result
@@ -687,11 +848,13 @@ class ByteTrackerLocalConflict(BYTETracker):
             is_large_component=int(is_large_component),
         )
         if len(candidates) <= 1:
+            result["candidate_count"] = int(len(candidates))
             result["decision"] = "no_candidate"
             return result
 
         candidate_action_types = [str(candidate["action_type"]) for candidate in candidates]
         candidate_features = [candidate["candidate_features"] for candidate in candidates]
+        result["candidate_count"] = int(len(candidates))
         cluster_feature = self._build_posthost_cluster_feature(candidate_features, candidate_action_types)
         device = next(self.posthost_hierarchical_model.parameters()).device
         cluster_tensor = torch.tensor(cluster_feature, dtype=torch.float32, device=device).unsqueeze(0)
@@ -737,11 +900,143 @@ class ByteTrackerLocalConflict(BYTETracker):
                 dtype=torch.float32,
                 device=device,
             )
-            local_best = int(ranker(ranker_features).argmax().item())
+            rank_scores = ranker(ranker_features)
+            local_best = int(rank_scores.argmax().item())
             best_index = int(active_indices[local_best])
+            topk_scores = torch.topk(rank_scores, k=min(2, int(rank_scores.numel())), dim=0).values
+            best_score = float(topk_scores[0].item())
+            second_score = float(topk_scores[1].item()) if int(topk_scores.numel()) > 1 else None
             result["selected_candidate"] = dict(candidates[best_index])
             result["decision"] = str(active_action)
+            result["active_candidate_count"] = int(len(active_indices))
+            result["selected_candidate_index"] = int(best_index)
+            result["rank_score"] = float(best_score)
+            result["rank_second_score"] = second_score
+            result["rank_margin"] = (
+                float(best_score - second_score) if second_score is not None else float(best_score)
+            )
             return result
+
+    def _compute_posthost_rule_rescue_stats(
+        self,
+        *,
+        remove_pair_local: tuple[int, int] | None,
+        det_rows: Sequence[int],
+        track_cols: Sequence[int],
+        detections: Sequence[STrack],
+        tracks: Sequence[STrack],
+        detections_second: Sequence[STrack],
+        unconfirmed: Sequence[STrack],
+    ) -> Dict[str, float]:
+        stats = {
+            "second_stage_iou": 0.0,
+            "second_stage_det_score": 0.0,
+            "unconfirmed_iou": 0.0,
+            "unconfirmed_fused_sim": 0.0,
+        }
+        if remove_pair_local is None:
+            return stats
+        det_global = int(det_rows[int(remove_pair_local[0])])
+        track_global = int(track_cols[int(remove_pair_local[1])])
+        track = tracks[track_global]
+        det = detections[det_global]
+
+        if detections_second:
+            second_cost = matching.iou_distance([track], detections_second)
+            if second_cost.size > 0:
+                second_iou = 1.0 - second_cost[0]
+                best_idx = int(np.argmax(second_iou))
+                stats["second_stage_iou"] = float(max(second_iou[best_idx], 0.0))
+                stats["second_stage_det_score"] = float(getattr(detections_second[best_idx], "score", 0.0))
+
+        if unconfirmed:
+            unc_cost = matching.iou_distance(unconfirmed, [det])
+            if unc_cost.size > 0:
+                unc_iou = 1.0 - unc_cost[:, 0]
+                stats["unconfirmed_iou"] = float(max(float(np.max(unc_iou)), 0.0))
+                if not self.args.mot20:
+                    unc_cost = matching.fuse_score(unc_cost, [det])
+                unc_sim = 1.0 - unc_cost[:, 0]
+                stats["unconfirmed_fused_sim"] = float(max(float(np.max(unc_sim)), 0.0))
+        return stats
+
+    def _score_posthost_rule_candidate(
+        self,
+        candidate: Dict[str, Any],
+        *,
+        rescue_stats: Dict[str, float] | None = None,
+    ) -> float | None:
+        action_type = str(candidate.get("action_type", "") or "")
+        if action_type != "defer":
+            return None
+        features = [float(x) for x in candidate.get("candidate_features", [])]
+        if len(features) <= POSTHOST_CANDIDATE_FEATURE_INDEX["has_remove"]:
+            return None
+        idx = POSTHOST_CANDIDATE_FEATURE_INDEX
+        if int(round(float(features[idx["has_remove"]]))) <= 0:
+            return None
+        if self.posthost_rule_large_only and int(round(float(features[idx["is_large_component"]]))) <= 0:
+            return None
+        if bool(self.posthost_rule_use_legacy_prefilter):
+            if float(features[idx["remove_refined"]]) > float(self.posthost_rule_defer_refined_max):
+                return None
+            if float(features[idx["remove_iou"]]) > float(self.posthost_rule_defer_iou_max):
+                return None
+            if float(features[idx["remove_row_margin"]]) > float(self.posthost_rule_defer_row_margin_max):
+                return None
+            if float(features[idx["remove_track_hist"]]) > float(self.posthost_rule_defer_track_hist_max):
+                return None
+        rescue = dict(rescue_stats or {})
+        second_stage_iou = float(rescue.get("second_stage_iou", 0.0) or 0.0)
+        unconfirmed_fused_sim = float(rescue.get("unconfirmed_fused_sim", 0.0) or 0.0)
+        if bool(self.posthost_rule_require_second_stage_rescue):
+            if second_stage_iou < float(self.posthost_rule_second_stage_iou_min):
+                fallback_min = float(self.posthost_rule_unconfirmed_fuse_min)
+                if fallback_min <= 0.0:
+                    return None
+                if unconfirmed_fused_sim < fallback_min:
+                    return None
+        if self.posthost_rule_scorecard is not None:
+            raw_score = float(self.posthost_rule_scorecard.get("raw_intercept", 0.0) or 0.0)
+            raw_weights = self.posthost_rule_scorecard.get("raw_weights", {}) or {}
+            for name, feature_value in zip(POSTHOST_CANDIDATE_FEATURE_NAMES, features):
+                raw_score += float(raw_weights.get(name, 0.0) or 0.0) * float(feature_value)
+            score_prob = 1.0 / (1.0 + math.exp(-max(min(raw_score, 60.0), -60.0)))
+            score_thresh = float(self.posthost_rule_score_thresh)
+            if score_thresh <= 0.0:
+                score_thresh = float(self.posthost_rule_scorecard.get("threshold", 0.0) or 0.0)
+            if score_prob < score_thresh:
+                return None
+            return float(score_prob)
+        # Offline replay showed swap heuristics remained low precision; v1 keeps only
+        # the highest-confidence defer actions under the fixed post-host contract.
+        return float(
+            (1.0 - float(features[idx["remove_refined"]]))
+            + (1.0 - float(features[idx["remove_iou"]]))
+            + (1.0 - float(features[idx["remove_row_margin"]]))
+            + 0.2 * float(features[idx["remove_row_entropy"]])
+            + 0.15 * float(features[idx["remove_track_gap"]])
+            - 0.1 * float(features[idx["remove_track_hist"]])
+            + 0.1 * float(features[idx["is_large_component"]])
+            + 0.35 * second_stage_iou
+            + 0.15 * unconfirmed_fused_sim
+        )
+
+    @staticmethod
+    def _load_posthost_rule_scorecard(scorecard_json: str) -> Dict[str, Any] | None:
+        path = str(scorecard_json or "").strip()
+        if not path:
+            return None
+        scorecard_path = Path(path).expanduser()
+        if not scorecard_path.exists():
+            return None
+        try:
+            payload = json.loads(scorecard_path.read_text(encoding="utf-8"))
+        except Exception:
+            return None
+        if not isinstance(payload, dict):
+            return None
+        return payload
 
     @staticmethod
     def _pairwise_iou_matrix(boxes_a: Sequence[np.ndarray], boxes_b: Sequence[np.ndarray]) -> np.ndarray:
@@ -1165,21 +1460,10 @@ class ByteTrackerLocalConflict(BYTETracker):
             return plan
 
         eligible_cluster_count = int(len(eligible_components))
-        budget_limit = 0
-        if float(self.local_conflict_replacement_budget_ratio) > 0.0 and eligible_cluster_count > 0:
-            budget_limit = max(
-                int(math.ceil(float(self.local_conflict_replacement_budget_ratio) * float(eligible_cluster_count))),
-                1,
-            )
-        if int(self.local_conflict_max_replaced_clusters) > 0:
-            budget_limit = (
-                min(int(self.local_conflict_max_replaced_clusters), budget_limit)
-                if budget_limit > 0
-                else int(self.local_conflict_max_replaced_clusters)
-            )
+        budget_limit = self._compute_replacement_budget_limit(eligible_cluster_count)
 
         feasible_score_thresh = 1.0 - float(thresh)
-        for component in eligible_components:
+        for component_idx, component in enumerate(eligible_components):
             det_rows = [int(x) for x in component.get("det_rows", [])]
             track_cols = [int(x) for x in component.get("track_cols", [])]
             if not det_rows or not track_cols:
@@ -1400,6 +1684,279 @@ class ByteTrackerLocalConflict(BYTETracker):
         plan["stats"]["blocked_tracks"] = int(len(plan["blocked_tracks"]))
         return plan
 
+    def _get_posthost_one_edit_rule_plan(
+        self,
+        *,
+        iou_cost: np.ndarray,
+        refined_cost: np.ndarray,
+        host_matches: np.ndarray,
+        host_u_track: np.ndarray,
+        host_u_detection: np.ndarray,
+        detections: Sequence[STrack],
+        tracks: Sequence[STrack],
+        detections_second: Sequence[STrack],
+        unconfirmed: Sequence[STrack],
+        thresh: float,
+    ) -> Dict[str, Any]:
+        plan = {
+            "matches": np.asarray(host_matches, dtype=int).reshape(-1, 2)
+            if np.asarray(host_matches).size > 0
+            else np.empty((0, 2), dtype=int),
+            "u_track": np.asarray(host_u_track, dtype=int).reshape(-1),
+            "u_detection": np.asarray(host_u_detection, dtype=int).reshape(-1),
+            "stats": self._empty_local_conflict_stats(),
+        }
+        if (
+            not self.use_posthost_rule_edit
+            or len(detections) == 0
+            or len(tracks) == 0
+        ):
+            return plan
+
+        device = torch.device("cpu")
+        score_mat = torch.as_tensor(1.0 - refined_cost, device=device, dtype=torch.float32).transpose(0, 1).contiguous()
+        base_scores = torch.as_tensor(1.0 - iou_cost, device=device, dtype=torch.float32).transpose(0, 1).contiguous()
+        det_scores = torch.tensor([float(det.score) for det in detections], device=device, dtype=torch.float32)
+        det_boxes_cxcywh = _tlbr_array_to_cxcywh([det.tlbr for det in detections]).to(device=device)
+        track_boxes_cxcywh = _tlbr_array_to_cxcywh([track.tlbr for track in tracks]).to(device=device)
+        track_gaps = torch.tensor(
+            [max(float(self.frame_id - int(track.frame_id)), 0.0) for track in tracks],
+            device=device,
+            dtype=torch.float32,
+        )
+        track_hist_lens = torch.tensor(
+            [
+                max(
+                    float(getattr(track, "tracklet_len", 0) + 1),
+                    float(int(track.frame_id) - int(track.start_frame) + 1),
+                )
+                for track in tracks
+            ],
+            device=device,
+            dtype=torch.float32,
+        )
+
+        components = build_topk_bipartite_components(
+            score_mat=score_mat,
+            topk=int(self.local_conflict_topk),
+            min_edge_score=0.0,
+        )
+        eligible_components, skipped_large = filter_local_conflict_clusters_by_size(
+            components,
+            min_detections=int(self.local_conflict_min_detections),
+            max_detections=int(self.local_conflict_max_detections),
+            max_tracks=int(self.local_conflict_max_tracks),
+        )
+        plan["stats"]["skipped_large_clusters"] = int(skipped_large)
+        if not eligible_components:
+            return plan
+
+        budget_limit = self._compute_replacement_budget_limit(int(len(eligible_components)))
+        match_set_det_track = {
+            (int(det_idx), int(track_idx))
+            for track_idx, det_idx in np.asarray(host_matches, dtype=int).reshape(-1, 2).tolist()
+        }
+        unmatched_track_set = {int(x) for x in np.asarray(host_u_track, dtype=int).reshape(-1).tolist()}
+        unmatched_det_set = {int(x) for x in np.asarray(host_u_detection, dtype=int).reshape(-1).tolist()}
+        component_proposals: List[Dict[str, Any]] = []
+
+        for component_idx, component in enumerate(eligible_components):
+            det_rows = [int(x) for x in component.get("det_rows", [])]
+            track_cols = [int(x) for x in component.get("track_cols", [])]
+            if not det_rows or not track_cols:
+                continue
+            plan["stats"]["eligible_clusters"] += 1
+
+            component_host_pairs = {
+                (int(det_idx), int(track_idx))
+                for det_idx, track_idx in match_set_det_track
+                if int(det_idx) in det_rows and int(track_idx) in track_cols
+            }
+            det_to_local = {int(det_idx): int(local_idx) for local_idx, det_idx in enumerate(det_rows)}
+            track_to_local = {int(track_idx): int(local_idx) for local_idx, track_idx in enumerate(track_cols)}
+            host_pairs_local = [
+                (int(det_to_local[int(det_idx)]), int(track_to_local[int(track_idx)]))
+                for det_idx, track_idx in sorted(component_host_pairs)
+            ]
+
+            feature_pack = self._build_local_conflict_runtime_features_v2(
+                base_scores=base_scores.index_select(0, torch.tensor(det_rows, device=device)).index_select(
+                    1, torch.tensor(track_cols, device=device)
+                ),
+                score_mat=score_mat.index_select(0, torch.tensor(det_rows, device=device)).index_select(
+                    1, torch.tensor(track_cols, device=device)
+                ),
+                det_scores=det_scores.index_select(0, torch.tensor(det_rows, device=device)),
+                track_gaps=track_gaps.index_select(0, torch.tensor(track_cols, device=device)),
+                track_hist_lens=track_hist_lens.index_select(0, torch.tensor(track_cols, device=device)),
+                det_boxes_cxcywh=det_boxes_cxcywh.index_select(0, torch.tensor(det_rows, device=device)),
+                track_boxes_cxcywh=track_boxes_cxcywh.index_select(0, torch.tensor(track_cols, device=device)),
+            )
+            trace_payload: Dict[str, Any] = {
+                "sequence": str(self.sequence_name or ""),
+                "frame": int(self.frame_id),
+                "component_index": int(component_idx),
+                "det_rows_global": [int(x) for x in det_rows],
+                "track_cols_global": [int(x) for x in track_cols],
+                "host_pair_count": int(len(component_host_pairs)),
+                "decision": "rule_keep",
+                "candidate_count": 0,
+                "active_candidate_count": 0,
+                "selected_candidate_index": -1,
+                "rank_score": None,
+                "rank_second_score": None,
+                "rank_margin": None,
+                "second_stage_iou": None,
+                "second_stage_det_score": None,
+                "unconfirmed_iou": None,
+                "unconfirmed_fused_sim": None,
+            }
+            if feature_pack["edge_features"].shape[0] == 0:
+                plan["stats"]["trigger_filtered_clusters"] += 1
+                trace_payload["decision"] = "empty_edge_keep"
+                self._append_posthost_rule_trace(trace_payload)
+                continue
+
+            is_large_component = int(max(len(det_rows), len(track_cols)) >= 4)
+            trace_payload["is_large_component"] = int(is_large_component)
+            candidates = self._enumerate_posthost_hierarchical_candidates(
+                feature_pack=feature_pack,
+                host_pairs_local=host_pairs_local,
+                is_large_component=int(is_large_component),
+            )
+            trace_payload["candidate_count"] = int(len(candidates))
+            ranked_candidates: List[tuple[float, int, Dict[str, Any]]] = []
+            for candidate_idx, candidate in enumerate(candidates):
+                rescue_stats = self._compute_posthost_rule_rescue_stats(
+                    remove_pair_local=candidate.get("remove_pair", None),
+                    det_rows=det_rows,
+                    track_cols=track_cols,
+                    detections=detections,
+                    tracks=tracks,
+                    detections_second=detections_second,
+                    unconfirmed=unconfirmed,
+                )
+                score = self._score_posthost_rule_candidate(candidate, rescue_stats=rescue_stats)
+                if score is None:
+                    continue
+                ranked_candidates.append((float(score), int(candidate_idx), candidate, rescue_stats))
+            trace_payload["active_candidate_count"] = int(len(ranked_candidates))
+            if not ranked_candidates:
+                plan["stats"]["gate_filtered_clusters"] += 1
+                self._append_posthost_rule_trace(trace_payload)
+                continue
+
+            ranked_candidates.sort(key=lambda row: float(row[0]), reverse=True)
+            best_score, best_index, best_candidate, best_rescue_stats = ranked_candidates[0]
+            second_score = float(ranked_candidates[1][0]) if len(ranked_candidates) > 1 else None
+            add_pair_local = best_candidate.get("add_pair", None)
+            remove_pair_local = best_candidate.get("remove_pair", None)
+            add_pair_global = None
+            if add_pair_local is not None:
+                add_pair_global = (
+                    int(det_rows[int(add_pair_local[0])]),
+                    int(track_cols[int(add_pair_local[1])]),
+                )
+            remove_pairs_global: set[tuple[int, int]] = set()
+            if remove_pair_local is not None:
+                remove_pairs_global.add(
+                    (
+                        int(det_rows[int(remove_pair_local[0])]),
+                        int(track_cols[int(remove_pair_local[1])]),
+                    )
+                )
+            final_pairs = set(component_host_pairs)
+            final_pairs.difference_update(remove_pairs_global)
+            if add_pair_global is not None:
+                final_pairs.add(add_pair_global)
+            trace_payload.update(
+                {
+                    "selected_candidate_index": int(best_index),
+                    "rank_score": float(best_score),
+                    "rank_second_score": second_score,
+                    "rank_margin": (
+                        float(best_score - second_score) if second_score is not None else float(best_score)
+                    ),
+                    "selected_action_type": str(best_candidate.get("action_type", "")),
+                    "selected_add_pair_global": list(add_pair_global) if add_pair_global is not None else None,
+                    "selected_remove_pair_global": [list(row) for row in sorted(remove_pairs_global)],
+                    "second_stage_iou": float(best_rescue_stats.get("second_stage_iou", 0.0) or 0.0),
+                    "second_stage_det_score": float(best_rescue_stats.get("second_stage_det_score", 0.0) or 0.0),
+                    "unconfirmed_iou": float(best_rescue_stats.get("unconfirmed_iou", 0.0) or 0.0),
+                    "unconfirmed_fused_sim": float(best_rescue_stats.get("unconfirmed_fused_sim", 0.0) or 0.0),
+                }
+            )
+            if final_pairs == component_host_pairs:
+                plan["stats"]["host_same_commit_clusters"] += 1
+                trace_payload["decision"] = "host_same_keep"
+                self._append_posthost_rule_trace(trace_payload)
+                continue
+
+            component_proposals.append(
+                {
+                    "score": float(best_score),
+                    "component_index": int(component_idx),
+                    "action_type": str(best_candidate.get("action_type", "")),
+                    "add_pair_global": add_pair_global,
+                    "remove_pairs_global": set(remove_pairs_global),
+                    "trace_payload": trace_payload,
+                }
+            )
+
+        component_proposals.sort(key=lambda row: float(row["score"]), reverse=True)
+        accepted_component_indices = {
+            int(row["component_index"])
+            for row in (
+                component_proposals[:budget_limit]
+                if budget_limit > 0
+                else component_proposals
+            )
+        }
+        for proposal in component_proposals:
+            trace_payload = dict(proposal["trace_payload"])
+            if int(proposal["component_index"]) not in accepted_component_indices:
+                plan["stats"]["budget_filtered_clusters"] += 1
+                trace_payload["decision"] = "budget_filtered"
+                self._append_posthost_rule_trace(trace_payload)
+                continue
+
+            plan["stats"]["replaced_clusters"] += 1
+            plan["stats"]["delta_replaced_clusters"] += 1
+            plan["stats"]["posthost_selected_clusters"] += 1
+            if str(proposal["action_type"]) == "swap":
+                plan["stats"]["posthost_swap_clusters"] += 1
+            elif str(proposal["action_type"]) == "add":
+                plan["stats"]["posthost_add_clusters"] += 1
+            elif str(proposal["action_type"]) == "defer":
+                plan["stats"]["posthost_defer_clusters"] += 1
+            trace_payload["decision"] = str(proposal["action_type"])
+            self._append_posthost_rule_trace(trace_payload)
+
+            for det_idx, track_idx in sorted(proposal["remove_pairs_global"]):
+                if (int(det_idx), int(track_idx)) in match_set_det_track:
+                    match_set_det_track.remove((int(det_idx), int(track_idx)))
+                    unmatched_det_set.add(int(det_idx))
+                    unmatched_track_set.add(int(track_idx))
+                    plan["stats"]["delta_drop_pairs"] += 1
+                    if proposal["add_pair_global"] is None or int(proposal["add_pair_global"][0]) != int(det_idx):
+                        plan["stats"]["deferred_dets"] += 1
+
+            if proposal["add_pair_global"] is not None and proposal["add_pair_global"] not in match_set_det_track:
+                match_set_det_track.add(proposal["add_pair_global"])
+                unmatched_det_set.discard(int(proposal["add_pair_global"][0]))
+                unmatched_track_set.discard(int(proposal["add_pair_global"][1]))
+                plan["stats"]["delta_commit_pairs"] += 1
+                plan["stats"]["matched_dets"] += 1
+
+        final_matches = sorted(
+            [[int(track_idx), int(det_idx)] for det_idx, track_idx in match_set_det_track],
+            key=lambda row: (int(row[0]), int(row[1])),
+        )
+        plan["matches"] = np.asarray(final_matches, dtype=int).reshape(-1, 2) if final_matches else np.empty((0, 2), dtype=int)
+        plan["u_track"] = np.asarray(sorted(unmatched_track_set), dtype=int)
+        plan["u_detection"] = np.asarray(sorted(unmatched_det_set), dtype=int)
+        return plan
+
     def _get_posthost_one_edit_oracle_plan(
         self,
         *,
@@ -1454,8 +2011,11 @@ class ByteTrackerLocalConflict(BYTETracker):
         }
         unmatched_track_set = {int(x) for x in np.asarray(host_u_track, dtype=int).reshape(-1).tolist()}
         unmatched_det_set = {int(x) for x in np.asarray(host_u_detection, dtype=int).reshape(-1).tolist()}
+        allowed_actions = str(self.posthost_oracle_allowed_actions or "all").strip().lower()
+        allow_add_swap = allowed_actions in {"all", "nondrop", "add_swap", "mixed"}
+        allow_defer = allowed_actions in {"all", "defer_only", "defer"}
 
-        for component in eligible_components:
+        for component_idx, component in enumerate(eligible_components):
             det_rows = [int(x) for x in component.get("det_rows", [])]
             track_cols = [int(x) for x in component.get("track_cols", [])]
             if not det_rows or not track_cols:
@@ -1476,30 +2036,58 @@ class ByteTrackerLocalConflict(BYTETracker):
             )
 
             candidates: List[Dict[str, Any]] = []
-            for det_idx in det_rows:
-                det_gt = int(det_gt_ids[int(det_idx)])
-                if det_gt <= 0:
-                    continue
-                for track_idx in track_cols:
+            if allow_add_swap:
+                for det_idx in det_rows:
+                    det_gt = int(det_gt_ids[int(det_idx)])
+                    if det_gt <= 0:
+                        continue
+                    for track_idx in track_cols:
+                        track_gt = int(track_gt_ids[int(track_idx)])
+                        if track_gt <= 0 or det_gt != track_gt:
+                            continue
+                        if float(score_mat[int(det_idx), int(track_idx)].item()) < feasible_score_thresh:
+                            continue
+                        if (int(det_idx), int(track_idx)) in component_host_pairs:
+                            continue
+                        remove_pairs: set[tuple[int, int]] = set()
+                        existing_track = host_det_to_track.get(int(det_idx))
+                        if existing_track is not None and int(existing_track) != int(track_idx):
+                            remove_pairs.add((int(det_idx), int(existing_track)))
+                        existing_det = host_track_to_det.get(int(track_idx))
+                        if existing_det is not None and int(existing_det) != int(det_idx):
+                            remove_pairs.add((int(existing_det), int(track_idx)))
+                        if len(remove_pairs) > 1:
+                            continue
+                        new_pairs = set(component_host_pairs)
+                        new_pairs.difference_update(remove_pairs)
+                        new_pairs.add((int(det_idx), int(track_idx)))
+                        new_score = self._score_pair_set_against_oracle(
+                            list(new_pairs),
+                            det_gt_ids=det_gt_ids,
+                            track_gt_ids=track_gt_ids,
+                        )
+                        utility = float(new_score["score"] - host_score["score"])
+                        if utility <= 0.0:
+                            continue
+                        action_type = "add" if len(remove_pairs) == 0 else "swap"
+                        candidates.append(
+                            {
+                                "action_type": action_type,
+                                "add_pair": (int(det_idx), int(track_idx)),
+                                "remove_pairs": sorted(remove_pairs),
+                                "utility": utility,
+                                "delta_correct": float(new_score["correct"] - host_score["correct"]),
+                                "delta_wrong": float(new_score["wrong"] - host_score["wrong"]),
+                            }
+                        )
+
+            if allow_defer:
+                for det_idx, track_idx in sorted(component_host_pairs):
+                    det_gt = int(det_gt_ids[int(det_idx)])
                     track_gt = int(track_gt_ids[int(track_idx)])
-                    if track_gt <= 0 or det_gt != track_gt:
+                    if det_gt <= 0 or track_gt <= 0 or det_gt == track_gt:
                         continue
-                    if float(score_mat[int(det_idx), int(track_idx)].item()) < feasible_score_thresh:
-                        continue
-                    if (int(det_idx), int(track_idx)) in component_host_pairs:
-                        continue
-                    remove_pairs: set[tuple[int, int]] = set()
-                    existing_track = host_det_to_track.get(int(det_idx))
-                    if existing_track is not None and int(existing_track) != int(track_idx):
-                        remove_pairs.add((int(det_idx), int(existing_track)))
-                    existing_det = host_track_to_det.get(int(track_idx))
-                    if existing_det is not None and int(existing_det) != int(det_idx):
-                        remove_pairs.add((int(existing_det), int(track_idx)))
-                    if len(remove_pairs) > 1:
-                        continue
-                    new_pairs = set(component_host_pairs)
-                    new_pairs.difference_update(remove_pairs)
-                    new_pairs.add((int(det_idx), int(track_idx)))
+                    new_pairs = {pair for pair in component_host_pairs if pair != (int(det_idx), int(track_idx))}
                     new_score = self._score_pair_set_against_oracle(
                         list(new_pairs),
                         det_gt_ids=det_gt_ids,
@@ -1508,42 +2096,16 @@ class ByteTrackerLocalConflict(BYTETracker):
                     utility = float(new_score["score"] - host_score["score"])
                     if utility <= 0.0:
                         continue
-                    action_type = "add" if len(remove_pairs) == 0 else "swap"
                     candidates.append(
                         {
-                            "action_type": action_type,
-                            "add_pair": (int(det_idx), int(track_idx)),
-                            "remove_pairs": sorted(remove_pairs),
+                            "action_type": "defer",
+                            "add_pair": None,
+                            "remove_pairs": [(int(det_idx), int(track_idx))],
                             "utility": utility,
                             "delta_correct": float(new_score["correct"] - host_score["correct"]),
                             "delta_wrong": float(new_score["wrong"] - host_score["wrong"]),
                         }
                     )
-
-            for det_idx, track_idx in sorted(component_host_pairs):
-                det_gt = int(det_gt_ids[int(det_idx)])
-                track_gt = int(track_gt_ids[int(track_idx)])
-                if det_gt <= 0 or track_gt <= 0 or det_gt == track_gt:
-                    continue
-                new_pairs = {pair for pair in component_host_pairs if pair != (int(det_idx), int(track_idx))}
-                new_score = self._score_pair_set_against_oracle(
-                    list(new_pairs),
-                    det_gt_ids=det_gt_ids,
-                    track_gt_ids=track_gt_ids,
-                )
-                utility = float(new_score["score"] - host_score["score"])
-                if utility <= 0.0:
-                    continue
-                candidates.append(
-                    {
-                        "action_type": "defer",
-                        "add_pair": None,
-                        "remove_pairs": [(int(det_idx), int(track_idx))],
-                        "utility": utility,
-                        "delta_correct": float(new_score["correct"] - host_score["correct"]),
-                        "delta_wrong": float(new_score["wrong"] - host_score["wrong"]),
-                    }
-                )
 
             if not candidates:
                 plan["stats"]["trigger_filtered_clusters"] += 1
@@ -1682,7 +2244,7 @@ class ByteTrackerLocalConflict(BYTETracker):
         unmatched_track_set = {int(x) for x in np.asarray(host_u_track, dtype=int).reshape(-1).tolist()}
         unmatched_det_set = {int(x) for x in np.asarray(host_u_detection, dtype=int).reshape(-1).tolist()}
 
-        for component in eligible_components:
+        for component_idx, component in enumerate(eligible_components):
             det_rows = [int(x) for x in component.get("det_rows", [])]
             track_cols = [int(x) for x in component.get("track_cols", [])]
             if not det_rows or not track_cols:
@@ -1724,12 +2286,35 @@ class ByteTrackerLocalConflict(BYTETracker):
                 host_pairs_local=host_pairs_local,
                 is_large_component=int(is_large_component),
             )
+            trace_payload: Dict[str, Any] = {
+                "sequence": str(self.sequence_name or ""),
+                "frame": int(self.frame_id),
+                "component_index": int(component_idx),
+                "det_rows_global": [int(x) for x in det_rows],
+                "track_cols_global": [int(x) for x in track_cols],
+                "host_pair_count": int(len(component_host_pairs)),
+                "is_large_component": int(is_large_component),
+                "decision": str(prediction.get("decision", "")),
+                "gate_prob": float(prediction.get("gate_prob", 0.0) or 0.0),
+                "swap_prob": float(prediction.get("swap_prob", 0.0) or 0.0),
+                "candidate_count": int(prediction.get("candidate_count", 0) or 0),
+                "active_candidate_count": int(prediction.get("active_candidate_count", 0) or 0),
+                "selected_candidate_index": (
+                    int(prediction["selected_candidate_index"])
+                    if prediction.get("selected_candidate_index", None) is not None
+                    else -1
+                ),
+                "rank_score": prediction.get("rank_score", None),
+                "rank_second_score": prediction.get("rank_second_score", None),
+                "rank_margin": prediction.get("rank_margin", None),
+            }
             selected = prediction.get("selected_candidate", None)
             if selected is None:
                 if str(prediction.get("decision", "")) == "gate_keep":
                     plan["stats"]["gate_filtered_clusters"] += 1
                 else:
                     plan["stats"]["trigger_filtered_clusters"] += 1
+                self._append_posthost_hierarchical_trace(trace_payload)
                 continue
 
             add_pair_local = selected.get("add_pair", None)
@@ -1756,6 +2341,16 @@ class ByteTrackerLocalConflict(BYTETracker):
 
             if final_pairs == component_host_pairs:
                 plan["stats"]["host_same_commit_clusters"] += 1
+                trace_payload.update(
+                    {
+                        "selected_action_type": str(selected.get("action_type", "")),
+                        "selected_add_pair_global": list(add_pair_global) if add_pair_global is not None else None,
+                        "selected_remove_pair_global": [
+                            list(row) for row in sorted(remove_pairs_global)
+                        ],
+                    }
+                )
+                self._append_posthost_hierarchical_trace(trace_payload)
                 continue
 
             plan["stats"]["replaced_clusters"] += 1
@@ -1768,6 +2363,14 @@ class ByteTrackerLocalConflict(BYTETracker):
                 plan["stats"]["posthost_add_clusters"] += 1
             elif action_type == "defer":
                 plan["stats"]["posthost_defer_clusters"] += 1
+            trace_payload.update(
+                {
+                    "selected_action_type": str(action_type),
+                    "selected_add_pair_global": list(add_pair_global) if add_pair_global is not None else None,
+                    "selected_remove_pair_global": [list(row) for row in sorted(remove_pairs_global)],
+                }
+            )
+            self._append_posthost_hierarchical_trace(trace_payload)
 
             for det_idx, track_idx in remove_pairs_global:
                 if (int(det_idx), int(track_idx)) in match_set_det_track:
@@ -1828,6 +2431,12 @@ class ByteTrackerLocalConflict(BYTETracker):
             else []
         )
         self._annotate_detection_gt_ids(detections)
+        detections_second = (
+            [STrack(STrack.tlbr_to_tlwh(tlbr), s) for (tlbr, s) in zip(dets_second, scores_second)]
+            if len(dets_second) > 0
+            else []
+        )
+        self._annotate_detection_gt_ids(detections_second)
 
         unconfirmed = []
         tracked_stracks = []
@@ -1905,7 +2514,11 @@ class ByteTrackerLocalConflict(BYTETracker):
                     [int(residual_det_cols[int(i)]) for i in list(u_detection_local)],
                     dtype=int,
                 )
-        elif (self.use_posthost_oracle_edit or self.use_posthost_hierarchical_edit) and len(strack_pool) > 0 and len(detections) > 0:
+        elif (
+            self.use_posthost_oracle_edit
+            or self.use_posthost_hierarchical_edit
+            or self.use_posthost_rule_edit
+        ) and len(strack_pool) > 0 and len(detections) > 0:
             matches, u_track, u_detection = matching.linear_assignment(dists, thresh=self.args.match_thresh)
             if self.use_posthost_oracle_edit:
                 oracle_plan = self._get_posthost_one_edit_oracle_plan(
@@ -1921,6 +2534,23 @@ class ByteTrackerLocalConflict(BYTETracker):
                 matches = oracle_plan["matches"]
                 u_track = oracle_plan["u_track"]
                 u_detection = oracle_plan["u_detection"]
+            elif self.use_posthost_rule_edit:
+                rule_plan = self._get_posthost_one_edit_rule_plan(
+                    iou_cost=iou_dists,
+                    refined_cost=dists,
+                    host_matches=matches,
+                    host_u_track=u_track,
+                    host_u_detection=u_detection,
+                    detections=detections,
+                    tracks=strack_pool,
+                    detections_second=detections_second,
+                    unconfirmed=unconfirmed,
+                    thresh=self.args.match_thresh,
+                )
+                self._accumulate_local_conflict_stats(rule_plan["stats"])
+                matches = rule_plan["matches"]
+                u_track = rule_plan["u_track"]
+                u_detection = rule_plan["u_detection"]
             else:
                 learned_plan = self._get_posthost_one_edit_hierarchical_plan(
                     iou_cost=iou_dists,
@@ -1951,12 +2581,6 @@ class ByteTrackerLocalConflict(BYTETracker):
                 self._update_track_oracle_identity(track, det)
                 refind_stracks.append(track)
 
-        detections_second = (
-            [STrack(STrack.tlbr_to_tlwh(tlbr), s) for (tlbr, s) in zip(dets_second, scores_second)]
-            if len(dets_second) > 0
-            else []
-        )
-        self._annotate_detection_gt_ids(detections_second)
         r_tracked_stracks = [strack_pool[i] for i in u_track if strack_pool[i].state == TrackState.Tracked]
         dists = matching.iou_distance(r_tracked_stracks, detections_second)
         matches, u_track, u_detection_second = matching.linear_assignment(dists, thresh=0.5)

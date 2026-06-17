@@ -2,10 +2,17 @@ SUPER_CONFIG_PATH: configs/experiments/bytetrack_fa_mot_mot17_v13_tf_only_val021
 
 EXP_NAME: bytetrack_fa_mot_mot17_v16_laplace_trainable_val0213
 
-# Start from the strongest available proxy checkpoint, then fine-tune with
-# explicit Laplace-guided association supervision.
-RESUME_MODEL: outputs/bytetrack_fa_mot_mot17_v13_tf_only_val0213/checkpoint_epoch_0.pth
-RESUME_ONLY_WEIGHTS: true
+USE_FREQ_AWARE: true
+USE_FREQ_DECODER_V2: true
+USE_MAMBA_FOR_LOWFREQ: false
+USE_MAMBA_IN_ID_DECODER: false
+USE_GLOBAL_MAMBA: false
+NUM_WORKERS: 0
+PREFETCH_FACTOR: 2
+
+# Start clean unless a caller injects a valid tracker checkpoint.
+RESUME_MODEL:
+RESUME_ONLY_WEIGHTS: false
 
 ASSOC_USE_LAPLACE: true
 ASSOC_LAPLACE_WEIGHT: 0.35

@@ -204,6 +204,15 @@ def _join_unique(rows: list[dict[str, Any]], key: str) -> str:
     return ",".join(values)
 
 
+def _safe_f1(precision: float, recall: float) -> float:
+    precision = float(precision)
+    recall = float(recall)
+    denom = precision + recall
+    if denom <= 1e-12:
+        return 0.0
+    return 2.0 * precision * recall / denom
+
+
 def _run_epoch(
     *,
     model: LocalConflictCommitRefiner,
@@ -286,6 +295,7 @@ def _run_epoch(
         "commit_recall": totals["tp_commits"] / target_commits,
         "clusters": totals["clusters"],
         "detections": totals["detections"],
+        "target_commits": totals["target_commits"],
     }
 
 
@@ -328,6 +338,8 @@ def main() -> int:
         "val_row_acc": "",
         "val_commit_precision": "",
         "val_commit_recall": "",
+        "val_commit_f1": "",
+        "selection_metric": "",
         "status": "running",
         "error": "",
     }
@@ -368,12 +380,15 @@ def main() -> int:
         )
 
         best_val_loss = float("inf")
+        best_selection_key: tuple[float, float, float] | None = None
         best_row: dict[str, Any] | None = None
         with metrics_jsonl.open("a", encoding="utf-8") as metrics_fp:
             for epoch in range(1, int(args.epochs) + 1):
                 train_metrics = _run_epoch(model=model, loader=train_loader, optimizer=optimizer, device=device)
                 with torch.inference_mode():
                     val_metrics = _run_epoch(model=model, loader=val_loader, optimizer=None, device=device)
+                val_commit_f1 = _safe_f1(val_metrics["commit_precision"], val_metrics["commit_recall"])
+                has_val_commit_targets = float(val_metrics.get("target_commits", 0.0)) > 0.0
 
                 metrics_row = {
                     "epoch": epoch,
@@ -385,6 +400,7 @@ def main() -> int:
                     "val_commit_acc": val_metrics["commit_acc"],
                     "val_commit_precision": val_metrics["commit_precision"],
                     "val_commit_recall": val_metrics["commit_recall"],
+                    "val_commit_f1": val_commit_f1,
                     "split_mode": split_mode,
                     "train_examples": len(train_rows),
                     "val_examples": len(val_rows),
@@ -392,7 +408,23 @@ def main() -> int:
                 metrics_fp.write(json.dumps(metrics_row) + "\n")
                 metrics_fp.flush()
 
-                if val_metrics["loss"] < best_val_loss:
+                if has_val_commit_targets:
+                    selection_metric = "val_commit_f1"
+                    selection_key = (
+                        float(val_commit_f1),
+                        float(val_metrics["commit_precision"]),
+                        float(val_metrics["row_acc"]),
+                    )
+                else:
+                    selection_metric = "val_loss"
+                    selection_key = (
+                        float(-val_metrics["loss"]),
+                        float(val_metrics["row_acc"]),
+                        float(train_metrics["row_acc"]),
+                    )
+
+                if best_selection_key is None or selection_key > best_selection_key:
+                    best_selection_key = selection_key
                     best_val_loss = float(val_metrics["loss"])
                     best_row = {
                         "exp_name": "local_conflict_commit_stage1",
@@ -421,6 +453,8 @@ def main() -> int:
                         "val_row_acc": float(val_metrics["row_acc"]),
                         "val_commit_precision": float(val_metrics["commit_precision"]),
                         "val_commit_recall": float(val_metrics["commit_recall"]),
+                        "val_commit_f1": float(val_commit_f1),
+                        "selection_metric": selection_metric,
                         "status": "ok",
                         "error": "",
                     }
@@ -440,6 +474,8 @@ def main() -> int:
                             split_mode=split_mode,
                             train_host_variants=_join_unique(train_rows, "host_variant"),
                             val_host_variants=_join_unique(val_rows, "host_variant"),
+                            val_commit_f1=float(val_commit_f1),
+                            selection_metric=selection_metric,
                         ),
                         best_ckpt,
                     )

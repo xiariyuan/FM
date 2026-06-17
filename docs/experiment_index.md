@@ -22,6 +22,9 @@ If the reader has no prior context, read these files in this order:
 9. `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
 10. `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
 11. `outputs/official_bytetrack_posthost_one_edit_hierarchical_followup_decision_20260328/report.md`
+12. `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
+13. `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
+14. `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
 
 That list is the current "minimal complete context" path.
 
@@ -35,17 +38,23 @@ These are the current repository-wide conclusions as of the latest indexed exper
 - Strongest internal positive line: `base_reid_da + set_predictor_v2`
 - Current official ByteTrack learned pre-Hungarian line: stop-gated
 - Current official ByteTrack post-host oracle ceiling: executable and globally positive on HOTA / AssA / IDF1, but not yet switch-safe
-- Current official ByteTrack offline post-host learned smoke: coarse `keep` vs `edit` is learnable, but flat exact action ranking is still weak
-- Current official ByteTrack best learned post-host family: hierarchical one-edit scorer
+- Current official ByteTrack strongest learned post-host family before stop-gate: hierarchical one-edit scorer
+- Current official ByteTrack bounded utility-aware rerun: safe but too sparse, and not better than the earlier tiny learned non-zero point
+- Current official ByteTrack learned post-host hierarchical family: stop-gated
+- Current official ByteTrack defer-only oracle decomposition: materially positive on HOTA / AssA / IDF1, but even less switch-safe than the full mixed oracle
+- Current official ByteTrack defer-only learned replacement line: rejected
+- Current official ByteTrack legal rule-controller reference: small positive on HOTA / AssA / IDF1, but not strong enough for hidden-test submission
 
 The important nuance is:
 
 - learned local operators are not globally disproven across all hosts
 - but the current `set_predictor_v2` family has not yet produced executable online commits under the frozen `official_bytetrack` pre-Hungarian partial-commit contract
 - after changing the contract to a post-host one-edit oracle, executable local correction headroom does appear
-- and the first hierarchical offline learner is now the strongest learned family under that changed contract
-- the latest hierarchical online follow-up cycle shows the line can be tuned into either exact no-op or sparse-but-negative execution
-- so threshold-only rescue is close to exhausted and the next redesign question is candidate utility / ranking quality
+- the hierarchical offline learner was the strongest learned family under that changed contract
+- the bounded utility-aware rerun then showed the learned line can be made safe, but only by becoming too sparse
+- so the learned post-host hierarchical family is now stop-gated rather than left open for more sweeps
+- the later defer-only oracle decomposition showed that narrowing to pure defer is not the safe simplification either
+- the later rule-based controller proved that a legal non-zero positive point exists, but only as a small bounded gain
 
 ## 3. Question-oriented navigation
 
@@ -206,6 +215,66 @@ Answer:
 - looser gate gives one or two executed `swap`s but still negative paired outcome
 - therefore the next bottleneck is candidate utility / ranking quality, not threshold calibration alone
 
+### Q11. What happened in the bounded utility-aware rerun, and what is the current stop decision?
+
+Read:
+
+- `outputs/official_bytetrack_posthost_one_edit_dataset_utilityaware_20260328_212500/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_utilityaware_20260328_215800/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_utilityaware_halfval_rerun_20260328_220500/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
+
+Answer:
+
+- the utility-aware redesign restored the correct defer-heavy target mix and produced a non-degenerate offline checkpoint
+- the strict paired rerun was not a no-op and not a runtime bug
+- but it executed only two `defer` edits, touched `MOT17-02` and `MOT17-05`, and still missed `MOT17-10` and `MOT17-13`
+- global paired delta became `HOTA +0.002 / AssA +0.002 / IDF1 -0.001 / MOTA +0.005 / IDSW -2`
+- this was safer than some earlier runs, but worse than the earlier `runtime_safe_zero` learned point on the main association metrics
+- under the agreed "one bounded utility-aware chance" rule, the learned post-host hierarchical family is now stop-gated
+
+### Q12. Did the post-host `defer-only` oracle validate a simpler replacement line?
+
+Read:
+
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_halfval_20260328_233113/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_halfval_20260328_233113/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
+
+Answer:
+
+- it retained a large share of the oracle `HOTA / AssA / IDF1` gains:
+  - `delta_HOTA = +1.238`
+  - `delta_AssA = +2.803`
+  - `delta_IDF1 = +2.217`
+- it touched all hard slices and executed `583` pure defer edits
+- but its switch cost was much worse than the full mixed oracle:
+  - `delta_IDSW = +90` versus `+28` for the mixed oracle
+- therefore `defer-only` is not a safe simplified replacement contract
+- a new learned defer-only branch should not be opened
+
+### Q13. Is there any test-legal post-host line that is actually non-zero and positive?
+
+Read:
+
+- `outputs/official_bytetrack_posthost_one_edit_rule_halfval_rerun_20260329_002100/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_rule_c4_halfval_20260329_005000/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
+
+Answer:
+
+- yes
+- a conservative rule-based post-host defer controller is executable without GT and gives:
+  - `delta_HOTA = +0.118`
+  - `delta_AssA = +0.302`
+  - `delta_IDF1 = +0.060`
+  - `delta_MOTA = -0.097`
+  - `delta_IDSW = +5`
+- this is better than the stop-gated learned utility-aware rerun on the main association metrics
+- but the gain is still small
+- and a looser follow-up already made the result worse
+- so it should be kept as a legal reference point, not treated as the final submission line
+
 ## 4. Baseline map
 
 This section groups the repository by baseline family and role.
@@ -244,8 +313,11 @@ Current state:
 - diagnosis complete enough to justify stop-gating the current learned family
 - a post-host oracle ceiling confirms executable edit headroom under a changed contract
 - the flat one-stage scorer is not the right learned architecture
-- the hierarchical one-edit scorer is now the best learned offline family on this contract
-- the next step is conservative online learned integration smoke
+- the hierarchical one-edit scorer was the best learned offline family on this contract
+- the bounded utility-aware rerun proved the learned line can become safe but too sparse
+- the current learned post-host hierarchical family is therefore stopped
+- the later defer-only oracle decomposition proved that narrowing the action space to pure defer is not the safe replacement either
+- the later conservative rule controller proved that a legal non-zero positive point exists, but only as a small bounded gain
 
 ### botsort_base
 
@@ -427,7 +499,57 @@ Outcome:
 - the hard official slices are still not being improved in a useful way
 - the next redesign question is candidate utility / ranking quality, not another broad threshold sweep
 
-### Phase I. Legacy idea forensic audit
+### Phase I. Bounded utility-aware rerun and stop gate
+
+Representative records:
+
+- `outputs/official_bytetrack_posthost_one_edit_dataset_utilityaware_20260328_212500/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_utilityaware_20260328_215800/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_utilityaware_halfval_rerun_20260328_220500/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
+
+Outcome:
+
+- the redesign restored an oracle-consistent defer-heavy target mix
+- the offline checkpoint became non-degenerate on utility-aware metrics
+- the online rerun was no longer a no-op and executed two real `defer` edits
+- but it still did not beat the earlier `runtime_safe_zero` learned point
+- therefore the learned post-host hierarchical family is now stop-gated
+
+### Phase J. Defer-only oracle decomposition
+
+Representative records:
+
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_halfval_20260328_233113/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_halfval_20260328_233113/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
+
+Outcome:
+
+- the narrow `defer-only` post-host oracle kept a large fraction of the association-quality headroom
+- but it exploded switch cost to `delta_IDSW = +90`
+- therefore a simpler learned defer-only replacement line is not justified
+
+### Phase K. Test-legal rule-controller probe
+
+Representative records:
+
+- `outputs/official_bytetrack_posthost_one_edit_rule_halfval_rerun_20260329_002100/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_rule_c4_halfval_20260329_005000/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
+
+Outcome:
+
+- a conservative rule-based post-host defer controller is the first test-legal official-carrier line in this repo that is both executable and globally positive on `HOTA / AssA / IDF1`
+- the best legal point is:
+  - `delta_HOTA = +0.118`
+  - `delta_AssA = +0.302`
+  - `delta_IDF1 = +0.060`
+  - `delta_MOTA = -0.097`
+  - `delta_IDSW = +5`
+- a looser follow-up is worse, so the current legal rule point should be treated as a bounded reference rather than an open threshold-sweep branch
+
+### Phase L. Legacy idea forensic audit
 
 Representative records:
 
@@ -442,9 +564,9 @@ Outcome:
 
 This section distinguishes the current mainline from archived-but-important historical paths.
 
-### Current official ByteTrack mainline
+### Latest official ByteTrack post-host path
 
-If the reader wants the latest active implementation path, start here:
+If the reader wants the latest learned official ByteTrack implementation path that was actually run, start here:
 
 - `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
 - `scripts/run_official_bytetrack_shared_detection_pair_core.py`
@@ -461,8 +583,9 @@ Interpretation:
 
 - the current runtime carrier remains `official_bytetrack`
 - the stopped `pre-Hungarian` learned line is no longer the active implementation focus
-- the active learned continuation is the `post-host one-edit` path
-- the latest learned offline family is hierarchical
+- the latest learned continuation that was actually tested is the `post-host one-edit` path
+- the latest learned family on that path is hierarchical
+- that learned hierarchical line is now stop-gated after one bounded utility-aware rerun
 
 ### Archived but still important official ByteTrack pre-Hungarian path
 

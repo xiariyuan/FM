@@ -187,6 +187,13 @@ def make_parser():
         help="Enable learned post-host hierarchical one-edit plugin after official ByteTrack first-stage matching.",
     )
     parser.add_argument(
+        "--use-posthost-rule-edit",
+        dest="use_posthost_rule_edit",
+        default=False,
+        action="store_true",
+        help="Enable test-legal rule-based post-host one-edit plugin after official ByteTrack first-stage matching.",
+    )
+    parser.add_argument(
         "--posthost-oracle-data-root",
         type=str,
         default="",
@@ -199,9 +206,15 @@ def make_parser():
         help="Minimum IoU required to attach a detection to GT for post-host oracle evaluation.",
     )
     parser.add_argument(
+        "--posthost-oracle-allowed-actions",
+        type=str,
+        default="all",
+        help="Oracle post-host action filter. Supported: all, defer_only.",
+    )
+    parser.add_argument(
         "--posthost-hierarchical-keep-thresh",
         type=float,
-        default=0.5,
+        default=0.97,
         help="Probability threshold for keep-vs-edit gate in learned post-host hierarchical mode.",
     )
     parser.add_argument(
@@ -221,6 +234,87 @@ def make_parser():
         type=float,
         default=0.0,
         help="Weak prior coefficient applied to runtime host-summary positive_count/score in learned post-host hierarchical mode.",
+    )
+    parser.add_argument(
+        "--posthost-rule-large-only",
+        dest="posthost_rule_large_only",
+        default=True,
+        action="store_true",
+        help="Restrict rule-based post-host edits to large local components only.",
+    )
+    parser.add_argument(
+        "--posthost-rule-allow-small",
+        dest="posthost_rule_large_only",
+        action="store_false",
+        help="Allow rule-based post-host edits on small local components as well.",
+    )
+    parser.add_argument(
+        "--posthost-rule-defer-refined-max",
+        type=float,
+        default=0.35,
+        help="Maximum host refined score allowed for a rule-based defer candidate.",
+    )
+    parser.add_argument(
+        "--posthost-rule-defer-iou-max",
+        type=float,
+        default=0.55,
+        help="Maximum host IoU score allowed for a rule-based defer candidate.",
+    )
+    parser.add_argument(
+        "--posthost-rule-defer-row-margin-max",
+        type=float,
+        default=0.15,
+        help="Maximum host row-margin allowed for a rule-based defer candidate.",
+    )
+    parser.add_argument(
+        "--posthost-rule-defer-track-hist-max",
+        type=float,
+        default=4.2,
+        help="Maximum host track-history feature allowed for a rule-based defer candidate.",
+    )
+    parser.add_argument(
+        "--posthost-rule-require-second-stage-rescue",
+        dest="posthost_rule_require_second_stage_rescue",
+        default=False,
+        action="store_true",
+        help="Require a deferred track to have a viable second-stage rescue path before the rule plugin can drop the host pair.",
+    )
+    parser.add_argument(
+        "--posthost-rule-second-stage-iou-min",
+        type=float,
+        default=0.5,
+        help="Minimum second-stage IoU rescue score required when second-stage rescue gating is enabled.",
+    )
+    parser.add_argument(
+        "--posthost-rule-unconfirmed-fuse-min",
+        type=float,
+        default=0.0,
+        help="Optional unconfirmed-track fused-sim fallback required when second-stage rescue gating is enabled.",
+    )
+    parser.add_argument(
+        "--posthost-rule-scorecard-json",
+        type=str,
+        default="",
+        help="Optional oracle-guided linear scorecard JSON used by the post-host rule plugin.",
+    )
+    parser.add_argument(
+        "--posthost-rule-score-thresh",
+        type=float,
+        default=0.0,
+        help="Optional probability threshold override for the post-host rule scorecard. <=0 uses the JSON default.",
+    )
+    parser.add_argument(
+        "--posthost-rule-use-legacy-prefilter",
+        dest="posthost_rule_use_legacy_prefilter",
+        default=True,
+        action="store_true",
+        help="Keep the legacy refined/iou/margin/history prefilter before scorecard ranking.",
+    )
+    parser.add_argument(
+        "--posthost-rule-no-legacy-prefilter",
+        dest="posthost_rule_use_legacy_prefilter",
+        action="store_false",
+        help="Disable the legacy prefilter and rely on the scorecard gate for defer candidate selection.",
     )
     return parser
 

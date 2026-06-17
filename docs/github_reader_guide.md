@@ -18,15 +18,19 @@ That carrier was fixed to `official_bytetrack`.
 
 ## 2. Current high-level project state
 
-As of `2026-03-28`:
+As of `2026-03-29`:
 
 - canonical paper carrier: `official_bytetrack`
 - transfer carrier: `botsort_base`
 - specialist reference carrier: `strongsort_base`
 - strongest internal positive evidence: `base_reid_da + set_predictor_v2`
 - official ByteTrack learned `pre-Hungarian` line: stopped
-- current active redesign direction: `post-host one-edit`
-- latest best learned offline family on the active direction: `hierarchical post-host one-edit`
+- post-host one-edit oracle contract: validated as having executable headroom
+- latest learned post-host family tested on that contract: `hierarchical post-host one-edit`
+- current learned post-host hierarchical family: stop-gated after one bounded utility-aware rerun
+- latest defer-only oracle decomposition on that contract: materially positive but switch-unsafe
+- current learned defer-only replacement line: not opened
+- latest legal post-host rule-controller reference: small positive on `HOTA / AssA / IDF1`, but not strong enough for hidden-test submission
 
 This matters because there are old code paths in the repo that are still relevant historically but are **not** the current mainline.
 
@@ -44,6 +48,10 @@ If you want the minimum complete context, read these files in order:
 8. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
 9. `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
 10. `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
+11. `outputs/official_bytetrack_posthost_one_edit_hierarchical_followup_decision_20260328/report.md`
+12. `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
+13. `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
+14. `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
 
 ## 4. What was already decided
 
@@ -54,11 +62,14 @@ These decisions are fixed unless a later report explicitly overturns them:
 - `strongsort_base` is a specialist reference, not the main carrier.
 - The learned `pre-Hungarian` official ByteTrack line is stop-gated.
 - The repository should not spend more budget sweeping sparse-edit / bridge variants on that old contract.
-- The current active contract is `post-host one-edit`.
+- The `post-host one-edit` oracle contract is validated.
+- The current learned hierarchical line on that contract is now stop-gated after one bounded utility-aware rerun.
+- The later `defer-only` oracle decomposition shows that pure defer is not a safe simplified replacement contract.
+- The later rule-based post-host controller gives the first test-legal non-zero positive point on the canonical carrier, but only as a small bounded gain.
 
-## 5. What the current active line means
+## 5. What the post-host contract means
 
-The current active line is **not** a whole-tracker rewrite.
+The post-host contract is **not** a whole-tracker rewrite.
 
 It means:
 
@@ -72,6 +83,12 @@ That is why the current code and reports focus on:
 - post-host one-edit dataset construction
 - offline learned one-edit scorers
 - hierarchical decomposition of `keep/edit -> defer/swap -> candidate rank`
+
+The important current nuance is:
+
+- this contract still matters because the oracle ceiling is real
+- but the latest learned hierarchical family under this contract is no longer an open tuning line
+- and the simplest narrowed replacement hypothesis, `defer-only`, also does not justify a new learned line
 
 ## 6. Current code entrypoints
 
@@ -132,6 +149,16 @@ Read these only to understand why the earlier line was stopped:
 - `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
 - `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_20260328_000238/summary.csv`
 - `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_followup_decision_20260328/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_dataset_utilityaware_20260328_212500/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_utilityaware_20260328_215800/summary.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_utilityaware_halfval_rerun_20260328_220500/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_halfval_20260328_233113/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
+- `outputs/official_bytetrack_posthost_one_edit_rule_halfval_rerun_20260329_002100/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_rule_c4_halfval_20260329_005000/result.csv`
+- `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
 
 ## 8. What is intentionally missing from git
 
@@ -162,11 +189,16 @@ Read these four files:
 1. `docs/experiment_index.md`
 2. `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
 3. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
-4. `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
+4. `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
+5. `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
+6. `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
 
 That is the shortest path to understanding:
 
 - what failed
 - what was stopped
 - what changed
-- what is active now
+- what still has oracle headroom
+- which narrowed replacement test was tried
+- why that simplified replacement was also rejected
+- and what the first legal non-zero post-host rule-controller reference actually achieved
