@@ -3,6 +3,16 @@ set -euo pipefail
 
 # MOT20 SCA+LMF evaluation — NO BACKGROUND GATE variant.
 # Runs baseline / freeze_only / Stage1 / Stage1+freeze and evaluates with TrackEval.
+
+# GUARD: 4-concurrent MOT20 eval is DISABLED (2026-06-18).
+# MOT20 eval must be strictly serial. Use scripts/run_haca_mot20_nobg_matrix.sh
+# or the serial smoke/fullval scripts instead.
+if [[ "${ALLOW_PARALLEL_MOT20_EVAL:-0}" != "1" ]]; then
+  echo "[ERROR] 4-concurrent MOT20 eval is disabled (2026-06-18)."
+  echo "  Set ALLOW_PARALLEL_MOT20_EVAL=1 to override at your own risk."
+  echo "  Prefer serial: scripts/run_haca_mot20_nobg_matrix.sh or run_tos_mot20_smoke.sh"
+  exit 1
+fi
 # All variants use --laplace-haca-no-background.
 
 REPO_ROOT="${REPO_ROOT:-/gemini/code/FMtrack-main/FM-Track}"

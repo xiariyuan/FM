@@ -1,0 +1,8 @@
+check,status,detail
+zero_feat_no_nan,pass,curr_feat and smooth_feat are zero vectors (not NaN)
+input_immutability,pass,input feat array unchanged after update_features call
+normal_feat_norm,pass,curr_feat norm=1.0 smooth_feat norm=1.0
+freeze_mode_smooth_preserved,pass,smooth_feat unchanged in freeze mode
+freeze_mode_history_unchanged,pass,features history not appended in freeze mode
+soft_mode_no_nan,pass,smooth_feat and curr_feat free of NaN
+soft_mode_history_appended,pass,features history correctly appended in soft mode

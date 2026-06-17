@@ -37,14 +37,16 @@ class STrack(BaseTrack):
         self.alpha = 0.9
 
     def update_features(self, feat):
-        feat /= np.linalg.norm(feat)
-        self.curr_feat = feat
+        norm = max(float(np.linalg.norm(feat)), 1e-12)
+        feat_normed = (feat / norm).copy()
+        self.curr_feat = feat_normed
         if self.smooth_feat is None:
-            self.smooth_feat = feat
+            self.smooth_feat = feat_normed.copy()
         else:
-            self.smooth_feat = self.alpha * self.smooth_feat + (1 - self.alpha) * feat
-        self.features.append(feat)
-        self.smooth_feat /= np.linalg.norm(self.smooth_feat)
+            self.smooth_feat = self.alpha * self.smooth_feat + (1 - self.alpha) * feat_normed
+        self.features.append(feat_normed.copy())
+        smooth_norm = max(float(np.linalg.norm(self.smooth_feat)), 1e-12)
+        self.smooth_feat = self.smooth_feat / smooth_norm
 
     def update_cls(self, cls, score):
         if len(self.cls_hist) > 0:

@@ -129,8 +129,10 @@ class STrack(BaseTrack):
         return gate_min + (gate_max - gate_min) * gate
 
     def update_features(self, feat, mode="normal", alpha_override=None, append_history=True):
-        feat /= np.linalg.norm(feat)
-        self.curr_feat = feat
+        # Normalize with epsilon guard; avoid in-place mutation of input array
+        norm = max(float(np.linalg.norm(feat)), 1e-12)
+        feat_normed = (feat / norm).copy()
+        self.curr_feat = feat_normed
 
         if mode == "freeze":
             # freeze: do NOT update smooth_feat, do NOT append to history
@@ -140,20 +142,22 @@ class STrack(BaseTrack):
             # soft: conservative EMA update
             alpha = alpha_override if alpha_override is not None else self.alpha
             if self.smooth_feat is None:
-                self.smooth_feat = feat.copy()
+                self.smooth_feat = feat_normed.copy()
             else:
-                self.smooth_feat = alpha * self.smooth_feat + (1 - alpha) * feat
-            self.smooth_feat /= np.linalg.norm(self.smooth_feat)
+                self.smooth_feat = alpha * self.smooth_feat + (1 - alpha) * feat_normed
+            smooth_norm = max(float(np.linalg.norm(self.smooth_feat)), 1e-12)
+            self.smooth_feat = self.smooth_feat / smooth_norm
             if append_history:
-                self.features.append(feat)
+                self.features.append(feat_normed.copy())
         else:
             # normal: original behavior
             if self.smooth_feat is None:
-                self.smooth_feat = feat
+                self.smooth_feat = feat_normed.copy()
             else:
-                self.smooth_feat = self.alpha * self.smooth_feat + (1 - self.alpha) * feat
-            self.smooth_feat /= np.linalg.norm(self.smooth_feat)
-            self.features.append(feat)
+                self.smooth_feat = self.alpha * self.smooth_feat + (1 - self.alpha) * feat_normed
+            smooth_norm = max(float(np.linalg.norm(self.smooth_feat)), 1e-12)
+            self.smooth_feat = self.smooth_feat / smooth_norm
+            self.features.append(feat_normed.copy())
 
     def update_fcaa_bands(self, desc, momentum=0.9):
         if desc is None:
@@ -2457,16 +2461,8 @@ class BoTSORT(object):
         """Compute TOS occlusion score for a matched pair.
 
         Returns float in [0, 1]: higher = more likely occlusion.
-        Key insight: we're computing this for a *matched* pair, meaning the track DID find
-        a detection. The occlusion score should reflect the QUALITY of this match, not just
-        the HACA activation (which may be 0 for legitimate initial frames).
-
-        A match is "occluded" when:
-        - Track had a large gap before reappearing (low haca_active, high gap)
-        - Detection score is ambiguous
-        - Match has low appearance coherence
-
-        We do NOT flag first-frame matches or high-quality matches as occluded.
+        Uses final_sim (appearance association strength) as primary signal,
+        since comp_active is only available with haca_v3 competition head.
         """
         if laplace_debug is None:
             return 0.0
@@ -2474,26 +2470,27 @@ class BoTSORT(object):
         # Track gap: only consider occlusion if track has been missing
         track_gap = max(0, int(self.frame_id) - int(getattr(track, "frame_id", self.frame_id)))
         if track_gap == 0:
-            # Track is currently being tracked (no gap) - not occluded
             return 0.0
 
-        # HACA active signal
-        haca_active = self._rgsa_matrix_value(laplace_debug, "haca_comp_active", itracked, idet, default=1.0)
-        # Low active signal = higher occlusion likelihood (only when gap > 0)
-        occlusion_haca = 1.0 - max(0.0, min(1.0, float(haca_active)))
+        # Primary: final_sim (association quality, available in all HACA versions)
+        final_sim = laplace_debug.get("final_sim") or laplace_debug.get("anchor_sim")
+        if final_sim is None:
+            return 0.0
+        sim = float(final_sim[itracked, idet]) if itracked < final_sim.shape[0] and idet < final_sim.shape[1] else 0.0
 
         # Detection score ambiguity
         det_score = float(getattr(det, "score", 0.0))
-        det_ambiguity = max(0.0, 1.0 - det_score)
 
-        # Gap factor: longer gap = more likely occlusion
+        # Gap factor
         gap_factor = min(1.0, float(track_gap) / max(float(self.tos_hold_buffer), 1.0))
 
-        # Combine: only freeze when there's a real gap AND low haca_active
+        # Low sim + high gap = occlusion
+        # sim_range: clamp [0,1] — occlusion_haca = 1 - sim
+        occlusion_sim = 1.0 - max(0.0, min(1.0, sim))
         score = (
-            0.5 * occlusion_haca
-            + 0.2 * det_ambiguity
+            0.5 * occlusion_sim
             + 0.3 * gap_factor
+            + 0.2 * max(0.0, 1.0 - det_score)
         )
         return float(np.clip(score, 0.0, 1.0))
 
