@@ -1,0 +1,5 @@
+phase,status,artifact
+gt_pseudotrack,interrupted,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_train_20260614_093752/gt_pseudotrack
+haca_v1,pending,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_train_20260614_093752/haca_v1/mot20_haca_v1.npz
+haca_v2,pending,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_train_20260614_093752/haca_v2/mot20_haca_v2.npz
+haca_v3,pending,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_train_20260614_093752/haca_v3/mot20_haca_v3.npz

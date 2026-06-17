@@ -1,0 +1,3 @@
+variant,status,HOTA,DetA,AssA,MOTA,IDF1,IDSW,MODA,Frag,HOTA_delta
+baseline,success,77.653,80.748,74.748,93.354,89.299,841,93.49,1607,+0.000
+freeze_only,success,77.658,80.711,74.794,93.358,89.351,851,93.496,1621,+0.005

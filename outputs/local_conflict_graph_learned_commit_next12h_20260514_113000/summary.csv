@@ -1,0 +1,7 @@
+step,script,status,out_dir,checkpoint,HOTA,AssA,IDF1,MOTA,IDSW,notes
+01_stage1,scripts/run_local_conflict_commit_stage1.sh,running,outputs/local_conflict_graph_learned_commit_next12h_20260514_113000/01_stage1,,,,,,,train stage1 learned commit
+02_proxy_eval,scripts/run_local_conflict_graph_learned_commit_proxy0213.sh,skipped,outputs/local_conflict_graph_learned_commit_next12h_20260514_113000/02_proxy_eval,,,,,,,proxy0213 learned commit eval
+03_frcnn_md2_mm2,scripts/run_local_conflict_graph_learned_commit_generic.sh,skipped,outputs/local_conflict_graph_learned_commit_next12h_20260514_113000/03_frcnn_md2_mm2,,,,,,,full FRCNN md2/mm2
+04_frcnn_md2_mm3,scripts/run_local_conflict_graph_learned_commit_generic.sh,skipped,outputs/local_conflict_graph_learned_commit_next12h_20260514_113000/04_frcnn_md2_mm3,,,,,,,full FRCNN md2/mm3
+05_frcnn_md3_mm2,scripts/run_local_conflict_graph_learned_commit_generic.sh,skipped,outputs/local_conflict_graph_learned_commit_next12h_20260514_113000/05_frcnn_md3_mm2,,,,,,,full FRCNN md3/mm2
+06_frcnn_md4_mm2,scripts/run_local_conflict_graph_learned_commit_generic.sh,skipped,outputs/local_conflict_graph_learned_commit_next12h_20260514_113000/06_frcnn_md4_mm2,,,,,,,full FRCNN md4/mm2

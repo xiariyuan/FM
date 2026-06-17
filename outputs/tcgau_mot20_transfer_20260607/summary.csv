@@ -1,0 +1,4 @@
+variant,seq,HOTA,AssA,IDF1,MOTA,IDSW,notes
+baseline,MOT20-02,66.850,57.348,73.588,90.277,296,from previous run
+Stage1_lambda0.15,MOT20-02,62.601,50.609,67.911,89.850,433,from previous run
+Stage1+TCGAU,MOT20-02,62.460,50.544,68.158,89.949,442,lambda=0.15 freeze=0.03; similar degradation to Stage1-only

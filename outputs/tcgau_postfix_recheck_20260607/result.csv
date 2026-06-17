@@ -1,0 +1,2 @@
+status,family,task,best_HOTA,best_IDSW,notes
+failed,tcgau,MOT17_fullval_recheck,73.730,47,semantic-fix recheck; soft mode harmful; three-tier TCGAU fails

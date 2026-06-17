@@ -1,0 +1,2 @@
+variant,status,HOTA,AssA,IDF1,MOTA,IDSW,notes
+haca_v3_no_background_full,success,77.394,74.306,88.866,93.341,819,same HACA v3 checkpoint; competition head enabled; runtime background gate disabled; MOT20-01/02/03/05

@@ -1,0 +1,2 @@
+status,script,dataset,split,run_root,summary_csv,checkpoint,log_path,notes
+completed,tools/track.py,MOT17,val,outputs/rgsa_verifier_fullval_20260606/baseline,outputs/rgsa_verifier_fullval_20260606/baseline/summary.csv,MOT17 HACA v3 only,outputs/rgsa_verifier_fullval_20260606/baseline/track.log,verifier comparison

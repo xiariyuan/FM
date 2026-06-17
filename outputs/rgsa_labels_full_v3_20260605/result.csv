@@ -1,0 +1,1 @@
+2026-06-05T23:31:12+08:00,analysis,completed,scripts/build_rgsa_labels.py,MOT17,train_half,rgsa_labels_full_v3_20260605,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_labels_full_v3_20260605,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_labels_full_v3_20260605/summary.csv,labels rebuilt after Stage2 protocol/split/stability fixes; Stage2 rewrite/defer/reject all nonzero

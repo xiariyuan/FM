@@ -1,0 +1,2 @@
+status,script,dataset,split,run_root,summary_csv,checkpoint,log_path,notes
+completed,tools/track.py,MOT17,val,outputs/rgsa_verifier_fullval_20260606/stage1_verifier,outputs/rgsa_verifier_fullval_20260606/stage1_verifier/summary.csv,outputs/rgsa_stage1_v3_formal_20260606/stage1_best.pt,outputs/rgsa_verifier_fullval_20260606/stage1_verifier/track.log,verifier comparison

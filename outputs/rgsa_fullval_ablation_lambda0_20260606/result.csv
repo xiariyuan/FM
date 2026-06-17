@@ -1,0 +1,2 @@
+status,script,dataset,split,run_root,summary_csv,checkpoint,log_path,notes
+completed,tools/track.py,MOT17,val,outputs/rgsa_fullval_ablation_lambda0_20260606,outputs/rgsa_fullval_ablation_lambda0_20260606/summary.csv,outputs/rgsa_stage1_v3_formal_20260606/stage1_best.pt+outputs/rgsa_stage2_v3_formal_20260606/stage2_best.pt,outputs/rgsa_fullval_ablation_lambda0_20260606/track.log,lambda_defer=0.0 lambda_reject=0.0; routing/logging only; identical to baseline

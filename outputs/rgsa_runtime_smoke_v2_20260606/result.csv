@@ -1,0 +1,2 @@
+timestamp,kind,status,script,dataset,split,variant,run_root,summary_csv,notes
+2026-06-06T01:22:05+08:00,analysis,completed,synthetic_rgsa_runtime_smoke_v2,synthetic,n/a,rgsa_runtime_smoke_v2_20260606,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_runtime_smoke_v2_20260606,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_runtime_smoke_v2_20260606/summary.csv,verified Stage1 reject is soft-only after patch; Stage2 reject remains hard newborn blocker

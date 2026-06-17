@@ -1,0 +1,2 @@
+status,family,task,best_variant,best_HOTA,best_delta_HOTA,best_IDSW,notes
+passed,tcgau_freezeonly,MOT17_fullval_recheck,s1_f003,74.512,+0.687,39,freeze-only recovers strong go; soft=0 confirmed; app_sim/pair_rel nonzero

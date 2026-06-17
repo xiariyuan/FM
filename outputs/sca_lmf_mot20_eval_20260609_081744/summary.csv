@@ -1,0 +1,4 @@
+variant,status,HOTA,AssA,IDF1,MOTA,IDSW
+baseline,success,9.3648,2.5205,7.5493,29.994,61558
+stage1_only,aborted_invalid_haca_baseline,,,,,
+stage1_freeze,skipped_invalid_haca_baseline,,,,,

@@ -1,0 +1,2 @@
+status,script,dataset,split,seq,run_root,summary_csv,checkpoint,log_path,notes
+completed,tools/track.py,MOT20,train_half,MOT20-02,outputs/rgsa_mot20_transfer_20260606/lambda0.15,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_mot20_transfer_20260606/lambda0.15/summary.csv,outputs/rgsa_stage1_v3_formal_20260606/stage1_best.pt+outputs/rgsa_stage2_v3_formal_20260606/stage2_best.pt,outputs/rgsa_mot20_transfer_20260606/lambda0.15/track_seq2.log,MOT20 single-seq transfer smoke

@@ -1,0 +1,2 @@
+status,method,best_variant,best_HOTA,best_delta,best_IDSW,scope,notes
+strong_go,SCA+LMF,Stage1+freeze_0.03,74.512,+0.687,39,MOT17 moderate-crowd,Stage1 soft deferral + freeze-only memory freezing; soft mode rejected; MOT20 negative transfer

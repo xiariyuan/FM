@@ -1,0 +1,2 @@
+timestamp,kind,status,script,dataset,split,tracker_family,variant,tag,run_root,summary_csv,checkpoint,calibrator_npz,log_path,notes,phase
+2026-05-13T14:07:48+08:00,train,failed,scripts/train_v16_laplace_gate_proxy0213.sh,MOT17,train,ByteTrack,v16_laplace_gate_proxy0213,laplace_trainable,outputs/bytetrack_fa_mot_mot17_v16_laplace_trainable_resume_epoch0_val0213_20260513_080000,,,,outputs/bytetrack_fa_mot_mot17_v16_laplace_trainable_resume_epoch0_val0213_20260513_080000/train.log,training failed: process disappeared during epoch 2 validation after checkpoint_2,train

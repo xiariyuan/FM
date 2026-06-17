@@ -1,0 +1,5 @@
+variant,status,HOTA,AssA,IDF1,MOTA,IDSW
+baseline,failed,,,,,
+freeze_only,failed,,,,,
+stage1_only,failed,,,,,
+stage1_freeze,failed,,,,,

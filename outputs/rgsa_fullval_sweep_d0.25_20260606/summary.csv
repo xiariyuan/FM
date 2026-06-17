@@ -1,0 +1,2 @@
+variant,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,notes
+rgsa_fullval_sweep_d0.25_20260606,73.41,75.453,71.757,85.733,88.644,43,110,lambda_defer=0.25 lambda_reject=0.0; degradation

@@ -1,0 +1,5 @@
+variant,status,HOTA,AssA,IDF1,MOTA,IDSW
+baseline,running,,,,,
+freeze_only,running,,,,,
+stage1_only,running,,,,,
+stage1_freeze,running,,,,,

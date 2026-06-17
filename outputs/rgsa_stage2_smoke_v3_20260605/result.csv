@@ -1,0 +1,1 @@
+2026-06-05T23:31:13+08:00,analysis,completed,scripts/train_rgsa_stage2.py,MOT17,train_half,rgsa_stage2_smoke_v3_20260605,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_stage2_smoke_v3_20260605,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_stage2_smoke_v3_20260605/summary.csv,2-epoch smoke complete after Stage2 protocol/stability fixes; train_loss finite

@@ -1,0 +1,2 @@
+run_name,status,kind,script,dataset,split,tracker_family,variant,run_root,summary_csv,checkpoint,log_path,notes
+rgsa_online_smoke_v3_s2soft_20260606,success,eval,tools/track.py,MOT17,val,BoT-SORT+RGSA,rgsa_v3_s2soft,outputs/rgsa_online_smoke_v3_s2soft_20260606,outputs/rgsa_online_smoke_v3_s2soft_20260606/summary.csv,outputs/rgsa_stage1_v3_formal_20260606/stage1_best.pt,outputs/rgsa_online_smoke_v3_s2soft_20260606/track.log,Stage2 reject soft-only smoke: newborn_blocked=0 confirmed

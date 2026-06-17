@@ -1,0 +1,2 @@
+timestamp,kind,status,script,dataset,split,variant,run_root,summary_csv,notes
+2026-06-06T00:41:57+08:00,analysis,completed,synthetic_rgsa_runtime_smoke,synthetic,n/a,rgsa_runtime_smoke_20260606,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_runtime_smoke_20260606,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_runtime_smoke_20260606/summary.csv,stubbed FastReID/HACA smoke for RGSA primary runtime helper after online integration

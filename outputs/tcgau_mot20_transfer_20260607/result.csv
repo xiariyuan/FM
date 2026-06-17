@@ -1,0 +1,2 @@
+status,family,HOTA,delta_vs_baseline,IDSW,notes
+negative_transfer,tcgau+stage1,62.460,-4.390,442,Cross-domain failure on MOT20; no worse than Stage1-only; paper scope: moderate-crowd MOT17

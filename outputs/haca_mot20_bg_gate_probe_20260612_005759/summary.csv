@@ -1,0 +1,2 @@
+variant,status,HOTA,AssA,IDF1,MOTA,IDSW,notes
+haca_v3_no_background_seq2,success,67.083,57.838,73.803,90.142,312,same HACA v3 checkpoint; disabled runtime background gate; MOT20-02 only; raw IDs 575 vs bad baseline 15324

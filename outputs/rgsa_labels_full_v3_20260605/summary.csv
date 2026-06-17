@@ -1,0 +1,5 @@
+seq_name,stage1_accept,stage1_defer,stage1_reject,stage2_rewrite,stage2_defer,stage2_reject,stage3_recover,stage3_miss
+MOT17-02-FRCNN,3187,492,11661,4,34,454,81,11614
+MOT17-04-FRCNN,10616,222,36136,3,25,194,44,36117
+MOT17-05-FRCNN,1317,411,4367,0,45,366,92,4320
+MOT17-09-FRCNN,806,113,3780,0,9,104,14,3775

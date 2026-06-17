@@ -1,0 +1,2 @@
+status,family,best_variant,best_HOTA,best_delta_HOTA,best_IDSW,notes
+strong_go,tcgau+stage1,s1_015_tcgau_003,74.512,+0.687,39,Stage1+TCGAU combo exceeds Stage1-only and TCGAU-only; all combo variants identical; Go criteria met

@@ -1,0 +1,2 @@
+timestamp,kind,status,script,dataset,split,variant,run_root,summary_csv,notes
+2026-06-06T00:38:44+08:00,analysis,completed,scripts/train_rgsa_stage2.py,MOT17,train_half,rgsa_stage2_v3_formal_20260606,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_stage2_v3_formal_20260606,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_stage2_v3_formal_20260606/summary.csv,formal Stage2 training after protocol/rank-stability fixes; val split lacks rewrite positives

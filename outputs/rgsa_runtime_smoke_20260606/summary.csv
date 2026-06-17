@@ -1,0 +1,2 @@
+check,status,details
+synthetic_runtime_helper,passed,"_apply_rgsa_primary_runtime returned shape=(3,2), frames=1, active_frames=1"

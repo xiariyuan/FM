@@ -1,0 +1,2 @@
+variant,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,notes
+stage1_verifier,73.416,75.459,71.764,85.737,88.651,43,109,Stage1+heuristic verifier; FAILS acceptance criteria

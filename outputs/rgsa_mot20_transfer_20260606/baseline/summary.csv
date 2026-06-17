@@ -1,0 +1,2 @@
+variant,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,seq,notes
+baseline,66.85,78.126,57.348,73.588,90.277,296,537,MOT20-02_val_half,MOT17-trained HACA+S1 transferred to MOT20

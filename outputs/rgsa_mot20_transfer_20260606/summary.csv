@@ -1,0 +1,4 @@
+variant,seq,HOTA,AssA,IDF1,MOTA,IDSW,notes
+baseline,MOT20-02,66.85,57.348,73.588,90.277,296,MOT20 half-val single seq
+lambda0.15,MOT20-02,62.601,50.609,67.911,89.85,433,MOT20 half-val single seq
+lambda0.18,MOT20-02,63.487,52.262,69.352,89.834,460,MOT20 half-val single seq

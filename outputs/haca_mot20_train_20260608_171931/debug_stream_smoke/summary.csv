@@ -1,0 +1,2 @@
+phase,status,artifact
+stream_smoke,success,outputs/haca_mot20_train_20260608_171931/debug_stream_smoke/haca_v1_smoke.npz

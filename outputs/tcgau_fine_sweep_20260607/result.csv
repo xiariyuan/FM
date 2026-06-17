@@ -1,0 +1,2 @@
+status,family,best_HOTA,best_delta_HOTA,best_IDSW,freeze_range,notes
+weak_go,tcgau,74.068,+0.243,41,0.01-0.07,freeze 33 rare high-impact pollution events; plateau 0.01-0.07; same trigger set

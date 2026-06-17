@@ -1,0 +1,9 @@
+exp_id,seq,frame_range,candidate_topk,max_hard_negatives,batch_size,max_history,wall_seconds,npz_size_mb,groups,candidates,status
+A2a_baseline,MOT20-01,1-120,16,6,4,8,170.0,732.94,13,0,success
+A2a_baseline,MOT20-05,1-120,16,6,4,8,442.32,3003.99,13,0,success
+A2b_topk8,MOT20-01,1-120,8,6,4,8,132.99,649.49,13,0,success
+A2b_topk8,MOT20-05,1-120,8,6,4,8,362.49,2636.31,13,0,success
+A2c_topk8_hn3,MOT20-01,1-120,8,3,4,8,119.62,488.36,13,0,success
+A2c_topk8_hn3,MOT20-05,1-120,8,3,4,8,350.99,1985.91,13,0,success
+A2d_topk8_hn3_b16,MOT20-01,1-120,8,3,16,8,109.73,488.36,13,0,success
+A2d_topk8_hn3_b16,MOT20-05,1-120,8,3,16,8,300.56,1985.93,13,0,success

@@ -1,0 +1,3 @@
+check,status,details
+stage1_reject_softened,passed,stage1 reject blocked_newborn=0 hard_block=0; host cost increased to ~0.9
+stage2_reject_hard_block,passed,stage2 reject blocked_newborn=1 hard_block=1; rejected column forced to cost=1.0

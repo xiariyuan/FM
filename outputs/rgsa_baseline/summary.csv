@@ -1,0 +1,5 @@
+variant,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,FPS,notes
+BoT-SORT+HACA_v3_light_baseline,73.984,75.284,73.046,87.062,88.695,43,111,15.17,Lightweight retrain on MOT17-{02,05,09}-FRCNN shards; evaluated on MOT17-{10,11,13}-FRCNN val_half
++Stage1_soft_deferral,,,,,,,,,
++Stage1+Stage2,,,,,,,,,
++Stage1+Stage2+Stage3,,,,,,,,,

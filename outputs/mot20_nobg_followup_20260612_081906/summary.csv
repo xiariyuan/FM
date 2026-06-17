@@ -1,0 +1,4 @@
+phase,status,artifact
+haca_v3,waiting,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_train_20260608_171931/haca_v3/mot20_haca_v3.npz
+stage1_mot20_nobg,pending,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_stage1_mot20_nobg_pipeline_20260612_081906/stage1/stage1_best.pt
+sca_lmf_nobg_eval,pending,/gemini/code/FMtrack-main/FM-Track/outputs/sca_lmf_mot20_nobg_eval_20260612_081906/summary.csv

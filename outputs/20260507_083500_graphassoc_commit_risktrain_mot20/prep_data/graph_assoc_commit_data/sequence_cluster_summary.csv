@@ -1,0 +1,3 @@
+seq,split_tag,clusters,detections,tracks,edges,trigger_pass_clusters,accepted_clusters,rejected_clusters,gt_positive_clusters,gt_negative_clusters,gt_neutral_clusters,action_rewrite_clusters,action_defer_clusters,action_reject_clusters
+MOT20-02,train,964,2402,3282,5890,898,84,880,118,492,354,118,354,492
+MOT20-05,val,686,1500,2126,3426,632,76,610,74,406,206,74,206,406

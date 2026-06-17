@@ -1,0 +1,2 @@
+epoch,train_loss,val_accuracy,val_accept_acc,val_defer_acc,val_reject_acc,val_accept_count,val_defer_count,val_reject_count,val_pred_accept,val_pred_defer,val_pred_reject,val_total
+0,1.6525447435312337,0.39031993437243645,0.5763097949886105,0.8,0.29693924166285973,1317,400,4378,3786,382,1927,6095

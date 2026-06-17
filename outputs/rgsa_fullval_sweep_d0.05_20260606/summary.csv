@@ -1,0 +1,2 @@
+variant,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,notes
+rgsa_fullval_sweep_d0.05_20260606,73.824,75.281,72.74,86.753,88.695,41,110,lambda_defer=0.05 lambda_reject=0.0

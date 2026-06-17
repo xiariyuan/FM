@@ -1,0 +1,2 @@
+dataset,split,seq_count,tracker_count,gap_bins,min_gap,gt_event_count,status,error
+MOT20,val_half,4,2,"0:30,30:100,100:500,500:",1,0,success,

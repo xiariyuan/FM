@@ -1,0 +1,4 @@
+variant,status,checkpoint,HOTA,AssA,IDF1,MOTA,IDSW
+haca_v1,cancelled_stale,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_nobg_matrix_20260616_111357/haca_v1/checkpoint.npz,,,,,
+haca_v2,cancelled_stale,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_nobg_matrix_20260616_111357/haca_v2/checkpoint.npz,,,,,
+haca_v3,cancelled_stale,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_nobg_matrix_20260616_111357/haca_v3/checkpoint.npz,,,,,

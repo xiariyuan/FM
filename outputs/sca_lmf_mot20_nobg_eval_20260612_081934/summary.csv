@@ -1,0 +1,5 @@
+variant,status,HOTA,AssA,IDF1,MOTA,IDSW
+baseline,success,77.394,74.306,88.866,93.341,819
+freeze_only,success,77.377,74.281,88.844,93.335,830
+stage1_only,success,77.351,74.24,88.807,93.342,845
+stage1_freeze,success,77.363,74.266,88.79,93.343,852

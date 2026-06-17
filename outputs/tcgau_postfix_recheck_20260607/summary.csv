@@ -1,0 +1,4 @@
+variant,status,HOTA,AssA,IDF1,MOTA,IDSW,Frag,tcgau_enable,tcgau_freeze_thresh,tcgau_soft_thresh,tcgau_soft_alpha,tcgau_frames,tcgau_primary_matches,tcgau_normal_updates,tcgau_soft_updates,tcgau_freeze_updates,tcgau_avg_q_update,tcgau_avg_app_sim,tcgau_avg_pair_rel,notes
+baseline,completed,73.825,72.74,86.753,88.695,41,110,False,-,-,-,0,0,0,0,0,0.0,0.0,0.0,baseline
+tcgau_only,completed,73.73,72.794,86.658,88.673,47,111,True,0.03,0.7,0.97,0,12054,9823,2208,23,0.7839,0.9319,0.9019,soft mode harmful
+s1_tcgau,completed,73.048,71.47,85.857,88.651,49,111,True,0.03,0.7,0.97,0,12054,9806,2212,36,0.7829,0.9318,0.9018,soft mode harmful

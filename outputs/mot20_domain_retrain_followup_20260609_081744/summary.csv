@@ -1,0 +1,4 @@
+phase,status,artifact
+haca_v3,success,/gemini/code/FMtrack-main/FM-Track/outputs/haca_mot20_train_20260608_171931/haca_v3/mot20_haca_v3.npz
+stage1_mot20,success,/gemini/code/FMtrack-main/FM-Track/outputs/rgsa_stage1_mot20_pipeline_20260609_081744/stage1/stage1_best.pt
+sca_lmf_eval,aborted_invalid_haca_baseline,/gemini/code/FMtrack-main/FM-Track/outputs/sca_lmf_mot20_eval_20260609_081744/summary.csv

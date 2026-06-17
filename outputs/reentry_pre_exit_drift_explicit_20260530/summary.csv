@@ -1,0 +1,2 @@
+status,error,case_count,flip_type_count,context_before,iou_thresh,exit_same_count,exit_different_count,exit_baseline_missing_count,exit_compare_missing_count,exit_both_missing_count,pre_exit_any_diverge_count,pre_exit_all_same_count,median_same_ratio,median_frames_to_first_diverge
+success,,10,2,15,0.5,1,8,0,1,0,10,0,0.0,15.0

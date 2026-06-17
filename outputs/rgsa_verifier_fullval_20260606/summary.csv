@@ -1,0 +1,4 @@
+variant,HOTA,AssA,IDF1,MOTA,IDSW,notes
+baseline,73.825,72.74,86.753,88.695,41,no RGSA
+stage1_only,74.104,73.062,86.565,88.695,39,Stage1 lambda=0.15; BEST
+stage1_verifier,73.416,71.764,85.737,88.651,43,Stage1+heuristic verifier; FAILS

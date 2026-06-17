@@ -1,0 +1,2 @@
+timestamp,kind,status,script,dataset,split,tracker_family,variant,tag,run_root,summary_csv,checkpoint,calibrator_npz,log_path,notes,phase
+2026-05-13T07:58:30+08:00,train,failed,scripts/train_v16_laplace_gate_proxy0213.sh,MOT17,train,ByteTrack,v16_laplace_gate_proxy0213,laplace_trainable,outputs/bytetrack_fa_mot_mot17_v16_laplace_gate_proxy0213_20260512_200536,,,,outputs/bytetrack_fa_mot_mot17_v16_laplace_gate_proxy0213_20260512_200536/train.log,training failed: process disappeared mid-epoch; will resume from checkpoint_0,train

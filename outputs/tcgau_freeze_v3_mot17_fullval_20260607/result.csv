@@ -1,0 +1,2 @@
+status,script,dataset,split,family,best_HOTA,best_IDSW,notes
+completed,tools/track.py,MOT17,val,tcgau,74.068,41,freeze-only MVP: freeze_thresh=0.03~0.08 gives HOTA+0.243 AssA+0.474 IDSW unchanged; Weak Go

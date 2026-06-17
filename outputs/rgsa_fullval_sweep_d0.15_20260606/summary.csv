@@ -1,0 +1,2 @@
+variant,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,notes
+rgsa_fullval_sweep_d0.15_20260606,74.104,75.521,73.062,86.565,88.695,39,107,lambda_defer=0.15 lambda_reject=0.0; BEST: HOTA+0.279 IDSW=39

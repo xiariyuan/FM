@@ -1,0 +1,2 @@
+variant,HOTA,DetA,AssA,IDF1,MOTA,IDSW,Frag,notes
+rgsa_fullval_ablation_lambda0_20260606,73.825,75.283,72.74,86.753,88.695,41,110,lambda_defer=0.0 lambda_reject=0.0; routing/logging only; identical to baseline
