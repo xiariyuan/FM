@@ -1,0 +1,2 @@
+variant,track_buffer,HOTA,DetA,AssA,MOTA,IDF1,IDSW,status,notes
+tb60,60,79.191,81.789,76.727,94.077,90.902,326,success,MOT20-05; HACA v1 no-bg; baseline tb30=79.121/328; delta=+0.07/-2
