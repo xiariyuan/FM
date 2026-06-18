@@ -1645,19 +1645,19 @@ class BoTSORT(object):
             det.tcgau_alpha_override = tcgau_policy["alpha_override"]
             det.tcgau_append_history = tcgau_policy["append_history"]
 
-            # TOS-Track: occlusion-triggered freeze
-            if self.tos_enable and self.tos_freeze_on_occlusion:
+            # TOS-Track: compute occlusion score (for analysis AND freeze)
+            if self.tos_enable:
                 tos_occlusion = self._compute_tos_occlusion_score(track, det, itracked, idet, laplace_debug if self.laplace_assoc else None)
                 det.tos_occlusion_score = tos_occlusion
-                # Record on track for analysis
                 track.tos_occlusion_score = tos_occlusion
                 track.tos_last_seen = int(self.frame_id)
-                if tos_occlusion >= self.tos_occlusion_thresh and det.tcgau_update_mode != "freeze":
-                    # Override: freeze appearance during occlusion
-                    det.tcgau_update_mode = "freeze"
-                    det.tcgau_append_history = False
-                    det.tcgau_alpha_override = None
-                    self.tos_stats["occluded_tracks"] += 1
+                # Apply freeze if occlusion detected and freeze mode is enabled
+                if self.tos_freeze_on_occlusion:
+                    if tos_occlusion >= self.tos_occlusion_thresh and det.tcgau_update_mode != "freeze":
+                        det.tcgau_update_mode = "freeze"
+                        det.tcgau_append_history = False
+                        det.tcgau_alpha_override = None
+                        self.tos_stats["occluded_tracks"] += 1
 
             if self.tos_enable and self.tos_analysis_only:
                 # Record per-track per-frame analysis row
@@ -2473,7 +2473,9 @@ class BoTSORT(object):
             return 0.0
 
         # Primary: final_sim (association quality, available in all HACA versions)
-        final_sim = laplace_debug.get("final_sim") or laplace_debug.get("anchor_sim")
+        final_sim = laplace_debug.get("final_sim", None)
+        if final_sim is None:
+            final_sim = laplace_debug.get("anchor_sim", None)
         if final_sim is None:
             return 0.0
         sim = float(final_sim[itracked, idet]) if itracked < final_sim.shape[0] and idet < final_sim.shape[1] else 0.0
