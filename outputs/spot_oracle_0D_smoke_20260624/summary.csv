@@ -1,2 +1,2 @@
 status,error,dataset,split,seq_name,num_correct_matches,num_false_freeze,false_freeze_rate,protected_update_loss_count,potential_fn_risk
-completed,,SMOKE,tiny,spot_smoke_seq,8,2,0.25,2,0.25
+completed,,SMOKE,tiny,spot_smoke_seq,8,0,0.05,0,0.0

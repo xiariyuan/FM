@@ -27,6 +27,9 @@ SUMMARY_FIELDS = [
     "state_gain",
     "rerank_gain_proxy",
     "median_evidence_latency",
+    "decision_confidence",
+    "runtime_patch_allowed",
+    "block_reason",
     "final_route",
     "pcc_role",
     "p5_role",
@@ -57,6 +60,9 @@ def main() -> int:
         "state_gain": 0.0,
         "rerank_gain_proxy": 0.0,
         "median_evidence_latency": "",
+        "decision_confidence": "",
+        "runtime_patch_allowed": 0,
+        "block_reason": "",
         "final_route": "",
         "pcc_role": "",
         "p5_role": "",
@@ -98,12 +104,33 @@ def main() -> int:
         rerank_gain = float(rerank.get("fixable_percent", 0.0))
         median_latency = delay.get("median_evidence_latency")
 
-        if state_gain >= 5.0:
+        block_reasons = []
+        if str(state.get("status", "completed")) not in {"completed", "success", "ok"}:
+            block_reasons.append("0A state oracle is not completed")
+        if str(rerank.get("status", "completed")) not in {"completed", "success", "ok"}:
+            block_reasons.append("0C rerank oracle is not completed")
+        if str(rerank.get("analysis_scope", "full")) != "full":
+            block_reasons.append("0C rerank oracle is not full-file")
+        if int(rerank.get("trusted", 1)) != 1:
+            block_reasons.append("0C rerank oracle is not trusted")
+
+        if block_reasons:
+            final_route = "NOT_CLOSED"
+            decision_confidence = "not_closed"
+            runtime_patch_allowed = 0
+        elif state_gain >= 5.0:
             final_route = "SPOT_MAINLINE"
+            decision_confidence = "closed"
+            runtime_patch_allowed = 1
         elif state_gain >= 3.0:
             final_route = "SPOT_ABLATION_ONLY"
+            decision_confidence = "closed"
+            runtime_patch_allowed = 1
         else:
             final_route = "B_PLAN_P0_CAUSAL_DIAGNOSTIC"
+            decision_confidence = "closed"
+            runtime_patch_allowed = 0
+        block_reason = "; ".join(block_reasons)
 
         if rerank_gain >= 10.0:
             pcc_role = "strong_support"
@@ -122,6 +149,9 @@ def main() -> int:
                 "state_gain": state_gain,
                 "rerank_gain_proxy": rerank_gain,
                 "median_evidence_latency": median_latency,
+                "decision_confidence": decision_confidence,
+                "runtime_patch_allowed": runtime_patch_allowed,
+                "block_reason": block_reason,
                 "final_route": final_route,
                 "pcc_role": pcc_role,
                 "p5_role": p5_role,
@@ -132,6 +162,9 @@ def main() -> int:
             "state_gain": state_gain,
             "rerank_gain_proxy": rerank_gain,
             "median_evidence_latency": median_latency,
+            "decision_confidence": decision_confidence,
+            "runtime_patch_allowed": runtime_patch_allowed,
+            "block_reason": block_reason,
             "final_route": final_route,
             "pcc_role": pcc_role,
             "p5_role": p5_role,
@@ -145,6 +178,9 @@ def main() -> int:
                     f"- state_gain: {state_gain}",
                     f"- rerank_gain_proxy: {rerank_gain}",
                     f"- median_evidence_latency: {median_latency}",
+                    f"- decision_confidence: {decision_confidence}",
+                    f"- runtime_patch_allowed: {runtime_patch_allowed}",
+                    f"- block_reason: {block_reason}",
                     f"- final_route: {final_route}",
                     f"- pcc_role: {pcc_role}",
                     f"- p5_role: {p5_role}",

@@ -20,7 +20,7 @@ from scripts.spot_common.io_utils import (
     write_json,
 )
 from scripts.spot_common.metrics import mean_or_none, safe_ratio
-from scripts.spot_common.mot_format import build_alignment, read_mot_txt
+from scripts.spot_common.mot_format import alignment_diagnostics, build_alignment, read_mot_txt
 
 
 SUMMARY_FIELDS = [
@@ -34,6 +34,10 @@ SUMMARY_FIELDS = [
     "matched_rows",
     "match_rate",
     "mean_gt_iou",
+    "num_gt_rows",
+    "unmatched_tracker_rows",
+    "unmatched_gt_rows",
+    "duplicate_gt_assignments",
 ]
 
 
@@ -65,6 +69,10 @@ def main() -> int:
         "matched_rows": 0,
         "match_rate": 0.0,
         "mean_gt_iou": 0.0,
+        "num_gt_rows": 0,
+        "unmatched_tracker_rows": 0,
+        "unmatched_gt_rows": 0,
+        "duplicate_gt_assignments": 0,
     }
     write_single_row_csv(summary_csv, summary_row, SUMMARY_FIELDS)
 
@@ -111,6 +119,7 @@ def main() -> int:
             seq_name=args.seq_name,
         )
         matched_rows = [row for row in aligned_rows if int(row["is_match"]) == 1]
+        diagnostics = alignment_diagnostics(aligned_rows, gt_rows)
         gt_alignment_json = reports_dir / "gt_alignment.json"
         gt_alignment_csv = reports_dir / "gt_alignment_rows.csv"
         write_json(
@@ -121,6 +130,7 @@ def main() -> int:
                 "tracker_txt": str(Path(args.tracker_txt).expanduser().resolve()),
                 "gt_txt": str(Path(args.gt_txt).expanduser().resolve()),
                 "iou_thresh": args.iou_thresh,
+                "diagnostics": diagnostics,
                 "rows": aligned_rows,
             },
             gt_alignment_json,
@@ -136,6 +146,10 @@ def main() -> int:
                 "matched_rows": len(matched_rows),
                 "match_rate": round(safe_ratio(len(matched_rows), len(aligned_rows)), 6),
                 "mean_gt_iou": round(mean_iou, 6),
+                "num_gt_rows": diagnostics["num_gt_rows"],
+                "unmatched_tracker_rows": diagnostics["unmatched_tracker_rows"],
+                "unmatched_gt_rows": diagnostics["unmatched_gt_rows"],
+                "duplicate_gt_assignments": diagnostics["duplicate_gt_assignments"],
             }
         )
         write_single_row_csv(summary_csv, summary_row, SUMMARY_FIELDS)
@@ -149,6 +163,10 @@ def main() -> int:
                     f"- matched_rows: {len(matched_rows)}",
                     f"- match_rate: {summary_row['match_rate']}",
                     f"- mean_gt_iou: {summary_row['mean_gt_iou']}",
+                    f"- num_gt_rows: {diagnostics['num_gt_rows']}",
+                    f"- unmatched_tracker_rows: {diagnostics['unmatched_tracker_rows']}",
+                    f"- unmatched_gt_rows: {diagnostics['unmatched_gt_rows']}",
+                    f"- duplicate_gt_assignments: {diagnostics['duplicate_gt_assignments']}",
                 ]
             ),
             reports_dir / "gt_alignment_report.md",
@@ -164,6 +182,10 @@ def main() -> int:
                 "aligned_rows": len(aligned_rows),
                 "matched_rows": len(matched_rows),
                 "match_rate": summary_row["match_rate"],
+                "num_gt_rows": diagnostics["num_gt_rows"],
+                "unmatched_tracker_rows": diagnostics["unmatched_tracker_rows"],
+                "unmatched_gt_rows": diagnostics["unmatched_gt_rows"],
+                "duplicate_gt_assignments": diagnostics["duplicate_gt_assignments"],
             },
             artifacts={
                 "summary_csv": str(summary_csv),

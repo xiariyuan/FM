@@ -13,12 +13,16 @@
     "gt_alignment_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_smoke_20260624/reports/gt_alignment.json",
     "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_smoke_20260624/summary.csv"
   },
-  "generated_at": "2026-06-24T23:09:42+08:00",
+  "generated_at": "2026-06-25T22:26:17+08:00",
   "metrics": {
     "aligned_rows": 8,
+    "duplicate_gt_assignments": 0,
     "match_rate": 1.0,
     "matched_rows": 8,
-    "tracker_rows": 8
+    "num_gt_rows": 10,
+    "tracker_rows": 8,
+    "unmatched_gt_rows": 2,
+    "unmatched_tracker_rows": 0
   },
   "notes": "alignment for spot_smoke_seq",
   "phase": "spot_p0_alignment",

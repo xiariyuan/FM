@@ -2,6 +2,6 @@
 
 - seq_name: spot_smoke_seq
 - num_correct_matches: 8
-- num_false_freeze: 2
-- protected_update_loss_count: 2
-- potential_fn_risk: 0.25
+- num_false_freeze: 0
+- protected_update_loss_count: 0
+- potential_fn_risk: 0.0

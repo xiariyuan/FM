@@ -1,23 +1,24 @@
 {
   "args": {
     "alignment_json": "outputs/spot_alignment_smoke_20260624/reports/gt_alignment.json",
-    "freeze_rate": 0.25,
+    "freeze_rate": 0.05,
     "out_dir": "outputs/spot_oracle_0D_smoke_20260624",
-    "seed": 0
+    "seed": 0,
+    "trusted_only": false
   },
   "artifacts": {
     "metrics_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0D_smoke_20260624/oracle_false_positive_freeze_metrics.json",
     "sampled_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0D_smoke_20260624/sampled_false_freeze_events.json",
     "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0D_smoke_20260624/summary.csv"
   },
-  "generated_at": "2026-06-24T23:10:11+08:00",
+  "generated_at": "2026-06-25T22:32:25+08:00",
   "metrics": {
-    "false_freeze_rate": 0.25,
+    "false_freeze_rate": 0.05,
     "num_correct_matches": 8,
-    "num_false_freeze": 2,
-    "num_sampled_tracks": 2,
-    "potential_fn_risk": 0.25,
-    "protected_update_loss_count": 2
+    "num_false_freeze": 0,
+    "num_sampled_tracks": 0,
+    "potential_fn_risk": 0.0,
+    "protected_update_loss_count": 0
   },
   "notes": "false positive freeze oracle for spot_smoke_seq",
   "phase": "oracle_0D_false_positive_freeze",

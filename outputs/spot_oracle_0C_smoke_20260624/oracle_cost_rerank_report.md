@@ -6,3 +6,7 @@
 - fixable_groups: 1
 - fixable_percent: 50.0
 - median_positive_rank: 0.0
+- analysis_scope: full
+- trusted: 0
+- label_source: box_proxy
+- processed_groups: 3

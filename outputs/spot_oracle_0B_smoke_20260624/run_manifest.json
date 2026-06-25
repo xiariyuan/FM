@@ -2,14 +2,15 @@
   "args": {
     "alignment_json": "outputs/spot_alignment_smoke_20260624/reports/gt_alignment.json",
     "delays": "2,5,10",
-    "out_dir": "outputs/spot_oracle_0B_smoke_20260624"
+    "out_dir": "outputs/spot_oracle_0B_smoke_20260624",
+    "trusted_only": false
   },
   "artifacts": {
     "events_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0B_smoke_20260624/delay_events.json",
     "metrics_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0B_smoke_20260624/oracle_delay_metrics.json",
     "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0B_smoke_20260624/summary.csv"
   },
-  "generated_at": "2026-06-24T23:13:24+08:00",
+  "generated_at": "2026-06-25T22:30:24+08:00",
   "metrics": {
     "median_evidence_latency": 1.0,
     "num_switch_events": 2,

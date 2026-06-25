@@ -1,2 +1,2 @@
-status,error,dataset,split,seq_name,groups_with_gt,wrong_selected_groups,fixable_groups,fixable_percent,median_positive_rank
-completed,,SMOKE,tiny,spot_smoke_seq,3,2,1,50.0,0.0
+status,error,dataset,split,seq_name,analysis_scope,trusted,label_source,groups_with_gt,wrong_selected_groups,fixable_groups,fixable_percent,median_positive_rank
+completed,,SMOKE,tiny,spot_smoke_seq,full,0,box_proxy,3,2,1,50.0,0.0

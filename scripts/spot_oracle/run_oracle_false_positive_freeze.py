@@ -44,6 +44,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", default="outputs/oracle_gate/0D_false_positive_damage")
     parser.add_argument("--freeze-rate", type=float, default=0.05)
     parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument("--trusted-only", action="store_true", help="mark output as untrusted if off")
     return parser.parse_args()
 
 

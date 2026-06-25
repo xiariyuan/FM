@@ -1,8 +1,11 @@
 {
-  "final_route": "SPOT_MAINLINE",
+  "block_reason": "0C rerank oracle is not trusted",
+  "decision_confidence": "not_closed",
+  "final_route": "NOT_CLOSED",
   "median_evidence_latency": 1.0,
   "p5_role": "skip",
   "pcc_role": "strong_support",
   "rerank_gain_proxy": 50.0,
+  "runtime_patch_allowed": 0,
   "state_gain": 50.0
 }

@@ -12,13 +12,16 @@
     "decision_md": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0E_smoke_20260624/joint_oracle_decision.md",
     "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0E_smoke_20260624/summary.csv"
   },
-  "generated_at": "2026-06-24T23:13:17+08:00",
+  "generated_at": "2026-06-25T22:35:54+08:00",
   "metrics": {
-    "final_route": "SPOT_MAINLINE",
+    "block_reason": "0C rerank oracle is not trusted",
+    "decision_confidence": "not_closed",
+    "final_route": "NOT_CLOSED",
     "median_evidence_latency": 1.0,
     "p5_role": "skip",
     "pcc_role": "strong_support",
     "rerank_gain_proxy": 50.0,
+    "runtime_patch_allowed": 0,
     "state_gain": 50.0
   },
   "notes": "joint oracle decision complete",

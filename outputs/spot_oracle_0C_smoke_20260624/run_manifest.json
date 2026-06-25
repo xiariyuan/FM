@@ -1,26 +1,35 @@
 {
   "args": {
+    "allow_box_proxy": true,
     "dataset": "SMOKE",
+    "max_frame": 0,
+    "max_groups": 0,
     "max_margin_gap": 0.05,
     "out_dir": "outputs/spot_oracle_0C_smoke_20260624",
     "pair_csv": "tests/fixtures/spot_smoke/pairs.csv",
     "seq_name": "spot_smoke_seq",
     "split": "tiny",
-    "top_k": 2
+    "top_k": 5
   },
   "artifacts": {
     "events_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0C_smoke_20260624/fixable_events.json",
     "metrics_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0C_smoke_20260624/oracle_cost_rerank_metrics.json",
     "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0C_smoke_20260624/summary.csv"
   },
-  "generated_at": "2026-06-24T23:10:13+08:00",
+  "generated_at": "2026-06-25T22:35:00+08:00",
   "metrics": {
+    "analysis_scope": "full",
     "fixable_groups": 1,
     "fixable_percent": 50.0,
     "groups_with_gt": 3,
+    "label_source": "box_proxy",
+    "max_frame": 0,
+    "max_groups": 0,
     "max_margin_gap": 0.05,
     "median_positive_rank": 0.0,
-    "top_k": 2,
+    "processed_groups": 3,
+    "top_k": 5,
+    "trusted": 0,
     "wrong_selected_groups": 2
   },
   "notes": "cost rerank oracle for spot_smoke_seq",

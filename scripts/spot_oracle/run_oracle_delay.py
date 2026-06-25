@@ -42,6 +42,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--alignment-json", required=True)
     parser.add_argument("--out-dir", default="outputs/oracle_gate/0B_delayed_commitment")
     parser.add_argument("--delays", default="2,5,10")
+    parser.add_argument("--trusted-only", action="store_true", help="mark output as untrusted if off")
     return parser.parse_args()
 
 

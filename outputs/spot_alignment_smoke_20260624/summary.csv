@@ -1,2 +1,2 @@
-status,error,dataset,split,seq_name,tracker_rows,aligned_rows,matched_rows,match_rate,mean_gt_iou
-completed,,SMOKE,tiny,spot_smoke_seq,8,8,8,1.0,1.0
+status,error,dataset,split,seq_name,tracker_rows,aligned_rows,matched_rows,match_rate,mean_gt_iou,num_gt_rows,unmatched_tracker_rows,unmatched_gt_rows,duplicate_gt_assignments
+completed,,SMOKE,tiny,spot_smoke_seq,8,8,8,1.0,1.0,10,0,2,0

@@ -14,6 +14,7 @@
 - `Oracle 0A` 在真实 `MOT20-05` 上给出了正信号，可继续作为证据链的一部分。
 - `Oracle 0C` 的 full-file 运行已被手动中止，结构化记录应保持 `interrupted`。
 - `Oracle 0C` 的 chunked partial 只证明流程跑通，**不能当最终结论**。
+- 当前的正式结论文件已经明确 `final_decision: not_closed`，因此 runtime tracker patch 仍应冻结。
 - `Oracle 0B / 0D / 0E` 目前是 smoke 级或决策级辅助证据，不应被写成真实主线结论。
 
 ## 关键文件

@@ -32,6 +32,8 @@ SUMMARY_FIELDS = [
     "split",
     "seq_name",
     "analysis_scope",
+    "trusted",
+    "label_source",
     "groups_with_gt",
     "wrong_selected_groups",
     "fixable_groups",
@@ -51,10 +53,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--top-k", type=int, default=5)
     parser.add_argument("--max-groups", type=int, default=0, help="Optional cap on processed groups; 0 means full file.")
     parser.add_argument("--max-frame", type=int, default=0, help="Optional cap on frame_id; 0 means no frame cap.")
+    parser.add_argument("--allow-box-proxy", action="store_true", help="allow IoU box-proxy positives for smoke only; marks output untrusted")
     return parser.parse_args()
 
 
-def _iter_group_rows(path: str | Path) -> Iterator[tuple[str, list[dict]]]:
+def _iter_group_rows(path: str | Path, *, allow_box_proxy: bool = False) -> Iterator[tuple[str, list[dict]]]:
     with Path(path).expanduser().open("r", encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle)
         current_key: str | None = None
@@ -67,7 +70,7 @@ def _iter_group_rows(path: str | Path) -> Iterator[tuple[str, list[dict]]]:
                 yield current_key, bucket
                 bucket = []
                 current_key = key
-            if not _is_positive(row) and _infer_positive_from_boxes(row):
+            if allow_box_proxy and not _is_positive(row) and _infer_positive_from_boxes(row):
                 row["_box_positive"] = "1"
             bucket.append(row)
         if current_key is not None and bucket:
@@ -154,6 +157,8 @@ def main() -> int:
         "split": args.split,
         "seq_name": args.seq_name,
         "analysis_scope": "partial" if (int(args.max_groups) > 0 or int(args.max_frame) > 0) else "full",
+        "trusted": int(not args.allow_box_proxy and int(args.max_groups) == 0 and int(args.max_frame) == 0),
+        "label_source": "box_proxy" if args.allow_box_proxy else "gt_id",
         "groups_with_gt": 0,
         "wrong_selected_groups": 0,
         "fixable_groups": 0,
@@ -196,21 +201,21 @@ def main() -> int:
         processed_groups = 0
         positive_ranks: list[int] = []
         fixable_events: list[dict] = []
-        for group_id, group_rows in _iter_group_rows(args.pair_csv):
+        for group_id, group_rows in _iter_group_rows(args.pair_csv, allow_box_proxy=bool(args.allow_box_proxy)):
             if args.max_groups and processed_groups >= int(args.max_groups):
                 break
             frame_id = _int(group_rows[0], ("frame", "frame_id"), 0) if group_rows else 0
             if args.max_frame and frame_id > int(args.max_frame):
                 break
             ordered = sorted(group_rows, key=_candidate_score, reverse=True)
-            positives = [row for row in ordered if _is_positive(row) or row.get("_box_positive") == "1"]
+            positives = [row for row in ordered if _is_positive(row) or (args.allow_box_proxy and row.get("_box_positive") == "1")]
             if not positives:
                 processed_groups += 1
                 continue
             groups_with_gt += 1
             selected = next((row for row in ordered if _selected_flag(row) == 1), ordered[0])
-            selected_correct = _is_positive(selected)
-            pos_rank = next((idx for idx, row in enumerate(ordered) if _is_positive(row)), None)
+            selected_correct = _is_positive(selected) or (args.allow_box_proxy and selected.get("_box_positive") == "1")
+            pos_rank = next((idx for idx, row in enumerate(ordered) if _is_positive(row) or (args.allow_box_proxy and row.get("_box_positive") == "1")), None)
             if pos_rank is not None:
                 positive_ranks.append(int(pos_rank))
             if selected_correct:
@@ -244,11 +249,15 @@ def main() -> int:
         analysis_scope = "full"
         if int(args.max_groups) > 0 or int(args.max_frame) > 0:
             analysis_scope = "partial"
+        trusted = int(analysis_scope == "full" and not bool(args.allow_box_proxy) and wrong_selected_groups > 0)
+        label_source = "box_proxy" if args.allow_box_proxy else "gt_id"
 
         summary_row.update(
             {
                 "status": "completed",
                 "analysis_scope": analysis_scope,
+                "trusted": trusted,
+                "label_source": label_source,
                 "groups_with_gt": groups_with_gt,
                 "wrong_selected_groups": wrong_selected_groups,
                 "fixable_groups": fixable_groups,
@@ -266,6 +275,8 @@ def main() -> int:
             "max_margin_gap": float(args.max_margin_gap),
             "top_k": int(args.top_k),
             "analysis_scope": analysis_scope,
+            "trusted": trusted,
+            "label_source": label_source,
             "processed_groups": processed_groups,
             "max_groups": int(args.max_groups),
             "max_frame": int(args.max_frame),
@@ -284,6 +295,8 @@ def main() -> int:
                     f"- fixable_percent: {summary_row['fixable_percent']}",
                     f"- median_positive_rank: {summary_row['median_positive_rank']}",
                     f"- analysis_scope: {analysis_scope}",
+                    f"- trusted: {trusted}",
+                    f"- label_source: {label_source}",
                     f"- processed_groups: {processed_groups}",
                 ]
             ),
