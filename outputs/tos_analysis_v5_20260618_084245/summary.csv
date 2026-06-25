@@ -1,0 +1,2 @@
+checkpoint,haca_version,bg_mode,tos_mode,tos_threshold,sequence,frames,total_matches,gap_max,occ_max,occ_gt_0,occ_gt_0_3,occ_gt_0_5,gap_ge_11,status,verdict
+haca_mot20_train_20260613_082005/haca_v1/mot20_haca_v1.npz,haca_v1,no-bg,analysis-only,0.5,MOT20-05,3315,612803,26,0.6773,612803,272,28,147,success,fail_analysis_gate

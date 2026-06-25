@@ -1,0 +1,14 @@
+{
+  "median_evidence_latency": 1.0,
+  "num_switch_events": 2,
+  "recoverable": {
+    "10": 1,
+    "2": 1,
+    "5": 1
+  },
+  "recoverable_rate": {
+    "10": 0.5,
+    "2": 0.5,
+    "5": 0.5
+  }
+}

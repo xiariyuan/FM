@@ -1,0 +1,25 @@
+{
+  "args": {
+    "alignment_json": "outputs/spot_alignment_smoke_20260624/reports/gt_alignment.json",
+    "out_dir": "outputs/spot_oracle_0A_smoke_20260624",
+    "recovery_window": 3
+  },
+  "artifacts": {
+    "events_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0A_smoke_20260624/switch_events.json",
+    "metrics_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0A_smoke_20260624/oracle_state_protection_metrics.json",
+    "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0A_smoke_20260624/summary.csv"
+  },
+  "generated_at": "2026-06-24T23:10:19+08:00",
+  "metrics": {
+    "idsw_reduction_percent": 50.0,
+    "median_recovery_latency": 1.0,
+    "protectable_events": 1,
+    "protectable_rate": 0.5,
+    "recovery_window": 3,
+    "switch_events": 2
+  },
+  "notes": "state protection oracle for spot_smoke_seq",
+  "phase": "oracle_0A_state_protection",
+  "script": "scripts/spot_oracle/run_oracle_state_protection.py",
+  "status": "ok"
+}

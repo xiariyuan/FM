@@ -1,0 +1,7 @@
+group_id,seq,frame,det_index,track_id,is_selected,matched_by_host,base_score,refined_score,det_gt_id,track_gt_id
+g1,spot_smoke_seq,3,0,1,1,1,0.90,0.90,1,2
+g1,spot_smoke_seq,3,0,3,0,0,0.88,0.93,1,1
+g2,spot_smoke_seq,4,0,1,1,1,0.91,0.91,1,1
+g2,spot_smoke_seq,4,0,2,0,0,0.60,0.60,1,2
+g3,spot_smoke_seq,5,1,2,1,1,0.80,0.80,2,1
+g3,spot_smoke_seq,5,1,4,0,0,0.30,0.35,2,2

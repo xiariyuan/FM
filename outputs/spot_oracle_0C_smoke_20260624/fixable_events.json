@@ -1,0 +1,28 @@
+{
+  "events": [
+    {
+      "entropy": 0.9998061328018257,
+      "fixable": 1,
+      "group_id": "g1",
+      "margin": 0.030000000000000027,
+      "positive_rank": 0,
+      "positive_score": 0.93,
+      "positive_track_id": 3,
+      "score_gap": -0.030000000000000027,
+      "selected_score": 0.9,
+      "selected_track_id": 1
+    },
+    {
+      "entropy": 0.8865408928192045,
+      "fixable": 0,
+      "group_id": "g3",
+      "margin": 0.45000000000000007,
+      "positive_rank": 1,
+      "positive_score": 0.35,
+      "positive_track_id": 4,
+      "score_gap": 0.45000000000000007,
+      "selected_score": 0.8,
+      "selected_track_id": 2
+    }
+  ]
+}

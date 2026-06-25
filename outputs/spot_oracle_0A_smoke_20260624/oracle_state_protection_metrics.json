@@ -1,0 +1,8 @@
+{
+  "idsw_reduction_percent": 50.0,
+  "median_recovery_latency": 1.0,
+  "protectable_events": 1,
+  "protectable_rate": 0.5,
+  "recovery_window": 3,
+  "switch_events": 2
+}

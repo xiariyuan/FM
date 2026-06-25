@@ -1,0 +1,2 @@
+status,error,dataset,split,seq_name,tracker_rows,aligned_rows,matched_rows,match_rate,mean_gt_iou
+completed,,MOT20,val_half,MOT20-05,632033,632033,82216,0.130082,0.629152

@@ -1,0 +1,2 @@
+status,error,dataset,split,seq_name,switch_events,protectable_events,protectable_rate,idsw_reduction_percent,median_recovery_latency
+completed,,SMOKE,tiny,spot_smoke_seq,2,1,0.5,50.0,1.0

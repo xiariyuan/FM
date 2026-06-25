@@ -1,0 +1,2 @@
+status,protocol_lock,gt_alignment,oracle_0a,oracle_0c_full,oracle_0c_partial,oracle_0b_smoke,oracle_0d_smoke,oracle_0e_smoke,final_decision,notes
+partial,completed,completed,completed,interrupted,untrusted_partial,completed,completed,completed,not_closed,"0A is positive; 0C partial is not a final conclusion; need a credible 0C rerun or a formal exclusion rationale"

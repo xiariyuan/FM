@@ -1,0 +1,42 @@
+{
+  "sampled_events": [
+    {
+      "dataset": "SMOKE",
+      "frame": 5,
+      "gt_h": 10.0,
+      "gt_id": 1,
+      "gt_iou": 1.0,
+      "gt_w": 10.0,
+      "gt_x": 4.0,
+      "gt_y": 0.0,
+      "h": 10.0,
+      "is_match": 1,
+      "score": 0.94,
+      "seq_name": "spot_smoke_seq",
+      "split": "tiny",
+      "track_id": 1,
+      "w": 10.0,
+      "x": 4.0,
+      "y": 0.0
+    },
+    {
+      "dataset": "SMOKE",
+      "frame": 5,
+      "gt_h": 10.0,
+      "gt_id": 2,
+      "gt_iou": 1.0,
+      "gt_w": 10.0,
+      "gt_x": 104.0,
+      "gt_y": 0.0,
+      "h": 10.0,
+      "is_match": 1,
+      "score": 0.95,
+      "seq_name": "spot_smoke_seq",
+      "split": "tiny",
+      "track_id": 2,
+      "w": 10.0,
+      "x": 104.0,
+      "y": 0.0
+    }
+  ]
+}

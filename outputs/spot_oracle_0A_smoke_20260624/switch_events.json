@@ -1,0 +1,22 @@
+{
+  "events": [
+    {
+      "frame": 3,
+      "from_gt": 1,
+      "protectable": 1,
+      "recover_within_window": 1,
+      "recovery_latency": 1,
+      "to_gt": 2,
+      "track_id": 1
+    },
+    {
+      "frame": 4,
+      "from_gt": 2,
+      "protectable": 0,
+      "recover_within_window": 0,
+      "recovery_latency": null,
+      "to_gt": 1,
+      "track_id": 1
+    }
+  ]
+}

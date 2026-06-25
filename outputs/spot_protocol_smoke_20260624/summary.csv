@@ -1,0 +1,2 @@
+status,phase,title,dataset,split,forbid_tracker_core_edits,next_gate,generated_at,notes
+completed,protocol_lock,SPOT-Track Phase 0 Protocol Lock,SMOKE,tiny,1,oracle_0A_state_protection,2026-06-24T23:09:34+08:00,scaffold smoke

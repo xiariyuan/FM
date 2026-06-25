@@ -1,0 +1,2 @@
+status,error,dataset,split,seq_name,analysis_scope,groups_with_gt,wrong_selected_groups,fixable_groups,fixable_percent,median_positive_rank
+completed,,MOT20,val_half,MOT20-05,partial,23418,23418,23414,99.982919,

@@ -1,0 +1,22 @@
+{
+  "args": {
+    "dataset": "SMOKE",
+    "notes": "scaffold smoke",
+    "out_dir": "outputs/spot_protocol_smoke_20260624",
+    "split": "tiny",
+    "title": "SPOT-Track Phase 0 Protocol Lock"
+  },
+  "artifacts": {
+    "protocol_lock_md": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_protocol_smoke_20260624/protocol_lock.md",
+    "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_protocol_smoke_20260624/summary.csv"
+  },
+  "generated_at": "2026-06-24T23:09:35+08:00",
+  "metrics": {
+    "forbid_tracker_core_edits": 1,
+    "next_gate": "oracle_0A_state_protection"
+  },
+  "notes": "scaffold smoke",
+  "phase": "protocol_lock",
+  "script": "scripts/spot_protocol/write_protocol_lock.py",
+  "status": "ok"
+}

@@ -1,0 +1,9 @@
+{
+  "fixable_groups": 1,
+  "fixable_percent": 50.0,
+  "groups_with_gt": 3,
+  "max_margin_gap": 0.05,
+  "median_positive_rank": 0.0,
+  "top_k": 2,
+  "wrong_selected_groups": 2
+}

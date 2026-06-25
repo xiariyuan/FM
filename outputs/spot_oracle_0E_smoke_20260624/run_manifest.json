@@ -1,0 +1,28 @@
+{
+  "args": {
+    "dataset": "SMOKE",
+    "delay_json": "outputs/spot_oracle_0B_smoke_20260624/oracle_delay_metrics.json",
+    "out_dir": "outputs/spot_oracle_0E_smoke_20260624",
+    "rerank_json": "outputs/spot_oracle_0C_smoke_20260624/oracle_cost_rerank_metrics.json",
+    "split": "tiny",
+    "state_json": "outputs/spot_oracle_0A_smoke_20260624/oracle_state_protection_metrics.json"
+  },
+  "artifacts": {
+    "decision_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0E_smoke_20260624/joint_oracle_decision.json",
+    "decision_md": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0E_smoke_20260624/joint_oracle_decision.md",
+    "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0E_smoke_20260624/summary.csv"
+  },
+  "generated_at": "2026-06-24T23:13:17+08:00",
+  "metrics": {
+    "final_route": "SPOT_MAINLINE",
+    "median_evidence_latency": 1.0,
+    "p5_role": "skip",
+    "pcc_role": "strong_support",
+    "rerank_gain_proxy": 50.0,
+    "state_gain": 50.0
+  },
+  "notes": "joint oracle decision complete",
+  "phase": "oracle_0E_joint",
+  "script": "scripts/spot_oracle/run_joint_oracle.py",
+  "status": "ok"
+}

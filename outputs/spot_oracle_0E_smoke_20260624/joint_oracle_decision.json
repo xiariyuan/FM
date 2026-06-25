@@ -1,0 +1,8 @@
+{
+  "final_route": "SPOT_MAINLINE",
+  "median_evidence_latency": 1.0,
+  "p5_role": "skip",
+  "pcc_role": "strong_support",
+  "rerank_gain_proxy": 50.0,
+  "state_gain": 50.0
+}

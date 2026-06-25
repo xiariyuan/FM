@@ -1,0 +1,30 @@
+{
+  "args": {
+    "dataset": "SMOKE",
+    "max_margin_gap": 0.05,
+    "out_dir": "outputs/spot_oracle_0C_smoke_20260624",
+    "pair_csv": "tests/fixtures/spot_smoke/pairs.csv",
+    "seq_name": "spot_smoke_seq",
+    "split": "tiny",
+    "top_k": 2
+  },
+  "artifacts": {
+    "events_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0C_smoke_20260624/fixable_events.json",
+    "metrics_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0C_smoke_20260624/oracle_cost_rerank_metrics.json",
+    "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_oracle_0C_smoke_20260624/summary.csv"
+  },
+  "generated_at": "2026-06-24T23:10:13+08:00",
+  "metrics": {
+    "fixable_groups": 1,
+    "fixable_percent": 50.0,
+    "groups_with_gt": 3,
+    "max_margin_gap": 0.05,
+    "median_positive_rank": 0.0,
+    "top_k": 2,
+    "wrong_selected_groups": 2
+  },
+  "notes": "cost rerank oracle for spot_smoke_seq",
+  "phase": "oracle_0C_cost_rerank",
+  "script": "scripts/spot_oracle/run_oracle_cost_rerank.py",
+  "status": "ok"
+}

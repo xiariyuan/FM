@@ -1,0 +1,27 @@
+{
+  "args": {
+    "dataset": "SMOKE",
+    "gt_txt": "tests/fixtures/spot_smoke/gt.txt",
+    "iou_thresh": 0.5,
+    "out_dir": "outputs/spot_alignment_smoke_20260624",
+    "seq_name": "spot_smoke_seq",
+    "split": "tiny",
+    "tracker_txt": "tests/fixtures/spot_smoke/tracker.txt"
+  },
+  "artifacts": {
+    "gt_alignment_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_smoke_20260624/reports/gt_alignment_rows.csv",
+    "gt_alignment_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_smoke_20260624/reports/gt_alignment.json",
+    "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_smoke_20260624/summary.csv"
+  },
+  "generated_at": "2026-06-24T23:09:42+08:00",
+  "metrics": {
+    "aligned_rows": 8,
+    "match_rate": 1.0,
+    "matched_rows": 8,
+    "tracker_rows": 8
+  },
+  "notes": "alignment for spot_smoke_seq",
+  "phase": "spot_p0_alignment",
+  "script": "scripts/spot_p0/build_gt_alignment.py",
+  "status": "ok"
+}

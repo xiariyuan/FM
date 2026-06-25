@@ -16,6 +16,7 @@ from tracker.laplace_assoc import laplace_fuse_distance
 from tracker.laplace_calibrator import LaplaceAlphaRCalibrator
 from tracker.local_graph_reassoc import LocalGraphReassocConfig, LocalGraphReassocRefiner
 from tracker.owneralt_competition import OwnerAltCompetitionConfig, OwnerAltCompetitionRefiner
+from tracker.rgot_analysis import RgotAnalysisCollector, RgotAnalysisConfig
 
 from fast_reid.fast_reid_interfece import FastReIDInterface
 
@@ -563,6 +564,20 @@ class BoTSORT(object):
             "suppressed_rows": 0,
             "event_rows": [],
         }
+        self.rgot_last_debug = {
+            "candidate_blocks": 0,
+            "skipped_too_large_blocks": 0,
+            "skip_no_focus_column": 0,
+            "trigger_blocks": 0,
+            "row_involved_blocks": 0,
+            "col_only_blocks": 0,
+            "ambiguous_rows": 0,
+            "ambiguous_cols": 0,
+            "event_rows": [],
+        }
+        self.rgot_enable = bool(getattr(args, "rgot_enable", False))
+        self.rgot_analysis_only = bool(getattr(args, "rgot_analysis_only", False))
+        self.rgot_refiner = None
         self.fcaa_enable = bool(getattr(args, "fcaa_enable", False))
         self.fgas_enable = bool(getattr(args, "fgas_enable", False))
         self.graph_assoc_enable = bool(getattr(args, "graph_assoc_enable", False))
@@ -954,6 +969,39 @@ class BoTSORT(object):
                     learned_commit_safety_max_cost_delta=self.graph_assoc_commit_safety_max_cost_delta,
                     learned_commit_safety_require_reclaim_improve=self.graph_assoc_commit_safety_require_reclaim_improve,
                     learned_commit_safety_require_same_match_count=self.graph_assoc_commit_safety_require_same_match_count,
+                )
+            )
+        if self.rgot_enable:
+            self.rgot_refiner = RgotAnalysisCollector(
+                RgotAnalysisConfig(
+                    enabled=True,
+                    analysis_only=bool(self.rgot_analysis_only),
+                    top_k=int(getattr(args, "rgot_top_k", max(1, int(getattr(args, "graph_assoc_top_k", 3))))),
+                    row_margin=float(getattr(args, "rgot_row_margin", float(getattr(args, "graph_assoc_row_margin", 0.03)))),
+                    col_margin=float(getattr(args, "rgot_col_margin", float(getattr(args, "graph_assoc_col_margin", 0.03)))),
+                    max_rows=int(getattr(args, "rgot_max_rows", max(1, int(getattr(args, "graph_assoc_max_rows", 4))))),
+                    max_cols=int(getattr(args, "rgot_max_cols", max(1, int(getattr(args, "graph_assoc_max_cols", 4))))),
+                    owner_recent_max_time_since_update=int(
+                        getattr(args, "rgot_owner_recent_max_time_since_update", int(getattr(args, "graph_assoc_recent_owner_max_time_since_update", 1)))
+                    ),
+                    owner_recent_max_tracklet_len=int(
+                        getattr(args, "rgot_owner_recent_max_tracklet_len", int(getattr(args, "graph_assoc_recent_owner_max_tracklet_len", 8)))
+                    ),
+                    reclaim_min_time_since_update=int(
+                        getattr(args, "rgot_reclaim_min_time_since_update", int(getattr(args, "graph_assoc_min_reclaim_time_since_update", 1)))
+                    ),
+                    reclaim_max_time_since_update=int(
+                        getattr(args, "rgot_reclaim_max_time_since_update", int(getattr(args, "graph_assoc_max_reclaim_time_since_update", 8)))
+                    ),
+                    reclaim_min_tracklet_len=int(
+                        getattr(args, "rgot_reclaim_min_tracklet_len", int(getattr(args, "graph_assoc_min_reclaim_tracklet_len", 20)))
+                    ),
+                    owneralt_min_box_iou=float(
+                        getattr(args, "rgot_owneralt_min_box_iou", float(getattr(args, "owneralt_competition_min_box_iou", 0.75)))
+                    ),
+                    owneralt_max_owner_edge_deficit=float(
+                        getattr(args, "rgot_owneralt_max_owner_edge_deficit", float(getattr(args, "owneralt_competition_max_owner_edge_deficit", 0.10)))
+                    ),
                 )
             )
 
@@ -1505,6 +1553,19 @@ class BoTSORT(object):
                 frame_id=self.frame_id,
                 match_thresh=float(self.args.match_thresh),
             )
+        if self.rgot_refiner is not None and self.rgot_refiner.is_active():
+            self.rgot_last_debug = self.rgot_refiner.inspect_primary_cost(
+                track_pool=strack_pool,
+                detections=detections,
+                baseline_dists=dists,
+                raw_ious_dists=raw_ious_dists,
+                frame_id=self.frame_id,
+                match_thresh=float(self.args.match_thresh),
+                max_time_lost=int(self.max_time_lost),
+                laplace_debug=laplace_debug if self.args.with_reid else None,
+                owneralt_event_rows=self.owneralt_last_debug.get("event_rows", []),
+                graph_assoc_event_rows=self.graph_assoc_last_debug.get("event_rows", []),
+            )
         dists, rgsa_newborn_blocked_det_ids, rgsa_hard_block_det_ids = self._apply_rgsa_primary_runtime(
             dists=dists,
             strack_pool=strack_pool,
@@ -2043,6 +2104,31 @@ class BoTSORT(object):
         summary["freeze_on_occlusion"] = bool(self.tos_freeze_on_occlusion)
         summary["disable_reentry"] = bool(self.tos_disable_reentry)
         return summary
+
+    def get_rgot_summary(self):
+        if self.rgot_refiner is None:
+            return {
+                "enabled": False,
+                "analysis_only": False,
+                "frames": 0,
+                "candidate_blocks": 0,
+                "trigger_blocks": 0,
+                "event_count": 0,
+                "trigger_block_rate": 0.0,
+                "owner_weak_rate": 0.0,
+                "challenger_reclaim_rate": 0.0,
+                "alt_available_rate": 0.0,
+                "buffer_like_rate": 0.0,
+                "reentry_like_rate": 0.0,
+                "owneralt_overlap_rate": 0.0,
+                "graph_assoc_overlap_rate": 0.0,
+                "not_explained_by_buffer_or_reentry_rate": 0.0,
+                "mean_owner_edge_deficit": 0.0,
+                "median_owner_edge_deficit": 0.0,
+                "mean_joint_cost_delta_proxy": 0.0,
+                "median_joint_cost_delta_proxy": 0.0,
+            }
+        return self.rgot_refiner.get_summary()
 
     def get_rgsa_summary(self):
         summary = dict(self.rgsa_stats)
@@ -2895,6 +2981,11 @@ class BoTSORT(object):
         if self.owneralt_refiner is None:
             return []
         return self.owneralt_refiner.drain_event_rows()
+
+    def drain_rgot_event_rows(self):
+        if self.rgot_refiner is None:
+            return []
+        return self.rgot_refiner.drain_event_rows()
 
     def get_graph_assoc_summary(self):
         if self.graph_assoc_refiner is None:

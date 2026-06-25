@@ -1,0 +1,2 @@
+status,error,dataset,split,seq_name,analysis_scope,groups_with_gt,wrong_selected_groups,fixable_groups,fixable_percent,median_positive_rank
+interrupted,full-file 0C run stopped manually; switching to chunked partial analysis,MOT20,val_half,MOT20-05,aborted,0,0,0,0.0,

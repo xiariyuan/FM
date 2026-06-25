@@ -372,6 +372,21 @@ def make_parser():
     )
     parser.add_argument('--graph-assoc-analysis-dir', dest='graph_assoc_analysis_dir', type=str, default='', help='optional output directory for graph-association runtime diagnostics')
     parser.add_argument('--owneralt-analysis-dir', dest='owneralt_analysis_dir', type=str, default='', help='optional output directory for OwnerAlt runtime diagnostics')
+    parser.add_argument('--rgot-enable', dest='rgot_enable', default=False, action='store_true', help='enable RG-OT analysis-only local recovery diagnostics before Hungarian')
+    parser.add_argument('--rgot-analysis-only', dest='rgot_analysis_only', default=False, action='store_true', help='RG-OT analysis-only mode: export local recovery events without changing matching behavior')
+    parser.add_argument('--rgot-analysis-dir', dest='rgot_analysis_dir', type=str, default='', help='optional output directory for RG-OT runtime diagnostics')
+    parser.add_argument('--rgot-top-k', dest='rgot_top_k', type=int, default=3, help='top-k candidate edges per row/column used by RG-OT ambiguity analysis')
+    parser.add_argument('--rgot-row-margin', dest='rgot_row_margin', type=float, default=0.03, help='row ambiguity margin for RG-OT trigger blocks')
+    parser.add_argument('--rgot-col-margin', dest='rgot_col_margin', type=float, default=0.03, help='column ambiguity margin for RG-OT trigger blocks')
+    parser.add_argument('--rgot-max-rows', dest='rgot_max_rows', type=int, default=4, help='maximum number of track rows allowed in an RG-OT local block')
+    parser.add_argument('--rgot-max-cols', dest='rgot_max_cols', type=int, default=4, help='maximum number of detection columns allowed in an RG-OT local block')
+    parser.add_argument('--rgot-owner-recent-max-time-since-update', dest='rgot_owner_recent_max_time_since_update', type=int, default=1, help='maximum gap for the current owner to count as a weak recent owner in RG-OT analysis')
+    parser.add_argument('--rgot-owner-recent-max-tracklet-len', dest='rgot_owner_recent_max_tracklet_len', type=int, default=8, help='maximum owner tracklet length for RG-OT weak-owner analysis')
+    parser.add_argument('--rgot-reclaim-min-time-since-update', dest='rgot_reclaim_min_time_since_update', type=int, default=1, help='minimum challenger gap for RG-OT reclaimable-row analysis')
+    parser.add_argument('--rgot-reclaim-max-time-since-update', dest='rgot_reclaim_max_time_since_update', type=int, default=8, help='maximum challenger gap for RG-OT reclaimable-row analysis')
+    parser.add_argument('--rgot-reclaim-min-tracklet-len', dest='rgot_reclaim_min_tracklet_len', type=int, default=20, help='minimum challenger tracklet length for RG-OT reclaimable-row analysis')
+    parser.add_argument('--rgot-owneralt-min-box-iou', dest='rgot_owneralt_min_box_iou', type=float, default=0.75, help='owneralt-like proxy IoU threshold used by RG-OT overlap analysis')
+    parser.add_argument('--rgot-owneralt-max-owner-edge-deficit', dest='rgot_owneralt_max_owner_edge_deficit', type=float, default=0.10, help='owneralt-like proxy owner-edge deficit threshold used by RG-OT overlap analysis')
     parser.add_argument('--incremental-write-interval', dest='incremental_write_interval', type=int, default=20, help='flush tracking results and owneralt diagnostics every N frames to avoid losing long-sequence progress')
     parser.add_argument('--rgsa-dump-dir', dest='rgsa_dump_dir', type=str, default='', help='optional output directory for RGSA oracle dump (HACA debug per frame)')
     parser.add_argument('--rgsa-enable', dest='rgsa_enable', default=False, action='store_true', help='enable RGSA stage1/stage2 runtime cost rewriting before Hungarian')
@@ -972,6 +987,13 @@ def image_track(predictor, vis_folder, args):
         os.remove(graph_assoc_event_partial_path)
     if graph_assoc_enabled and bool(getattr(args, "graph_assoc_dump_candidate_rows", False)) and osp.isfile(graph_assoc_candidate_partial_path):
         os.remove(graph_assoc_candidate_partial_path)
+    rgot_enabled = bool(getattr(args, "rgot_enable", False)) and hasattr(tracker, "get_rgot_summary")
+    rgot_analysis_dir = args.rgot_analysis_dir or osp.join(osp.dirname(vis_folder), "rgot_analysis")
+    rgot_summary_path = osp.join(rgot_analysis_dir, f"{args.name}_summary.csv")
+    rgot_event_path = osp.join(rgot_analysis_dir, f"{args.name}_events.jsonl")
+    rgot_event_partial_path = rgot_event_path + ".partial"
+    if rgot_enabled and osp.isfile(rgot_event_partial_path):
+        os.remove(rgot_event_partial_path)
     engine_match_dump_enabled = bool(getattr(args, "reentry_engine_dump_matches", False)) and hasattr(tracker, "reentry_engine") and tracker.reentry_engine is not None
     engine_match_dump_dir = osp.join(osp.dirname(vis_folder), "engine_match_dumps")
     engine_match_dump_path = osp.join(engine_match_dump_dir, f"{args.name}_matches.jsonl") if engine_match_dump_enabled else ""
@@ -1090,6 +1112,27 @@ def image_track(predictor, vis_folder, args):
                 graph_assoc_candidate_path if final else graph_assoc_candidate_partial_path
             ) if bool(getattr(args, "graph_assoc_dump_candidate_rows", False)) else ""
             write_single_row_csv(graph_assoc_summary_path, graph_assoc_summary)
+        if rgot_enabled:
+            rgot_events = tracker.drain_rgot_event_rows() if hasattr(tracker, "drain_rgot_event_rows") else []
+            append_jsonl(rgot_event_partial_path, rgot_events)
+            rgot_summary = tracker.get_rgot_summary()
+            rgot_summary.update(
+                {
+                    "seq_name": args.name,
+                    "benchmark": args.benchmark,
+                    "split_to_eval": args.split_to_eval,
+                    "rgot_enable": bool(getattr(args, "rgot_enable", False)),
+                    "rgot_analysis_only": bool(getattr(args, "rgot_analysis_only", False)),
+                    "with_reid": bool(getattr(args, "with_reid", False)),
+                    "laplace_assoc": bool(getattr(args, "laplace_assoc", False)),
+                    "result_file": res_file if final else res_partial_file,
+                    "num_frames": int(num_frames),
+                    "checkpoint_frame": int(frame_id),
+                    "checkpoint_complete": int(bool(final)),
+                }
+            )
+            rgot_summary["event_jsonl"] = rgot_event_path if final else rgot_event_partial_path
+            write_single_row_csv(rgot_summary_path, rgot_summary)
 
     for frame_id, img_path in enumerate(files, 1):
 
@@ -1253,6 +1296,13 @@ def image_track(predictor, vis_folder, args):
             elif not osp.isfile(graph_assoc_candidate_path):
                 write_jsonl(graph_assoc_candidate_path, [])
         logger.info(f"save graph association analysis to {graph_assoc_summary_path}")
+    if rgot_enabled:
+        flush_tracking_checkpoint(num_frames, final=True)
+        if osp.isfile(rgot_event_partial_path):
+            os.replace(rgot_event_partial_path, rgot_event_path)
+        elif not osp.isfile(rgot_event_path):
+            write_jsonl(rgot_event_path, [])
+        logger.info(f"save RG-OT analysis to {rgot_summary_path}")
     if engine_match_dump_enabled:
         if osp.isfile(engine_match_dump_partial_path):
             os.replace(engine_match_dump_partial_path, engine_match_dump_path)

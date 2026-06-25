@@ -1,0 +1,27 @@
+{
+  "args": {
+    "dataset": "MOT20",
+    "gt_txt": "external/Deep-OC-SORT-main/results/gt/MOT20-val/MOT20-05/gt/gt.txt",
+    "iou_thresh": 0.5,
+    "out_dir": "outputs/spot_alignment_mot20_05_baseline_20260624",
+    "seq_name": "MOT20-05",
+    "split": "val_half",
+    "tracker_txt": "external/BoT-SORT-main/YOLOX_outputs/tos_mot20_baseline_20260617_012506/track_results/MOT20-05.txt"
+  },
+  "artifacts": {
+    "gt_alignment_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_mot20_05_baseline_20260624/reports/gt_alignment_rows.csv",
+    "gt_alignment_json": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_mot20_05_baseline_20260624/reports/gt_alignment.json",
+    "summary_csv": "/gemini/code/FMtrack-main/FM-Track/outputs/spot_alignment_mot20_05_baseline_20260624/summary.csv"
+  },
+  "generated_at": "2026-06-24T23:51:05+08:00",
+  "metrics": {
+    "aligned_rows": 632033,
+    "match_rate": 0.130082,
+    "matched_rows": 82216,
+    "tracker_rows": 632033
+  },
+  "notes": "alignment for MOT20-05",
+  "phase": "spot_p0_alignment",
+  "script": "scripts/spot_p0/build_gt_alignment.py",
+  "status": "ok"
+}
