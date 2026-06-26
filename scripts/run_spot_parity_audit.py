@@ -110,26 +110,51 @@ def run_condition(command: Optional[str], condition: str, out_root: Path, repo_r
 
 
 def resolve_results_dir(explicit_dir: Optional[Path], command: Optional[str], condition: str, out_root: Path, repo_root: Path) -> Path:
-    ran_dir = run_condition(command, condition, out_root, repo_root)
+    # Explicit result directories are treated as already-materialized outputs.
+    # Do not execute a command and then ignore its generated directory.
     if explicit_dir is not None:
         return explicit_dir
+    ran_dir = run_condition(command, condition, out_root, repo_root)
     if ran_dir is not None:
         return ran_dir
     raise ValueError(f"Missing --{condition.split('_', 1)[1] if '_' in condition else condition}-results-dir or command for {condition}")
 
 
-def summarize_spot_csv(run_dir: Path) -> Dict[str, Any]:
-    candidates = sorted(run_dir.rglob("*_summary.csv")) + sorted(run_dir.rglob("spot_summary.csv"))
-    if not candidates:
-        return {"summary_found": False}
+def _candidate_summary_files(roots: Iterable[Path]) -> list[Path]:
+    files: list[Path] = []
+    seen: set[Path] = set()
+    patterns = ["spot_summary.csv", "*_spot_summary.csv", "*_summary.csv"]
+    for root in roots:
+        if root is None or not root.exists():
+            continue
+        search_root = root if root.is_dir() else root.parent
+        for pattern in patterns:
+            for candidate in sorted(search_root.rglob(pattern)):
+                if candidate not in seen:
+                    seen.add(candidate)
+                    files.append(candidate)
+    return files
+
+
+def summarize_spot_csv(*roots: Path) -> Dict[str, Any]:
     # Keep this parser deliberately simple: SPOT summaries are one-row CSV files.
+    # Validate field names so TOS/RGSA/etc. *_summary.csv files are not mistaken
+    # for SPOT summaries when explicit result directories are outside out_root.
     import csv
 
-    path = candidates[0]
-    with path.open("r", encoding="utf-8") as f:
-        rows = list(csv.DictReader(f))
-    data: Dict[str, Any] = {"summary_found": True, "summary_csv": str(path), "rows": len(rows)}
-    if rows:
+    skipped: list[str] = []
+    for path in _candidate_summary_files(roots):
+        with path.open("r", encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
+        if not rows:
+            skipped.append(str(path))
+            continue
+        row = rows[0]
+        required_any = {"enabled", "freeze_app", "primary_matches", "ambiguous_matches", "forced_freeze_updates"}
+        if not required_any.intersection(row.keys()):
+            skipped.append(str(path))
+            continue
+        data: Dict[str, Any] = {"summary_found": True, "summary_csv": str(path), "rows": len(rows)}
         for key in [
             "enabled",
             "freeze_app",
@@ -142,9 +167,12 @@ def summarize_spot_csv(run_dir: Path) -> Dict[str, Any]:
             "freeze_rate",
             "pairs_csv",
         ]:
-            if key in rows[0]:
-                data[key] = rows[0][key]
-    return data
+            if key in row:
+                data[key] = row[key]
+        if skipped:
+            data["skipped_non_spot_summaries"] = skipped[:10]
+        return data
+    return {"summary_found": False, "skipped_non_spot_summaries": skipped[:10]}
 
 
 def write_markdown_report(path: Path, manifest: Dict[str, Any], observe_report: Dict[str, Any], freeze_report: Optional[Dict[str, Any]]) -> None:
@@ -181,7 +209,7 @@ def write_markdown_report(path: Path, manifest: Dict[str, Any], observe_report: 
         for key, value in observe_summary.items():
             lines.append(f"- `{key}`: `{value}`")
     else:
-        lines.append("- No SPOT summary CSV found. This is acceptable only if the run did not enable `--spot-enable` or did not complete summary writing.")
+        lines.append("- WARNING: No SPOT summary CSV found for observe-only. Track-output parity may still be valid, but instrumentation evidence is incomplete for a standard `--spot-enable` audit.")
     lines.append("")
 
     if freeze_report is not None:
@@ -203,7 +231,7 @@ def write_markdown_report(path: Path, manifest: Dict[str, Any], observe_report: 
             for key, value in freeze_summary.items():
                 lines.append(f"- `{key}`: `{value}`")
         else:
-            lines.append("- No SPOT summary CSV found.")
+            lines.append("- WARNING: No SPOT summary CSV found for freeze-app. Output diffs may exist, but SPOT trigger/freeze accounting is incomplete.")
         lines.append("")
 
     lines.extend(
@@ -246,14 +274,17 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
         "tol": float(args.tol),
         "conditions": {
             "00_baseline": {"results_dir": str(baseline_dir)},
-            "01_spot_observe": {"results_dir": str(observe_dir), "spot_summary": summarize_spot_csv(out_root / "01_spot_observe")},
+            "01_spot_observe": {
+                "results_dir": str(observe_dir),
+                "spot_summary": summarize_spot_csv(out_root / "01_spot_observe", observe_dir, observe_dir.parent),
+            },
         },
         "observe_parity_ok": bool(observe_report["parity_ok"]),
     }
     if freeze_dir is not None:
         manifest["conditions"]["02_spot_freeze_app"] = {
             "results_dir": str(freeze_dir),
-            "spot_summary": summarize_spot_csv(out_root / "02_spot_freeze_app"),
+            "spot_summary": summarize_spot_csv(out_root / "02_spot_freeze_app", freeze_dir, freeze_dir.parent),
         }
         manifest["freeze_outputs_changed"] = bool(not freeze_report["parity_ok"] if freeze_report is not None else False)
 

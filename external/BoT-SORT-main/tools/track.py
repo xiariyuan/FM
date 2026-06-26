@@ -1273,7 +1273,7 @@ def image_track(predictor, vis_folder, args):
                 _w.writerows(spot_rows)
         elif str(getattr(args, "spot_debug_dir", "") or ""):
             with open(spot_pairs_path, "w", encoding="utf-8") as _f:
-                _f.write("frame,track_id,det_id,cost,row_margin,col_margin,spot_margin,spot_triggered,spot_freeze_app,spot_freeze_app_applied,update_mode_observed,update_mode_final,det_score\n")
+                _f.write("seq_name,frame,frame_id,track_id,det_id,det_score,cost,cost_top1,cost_top2,cost_margin,row_margin,col_margin,spot_margin,spot_triggered,spot_reason,spot_action,spot_freeze_app,spot_freeze_app_applied,update_mode_observed,update_mode_final,update_mode,append_history,track_age,lost_age\n")
         logger.info(f"save SPOT analysis to {spot_summary_path}")
     if rgsa_or_tcgau:
         flush_tracking_checkpoint(num_frames, final=True)

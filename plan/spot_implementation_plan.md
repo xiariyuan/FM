@@ -58,10 +58,10 @@ Do not start with a complex dual-tracker shared-detection harness unless necessa
 First implementation should be conservative:
 
 1. Fix detector/checkpoint/thresholds/seeds/config in `run_manifest.json`.
-2. Run baseline once.
-3. Run `spot_enable=0` once.
+2. Run baseline once without any SPOT flags.
+3. Run observe-only once with `--spot-enable` and without `--spot-freeze-app`.
 4. Compare result files and metrics for exact parity.
-5. Run `--spot-enable` only after parity passes.
+5. Run `--spot-enable --spot-freeze-app` only after observe-only parity passes.
 
 The older ByteTrack paired-eval scripts remain useful references, not the first required implementation target:
 
@@ -76,12 +76,17 @@ outputs/spot_runtime/<run_name>/
 ├── 00_baseline/
 │   ├── track_results/*.txt
 │   └── summary.csv
-├── 01_spot_freeze_app/
+├── 01_spot_observe/
 │   ├── track_results/*.txt
 │   ├── summary.csv
-│   └── spot_debug.csv
-├── result.csv
-├── report.md
+│   └── spot_debug/
+├── 02_spot_freeze_app/
+│   ├── track_results/*.txt
+│   ├── summary.csv
+│   └── spot_debug/
+├── observe_parity_report.json
+├── freeze_diff_report.json
+├── parity_report.md
 └── run_manifest.json
 ```
 
@@ -102,16 +107,21 @@ Initialize fields in `external/BoT-SORT-main/tracker/bot_sort.py`, but do not ch
 
 Hard requirement:
 
-- baseline and `spot_enable=0` must be identical.
-- If adding the switch changes results, stop and debug before any freeze logic.
+- baseline and observe-only (`--spot-enable` without `--spot-freeze-app`) must be identical.
+- If the observe-only switch changes results, stop and debug before interpreting freeze logic.
 
 ## 5. P3 Minimal `freeze_app_history_only` Runtime Patch
 
-SPOT v0 trigger:
+SPOT v0 trigger is margin-only:
 
 ```text
+row_margin = second_best_cost_for_track - chosen_cost
+col_margin = second_best_cost_for_detection - chosen_cost
+cost_margin = min(row_margin, col_margin)
 spot_triggered = cost_margin < spot_margin_thresh
 ```
+
+Entropy and density triggers are not part of v0. Keep them out until a separate paired-eval-backed design justifies them.
 
 Do not use detection confidence as local density.
 

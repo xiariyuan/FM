@@ -488,6 +488,7 @@ class BoTSORT(object):
         self.spot_freeze_app = bool(getattr(args, "spot_freeze_app", False))
         self.spot_margin_thresh = float(getattr(args, "spot_margin_thresh", 0.05))
         self.spot_debug_dir = str(getattr(args, "spot_debug_dir", "") or "")
+        self.spot_seq_name = str(getattr(args, "name", "") or "")
         self.spot_stats = {
             "frames": 0,
             "primary_matches": 0,
@@ -1729,6 +1730,9 @@ class BoTSORT(object):
             if self.spot_enable:
                 spot_row_margin = float("inf")
                 spot_col_margin = float("inf")
+                chosen_cost = float("nan")
+                row_second = float("inf")
+                col_second = float("inf")
                 if 0 <= int(itracked) < dists.shape[0] and 0 <= int(idet) < dists.shape[1]:
                     row_vals = np.asarray(dists[int(itracked)], dtype=float).copy()
                     col_vals = np.asarray(dists[:, int(idet)], dtype=float).copy()
@@ -1743,13 +1747,18 @@ class BoTSORT(object):
                         spot_row_margin = row_second - chosen_cost if np.isfinite(row_second) else float("inf")
                         spot_col_margin = col_second - chosen_cost if np.isfinite(col_second) else float("inf")
                 spot_margin = min(spot_row_margin, spot_col_margin)
+                spot_cost_top2 = min(row_second, col_second)
                 self.spot_stats["primary_matches"] += 1
-                if np.isfinite(spot_margin) and spot_margin < self.spot_margin_thresh:
+                spot_triggered = bool(np.isfinite(spot_margin) and spot_margin < self.spot_margin_thresh)
+                if spot_triggered:
                     self.spot_stats["ambiguous_matches"] += 1
+                det.spot_cost_top1 = chosen_cost
+                det.spot_cost_top2 = spot_cost_top2
                 det.spot_row_margin = spot_row_margin
                 det.spot_col_margin = spot_col_margin
                 det.spot_margin = spot_margin
-                det.spot_triggered = bool(np.isfinite(spot_margin) and spot_margin < self.spot_margin_thresh)
+                det.spot_triggered = spot_triggered
+                det.spot_reason = "low_margin" if spot_triggered else "not_triggered"
                 det.spot_update_mode_observed = str(det.tcgau_update_mode)
 
             # TOS-Track: compute occlusion score (for analysis AND freeze)
@@ -1783,20 +1792,33 @@ class BoTSORT(object):
                     self.spot_stats["already_freeze_updates"] += 1
 
             if self.spot_enable and self.spot_pair_rows is not None:
+                spot_cost = float(dists[int(itracked), int(idet)]) if 0 <= int(itracked) < dists.shape[0] and 0 <= int(idet) < dists.shape[1] else float("nan")
+                spot_triggered_final = bool(getattr(det, "spot_triggered", False))
                 self.spot_pair_rows.append({
+                    "seq_name": str(self.spot_seq_name),
                     "frame": int(self.frame_id),
+                    "frame_id": int(self.frame_id),
                     "track_id": int(getattr(track, "track_id", -1)),
                     "det_id": int(idet),
-                    "cost": float(dists[int(itracked), int(idet)]) if 0 <= int(itracked) < dists.shape[0] and 0 <= int(idet) < dists.shape[1] else float("nan"),
+                    "det_score": float(getattr(det, "score", 0.0)),
+                    "cost": spot_cost,
+                    "cost_top1": float(getattr(det, "spot_cost_top1", spot_cost)),
+                    "cost_top2": float(getattr(det, "spot_cost_top2", float("inf"))),
+                    "cost_margin": float(getattr(det, "spot_margin", float("inf"))),
                     "row_margin": float(getattr(det, "spot_row_margin", float("inf"))),
                     "col_margin": float(getattr(det, "spot_col_margin", float("inf"))),
                     "spot_margin": float(getattr(det, "spot_margin", float("inf"))),
-                    "spot_triggered": int(bool(getattr(det, "spot_triggered", False))),
+                    "spot_triggered": int(spot_triggered_final),
+                    "spot_reason": str(getattr(det, "spot_reason", "low_margin" if spot_triggered_final else "not_triggered")),
+                    "spot_action": "freeze_app" if self.spot_freeze_app and spot_triggered_final else "observe",
                     "spot_freeze_app": int(bool(self.spot_freeze_app)),
                     "spot_freeze_app_applied": int(bool(getattr(det, "spot_freeze_app_applied", False))),
                     "update_mode_observed": str(getattr(det, "spot_update_mode_observed", "")),
                     "update_mode_final": str(getattr(det, "tcgau_update_mode", "")),
-                    "det_score": float(getattr(det, "score", 0.0)),
+                    "update_mode": str(getattr(det, "tcgau_update_mode", "")),
+                    "append_history": int(bool(getattr(det, "tcgau_append_history", True))),
+                    "track_age": int(getattr(track, "tracklet_len", 0)),
+                    "lost_age": int(getattr(track, "time_since_update", 0)),
                 })
 
             if self.tos_enable and self.tos_analysis_only:
