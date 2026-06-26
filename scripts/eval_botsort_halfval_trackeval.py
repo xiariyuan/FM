@@ -10,14 +10,14 @@ import sys
 from pathlib import Path
 
 
-REPO_ROOT = Path("/gemini/code/FMtrack-main/FM-Track")
-TRACKEVAL_SCRIPT = REPO_ROOT / "TrackEval" / "scripts" / "run_mot_challenge.py"
+DEFAULT_REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Evaluate BoT-SORT validation-half outputs with TrackEval.")
     parser.add_argument("--dataset", required=True, choices=["MOT17", "MOT20"])
     parser.add_argument("--data-root", default="/gemini/code/datasets")
+    parser.add_argument("--repo-root", default=str(DEFAULT_REPO_ROOT), help="Repository root; defaults to this script's parent repo")
     parser.add_argument("--results-dir", required=True, help="Directory containing BoT-SORT *.txt tracking outputs")
     parser.add_argument("--tracker-name", required=True, help="Tracker name used inside TrackEval temp folder")
     parser.add_argument("--work-dir", required=True, help="Output working directory for GT/tracker/eval artifacts")
@@ -145,7 +145,7 @@ def run_trackeval(args: argparse.Namespace, seqs: list[str], tracker_root: Path,
     output_root = work_dir / "eval"
     cmd = [
         args.python_bin,
-        str(TRACKEVAL_SCRIPT),
+        str(Path(args.repo_root) / "TrackEval" / "scripts" / "run_mot_challenge.py"),
         "--GT_FOLDER", str(gt_root),
         "--TRACKERS_FOLDER", str(tracker_root),
         "--OUTPUT_FOLDER", str(output_root),
@@ -160,7 +160,7 @@ def run_trackeval(args: argparse.Namespace, seqs: list[str], tracker_root: Path,
         "--PRINT_ONLY_COMBINED", "True",
         "--METRICS", "HOTA", "CLEAR", "Identity",
     ]
-    subprocess.run(cmd, check=True, cwd=REPO_ROOT)
+    subprocess.run(cmd, check=True, cwd=Path(args.repo_root))
     return output_root / args.tracker_name
 
 

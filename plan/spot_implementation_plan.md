@@ -61,7 +61,7 @@ First implementation should be conservative:
 2. Run baseline once.
 3. Run `spot_enable=0` once.
 4. Compare result files and metrics for exact parity.
-5. Run `spot_enable=1` only after parity passes.
+5. Run `--spot-enable` only after parity passes.
 
 The older ByteTrack paired-eval scripts remain useful references, not the first required implementation target:
 
@@ -95,7 +95,7 @@ Add arguments to `external/BoT-SORT-main/tools/track.py`:
 --spot-enable
 --spot-debug-dir
 --spot-margin-thresh
---spot-action freeze_app
+--spot-freeze-app
 ```
 
 Initialize fields in `external/BoT-SORT-main/tracker/bot_sort.py`, but do not change tracker behavior yet.
@@ -190,7 +190,7 @@ If parity fails, stop.
 Only after parity passes:
 
 1. Run baseline.
-2. Run `spot_enable=1 --spot-action freeze_app`.
+2. Run `--spot-enable --spot-freeze-app`.
 3. Produce:
    - `summary.csv`
    - `result.csv`
