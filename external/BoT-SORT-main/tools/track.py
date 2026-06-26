@@ -95,6 +95,10 @@ def make_parser():
     parser.add_argument("--match_thresh", type=float, default=0.8, help="matching threshold for tracking")
     parser.add_argument("--aspect_ratio_thresh", type=float, default=1.6, help="threshold for filtering out boxes of which aspect ratio are above the given value.")
     parser.add_argument('--min_box_area', type=float, default=10, help='filter out tiny boxes')
+    parser.add_argument('--spot-enable', dest='spot_enable', default=False, action='store_true', help='enable SPOT v0 observation layer; no tracking behavior change')
+    parser.add_argument('--spot-freeze-app', dest='spot_freeze_app', default=False, action='store_true', help='enable SPOT v0 control: freeze appearance/history updates on ambiguous primary matches')
+    parser.add_argument('--spot-margin-thresh', dest='spot_margin_thresh', type=float, default=0.05, help='SPOT ambiguity threshold on min(row_margin, col_margin)')
+    parser.add_argument('--spot-debug-dir', dest='spot_debug_dir', type=str, default='', help='optional SPOT debug output directory; reserved for paired-eval diagnostics')
 
     # CMC
     parser.add_argument("--cmc-method", default="file", type=str, help="cmc method: files (Vidstab GMC) | sparseOptFlow | orb | ecc | none")
@@ -1247,6 +1251,30 @@ def image_track(predictor, vis_folder, args):
         os.makedirs(tos_summary_dir, exist_ok=True)
         write_single_row_csv(tos_summary_path, tos_summary)
         logger.info(f"save TOS analysis to {tos_summary_path}")
+    if bool(getattr(args, "spot_enable", False)) and hasattr(tracker, "get_spot_summary"):
+        spot_summary = tracker.get_spot_summary()
+        spot_summary["seq_name"] = str(args.name)
+        spot_summary["benchmark"] = str(args.benchmark)
+        spot_summary["split_to_eval"] = str(args.split_to_eval)
+        spot_summary["num_frames"] = int(num_frames)
+        spot_summary["result_file"] = str(res_file) if res_file else ""
+        spot_analysis_dir = str(getattr(args, "spot_debug_dir", "") or osp.join(osp.dirname(vis_folder), "spot_analysis"))
+        spot_summary_path = osp.join(spot_analysis_dir, f"{args.name}_summary.csv")
+        spot_pairs_path = osp.join(spot_analysis_dir, f"{args.name}_pairs.csv")
+        spot_summary["pairs_csv"] = spot_pairs_path
+        os.makedirs(spot_analysis_dir, exist_ok=True)
+        write_single_row_csv(spot_summary_path, spot_summary)
+        spot_rows = tracker.drain_spot_pair_rows() if hasattr(tracker, "drain_spot_pair_rows") else []
+        if spot_rows:
+            import csv as _csv
+            with open(spot_pairs_path, "w", newline="") as _f:
+                _w = _csv.DictWriter(_f, fieldnames=list(spot_rows[0].keys()))
+                _w.writeheader()
+                _w.writerows(spot_rows)
+        elif str(getattr(args, "spot_debug_dir", "") or ""):
+            with open(spot_pairs_path, "w", encoding="utf-8") as _f:
+                _f.write("frame,track_id,det_id,cost,row_margin,col_margin,spot_margin,spot_triggered,spot_freeze_app,spot_freeze_app_applied,update_mode_observed,update_mode_final,det_score\n")
+        logger.info(f"save SPOT analysis to {spot_summary_path}")
     if rgsa_or_tcgau:
         flush_tracking_checkpoint(num_frames, final=True)
         logger.info(f"save RGSA/TCGAU analysis to {rgsa_summary_path}")

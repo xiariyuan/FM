@@ -481,6 +481,21 @@ class BoTSORT(object):
             "avg_app_sim": 0.0,
             "avg_pair_rel": 0.0,
         }
+        # SPOT v0 P2: observation-only flags. These fields must not change any
+        # matching, lifecycle, Kalman, ReID, or update behavior until paired
+        # parity has been proven.
+        self.spot_enable = bool(getattr(args, "spot_enable", False))
+        self.spot_freeze_app = bool(getattr(args, "spot_freeze_app", False))
+        self.spot_margin_thresh = float(getattr(args, "spot_margin_thresh", 0.05))
+        self.spot_debug_dir = str(getattr(args, "spot_debug_dir", "") or "")
+        self.spot_stats = {
+            "frames": 0,
+            "primary_matches": 0,
+            "ambiguous_matches": 0,
+            "forced_freeze_updates": 0,
+            "already_freeze_updates": 0,
+        }
+        self.spot_pair_rows = [] if self.spot_debug_dir else None
         self.tcgau_debug_available = False
         self.rgsa_stage1_head = None
         self.rgsa_stage2_head = None
@@ -1204,6 +1219,8 @@ class BoTSORT(object):
             self.reentry_memory_stats["frames"] += 1
         if self.tcgau_enable:
             self.tcgau_stats["frames"] = int(self.tcgau_stats.get("frames", 0)) + 1
+        if self.spot_enable:
+            self.spot_stats["frames"] = int(self.spot_stats.get("frames", 0)) + 1
         self.fcaa_stats["frames"] = int(self.fcaa_stats["frames"]) + 1
         self.fgas_stats["frames"] = int(self.fgas_stats["frames"]) + 1
         activated_starcks = []
@@ -1706,6 +1723,35 @@ class BoTSORT(object):
             det.tcgau_alpha_override = tcgau_policy["alpha_override"]
             det.tcgau_append_history = tcgau_policy["append_history"]
 
+            # SPOT v0 P2 observation hook. Compute min(row_margin, col_margin)
+            # from the already-built primary cost matrix, attach debug metadata,
+            # and update counters only. Do not modify det.tcgau_update_mode here.
+            if self.spot_enable:
+                spot_row_margin = float("inf")
+                spot_col_margin = float("inf")
+                if 0 <= int(itracked) < dists.shape[0] and 0 <= int(idet) < dists.shape[1]:
+                    row_vals = np.asarray(dists[int(itracked)], dtype=float).copy()
+                    col_vals = np.asarray(dists[:, int(idet)], dtype=float).copy()
+                    row_vals[~np.isfinite(row_vals)] = float("inf")
+                    col_vals[~np.isfinite(col_vals)] = float("inf")
+                    row_vals[int(idet)] = float("inf")
+                    col_vals[int(itracked)] = float("inf")
+                    row_second = float(np.min(row_vals)) if row_vals.size else float("inf")
+                    col_second = float(np.min(col_vals)) if col_vals.size else float("inf")
+                    chosen_cost = float(dists[int(itracked), int(idet)])
+                    if np.isfinite(chosen_cost):
+                        spot_row_margin = row_second - chosen_cost if np.isfinite(row_second) else float("inf")
+                        spot_col_margin = col_second - chosen_cost if np.isfinite(col_second) else float("inf")
+                spot_margin = min(spot_row_margin, spot_col_margin)
+                self.spot_stats["primary_matches"] += 1
+                if np.isfinite(spot_margin) and spot_margin < self.spot_margin_thresh:
+                    self.spot_stats["ambiguous_matches"] += 1
+                det.spot_row_margin = spot_row_margin
+                det.spot_col_margin = spot_col_margin
+                det.spot_margin = spot_margin
+                det.spot_triggered = bool(np.isfinite(spot_margin) and spot_margin < self.spot_margin_thresh)
+                det.spot_update_mode_observed = str(det.tcgau_update_mode)
+
             # TOS-Track: compute occlusion score (for analysis AND freeze)
             if self.tos_enable:
                 tos_occlusion = self._compute_tos_occlusion_score(track, det, itracked, idet, laplace_debug if self.laplace_assoc else None)
@@ -1719,6 +1765,39 @@ class BoTSORT(object):
                         det.tcgau_append_history = False
                         det.tcgau_alpha_override = None
                         self.tos_stats["occluded_tracks"] += 1
+
+            # SPOT v0 P3: minimal appearance/history freeze. This runs after
+            # TOS so existing occlusion-freeze accounting has priority. The
+            # intervention is deliberately narrow: no Hungarian, KF, lifecycle,
+            # detector, or ReID changes.
+            if self.spot_enable and self.spot_freeze_app and bool(getattr(det, "spot_triggered", False)):
+                if det.tcgau_update_mode != "freeze":
+                    det.spot_update_mode_before_freeze = str(det.tcgau_update_mode)
+                    det.tcgau_update_mode = "freeze"
+                    det.tcgau_append_history = False
+                    det.tcgau_alpha_override = None
+                    det.spot_freeze_app_applied = True
+                    self.spot_stats["forced_freeze_updates"] += 1
+                else:
+                    det.spot_freeze_app_applied = False
+                    self.spot_stats["already_freeze_updates"] += 1
+
+            if self.spot_enable and self.spot_pair_rows is not None:
+                self.spot_pair_rows.append({
+                    "frame": int(self.frame_id),
+                    "track_id": int(getattr(track, "track_id", -1)),
+                    "det_id": int(idet),
+                    "cost": float(dists[int(itracked), int(idet)]) if 0 <= int(itracked) < dists.shape[0] and 0 <= int(idet) < dists.shape[1] else float("nan"),
+                    "row_margin": float(getattr(det, "spot_row_margin", float("inf"))),
+                    "col_margin": float(getattr(det, "spot_col_margin", float("inf"))),
+                    "spot_margin": float(getattr(det, "spot_margin", float("inf"))),
+                    "spot_triggered": int(bool(getattr(det, "spot_triggered", False))),
+                    "spot_freeze_app": int(bool(self.spot_freeze_app)),
+                    "spot_freeze_app_applied": int(bool(getattr(det, "spot_freeze_app_applied", False))),
+                    "update_mode_observed": str(getattr(det, "spot_update_mode_observed", "")),
+                    "update_mode_final": str(getattr(det, "tcgau_update_mode", "")),
+                    "det_score": float(getattr(det, "score", 0.0)),
+                })
 
             if self.tos_enable and self.tos_analysis_only:
                 # Record per-track per-frame analysis row
@@ -2104,6 +2183,27 @@ class BoTSORT(object):
         summary["freeze_on_occlusion"] = bool(self.tos_freeze_on_occlusion)
         summary["disable_reentry"] = bool(self.tos_disable_reentry)
         return summary
+
+    def get_spot_summary(self):
+        summary = dict(self.spot_stats)
+        primary_matches = int(summary.get("primary_matches", 0))
+        ambiguous_matches = int(summary.get("ambiguous_matches", 0))
+        summary["enabled"] = bool(self.spot_enable)
+        summary["freeze_app"] = bool(self.spot_freeze_app)
+        summary["margin_thresh"] = float(self.spot_margin_thresh)
+        summary["pair_rows_collected"] = int(len(self.spot_pair_rows or []))
+        summary["ambiguity_rate"] = float(ambiguous_matches) / float(primary_matches) if primary_matches > 0 else 0.0
+        summary["freeze_rate"] = float(summary.get("forced_freeze_updates", 0)) / float(primary_matches) if primary_matches > 0 else 0.0
+        return summary
+
+    def get_spot_pair_rows(self):
+        return list(self.spot_pair_rows or [])
+
+    def drain_spot_pair_rows(self):
+        rows = list(self.spot_pair_rows or [])
+        if self.spot_pair_rows is not None:
+            self.spot_pair_rows.clear()
+        return rows
 
     def get_rgot_summary(self):
         if self.rgot_refiner is None:
