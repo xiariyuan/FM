@@ -2,37 +2,42 @@
 
 This file is the shortest high-signal guide for a human reviewer or GitHub-connected GPT that needs to understand the repository **without any chat history**.
 
+## ⚠️ IMPORTANT: Current Mainline Has Changed
+
+**As of 2026-06-26, the current mainline is SPOT-Track, not the old `official_bytetrack / post-host one-edit` line.**
+
+Read `docs/current_mainline_2026-06-26.md` first for the current state.
+
 ## 1. What this repository is actually about
 
-This repository contains several historical FM-Track / FA-MOT research directions, but the current paper-oriented tracking question has already been narrowed.
+This repository contains SPOT-Track: State-Protected Online Tracking under Ambiguous Association.
 
-The important current question is not:
+The current question is:
 
-- "how do I train the old generic FM-Track model?"
+- "under a frozen detector protocol, can we learn when NOT to update tracker state under ambiguous association?"
 
-The important current question is:
-
-- "under a clean canonical carrier, can a local learned operator improve tracking without changing the host into something else?"
-
-That carrier was fixed to `official_bytetrack`.
+The oracle gate has confirmed:
+- Oracle 0A: 7.29% IDSW reduction (positive)
+- Oracle 0C: 43.28% fixable (moderate)
+- Oracle 0E: CLOSED → SPOT_MAINLINE
 
 ## 2. Current high-level project state
 
-As of `2026-03-29`:
+As of `2026-06-26`:
 
-- canonical paper carrier: `official_bytetrack`
-- transfer carrier: `botsort_base`
-- specialist reference carrier: `strongsort_base`
-- strongest internal positive evidence: `base_reid_da + set_predictor_v2`
-- official ByteTrack learned `pre-Hungarian` line: stopped
-- post-host one-edit oracle contract: validated as having executable headroom
-- latest learned post-host family tested on that contract: `hierarchical post-host one-edit`
-- current learned post-host hierarchical family: stop-gated after one bounded utility-aware rerun
-- latest defer-only oracle decomposition on that contract: materially positive but switch-unsafe
-- current learned defer-only replacement line: not opened
-- latest legal post-host rule-controller reference: small positive on `HOTA / AssA / IDF1`, but not strong enough for hidden-test submission
+- **Current mainline:** SPOT-Track
+- **Oracle Gate:** CLOSED → SPOT_MAINLINE
+- **Runtime patch allowed:** YES
+- **Main novelty:** P4 ADG-freeze / State Protection
+- **Support module:** PCC (strong support)
+- **P5 delayed commitment:** SKIP
 
-This matters because there are old code paths in the repo that are still relevant historically but are **not** the current mainline.
+Historical (2026-03) context:
+- old canonical carrier: `official_bytetrack`
+- old transfer carrier: `botsort_base`
+- old specialist reference: `strongsort_base`
+- old learned pre-Hungarian line: stopped
+- old post-host one-edit: stop-gated
 
 ## 3. Shortest reading order
 

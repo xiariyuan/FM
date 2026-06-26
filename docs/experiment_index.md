@@ -7,9 +7,20 @@ The intended reader is either:
 - a human reviewer who wants the shortest path to the main evidence, or
 - a GitHub-connected GPT that needs to reconstruct project context from repository contents alone.
 
-## 1. Start here
+## ⚠️ IMPORTANT: Current Mainline Has Changed
 
-If the reader has no prior context, read these files in this order:
+**As of 2026-06-26, the current mainline is SPOT-Track, not the old `official_bytetrack / post-host one-edit` line.**
+
+Read these files first for the current state:
+
+1. `docs/current_mainline_2026-06-26.md`
+2. `outputs/oracle_gate/decision.md`
+3. `outputs/oracle_gate/summary.csv`
+4. `docs/oracle_gate_recap_2026-06-25.md`
+
+## 1. Start here (historical context)
+
+If the reader wants the **old** (2026-03) experiment history, read these files in this order:
 
 1. `outputs/experiment_registry.csv`
 2. `docs/experiment_index.md`
@@ -26,11 +37,21 @@ If the reader has no prior context, read these files in this order:
 13. `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
 14. `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
 
-That list is the current "minimal complete context" path.
+That list is the old "minimal complete context" path for the 2026-03 mainline.
 
-## 2. Current top-level conclusions
+## 2. Current top-level conclusions (2026-06-26)
 
-These are the current repository-wide conclusions as of the latest indexed experiments:
+**Current mainline: SPOT-Track**
+
+- Oracle Gate: CLOSED → SPOT_MAINLINE
+- Runtime patch allowed: YES
+- Main novelty: P4 ADG-freeze / State Protection
+- Support module: PCC (strong support)
+- P5 delayed commitment: SKIP
+
+**Historical (2026-03) conclusions:**
+
+These are the old repository-wide conclusions as of the latest indexed experiments:
 
 - Canonical paper carrier: `official_bytetrack`
 - Test-oriented transfer carrier: `botsort_base`

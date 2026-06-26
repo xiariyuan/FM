@@ -1,77 +1,77 @@
 # FM-Track Research Repository
 
-This repository is not just a generic training codebase. It is the working research repository for a sequence of multi-object tracking experiments, diagnosis reports, and redesign decisions around local intervention operators on top of standard MOT trackers.
+This repository is the working research repository for SPOT-Track: State-Protected Online Tracking under Ambiguous Association.
 
-If you are a human reviewer or a GitHub-connected GPT, do **not** start from the old generic training entrypoints alone. Start from the project navigation docs below.
+If you are a human reviewer or a GitHub-connected GPT, **start from the current mainline docs below**, not the old training entrypoints.
 
-## Start Here
+## Start Here (2026-06-26)
 
-Primary reading entrypoints:
+**Current canonical status:**
 
-- `docs/github_reader_guide.md`
-- `docs/experiment_index.md`
-- `outputs/experiment_registry.csv`
+1. `docs/current_mainline_2026-06-26.md` — current mainline overview
+2. `outputs/oracle_gate/decision.md` — current decision
+3. `outputs/oracle_gate/summary.csv` — structured status
+4. `docs/oracle_gate_recap_2026-06-25.md` — detailed recap
 
-These three files are the intended shortest path for reconstructing:
+**Current code entrypoints:**
 
-- which baseline families were audited
-- which learned directions were stopped
-- which carrier is canonical
-- what the current active line is
-- where the relevant code and structured experiment records live
+- `scripts/spot_oracle/` — oracle experiments
+- `scripts/spot_p0/` — GT alignment
+- `scripts/spot_common/` — shared utilities
+- `external/BoT-SORT-main/tracker/bot_sort.py` — runtime tracker
+- `external/BoT-SORT-main/tools/track.py` — runtime entry
 
 ## Current Research Status
 
-As of `2026-03-28`, the repository-wide state is:
+As of `2026-06-26`, the repository-wide state is:
 
-- canonical paper carrier: `official_bytetrack`
-- transfer carrier: `botsort_base`
-- specialist reference carrier: `strongsort_base`
-- strongest internal positive line: `base_reid_da + set_predictor_v2`
-- learned `pre-Hungarian` official ByteTrack line: stopped
-- current active official ByteTrack line: `post-host one-edit`
-- current best learned family on that changed contract: `hierarchical post-host one-edit scorer`
+- **Current mainline:** SPOT-Track (State-Protected Online Tracking)
+- **Oracle Gate:** CLOSED → SPOT_MAINLINE
+- **Runtime patch allowed:** YES
+- **Main novelty:** P4 ADG-freeze / State Protection
+- **Support module:** PCC (strong support)
+- **P5 delayed commitment:** SKIP
 
-Important nuance:
+Oracle evidence:
+- Oracle 0A: 7.29% IDSW reduction on MOT20-05 (positive)
+- Oracle 0C: 43.28% fixable by reranking (moderate, partial but trusted)
+- Oracle 0E: CLOSED with SPOT_MAINLINE
 
-- the old `set_predictor_v2` direction was not globally disproven
-- it did produce real positives on an internal host
-- but under the frozen official ByteTrack `pre-Hungarian` contract it failed and was stop-gated
-- after changing the contract to a `post-host one-edit` intervention, executable oracle headroom became positive
-- the latest offline learned smoke says a hierarchical family is the first plausible learned continuation on that new contract
+## Historical Context (2026-03)
 
-## Reader Guide
+The following files describe the **old mainline** (2026-03) and should be treated as historical context only:
 
-If you need full context without prior conversation history:
+- `docs/github_reader_guide.md` — old `official_bytetrack / post-host one-edit`
+- `docs/experiment_index.md` — old experiment history
+- `outputs/experiment_registry.csv` — old experiment records
 
-1. Read `docs/github_reader_guide.md`
-2. Read `docs/experiment_index.md`
-3. Follow the linked `report.md`, `summary.csv`, and `result.csv` files in `outputs/`
+These are NOT the current mainline. The current mainline is SPOT-Track.
 
 ## Important Code Paths
 
 There are two different kinds of code in this repository:
 
-1. historical / archived research lines
-2. current mainline code paths
+1. **Current mainline:** SPOT-Track oracle and runtime code
+2. **Historical:** old `official_bytetrack / post-host one-edit` lines
 
-If you want the **current mainline** for the official ByteTrack direction, start here:
+If you want the **current mainline**, start here:
 
+- `scripts/spot_oracle/run_oracle_state_protection.py`
+- `scripts/spot_oracle/run_oracle_cost_rerank_inline.py`
+- `scripts/spot_oracle/run_joint_oracle.py`
+- `scripts/spot_p0/build_gt_alignment.py`
+- `scripts/spot_common/mot_format.py`
+- `external/BoT-SORT-main/tracker/bot_sort.py`
+- `external/BoT-SORT-main/tools/track.py`
+
+If you want the **historical official ByteTrack lines**, start here:
+
+- `docs/github_reader_guide.md`
+- `docs/experiment_index.md`
 - `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
 - `scripts/run_official_bytetrack_shared_detection_pair_core.py`
 - `third_party/ByteTrack/yolox/tracker/byte_tracker_local_conflict.py`
 - `third_party/ByteTrack/tools/track.py`
-- `third_party/ByteTrack/exps/example/mot/yolox_x_mix_det_valhalf.py`
-- `scripts/build_posthost_one_edit_dataset.py`
-- `scripts/train_posthost_one_edit_hierarchical.py`
-- `models/posthost_one_edit_hierarchical.py`
-
-If you want the **stopped historical official ByteTrack pre-Hungarian line**, start here:
-
-- `scripts/build_local_conflict_set_predictor_dataset.py`
-- `scripts/train_local_conflict_set_predictor.py`
-- `scripts/run_official_bytetrack_local_conflict_stage1_trainhalf.py`
-- `models/local_conflict_set_predictor.py`
 
 ## Experiment Records
 
@@ -99,12 +99,13 @@ This is deliberate. The goal is to keep the repository readable by both humans a
 
 This repository includes multiple tracker families and historical branches, so there is no single one-line reproduction command that explains the whole project.
 
-For current official ByteTrack work, the most useful reproduction-related files are:
+For current SPOT-Track work, the most useful reproduction-related files are:
 
-- `third_party/ByteTrack/exps/example/mot/yolox_x_mix_det_valhalf.py`
-- `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
-- `scripts/build_posthost_one_edit_dataset.py`
-- `scripts/train_posthost_one_edit_hierarchical.py`
+- `scripts/spot_oracle/`
+- `scripts/spot_p0/`
+- `scripts/spot_common/`
+- `external/BoT-SORT-main/tracker/bot_sort.py`
+- `external/BoT-SORT-main/tools/track.py`
 
 Weights and datasets are expected to exist locally and are **not** fully vendored in git.
 
