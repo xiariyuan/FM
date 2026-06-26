@@ -1,7 +1,12 @@
 # Current Mainline: SPOT-Track
 
-**Date:** 2026-06-26  
-**Status:** Oracle Gate CLOSED → SPOT_MAINLINE
+**Date:** 2026-06-26 (corrected)  
+**Status:** Oracle Gate PROVISIONAL → SPOT_PROVISIONAL
+
+## ⚠️ IMPORTANT CORRECTION
+
+Previous version incorrectly stated `runtime_patch_allowed=1`. Oracle ceiling ≠ runtime gain.
+Runtime patches require real paired eval to unlock. See `outputs/oracle_gate/decision.md`.
 
 ## Authority Order
 
@@ -19,11 +24,11 @@ When reading this repository, trust these files in this order:
 |------|--------|
 | protocol_lock | completed |
 | gt_alignment | completed_verified |
-| oracle_0a | completed_positive |
+| oracle_0a | completed_positive (oracle ceiling, not runtime gain) |
 | oracle_0c_inline_gt | completed_partial_trusted |
-| oracle_0e | closed |
-| final_decision | SPOT_MAINLINE |
-| runtime_patch_allowed | 1 |
+| oracle_0e | provisional |
+| final_decision | SPOT_PROVISIONAL |
+| runtime_patch_allowed | 0 (requires real paired eval) |
 
 ## What This Means
 
@@ -31,13 +36,13 @@ SPOT-Track = State-Protected Online Tracking under Ambiguous Association
 
 The oracle gate experiments have confirmed:
 
-- **Oracle 0A** (State Protection): 7.29% IDSW reduction on MOT20-05. Above 3% threshold.
+- **Oracle 0A** (State Protection): 7.29% oracle recoverable rate on MOT20-05. This is an ORACLE CEILING, NOT a runtime improvement. Indicates headroom exists.
 - **Oracle 0C** (Cost Reranking): 43.28% of wrong selections fixable by reranking. Moderate signal, partial but trusted.
-- **Oracle 0E** (Joint Decision): CLOSED with SPOT_MAINLINE. Runtime patches allowed.
+- **Oracle 0E** (Joint Decision): PROVISIONAL. Runtime patches NOT yet allowed. Requires real paired eval.
 
 ## Current Novelty
 
-- **Main novelty:** P4 ADG-freeze / State Protection
+- **Candidate novelty:** P4 ADG-freeze / State Protection (needs paired eval confirmation)
 - **Support module:** PCC (strong support, 43.28% fixable)
 - **P5 delayed commitment:** SKIP (not required)
 
@@ -45,11 +50,9 @@ The oracle gate experiments have confirmed:
 
 The following files describe the **old mainline** (2026-03) and should be treated as historical context only:
 
-- `README.md` — still describes `official_bytetrack / post-host one-edit`
-- `docs/github_reader_guide.md` — still describes `official_bytetrack post-host one-edit`
-- `docs/experiment_index.md` — still describes `official_bytetrack post-host one-edit`
-
-These are NOT the current mainline. The current mainline is SPOT-Track.
+- `README.md` — updated to SPOT-Track
+- `docs/github_reader_guide.md` — updated to SPOT-Track
+- `docs/experiment_index.md` — updated to SPOT-Track
 
 ## What to Read for SPOT-Track
 
@@ -76,15 +79,18 @@ These are NOT the current mainline. The current mainline is SPOT-Track.
 
 1. Implement minimal P4 ADG-freeze runtime patch (appearance/history freeze only, no KF change)
 2. Run smoke: spot_enable=0 must equal baseline
-3. Run MOT20-05 paired eval
-4. Only if positive: MOT20 half-val, MOT17 transfer
-5. Only after P4 positive: consider PCC as support module
-6. P5 remains SKIP
+3. Run MOT20-05 paired eval (baseline vs SPOT)
+4. Only if paired eval positive: unlock runtime_patch_allowed=1
+5. Only then: expand to DanceTrack/SportsMOT
+6. Only after P4 positive: consider PCC as support module
+7. P5 remains SKIP
 
 ## What NOT to Do
 
-- Do not go back to `official_bytetrack / post-host one-edit`
-- Do not implement P5 delayed commitment
-- Do not train large models
-- Do not change detector / ReID / TrackEval
-- Do not open new brainstorming lines
+- Do NOT use oracle ceiling as go/kill criterion for runtime patches
+- Do NOT unlock runtime_patch_allowed until paired eval confirms positive
+- Do NOT go back to `official_bytetrack / post-host one-edit`
+- Do NOT implement P5 delayed commitment
+- Do NOT train large models
+- Do NOT change detector / ReID / TrackEval
+- Do NOT open new brainstorming lines

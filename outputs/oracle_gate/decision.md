@@ -1,23 +1,28 @@
 # Oracle Gate Decision
 
+## ⚠️ CORRECTED (2026-06-26)
+
+Previous version incorrectly used oracle ceiling as go/kill criterion for runtime patches.
+Oracle numbers are upper bounds, NOT runtime improvements. Real paired eval required.
+
 ## Status
 
 - protocol_lock: completed
 - gt_alignment: completed_verified
-- oracle_0a: completed_positive
+- oracle_0a: completed_positive (oracle ceiling, not runtime gain)
 - oracle_0c_inline_gt: completed_partial_trusted
-- oracle_0b_smoke: completed
+- oracle_0b_smoke: completed (evidence_latency semantics need correction)
 - oracle_0d_smoke: completed
-- oracle_0e: closed (with --allow-partial-0c)
+- oracle_0e: provisional (runtime_patch_allowed=0, requires real paired eval)
 
 ## Key Results
 
 ### Oracle 0A (State Protection)
 - switch_events: 3935
 - protectable_events: 287
-- idsw_reduction_percent: 7.29%
+- oracle_recoverable_rate: 7.29% (ORACLE CEILING, NOT RUNTIME GAIN)
 - median_recovery_latency: 9.0 frames
-- **Verdict: POSITIVE** (above 3% threshold for SPOT ablation)
+- **Verdict: POSITIVE DIRECTION** (oracle ceiling indicates headroom exists)
 
 ### Oracle 0C (Cost Reranking, inline GT)
 - groups_with_gt: 1803
@@ -27,35 +32,43 @@
 - median_positive_rank: 0.0
 - **Verdict: MODERATE SIGNAL** (partial, trusted inline GT)
 
-### Oracle 0E (Joint Decision, allow-partial-0c)
-- state_gain: 7.29%
+### Oracle 0E (Joint Decision)
+- oracle_recoverable_rate: 7.29% (ceiling, not runtime)
 - rerank_gain_proxy: 43.28%
-- decision_confidence: closed
-- runtime_patch_allowed: 1
-- block_reason: (none)
-- final_route: SPOT_MAINLINE
+- decision_confidence: provisional
+- runtime_patch_allowed: 0
+- block_reason: requires real paired eval; oracle ceiling is not sufficient
+- final_route: SPOT_PROVISIONAL
 - pcc_role: strong_support
 - p5_role: skip
-- **Verdict: CLOSED** (with partial 0C allowance)
+- **Verdict: PROVISIONAL** (oracle indicates direction, but runtime patches require paired eval)
 
 ## Decision
 
-Runtime tracker patches are now allowed to proceed. The 0C result is trusted (inline GT) and partial, but combined with the strong 0A signal, the decision is closed.
+Runtime tracker patches are NOT yet allowed. Oracle evidence indicates SPOT direction has headroom,
+but the go/kill criterion must be real paired eval (HOTA/IDSW delta), not oracle ceiling.
 
-**Final Route: SPOT_MAINLINE**
+**Final Route: SPOT_PROVISIONAL**
 
-- P4 ADG-freeze / State Protection: main novelty
-- PCC: strong support module
-- P5 delayed commitment: skip (not required)
+- P4 ADG-freeze / State Protection: candidate novelty (needs paired eval)
+- PCC: support module (needs paired eval)
+- P5 delayed commitment: skip
+
+## Next Steps
+
+1. Implement minimal P4 ADG-freeze runtime patch (appearance/history freeze only)
+2. Run spot_enable=0 parity test (must equal baseline exactly)
+3. Run MOT20-05 paired eval (baseline vs SPOT)
+4. Only if paired eval positive: unlock runtime_patch_allowed=1
+5. Only then: expand to DanceTrack/SportsMOT
 
 ## Recommendation
 
 Given:
-- 0A has positive signal (7.29% IDSW reduction)
-- 0C has moderate signal (43.28% fixable)
+- 0A oracle ceiling: 7.29% (indicates headroom exists)
+- 0C moderate signal: 43.28% fixable
 - 0C is partial but trusted (inline GT)
-- 0E decision is closed with SPOT_MAINLINE
+- 0B evidence_latency semantics need correction
+- Only MOT20-05 single sequence evidence
 
-**Proceed with SPOT state protection (P4 ADG-freeze) as main novelty, with PCC as support module.**
-
-This matches the strategic direction from the design document: "SPOT-Track = State-Protected Online Tracking under Ambiguous Association"
+**Proceed with minimal P4 implementation + paired eval. Do NOT unlock runtime patches until paired eval confirms positive.**

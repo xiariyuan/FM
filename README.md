@@ -23,19 +23,19 @@ If you are a human reviewer or a GitHub-connected GPT, **start from the current 
 
 ## Current Research Status
 
-As of `2026-06-26`, the repository-wide state is:
+As of `2026-06-26` (corrected):
 
 - **Current mainline:** SPOT-Track (State-Protected Online Tracking)
-- **Oracle Gate:** CLOSED → SPOT_MAINLINE
-- **Runtime patch allowed:** YES
-- **Main novelty:** P4 ADG-freeze / State Protection
+- **Oracle Gate:** PROVISIONAL → SPOT_PROVISIONAL
+- **Runtime patch allowed:** NO (requires real paired eval)
+- **Candidate novelty:** P4 ADG-freeze / State Protection (needs paired eval)
 - **Support module:** PCC (strong support)
 - **P5 delayed commitment:** SKIP
 
-Oracle evidence:
-- Oracle 0A: 7.29% IDSW reduction on MOT20-05 (positive)
+Oracle evidence (oracle ceiling, NOT runtime gain):
+- Oracle 0A: 7.29% oracle recoverable rate on MOT20-05 (ceiling, not runtime)
 - Oracle 0C: 43.28% fixable by reranking (moderate, partial but trusted)
-- Oracle 0E: CLOSED with SPOT_MAINLINE
+- Oracle 0E: PROVISIONAL (runtime_patch_allowed=0)
 
 ## Historical Context (2026-03)
 

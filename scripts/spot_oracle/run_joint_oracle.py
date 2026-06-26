@@ -24,7 +24,7 @@ from scripts.spot_common.io_utils import (
 SUMMARY_FIELDS = [
     "status",
     "error",
-    "state_gain",
+    "oracle_recoverable_rate",
     "rerank_gain_proxy",
     "median_evidence_latency",
     "decision_confidence",
@@ -33,6 +33,7 @@ SUMMARY_FIELDS = [
     "final_route",
     "pcc_role",
     "p5_role",
+    "state_gain_note",
 ]
 
 
@@ -44,7 +45,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", default="outputs/oracle_gate/0E_joint_oracle")
     parser.add_argument("--dataset", default="unknown")
     parser.add_argument("--split", default="unknown")
-    parser.add_argument("--allow-partial-0c", action="store_true", help="allow partial 0C to close the decision when 0A is strong")
+    parser.add_argument("--allow-partial-0c", action="store_true", help="allow partial 0C; marks decision as provisional")
     return parser.parse_args()
 
 
@@ -58,7 +59,7 @@ def main() -> int:
     summary_row = {
         "status": "running",
         "error": "",
-        "state_gain": 0.0,
+        "oracle_recoverable_rate": 0.0,
         "rerank_gain_proxy": 0.0,
         "median_evidence_latency": "",
         "decision_confidence": "",
@@ -67,6 +68,7 @@ def main() -> int:
         "final_route": "",
         "pcc_role": "",
         "p5_role": "",
+        "state_gain_note": "",
     }
     write_single_row_csv(summary_csv, summary_row, SUMMARY_FIELDS)
     append_registry(
@@ -101,7 +103,7 @@ def main() -> int:
         state = read_json(args.state_json)
         delay = read_json(args.delay_json)
         rerank = read_json(args.rerank_json)
-        state_gain = float(state.get("idsw_reduction_percent", 0.0))
+        oracle_recoverable_rate = float(state.get("oracle_recoverable_rate", state.get("idsw_reduction_percent", 0.0)))
         rerank_gain = float(rerank.get("fixable_percent", 0.0))
         median_latency = delay.get("median_evidence_latency")
 
@@ -115,23 +117,33 @@ def main() -> int:
         if int(rerank.get("trusted", 1)) != 1:
             block_reasons.append("0C rerank oracle is not trusted")
 
+        # NOTE: oracle_recoverable_rate is an oracle ceiling, NOT a runtime improvement.
+        # Runtime patches require real paired eval (HOTA/IDSW delta) to unlock.
+        # Oracle numbers are only used for directional guidance.
+
+        is_provisional = bool(args.allow_partial_0c) or bool(block_reasons)
+
         if block_reasons:
             final_route = "NOT_CLOSED"
             decision_confidence = "not_closed"
             runtime_patch_allowed = 0
-        elif state_gain >= 5.0:
-            final_route = "SPOT_MAINLINE"
-            decision_confidence = "closed"
-            runtime_patch_allowed = 1
-        elif state_gain >= 3.0:
+        elif is_provisional:
+            final_route = "SPOT_PROVISIONAL"
+            decision_confidence = "provisional"
+            runtime_patch_allowed = 0
+        elif oracle_recoverable_rate >= 5.0:
+            final_route = "SPOT_CANDIDATE"
+            decision_confidence = "candidate"
+            runtime_patch_allowed = 0  # requires real paired eval to unlock
+        elif oracle_recoverable_rate >= 3.0:
             final_route = "SPOT_ABLATION_ONLY"
-            decision_confidence = "closed"
-            runtime_patch_allowed = 1
+            decision_confidence = "candidate"
+            runtime_patch_allowed = 0
         else:
             final_route = "B_PLAN_P0_CAUSAL_DIAGNOSTIC"
             decision_confidence = "closed"
             runtime_patch_allowed = 0
-        block_reason = "; ".join(block_reasons)
+        block_reason = "; ".join(block_reasons) if block_reasons else ""
 
         if rerank_gain >= 10.0:
             pcc_role = "strong_support"
@@ -141,13 +153,15 @@ def main() -> int:
             pcc_role = "skip"
 
         p5_role = "skip"
-        if median_latency is not None and 2 <= float(median_latency) <= 5 and state_gain >= 5.0:
-            p5_role = "candidate_extension"
+        state_gain_note = (
+            "oracle_recoverable_rate is an oracle ceiling, not runtime gain. "
+            "Real paired eval required to unlock runtime_patch_allowed."
+        )
 
         summary_row.update(
             {
                 "status": "completed",
-                "state_gain": state_gain,
+                "oracle_recoverable_rate": oracle_recoverable_rate,
                 "rerank_gain_proxy": rerank_gain,
                 "median_evidence_latency": median_latency,
                 "decision_confidence": decision_confidence,
@@ -156,11 +170,12 @@ def main() -> int:
                 "final_route": final_route,
                 "pcc_role": pcc_role,
                 "p5_role": p5_role,
+                "state_gain_note": state_gain_note,
             }
         )
         write_single_row_csv(summary_csv, summary_row, SUMMARY_FIELDS)
         decision = {
-            "state_gain": state_gain,
+            "oracle_recoverable_rate": oracle_recoverable_rate,
             "rerank_gain_proxy": rerank_gain,
             "median_evidence_latency": median_latency,
             "decision_confidence": decision_confidence,
@@ -169,6 +184,7 @@ def main() -> int:
             "final_route": final_route,
             "pcc_role": pcc_role,
             "p5_role": p5_role,
+            "state_gain_note": state_gain_note,
         }
         write_json(decision, out_dir / "joint_oracle_decision.json")
         write_markdown(
@@ -176,7 +192,7 @@ def main() -> int:
                 [
                     "# Oracle 0E Joint Decision",
                     "",
-                    f"- state_gain: {state_gain}",
+                    f"- oracle_recoverable_rate: {oracle_recoverable_rate}",
                     f"- rerank_gain_proxy: {rerank_gain}",
                     f"- median_evidence_latency: {median_latency}",
                     f"- decision_confidence: {decision_confidence}",
@@ -185,6 +201,12 @@ def main() -> int:
                     f"- final_route: {final_route}",
                     f"- pcc_role: {pcc_role}",
                     f"- p5_role: {p5_role}",
+                    "",
+                    "## IMPORTANT",
+                    "",
+                    "oracle_recoverable_rate is an oracle ceiling, NOT a runtime improvement.",
+                    "Runtime patches require real paired eval (HOTA/IDSW delta) to unlock.",
+                    "Do NOT use oracle numbers as go/kill criteria for runtime patches.",
                 ]
             ),
             out_dir / "joint_oracle_decision.md",

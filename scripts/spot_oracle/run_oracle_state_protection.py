@@ -32,6 +32,7 @@ SUMMARY_FIELDS = [
     "switch_events",
     "protectable_events",
     "protectable_rate",
+    "oracle_recoverable_rate",
     "idsw_reduction_percent",
     "median_recovery_latency",
 ]
@@ -102,6 +103,7 @@ def main() -> int:
         "switch_events": 0,
         "protectable_events": 0,
         "protectable_rate": 0.0,
+        "oracle_recoverable_rate": 0.0,
         "idsw_reduction_percent": 0.0,
         "median_recovery_latency": "",
     }
@@ -142,12 +144,14 @@ def main() -> int:
             event["recover_within_window"] = int(latency is not None and int(latency) <= int(args.recovery_window))
             filtered_events.append(event)
         protectable = sum(int(event["recover_within_window"]) for event in filtered_events)
+        oracle_recoverable_rate = round(safe_ratio(protectable, len(filtered_events)), 6)
         summary_row.update(
             {
                 "status": "completed",
                 "switch_events": len(filtered_events),
                 "protectable_events": protectable,
-                "protectable_rate": round(safe_ratio(protectable, len(filtered_events)), 6),
+                "protectable_rate": oracle_recoverable_rate,
+                "oracle_recoverable_rate": oracle_recoverable_rate,
                 "idsw_reduction_percent": round(100.0 * safe_ratio(protectable, len(filtered_events)), 6),
                 "median_recovery_latency": median_or_none(latencies),
             }
@@ -157,6 +161,7 @@ def main() -> int:
             "switch_events": len(filtered_events),
             "protectable_events": protectable,
             "protectable_rate": summary_row["protectable_rate"],
+            "oracle_recoverable_rate": oracle_recoverable_rate,
             "idsw_reduction_percent": summary_row["idsw_reduction_percent"],
             "median_recovery_latency": summary_row["median_recovery_latency"],
             "recovery_window": int(args.recovery_window),
@@ -172,8 +177,17 @@ def main() -> int:
                     f"- switch_events: {len(filtered_events)}",
                     f"- protectable_events: {protectable}",
                     f"- protectable_rate: {summary_row['protectable_rate']}",
+                    f"- oracle_recoverable_rate: {summary_row['oracle_recoverable_rate']}",
                     f"- idsw_reduction_percent: {summary_row['idsw_reduction_percent']}",
                     f"- median_recovery_latency: {summary_row['median_recovery_latency']}",
+                    "",
+                    "## Interpretation",
+                    "",
+                    "This metric measures the oracle ceiling: what fraction of switch events have a recoverable",
+                    "correct detection reappearing within the recovery window. It is NOT a runtime improvement.",
+                    "The actual runtime improvement after learning-based ADG + FN costs will be significantly lower.",
+                    "",
+                    "This is an upper bound indicator, not a go/kill criterion for runtime patches.",
                 ]
             ),
             out_dir / "oracle_state_protection_report.md",

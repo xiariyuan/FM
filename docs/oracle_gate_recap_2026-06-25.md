@@ -1,20 +1,25 @@
 # SPOT Oracle Gate Recap
 
-**Date:** 2026-06-25  
+**Date:** 2026-06-25 (corrected 2026-06-26)  
 **Scope:** `MOT20-05` oracle evidence收口，按 protocol lock 只整理证据，不扩展 runtime tracker patch。
+
+## ⚠️ CORRECTION (2026-06-26)
+
+Previous version incorrectly stated `runtime_patch_allowed=1` and `SPOT_MAINLINE`.
+Oracle ceiling ≠ runtime gain. Runtime patches require real paired eval to unlock.
 
 ## 结论先行
 
-当前这轮 oracle 工作是**已完成，并决定进入 SPOT_MAINLINE**。
+当前这轮 oracle 工作是**已完成，但处于 PROVISIONAL 状态**。
 
 已确认的事实：
 
 - `protocol lock` 已落盘并生效。
 - `GT alignment` 已完成，且结果稳定。
-- `Oracle 0A` 在真实 `MOT20-05` 上给出了正信号 (7.29% IDSW reduction)，可继续作为证据链的一部分。
+- `Oracle 0A` 在真实 `MOT20-05` 上给出了 oracle ceiling (7.29% recoverable rate)，**这是上界，不是运行时增益**。
 - `Oracle 0C` 的 full-file 运行已被手动中止，结构化记录应保持 `interrupted`。
 - `Oracle 0C` 的 inline GT 版本已完成，`fixable_percent=43.28%`，这是一个中等强度的信号。
-- `Oracle 0E` 的最终决策是 `SPOT_MAINLINE`，`runtime_patch_allowed=1`。
+- `Oracle 0E` 的最终决策是 `SPOT_PROVISIONAL`，`runtime_patch_allowed=0`。
 - `Oracle 0B / 0D / 0E` 目前是 smoke 级或决策级辅助证据，不应被写成真实主线结论。
 
 ## 关键文件
@@ -56,28 +61,30 @@
 
 1. 协议锁定。
 2. GT 对齐。
-3. Oracle 0A 正信号采集。
+3. Oracle 0A oracle ceiling 采集。
 4. Oracle 0C inline GT 证据采集。
 5. 0B / 0D / 0E smoke 链路跑通。
-6. Oracle Gate 决策文件已更新。
+6. Oracle Gate 决策文件已修正。
 
-### 已收口
+### 未收口
 
-1. `Oracle 0C` inline GT 是 partial，但已足够支撑决策。
-2. `Oracle 0E` 已闭合，`final_route=SPOT_MAINLINE`。
-3. `runtime_patch_allowed=1`。
+1. `Oracle 0E` 仍然 `provisional`，`runtime_patch_allowed=0`。
+2. 需要真实 paired eval 才能解锁 runtime patch。
 
 ### 不能误写的状态
 
 - `0C full-file` 不能写成 `completed`。
 - `0C inline GT` 是 partial，不能写成 `final`.
 - `smoke` 不能写成 `real MOT20-05` 结论。
+- `oracle_recoverable_rate` 是上界，不能写成 `IDSW reduction`。
 
 ## 推荐后续动作
 
-1. 开始实现 P4 ADG-freeze / State Protection。
-2. 开始实现 PCC 作为 support module。
-3. 把 `0A / 0B / 0C / 0D / 0E` 汇总到正式的 `outputs/oracle_gate/` 目录。
+1. 实现最小 P4 ADG-freeze runtime patch (appearance/history freeze only)。
+2. 跑 smoke: spot_enable=0 必须与 baseline 完全一致。
+3. 跑 MOT20-05 paired eval (baseline vs SPOT)。
+4. 只有 paired eval 正向才解锁 runtime_patch_allowed=1。
+5. 之后才扩展到 DanceTrack/SportsMOT。
 
 ## 上传边界
 

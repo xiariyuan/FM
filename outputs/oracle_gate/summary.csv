@@ -1,2 +1,2 @@
-status,protocol_lock,gt_alignment,oracle_0a,oracle_0c_inline_gt,oracle_0b_smoke,oracle_0d_smoke,oracle_0e,final_decision,notes
-closed,completed,completed_verified,completed_positive,completed_partial_trusted,completed,completed,closed,SPOT_MAINLINE,"0A positive (7.29% IDSW); 0C moderate (43.28% fixable, inline GT); runtime patch allowed; proceed with P4 ADG-freeze"
+status,protocol_lock,gt_alignment,oracle_0a,oracle_0c_inline_gt,oracle_0b_smoke,oracle_0d_smoke,oracle_0e,final_decision,runtime_patch_allowed,notes
+provisional,completed,completed_verified,completed_positive,completed_partial_trusted,completed,completed,provisional,SPOT_PROVISIONAL,0,"0A oracle ceiling 7.29%; 0C moderate 43.28%; oracle≠runtime; paired eval required before unlocking"
