@@ -1333,6 +1333,10 @@ class BoTSORT(object):
             ious_dists = matching.fuse_score(ious_dists, detections)
 
         bc_raw_emb_dists = None
+        # Optional association debug shared by Laplace/HACA, RGSA, TCGAU, TOS,
+        # and diagnostics. ReID can be enabled without Laplace association, so
+        # this must be initialized on every control-flow path.
+        laplace_debug = None
         if self.args.with_reid:
             emb_dists = matching.embedding_distance(strack_pool, detections) / 2.0
             bc_raw_emb_dists = emb_dists.copy()  # save before gating for bc promotion
