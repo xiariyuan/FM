@@ -1,0 +1,2 @@
+status,error,state_gain,rerank_gain_proxy,median_evidence_latency,decision_confidence,runtime_patch_allowed,block_reason,final_route,pcc_role,p5_role
+completed,,7.29352,43.28,1.0,not_closed,0,0C rerank oracle is not full-file,NOT_CLOSED,strong_support,skip

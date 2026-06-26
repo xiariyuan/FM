@@ -54,6 +54,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--max-groups", type=int, default=0, help="Optional cap on processed groups; 0 means full file.")
     parser.add_argument("--max-frame", type=int, default=0, help="Optional cap on frame_id; 0 means no frame cap.")
     parser.add_argument("--allow-box-proxy", action="store_true", help="allow IoU box-proxy positives for smoke only; marks output untrusted")
+    parser.add_argument("--require-gt-id", action="store_true", help="reject any row that cannot be verified by GT ids")
     return parser.parse_args()
 
 
@@ -157,7 +158,7 @@ def main() -> int:
         "split": args.split,
         "seq_name": args.seq_name,
         "analysis_scope": "partial" if (int(args.max_groups) > 0 or int(args.max_frame) > 0) else "full",
-        "trusted": int(not args.allow_box_proxy and int(args.max_groups) == 0 and int(args.max_frame) == 0),
+        "trusted": int((not args.allow_box_proxy) and bool(args.require_gt_id) and int(args.max_groups) == 0 and int(args.max_frame) == 0),
         "label_source": "box_proxy" if args.allow_box_proxy else "gt_id",
         "groups_with_gt": 0,
         "wrong_selected_groups": 0,
@@ -214,6 +215,8 @@ def main() -> int:
                 continue
             groups_with_gt += 1
             selected = next((row for row in ordered if _selected_flag(row) == 1), ordered[0])
+            if args.require_gt_id and any(row.get("_box_positive") == "1" for row in ordered):
+                raise ValueError(f"box-proxy label encountered in trusted mode for group {group_id}")
             selected_correct = _is_positive(selected) or (args.allow_box_proxy and selected.get("_box_positive") == "1")
             pos_rank = next((idx for idx, row in enumerate(ordered) if _is_positive(row) or (args.allow_box_proxy and row.get("_box_positive") == "1")), None)
             if pos_rank is not None:
@@ -249,8 +252,8 @@ def main() -> int:
         analysis_scope = "full"
         if int(args.max_groups) > 0 or int(args.max_frame) > 0:
             analysis_scope = "partial"
-        trusted = int(analysis_scope == "full" and not bool(args.allow_box_proxy) and wrong_selected_groups > 0)
-        label_source = "box_proxy" if args.allow_box_proxy else "gt_id"
+        trusted = int(analysis_scope == "full" and not bool(args.allow_box_proxy) and bool(args.require_gt_id) and wrong_selected_groups > 0)
+        label_source = "gt_id" if bool(args.require_gt_id) and not args.allow_box_proxy else "box_proxy"
 
         summary_row.update(
             {

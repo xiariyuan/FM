@@ -1,0 +1,2 @@
+status,error,dataset,split,seq_name,analysis_scope,trusted,label_source,groups_with_gt,wrong_selected_groups,fixable_groups,fixable_percent,median_positive_rank
+completed,,MOT20,train,MOT20-05,partial,1,inline_gt_one_to_one,1803,134,58,43.28,0.0

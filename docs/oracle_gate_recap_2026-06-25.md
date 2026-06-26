@@ -5,15 +5,15 @@
 
 ## 结论先行
 
-当前这轮 oracle 工作是**部分完成，但未正式收口**。
+当前这轮 oracle 工作是**部分完成，但已有可信的 inline GT 0C 结果**。
 
 已确认的事实：
 
 - `protocol lock` 已落盘并生效。
 - `GT alignment` 已完成，且结果稳定。
-- `Oracle 0A` 在真实 `MOT20-05` 上给出了正信号，可继续作为证据链的一部分。
+- `Oracle 0A` 在真实 `MOT20-05` 上给出了正信号 (7.29% IDSW reduction)，可继续作为证据链的一部分。
 - `Oracle 0C` 的 full-file 运行已被手动中止，结构化记录应保持 `interrupted`。
-- `Oracle 0C` 的 chunked partial 只证明流程跑通，**不能当最终结论**。
+- `Oracle 0C` 的 inline GT 版本已完成，`fixable_percent=43.28%`，这是一个中等强度的信号。
 - 当前的正式结论文件已经明确 `final_decision: not_closed`，因此 runtime tracker patch 仍应冻结。
 - `Oracle 0B / 0D / 0E` 目前是 smoke 级或决策级辅助证据，不应被写成真实主线结论。
 
@@ -34,17 +34,21 @@
 - `outputs/spot_oracle_0A_mot20_05_baseline_20260624/oracle_state_protection_report.md`
 - `outputs/spot_oracle_0A_mot20_05_baseline_20260624/summary.csv`
 
-### Oracle 0C
+### Oracle 0C (inline GT)
 
-- `outputs/spot_oracle_0C_mot20_05_pairbank_20260624/summary.csv`
-- `outputs/spot_oracle_0C_mot20_05_f0120_partial_20260624/oracle_cost_rerank_report.md`
-- `outputs/spot_oracle_0C_mot20_05_f0120_partial_20260624/summary.csv`
+- `outputs/spot_oracle_0C_mot20_05_inline_gt_20260625/oracle_cost_rerank_report.md`
+- `outputs/spot_oracle_0C_mot20_05_inline_gt_20260625/oracle_cost_rerank_metrics.json`
+- `outputs/spot_oracle_0C_mot20_05_inline_gt_20260625/summary.csv`
 
-### Oracle 0B / 0D / 0E smoke
+### Oracle 0E
 
-- `outputs/spot_oracle_0B_smoke_20260624/oracle_delay_report.md`
-- `outputs/spot_oracle_0D_smoke_20260624/oracle_false_positive_freeze_report.md`
-- `outputs/spot_oracle_0E_smoke_20260624/joint_oracle_decision.md`
+- `outputs/spot_oracle_0E_mot20_05_inline_gt_20260625/joint_oracle_decision.md`
+- `outputs/spot_oracle_0E_mot20_05_inline_gt_20260625/summary.csv`
+
+### Oracle Gate Decision
+
+- `outputs/oracle_gate/decision.md`
+- `outputs/oracle_gate/summary.csv`
 
 ## 当前状态判断
 
@@ -53,18 +57,20 @@
 1. 协议锁定。
 2. GT 对齐。
 3. Oracle 0A 正信号采集。
-4. 0B / 0D / 0E smoke 链路跑通。
+4. Oracle 0C inline GT 证据采集。
+5. 0B / 0D / 0E smoke 链路跑通。
+6. Oracle Gate 决策文件已更新。
 
 ### 未收口
 
 1. `Oracle 0C` full-file 主结论缺失。
-2. `Oracle 0C` partial 的 `fixable_percent=99.982919` 明显偏乐观，不能直接作为决策依据。
-3. 当前没有一个正式的 `outputs/oracle_gate/` 总目录来承接最终决策。
+2. `Oracle 0C` inline GT 是 partial，不是 full-file。
+3. `Oracle 0E` 仍然 `not_closed`。
 
 ### 不能误写的状态
 
 - `0C full-file` 不能写成 `completed`。
-- `0C partial` 不能写成 `final`.
+- `0C inline GT` 是 partial，不能写成 `final`.
 - `smoke` 不能写成 `real MOT20-05` 结论。
 
 ## 推荐后续动作
