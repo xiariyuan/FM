@@ -219,7 +219,7 @@ GO conditions:
 
 NO-GO conditions:
 
-- `spot_enable=0` parity fails.
+- observe-only parity fails.
 - IDSW does not decrease or increases.
 - HOTA decreases.
 - AssA / IDF1 decrease materially.

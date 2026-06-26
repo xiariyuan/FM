@@ -62,6 +62,8 @@ def parse_args(argv: Optional[Iterable[str]] = None) -> argparse.Namespace:
     parser.add_argument("--baseline-results-dir", type=Path, default=None)
     parser.add_argument("--observe-results-dir", type=Path, default=None)
     parser.add_argument("--freeze-results-dir", type=Path, default=None)
+    parser.add_argument("--observe-spot-debug-dir", type=Path, default=None, help="Optional observe-only SPOT debug directory containing *_summary.csv")
+    parser.add_argument("--freeze-spot-debug-dir", type=Path, default=None, help="Optional freeze-app SPOT debug directory containing *_summary.csv")
 
     parser.add_argument("--baseline-cmd", default=None, help="Shell command for baseline condition")
     parser.add_argument("--observe-cmd", default=None, help="Shell command for observe-only condition")
@@ -150,7 +152,21 @@ def summarize_spot_csv(*roots: Path) -> Dict[str, Any]:
             skipped.append(str(path))
             continue
         row = rows[0]
-        required_any = {"enabled", "freeze_app", "primary_matches", "ambiguous_matches", "forced_freeze_updates"}
+        # Do not accept generic summaries with only `enabled`/`frames` fields.
+        # FCAA/TOS/RGSA summaries can have those too. Require SPOT-specific
+        # counters or metadata emitted by BoTSORT.get_spot_summary().
+        required_any = {
+            "freeze_app",
+            "margin_thresh",
+            "pair_rows_collected",
+            "primary_matches",
+            "ambiguous_matches",
+            "forced_freeze_updates",
+            "already_freeze_updates",
+            "ambiguity_rate",
+            "freeze_rate",
+            "pairs_csv",
+        }
         if not required_any.intersection(row.keys()):
             skipped.append(str(path))
             continue
@@ -276,7 +292,13 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
             "00_baseline": {"results_dir": str(baseline_dir)},
             "01_spot_observe": {
                 "results_dir": str(observe_dir),
-                "spot_summary": summarize_spot_csv(out_root / "01_spot_observe", observe_dir, observe_dir.parent),
+                "spot_summary": summarize_spot_csv(
+                    args.observe_spot_debug_dir,
+                    out_root / "01_spot_observe",
+                    out_root.parent / "01_spot_observe",
+                    observe_dir,
+                    observe_dir.parent,
+                ),
             },
         },
         "observe_parity_ok": bool(observe_report["parity_ok"]),
@@ -284,7 +306,13 @@ def main(argv: Optional[Iterable[str]] = None) -> int:
     if freeze_dir is not None:
         manifest["conditions"]["02_spot_freeze_app"] = {
             "results_dir": str(freeze_dir),
-            "spot_summary": summarize_spot_csv(out_root / "02_spot_freeze_app", freeze_dir, freeze_dir.parent),
+            "spot_summary": summarize_spot_csv(
+                args.freeze_spot_debug_dir,
+                out_root / "02_spot_freeze_app",
+                out_root.parent / "02_spot_freeze_app",
+                freeze_dir,
+                freeze_dir.parent,
+            ),
         }
         manifest["freeze_outputs_changed"] = bool(not freeze_report["parity_ok"] if freeze_report is not None else False)
 
