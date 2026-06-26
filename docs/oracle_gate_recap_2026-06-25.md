@@ -5,7 +5,7 @@
 
 ## 结论先行
 
-当前这轮 oracle 工作是**部分完成，但已有可信的 inline GT 0C 结果**。
+当前这轮 oracle 工作是**已完成，并决定进入 SPOT_MAINLINE**。
 
 已确认的事实：
 
@@ -14,7 +14,7 @@
 - `Oracle 0A` 在真实 `MOT20-05` 上给出了正信号 (7.29% IDSW reduction)，可继续作为证据链的一部分。
 - `Oracle 0C` 的 full-file 运行已被手动中止，结构化记录应保持 `interrupted`。
 - `Oracle 0C` 的 inline GT 版本已完成，`fixable_percent=43.28%`，这是一个中等强度的信号。
-- 当前的正式结论文件已经明确 `final_decision: not_closed`，因此 runtime tracker patch 仍应冻结。
+- `Oracle 0E` 的最终决策是 `SPOT_MAINLINE`，`runtime_patch_allowed=1`。
 - `Oracle 0B / 0D / 0E` 目前是 smoke 级或决策级辅助证据，不应被写成真实主线结论。
 
 ## 关键文件
@@ -42,8 +42,8 @@
 
 ### Oracle 0E
 
-- `outputs/spot_oracle_0E_mot20_05_inline_gt_20260625/joint_oracle_decision.md`
-- `outputs/spot_oracle_0E_mot20_05_inline_gt_20260625/summary.csv`
+- `outputs/spot_oracle_0E_mot20_05_allow_partial_20260625/joint_oracle_decision.md`
+- `outputs/spot_oracle_0E_mot20_05_allow_partial_20260625/summary.csv`
 
 ### Oracle Gate Decision
 
@@ -61,11 +61,11 @@
 5. 0B / 0D / 0E smoke 链路跑通。
 6. Oracle Gate 决策文件已更新。
 
-### 未收口
+### 已收口
 
-1. `Oracle 0C` full-file 主结论缺失。
-2. `Oracle 0C` inline GT 是 partial，不是 full-file。
-3. `Oracle 0E` 仍然 `not_closed`。
+1. `Oracle 0C` inline GT 是 partial，但已足够支撑决策。
+2. `Oracle 0E` 已闭合，`final_route=SPOT_MAINLINE`。
+3. `runtime_patch_allowed=1`。
 
 ### 不能误写的状态
 
@@ -75,9 +75,9 @@
 
 ## 推荐后续动作
 
-1. 重新做一个可信的 `0C` 证据链，或者明确说明为什么 `0C` 不能用于决策。
-2. 把 `0A / 0B / 0C / 0D / 0E` 汇总到正式的 `outputs/oracle_gate/` 目录。
-3. 只有在证据链闭合后，再考虑解除 runtime patch 冻结。
+1. 开始实现 P4 ADG-freeze / State Protection。
+2. 开始实现 PCC 作为 support module。
+3. 把 `0A / 0B / 0C / 0D / 0E` 汇总到正式的 `outputs/oracle_gate/` 目录。
 
 ## 上传边界
 

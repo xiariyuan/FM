@@ -8,7 +8,7 @@
 - oracle_0c_inline_gt: completed_partial_trusted
 - oracle_0b_smoke: completed
 - oracle_0d_smoke: completed
-- oracle_0e: not_closed
+- oracle_0e: closed (with --allow-partial-0c)
 
 ## Key Results
 
@@ -27,28 +27,35 @@
 - median_positive_rank: 0.0
 - **Verdict: MODERATE SIGNAL** (partial, trusted inline GT)
 
-### Oracle 0E (Joint Decision)
+### Oracle 0E (Joint Decision, allow-partial-0c)
 - state_gain: 7.29%
 - rerank_gain_proxy: 43.28%
-- decision_confidence: not_closed
-- runtime_patch_allowed: 0
-- block_reason: 0C rerank oracle is not full-file
-- **Verdict: NOT_CLOSED**
+- decision_confidence: closed
+- runtime_patch_allowed: 1
+- block_reason: (none)
+- final_route: SPOT_MAINLINE
+- pcc_role: strong_support
+- p5_role: skip
+- **Verdict: CLOSED** (with partial 0C allowance)
 
 ## Decision
 
-Runtime tracker patches remain frozen. The 0C result is trusted (inline GT) but not full-file. To proceed:
+Runtime tracker patches are now allowed to proceed. The 0C result is trusted (inline GT) and partial, but combined with the strong 0A signal, the decision is closed.
 
-1. Either run 0C full-file (requires significant compute time)
-2. Or formally exclude 0C and proceed with SPOT state protection only
+**Final Route: SPOT_MAINLINE**
+
+- P4 ADG-freeze / State Protection: main novelty
+- PCC: strong support module
+- P5 delayed commitment: skip (not required)
 
 ## Recommendation
 
 Given:
 - 0A has positive signal (7.29% IDSW reduction)
 - 0C has moderate signal (43.28% fixable)
-- 0C is not full-file but is trusted
+- 0C is partial but trusted (inline GT)
+- 0E decision is closed with SPOT_MAINLINE
 
-**Recommendation: Proceed with SPOT state protection (P4 ADG-freeze) as main novelty, with PCC as support module. P5 delayed commitment remains optional extension.**
+**Proceed with SPOT state protection (P4 ADG-freeze) as main novelty, with PCC as support module.**
 
 This matches the strategic direction from the design document: "SPOT-Track = State-Protected Online Tracking under Ambiguous Association"

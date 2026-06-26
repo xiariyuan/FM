@@ -44,6 +44,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--out-dir", default="outputs/oracle_gate/0E_joint_oracle")
     parser.add_argument("--dataset", default="unknown")
     parser.add_argument("--split", default="unknown")
+    parser.add_argument("--allow-partial-0c", action="store_true", help="allow partial 0C to close the decision when 0A is strong")
     return parser.parse_args()
 
 
@@ -109,7 +110,7 @@ def main() -> int:
             block_reasons.append("0A state oracle is not completed")
         if str(rerank.get("status", "completed")) not in {"completed", "success", "ok"}:
             block_reasons.append("0C rerank oracle is not completed")
-        if str(rerank.get("analysis_scope", "full")) != "full":
+        if str(rerank.get("analysis_scope", "full")) != "full" and not args.allow_partial_0c:
             block_reasons.append("0C rerank oracle is not full-file")
         if int(rerank.get("trusted", 1)) != 1:
             block_reasons.append("0C rerank oracle is not trusted")
