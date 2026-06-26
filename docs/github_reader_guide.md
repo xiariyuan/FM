@@ -41,22 +41,20 @@ Historical (2026-03) context:
 
 ## 3. Shortest reading order
 
-If you want the minimum complete context, read these files in order:
+If you want the minimum complete **current SPOT** context, read these files in order:
 
-1. `docs/github_reader_guide.md`
-2. `docs/experiment_index.md`
-3. `outputs/experiment_registry.csv`
-4. `outputs/cross_host_carrier_uniqueness_audit_mot17_frcnn_valhalf_20260327_030500/report.md`
-5. `outputs/cross_host_baseline_defect_audit_mot17_frcnn_valhalf_20260327_104500/report.md`
-6. `outputs/legacy_module_forensic_audit_20260327_161709/report.md`
-7. `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
-8. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
-9. `outputs/official_bytetrack_posthost_one_edit_offline_smoke_decision_20260327/report.md`
-10. `outputs/official_bytetrack_posthost_one_edit_hierarchical_smoke_decision_20260328/report.md`
-11. `outputs/official_bytetrack_posthost_one_edit_hierarchical_followup_decision_20260328/report.md`
-12. `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
-13. `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
-14. `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
+1. `docs/current_mainline_2026-06-26.md`
+2. `outputs/oracle_gate/decision.md`
+3. `outputs/oracle_gate/summary.csv`
+4. `docs/oracle_gate_recap_2026-06-25.md`
+5. `plan/spot_implementation_plan.md`
+6. `scripts/spot_oracle/run_oracle_state_protection.py`
+7. `scripts/spot_oracle/run_oracle_cost_rerank_inline.py`
+8. `scripts/spot_oracle/run_joint_oracle.py`
+9. `external/BoT-SORT-main/tracker/bot_sort.py`
+10. `external/BoT-SORT-main/tools/track.py`
+
+For the old 2026-03 ByteTrack/post-host history, read `docs/experiment_index.md` after the current SPOT files above.
 
 ## 4. What was already decided
 
@@ -97,20 +95,23 @@ The important current nuance is:
 
 ## 6. Current code entrypoints
 
-### Runtime / paired evaluation
+### Current SPOT runtime / paired evaluation
 
-Start here for the current runnable official ByteTrack path:
+SPOT runtime is **not yet unlocked**. The next implementation target is a minimal BoT-SORT `freeze_app` experiment with `spot_enable=0` parity first:
+
+- `external/BoT-SORT-main/tracker/bot_sort.py`
+- `external/BoT-SORT-main/tools/track.py`
+- `scripts/eval_botsort_halfval_trackeval.py`
+- `plan/spot_implementation_plan.md`
+
+Historical ByteTrack paired-eval scripts are references only, not the active runtime path:
 
 - `scripts/run_official_bytetrack_local_conflict_halfval_pair.py`
 - `scripts/run_official_bytetrack_shared_detection_pair_core.py`
-- `third_party/ByteTrack/yolox/tracker/byte_tracker_local_conflict.py`
-- `third_party/ByteTrack/tools/track.py`
-- `third_party/ByteTrack/yolox/evaluators/mot_evaluator.py`
-- `third_party/ByteTrack/exps/example/mot/yolox_x_mix_det_valhalf.py`
 
-### Current learned post-host path
+### Historical learned post-host path
 
-Start here for the current offline learned redesign:
+Read this only for the old 2026-03 offline learned redesign:
 
 - `scripts/build_posthost_one_edit_dataset.py`
 - `scripts/train_posthost_one_edit_scorer.py`
@@ -189,21 +190,18 @@ The project stores the lightweight evidence that explains what happened:
 
 ## 9. If you only have one minute
 
-Read these four files:
+Read these first for the **current SPOT state**:
 
-1. `docs/experiment_index.md`
-2. `outputs/official_bytetrack_bridgecommit_smoke_decision_20260327.md`
-3. `outputs/official_bytetrack_posthost_one_edit_oracle_decision_20260327/report.md`
-4. `outputs/official_bytetrack_posthost_one_edit_hierarchical_stop_decision_20260328/report.md`
-5. `outputs/official_bytetrack_posthost_one_edit_oracle_defer_only_decision_20260328/report.md`
-6. `outputs/official_bytetrack_posthost_one_edit_rule_decision_20260329/report.md`
+1. `docs/current_mainline_2026-06-26.md`
+2. `outputs/oracle_gate/decision.md`
+3. `outputs/oracle_gate/summary.csv`
+4. `docs/oracle_gate_recap_2026-06-25.md`
+5. `plan/spot_implementation_plan.md`
 
 That is the shortest path to understanding:
 
-- what failed
-- what was stopped
-- what changed
-- what still has oracle headroom
-- which narrowed replacement test was tried
-- why that simplified replacement was also rejected
-- and what the first legal non-zero post-host rule-controller reference actually achieved
+- current mainline is SPOT-Track, not old ByteTrack/post-host
+- oracle gate is PROVISIONAL
+- runtime patches are not allowed yet
+- oracle ceiling is not runtime gain
+- next step is minimal paired eval, not opening PCC/P5

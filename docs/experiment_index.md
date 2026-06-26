@@ -17,6 +17,9 @@ Read these files first for the current state:
 2. `outputs/oracle_gate/decision.md`
 3. `outputs/oracle_gate/summary.csv`
 4. `docs/oracle_gate_recap_2026-06-25.md`
+5. `plan/spot_implementation_plan.md`
+
+The rest of this file primarily navigates the **historical 2026-03 ByteTrack/post-host evidence chain**, not the active SPOT runtime path.
 
 ## 1. Start here (historical context)
 
@@ -583,9 +586,21 @@ Outcome:
 
 ## 6. Current code paths
 
-This section distinguishes the current mainline from archived-but-important historical paths.
+This section distinguishes the current SPOT mainline from archived historical paths.
 
-### Latest official ByteTrack post-host path
+### Current SPOT path
+
+SPOT runtime is not yet unlocked. The next minimal implementation target is BoT-SORT + SPOT `freeze_app`, preceded by a strict `spot_enable=0` parity test.
+
+- `external/BoT-SORT-main/tracker/bot_sort.py`
+- `external/BoT-SORT-main/tools/track.py`
+- `scripts/eval_botsort_halfval_trackeval.py`
+- `scripts/spot_oracle/run_oracle_state_protection.py`
+- `scripts/spot_oracle/run_oracle_cost_rerank_inline.py`
+- `scripts/spot_oracle/run_joint_oracle.py`
+- `plan/spot_implementation_plan.md`
+
+### Historical official ByteTrack post-host path
 
 If the reader wants the latest learned official ByteTrack implementation path that was actually run, start here:
 
