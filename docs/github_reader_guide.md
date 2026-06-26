@@ -17,19 +17,19 @@ The current question is:
 - "under a frozen detector protocol, can we learn when NOT to update tracker state under ambiguous association?"
 
 The oracle gate has confirmed:
-- Oracle 0A: 7.29% IDSW reduction (positive)
-- Oracle 0C: 43.28% fixable (moderate)
-- Oracle 0E: CLOSED → SPOT_MAINLINE
+- Oracle 0A: 7.29% oracle recoverable ceiling (NOT runtime gain)
+- Oracle 0C: 43.28% fixable (moderate, partial inline GT)
+- Oracle 0E: PROVISIONAL → SPOT_PROVISIONAL (requires paired eval)
 
 ## 2. Current high-level project state
 
 As of `2026-06-26`:
 
 - **Current mainline:** SPOT-Track
-- **Oracle Gate:** CLOSED → SPOT_MAINLINE
-- **Runtime patch allowed:** YES
-- **Main novelty:** P4 ADG-freeze / State Protection
-- **Support module:** PCC (strong support)
+- **Oracle Gate:** PROVISIONAL → SPOT_PROVISIONAL
+- **Runtime patch allowed:** NO
+- **Main novelty:** P4 ADG-freeze / State Protection (candidate; needs paired eval)
+- **Support module:** PCC (support only; not runtime gain)
 - **P5 delayed commitment:** SKIP
 
 Historical (2026-03) context:

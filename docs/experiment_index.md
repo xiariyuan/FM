@@ -43,10 +43,10 @@ That list is the old "minimal complete context" path for the 2026-03 mainline.
 
 **Current mainline: SPOT-Track**
 
-- Oracle Gate: CLOSED → SPOT_MAINLINE
-- Runtime patch allowed: YES
-- Main novelty: P4 ADG-freeze / State Protection
-- Support module: PCC (strong support)
+- Oracle Gate: PROVISIONAL → SPOT_PROVISIONAL
+- Runtime patch allowed: NO
+- Main novelty: P4 ADG-freeze / State Protection (candidate; needs paired eval)
+- Support module: PCC (support only; not runtime gain)
 - P5 delayed commitment: SKIP
 
 **Historical (2026-03) conclusions:**
