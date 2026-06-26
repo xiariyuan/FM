@@ -23,6 +23,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--work-dir", required=True, help="Work directory for copied tracker outputs and eval logs")
     parser.add_argument("--python-bin", default=sys.executable)
     parser.add_argument("--keep-workdir", action="store_true")
+    parser.add_argument("--seqs", nargs="*", default=None, help="Optional sequence names to evaluate, e.g. MOT20-05")
     return parser.parse_args()
 
 
@@ -53,6 +54,12 @@ def main() -> None:
     tracker_data.mkdir(parents=True, exist_ok=True)
 
     seq_dirs = sorted(path for path in gt_root.iterdir() if path.is_dir())
+    if args.seqs:
+        wanted = set(args.seqs)
+        seq_dirs = [path for path in seq_dirs if path.name in wanted]
+        missing_gt_dirs = sorted(wanted - {path.name for path in seq_dirs})
+        if missing_gt_dirs:
+            raise FileNotFoundError(f"Missing GT sequence directories: {', '.join(missing_gt_dirs)}")
     if not seq_dirs:
         raise FileNotFoundError(f"No sequences found under: {gt_root}")
 
