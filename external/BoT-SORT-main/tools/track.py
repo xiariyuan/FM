@@ -97,6 +97,9 @@ def make_parser():
     parser.add_argument('--min_box_area', type=float, default=10, help='filter out tiny boxes')
     parser.add_argument('--spot-enable', dest='spot_enable', default=False, action='store_true', help='enable SPOT v0 observation layer; no tracking behavior change')
     parser.add_argument('--spot-freeze-app', dest='spot_freeze_app', default=False, action='store_true', help='enable SPOT v0 control: freeze appearance/history updates on ambiguous primary matches')
+    parser.add_argument('--spot-soft-app-alpha', dest='spot_soft_app_alpha', type=float, default=0.0, help='SPOT soft appearance EMA alpha on ambiguous primary matches; 0 disables, e.g. 0.97 or 0.99')
+    parser.add_argument('--spot-soft-min-track-age', dest='spot_soft_min_track_age', type=int, default=0, help='minimum tracklet length for SPOT soft appearance update gate')
+    parser.add_argument('--spot-soft-max-det-score', dest='spot_soft_max_det_score', type=float, default=1.01, help='maximum detection score allowed for SPOT soft appearance update gate')
     parser.add_argument('--spot-margin-thresh', dest='spot_margin_thresh', type=float, default=0.05, help='SPOT ambiguity threshold on min(row_margin, col_margin)')
     parser.add_argument('--spot-debug-dir', dest='spot_debug_dir', type=str, default='', help='optional SPOT debug output directory; reserved for paired-eval diagnostics')
 
@@ -1273,7 +1276,7 @@ def image_track(predictor, vis_folder, args):
                 _w.writerows(spot_rows)
         elif str(getattr(args, "spot_debug_dir", "") or ""):
             with open(spot_pairs_path, "w", encoding="utf-8") as _f:
-                _f.write("seq_name,frame,frame_id,track_id,det_id,det_score,cost,cost_top1,cost_top2,cost_margin,row_margin,col_margin,spot_margin,spot_triggered,spot_reason,spot_action,spot_freeze_app,spot_freeze_app_applied,update_mode_observed,update_mode_final,update_mode,append_history,track_age,lost_age\n")
+                _f.write("seq_name,frame,frame_id,track_id,det_id,det_score,cost,cost_top1,cost_top2,cost_margin,row_margin,col_margin,spot_margin,spot_triggered,spot_reason,spot_action,spot_freeze_app,spot_freeze_app_applied,spot_soft_app_alpha,spot_soft_app_applied,spot_soft_app_skipped,update_mode_observed,update_mode_final,update_mode,append_history,track_age,lost_age\n")
         logger.info(f"save SPOT analysis to {spot_summary_path}")
     if rgsa_or_tcgau:
         flush_tracking_checkpoint(num_frames, final=True)

@@ -486,6 +486,9 @@ class BoTSORT(object):
         # parity has been proven.
         self.spot_enable = bool(getattr(args, "spot_enable", False))
         self.spot_freeze_app = bool(getattr(args, "spot_freeze_app", False))
+        self.spot_soft_app_alpha = float(getattr(args, "spot_soft_app_alpha", 0.0) or 0.0)
+        self.spot_soft_min_track_age = int(getattr(args, "spot_soft_min_track_age", 0) or 0)
+        self.spot_soft_max_det_score = float(getattr(args, "spot_soft_max_det_score", 1.01) or 1.01)
         self.spot_margin_thresh = float(getattr(args, "spot_margin_thresh", 0.05))
         self.spot_debug_dir = str(getattr(args, "spot_debug_dir", "") or "")
         self.spot_seq_name = str(getattr(args, "name", "") or "")
@@ -495,6 +498,8 @@ class BoTSORT(object):
             "ambiguous_matches": 0,
             "forced_freeze_updates": 0,
             "already_freeze_updates": 0,
+            "soft_app_updates": 0,
+            "soft_app_skipped_by_gate": 0,
         }
         self.spot_pair_rows = [] if self.spot_debug_dir else None
         self.tcgau_debug_available = False
@@ -1779,10 +1784,12 @@ class BoTSORT(object):
                         det.tcgau_alpha_override = None
                         self.tos_stats["occluded_tracks"] += 1
 
-            # SPOT v0 P3: minimal appearance/history freeze. This runs after
-            # TOS so existing occlusion-freeze accounting has priority. The
-            # intervention is deliberately narrow: no Hungarian, KF, lifecycle,
-            # detector, or ReID changes.
+            # SPOT controls run after TOS so existing occlusion-freeze accounting
+            # has priority. The intervention is deliberately narrow: no Hungarian,
+            # KF, lifecycle, detector, or ReID changes.
+            det.spot_freeze_app_applied = False
+            det.spot_soft_app_applied = False
+            det.spot_soft_app_skipped = False
             if self.spot_enable and self.spot_freeze_app and bool(getattr(det, "spot_triggered", False)):
                 if det.tcgau_update_mode != "freeze":
                     det.spot_update_mode_before_freeze = str(det.tcgau_update_mode)
@@ -1792,8 +1799,25 @@ class BoTSORT(object):
                     det.spot_freeze_app_applied = True
                     self.spot_stats["forced_freeze_updates"] += 1
                 else:
-                    det.spot_freeze_app_applied = False
                     self.spot_stats["already_freeze_updates"] += 1
+            elif (
+                self.spot_enable
+                and bool(getattr(det, "spot_triggered", False))
+                and 0.0 < float(self.spot_soft_app_alpha) < 1.0
+            ):
+                track_age = int(getattr(track, "tracklet_len", 0))
+                det_score = float(getattr(det, "score", 0.0))
+                gate_ok = track_age >= int(self.spot_soft_min_track_age) and det_score <= float(self.spot_soft_max_det_score)
+                if gate_ok and det.tcgau_update_mode != "freeze":
+                    det.spot_update_mode_before_soft = str(det.tcgau_update_mode)
+                    det.tcgau_update_mode = "soft"
+                    det.tcgau_append_history = True
+                    det.tcgau_alpha_override = float(self.spot_soft_app_alpha)
+                    det.spot_soft_app_applied = True
+                    self.spot_stats["soft_app_updates"] += 1
+                else:
+                    det.spot_soft_app_skipped = True
+                    self.spot_stats["soft_app_skipped_by_gate"] += 1
 
             if self.spot_enable and self.spot_pair_rows is not None:
                 spot_cost = float(dists[int(itracked), int(idet)]) if 0 <= int(itracked) < dists.shape[0] and 0 <= int(idet) < dists.shape[1] else float("nan")
@@ -1814,9 +1838,12 @@ class BoTSORT(object):
                     "spot_margin": float(getattr(det, "spot_margin", float("inf"))),
                     "spot_triggered": int(spot_triggered_final),
                     "spot_reason": str(getattr(det, "spot_reason", "low_margin" if spot_triggered_final else "not_triggered")),
-                    "spot_action": "freeze_app" if self.spot_freeze_app and spot_triggered_final else "observe",
+                    "spot_action": ("freeze_app" if self.spot_freeze_app and spot_triggered_final else ("soft_app" if bool(getattr(det, "spot_soft_app_applied", False)) else ("soft_skipped" if bool(getattr(det, "spot_soft_app_skipped", False)) else "observe"))),
                     "spot_freeze_app": int(bool(self.spot_freeze_app)),
                     "spot_freeze_app_applied": int(bool(getattr(det, "spot_freeze_app_applied", False))),
+                    "spot_soft_app_alpha": float(self.spot_soft_app_alpha),
+                    "spot_soft_app_applied": int(bool(getattr(det, "spot_soft_app_applied", False))),
+                    "spot_soft_app_skipped": int(bool(getattr(det, "spot_soft_app_skipped", False))),
                     "update_mode_observed": str(getattr(det, "spot_update_mode_observed", "")),
                     "update_mode_final": str(getattr(det, "tcgau_update_mode", "")),
                     "update_mode": str(getattr(det, "tcgau_update_mode", "")),
@@ -2216,10 +2243,14 @@ class BoTSORT(object):
         ambiguous_matches = int(summary.get("ambiguous_matches", 0))
         summary["enabled"] = bool(self.spot_enable)
         summary["freeze_app"] = bool(self.spot_freeze_app)
+        summary["soft_app_alpha"] = float(self.spot_soft_app_alpha)
+        summary["soft_min_track_age"] = int(self.spot_soft_min_track_age)
+        summary["soft_max_det_score"] = float(self.spot_soft_max_det_score)
         summary["margin_thresh"] = float(self.spot_margin_thresh)
         summary["pair_rows_collected"] = int(len(self.spot_pair_rows or []))
         summary["ambiguity_rate"] = float(ambiguous_matches) / float(primary_matches) if primary_matches > 0 else 0.0
         summary["freeze_rate"] = float(summary.get("forced_freeze_updates", 0)) / float(primary_matches) if primary_matches > 0 else 0.0
+        summary["soft_app_rate"] = float(summary.get("soft_app_updates", 0)) / float(primary_matches) if primary_matches > 0 else 0.0
         return summary
 
     def get_spot_pair_rows(self):
