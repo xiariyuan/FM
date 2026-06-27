@@ -210,8 +210,11 @@ class COCOEvaluator:
                 from pycocotools import cocoeval as COCOeval
                 logger.warning("Use standard COCOeval.")
             '''
-            #from pycocotools.cocoeval import COCOeval
-            from yolox.layers import COCOeval_opt as COCOeval
+            try:
+                from yolox.layers import COCOeval_opt as COCOeval
+            except Exception:
+                from pycocotools.cocoeval import COCOeval
+                logger.warning("Use standard pycocotools COCOeval fallback.")
             cocoEval = COCOeval(cocoGt, cocoDt, annType[1])
             cocoEval.evaluate()
             cocoEval.accumulate()
