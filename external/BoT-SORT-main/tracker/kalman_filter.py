@@ -37,8 +37,9 @@ class KalmanFilter(object):
 
     """
 
-    def __init__(self):
+    def __init__(self, nsa_k: float = 0.0):
         ndim, dt = 4, 1.
+        self._nsa_k = float(nsa_k)
 
         # Create Kalman filter model matrices.
         self._motion_mat = np.eye(2 * ndim, 2 * ndim)
@@ -122,7 +123,7 @@ class KalmanFilter(object):
 
         return mean, covariance
 
-    def project(self, mean, covariance):
+    def project(self, mean, covariance, confidence: float = 1.0):
         """Project state distribution to measurement space.
 
         Parameters
@@ -131,6 +132,9 @@ class KalmanFilter(object):
             The state's mean vector (8 dimensional array).
         covariance : ndarray
             The state's covariance matrix (8x8 dimensional).
+        confidence : float
+            Detection confidence score. When nsa_k > 0, low-confidence
+            detections get larger measurement noise (less trusted).
 
         Returns
         -------
@@ -144,6 +148,9 @@ class KalmanFilter(object):
             self._std_weight_position * mean[3],
             self._std_weight_position * mean[2],
             self._std_weight_position * mean[3]]
+        if self._nsa_k > 0.0:
+            nsa_factor = 1.0 + self._nsa_k * (1.0 - float(confidence))
+            std = [nsa_factor * s for s in std]
         innovation_cov = np.diag(np.square(std))
 
         mean = np.dot(self._update_mat, mean)
@@ -190,7 +197,7 @@ class KalmanFilter(object):
 
         return mean, covariance
 
-    def update(self, mean, covariance, measurement):
+    def update(self, mean, covariance, measurement, confidence: float = 1.0):
         """Run Kalman filter correction step.
 
         Parameters
@@ -203,6 +210,8 @@ class KalmanFilter(object):
             The 4 dimensional measurement vector (x, y, w, h), where (x, y)
             is the center position, w the width, and h the height of the
             bounding box.
+        confidence : float
+            Detection confidence score (0-1). Used for NSA when nsa_k > 0.
 
         Returns
         -------
@@ -210,7 +219,7 @@ class KalmanFilter(object):
             Returns the measurement-corrected state distribution.
 
         """
-        projected_mean, projected_cov = self.project(mean, covariance)
+        projected_mean, projected_cov = self.project(mean, covariance, confidence=float(confidence))
 
         chol_factor, lower = scipy.linalg.cho_factor(
             projected_cov, lower=True, check_finite=False)

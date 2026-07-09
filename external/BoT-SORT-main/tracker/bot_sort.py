@@ -3,6 +3,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 from collections import deque
 import math
+import json
+import csv
+import os
 import os.path as osp
 import sys
 
@@ -385,6 +388,48 @@ class BoTSORT(object):
         self.proximity_thresh = args.proximity_thresh
         self.appearance_thresh = args.appearance_thresh
 
+        # A31 overlap-aware online correction: freeze appearance updates for
+        # tracks currently in strong spatial overlap, preventing occlusion
+        # contamination of the ReID prototype. First implementation is
+        # freeze-only; reassignment is added in later A31 stages.
+        self.overlap_correction_enable = bool(getattr(args, "overlap_correction_enable", False))
+        self.overlap_freeze_ioa = float(getattr(args, "overlap_freeze_ioa", 0.30))
+        self.overlap_pair_ioa = float(getattr(args, "overlap_pair_ioa", 0.80))
+        # If >= 0, freeze only when cosine(track.smooth_feat, det.curr_feat)
+        # is below this threshold. This avoids blocking high-confidence clean updates.
+        self.overlap_freeze_max_app_sim = float(getattr(args, "overlap_freeze_max_app_sim", -1.0))
+        self.overlap_reassign_enable = bool(getattr(args, "overlap_reassign_enable", False))
+        self.overlap_reassign_margin = float(getattr(args, "overlap_reassign_margin", 0.10))
+        self.overlap_reassign_min_sim = float(getattr(args, "overlap_reassign_min_sim", 0.45))
+        self.overlap_stats = {
+            "frames": 0,
+            "frames_with_overlap": 0,
+            "overlap_pairs_ge_freeze": 0,
+            "freeze_updates": 0,
+            "freeze_skipped_high_app": 0,
+            "reassign_candidates": 0,
+            "reassign_swaps": 0,
+        }
+
+        # A37 Identity Escrow candidate logger. This is analysis-only: it logs
+        # top-k online candidate identities before commit, so we can verify
+        # whether false commits were preventable by delayed confirmation.
+        self.a37_candidate_log_dir = str(getattr(args, "a37_candidate_log_dir", "") or "")
+        self.a37_candidate_topk = max(1, int(getattr(args, "a37_candidate_topk", 5)))
+        self.a37_candidate_max_cost = float(getattr(args, "a37_candidate_max_cost", 1.0))
+        self.a37_candidate_log_path = ""
+        self.a37_candidate_fieldnames = [
+            "seq_name", "frame", "stage", "det_id", "det_score", "det_tlwh",
+            "candidate_rank", "track_row", "track_id", "track_state", "track_age", "lost_age", "track_tlwh",
+            "candidate_cost", "raw_iou_cost", "emb_cost", "is_chosen", "chosen_track_id",
+            "row_best_cost", "row_second_cost", "row_margin", "col_best_cost", "col_second_cost", "col_margin",
+        ]
+        if self.a37_candidate_log_dir:
+            os.makedirs(self.a37_candidate_log_dir, exist_ok=True)
+            self.a37_candidate_log_path = osp.join(self.a37_candidate_log_dir, f"{getattr(args, 'name', 'seq')}_candidate_topk.csv")
+            if osp.isfile(self.a37_candidate_log_path):
+                os.remove(self.a37_candidate_log_path)
+
         if args.with_reid:
             self.encoder = FastReIDInterface(args.fast_reid_config, args.fast_reid_weights, args.device)
 
@@ -492,6 +537,40 @@ class BoTSORT(object):
         self.spot_margin_thresh = float(getattr(args, "spot_margin_thresh", 0.05))
         self.spot_debug_dir = str(getattr(args, "spot_debug_dir", "") or "")
         self.spot_seq_name = str(getattr(args, "name", "") or "")
+        self.spot_risk_model_path = str(getattr(args, "spot_risk_model", "") or "")
+        self.spot_risk_mode = str(getattr(args, "spot_risk_mode", "") or "")
+        self.spot_risk_threshold = float(getattr(args, "spot_risk_threshold", 1.01) or 1.01)
+        self.spot_risk_max_rate = float(getattr(args, "spot_risk_max_rate", 0.0) or 0.0)
+        self.spot_risk_soft_alpha = float(getattr(args, "spot_risk_soft_alpha", 0.999) or 0.999)
+        self.spot_risk_model = None
+        self.spot_risk_features = []
+        self.spot_risk_enabled = False
+        if self.spot_risk_model_path and self.spot_risk_mode:
+            try:
+                with open(self.spot_risk_model_path, "r", encoding="utf-8") as _spot_risk_f:
+                    _spot_risk_payload = json.load(_spot_risk_f)
+                self.spot_risk_features = list(_spot_risk_payload.get("features", []))
+                self.spot_risk_model = {
+                    "mean": np.asarray(_spot_risk_payload.get("scaler_mean", []), dtype=float),
+                    "scale": np.asarray(_spot_risk_payload.get("scaler_scale", []), dtype=float),
+                    "coef": np.asarray(_spot_risk_payload.get("coef", []), dtype=float),
+                    "intercept": float((_spot_risk_payload.get("intercept", [0.0]) or [0.0])[0]),
+                }
+                if (
+                    len(self.spot_risk_features) > 0
+                    and self.spot_risk_model["mean"].shape[0] == len(self.spot_risk_features)
+                    and self.spot_risk_model["scale"].shape[0] == len(self.spot_risk_features)
+                    and self.spot_risk_model["coef"].shape[0] == len(self.spot_risk_features)
+                ):
+                    self.spot_risk_enabled = True
+                else:
+                    self.spot_risk_model = None
+                    self.spot_risk_features = []
+            except Exception as _spot_risk_exc:
+                sys.stderr.write(f"[SPOT-RISK] failed to load risk model: {_spot_risk_exc}\n")
+                self.spot_risk_model = None
+                self.spot_risk_features = []
+                self.spot_risk_enabled = False
         self.spot_stats = {
             "frames": 0,
             "primary_matches": 0,
@@ -500,6 +579,12 @@ class BoTSORT(object):
             "already_freeze_updates": 0,
             "soft_app_updates": 0,
             "soft_app_skipped_by_gate": 0,
+            "risk_scored": 0,
+            "risk_pre_cap_triggered": 0,
+            "risk_cap_blocked": 0,
+            "risk_triggered": 0,
+            "risk_soft_updates": 0,
+            "risk_soft_skipped_by_gate": 0,
         }
         self.spot_pair_rows = [] if self.spot_debug_dir else None
         self.tcgau_debug_available = False
@@ -1219,6 +1304,183 @@ class BoTSORT(object):
         }
         return matches_array, np.asarray(sorted(unmatched_rows), dtype=int), np.asarray(sorted(unmatched_cols), dtype=int), debug
 
+    @staticmethod
+    def _overlap_ioa_min_area_tlbr(a, b):
+        ax1, ay1, ax2, ay2 = [float(v) for v in a]
+        bx1, by1, bx2, by2 = [float(v) for v in b]
+        iw = max(0.0, min(ax2, bx2) - max(ax1, bx1))
+        ih = max(0.0, min(ay2, by2) - max(ay1, by1))
+        inter = iw * ih
+        area_a = max(1e-6, (ax2 - ax1) * (ay2 - ay1))
+        area_b = max(1e-6, (bx2 - bx1) * (by2 - by1))
+        return float(inter / max(1e-6, min(area_a, area_b)))
+
+    def _compute_overlap_freeze_track_ids(self, track_pool):
+        if not self.overlap_correction_enable or len(track_pool) < 2:
+            return set()
+        active = []
+        for idx, track in enumerate(track_pool):
+            if getattr(track, "state", None) != TrackState.Tracked:
+                continue
+            if not bool(getattr(track, "is_activated", False)):
+                continue
+            if getattr(track, "mean", None) is None:
+                continue
+            active.append((idx, track, np.asarray(track.tlbr, dtype=np.float32)))
+        freeze_ids = set()
+        pair_count = 0
+        for i in range(len(active)):
+            _, ti, bi = active[i]
+            for j in range(i + 1, len(active)):
+                _, tj, bj = active[j]
+                ioa = self._overlap_ioa_min_area_tlbr(bi, bj)
+                if ioa >= self.overlap_freeze_ioa:
+                    freeze_ids.add(int(getattr(ti, "track_id", -1)))
+                    freeze_ids.add(int(getattr(tj, "track_id", -1)))
+                    pair_count += 1
+        if pair_count > 0:
+            self.overlap_stats["frames_with_overlap"] += 1
+            self.overlap_stats["overlap_pairs_ge_freeze"] += int(pair_count)
+        return freeze_ids
+
+    def _apply_overlap_pair_reassignment(self, matches, track_pool, detections):
+        if not self.overlap_correction_enable or not self.overlap_reassign_enable:
+            return matches
+        if matches is None or len(matches) < 2:
+            return matches
+        match_list = [(int(r), int(c)) for r, c in np.asarray(matches, dtype=int).tolist()]
+        gains = []
+        for i in range(len(match_list)):
+            ri, ci = match_list[i]
+            if ri < 0 or ri >= len(track_pool) or ci < 0 or ci >= len(detections):
+                continue
+            ti = track_pool[ri]
+            di = detections[ci]
+            if getattr(ti, "state", None) != TrackState.Tracked:
+                continue
+            for j in range(i + 1, len(match_list)):
+                rj, cj = match_list[j]
+                if rj < 0 or rj >= len(track_pool) or cj < 0 or cj >= len(detections):
+                    continue
+                tj = track_pool[rj]
+                dj = detections[cj]
+                if getattr(tj, "state", None) != TrackState.Tracked:
+                    continue
+                ioa = self._overlap_ioa_min_area_tlbr(np.asarray(ti.tlbr, dtype=np.float32), np.asarray(tj.tlbr, dtype=np.float32))
+                if ioa < self.overlap_pair_ioa:
+                    continue
+                cur_ii = self._safe_cosine_similarity(getattr(ti, "smooth_feat", None), getattr(di, "curr_feat", None))
+                cur_jj = self._safe_cosine_similarity(getattr(tj, "smooth_feat", None), getattr(dj, "curr_feat", None))
+                sw_ij = self._safe_cosine_similarity(getattr(ti, "smooth_feat", None), getattr(dj, "curr_feat", None))
+                sw_ji = self._safe_cosine_similarity(getattr(tj, "smooth_feat", None), getattr(di, "curr_feat", None))
+                cur = cur_ii + cur_jj
+                sw = sw_ij + sw_ji
+                gain = sw - cur
+                self.overlap_stats["reassign_candidates"] += 1
+                if gain >= self.overlap_reassign_margin and min(sw_ij, sw_ji) >= self.overlap_reassign_min_sim:
+                    gains.append((float(gain), i, j, ci, cj, float(ioa), float(cur), float(sw)))
+        if not gains:
+            return matches
+        gains.sort(reverse=True, key=lambda x: x[0])
+        used = set()
+        for gain, i, j, ci, cj, ioa, cur, sw in gains:
+            if i in used or j in used:
+                continue
+            ri, _ = match_list[i]
+            rj, _ = match_list[j]
+            match_list[i] = (ri, cj)
+            match_list[j] = (rj, ci)
+            used.add(i); used.add(j)
+            self.overlap_stats["reassign_swaps"] += 1
+        return np.asarray(match_list, dtype=int)
+
+    @staticmethod
+    def _a37_tlwh_str(obj):
+        try:
+            vals = getattr(obj, "tlwh", None)
+            if vals is None:
+                return ""
+            return ",".join(f"{float(v):.2f}" for v in vals)
+        except Exception:
+            return ""
+
+    @staticmethod
+    def _a37_top2_margin(vals):
+        arr = np.asarray(vals, dtype=float).copy()
+        arr = arr[np.isfinite(arr)]
+        if arr.size == 0:
+            return float("inf"), float("inf"), float("inf")
+        arr.sort()
+        best = float(arr[0])
+        second = float(arr[1]) if arr.size > 1 else float("inf")
+        return best, second, second - best if np.isfinite(second) else float("inf")
+
+    def _log_a37_candidate_set(self, dists, raw_ious_dists, emb_dists, track_pool, detections, matches, stage="primary"):
+        if not self.a37_candidate_log_path:
+            return
+        if dists is None or len(track_pool) == 0 or len(detections) == 0:
+            return
+        dists_arr = np.asarray(dists, dtype=float)
+        if dists_arr.size == 0:
+            return
+        chosen_by_det = {}
+        for r, c in np.asarray(matches, dtype=int).tolist() if matches is not None and len(matches) > 0 else []:
+            chosen_by_det[int(c)] = int(r)
+        rows = []
+        for det_id, det in enumerate(detections):
+            if det_id >= dists_arr.shape[1]:
+                continue
+            col = dists_arr[:, det_id]
+            finite_idx = [int(i) for i in np.argsort(col) if i < len(track_pool) and np.isfinite(col[int(i)]) and float(col[int(i)]) <= self.a37_candidate_max_cost]
+            chosen_row = chosen_by_det.get(int(det_id), -1)
+            if chosen_row >= 0 and chosen_row not in finite_idx and chosen_row < len(track_pool):
+                finite_idx.append(chosen_row)
+            finite_idx = finite_idx[: self.a37_candidate_topk]
+            if not finite_idx:
+                continue
+            col_best, col_second, col_margin = self._a37_top2_margin(col)
+            chosen_track_id = int(getattr(track_pool[chosen_row], "track_id", -1)) if 0 <= chosen_row < len(track_pool) else -1
+            for rank, row_idx in enumerate(finite_idx):
+                track = track_pool[row_idx]
+                row_vals = dists_arr[row_idx, :] if row_idx < dists_arr.shape[0] else np.asarray([])
+                row_best, row_second, row_margin = self._a37_top2_margin(row_vals)
+                raw_iou_cost = float(raw_ious_dists[row_idx, det_id]) if raw_ious_dists is not None and row_idx < raw_ious_dists.shape[0] and det_id < raw_ious_dists.shape[1] else float("nan")
+                emb_cost = float(emb_dists[row_idx, det_id]) if emb_dists is not None and row_idx < emb_dists.shape[0] and det_id < emb_dists.shape[1] else float("nan")
+                rows.append({
+                    "seq_name": str(getattr(self.args, "name", "")),
+                    "frame": int(self.frame_id),
+                    "stage": str(stage),
+                    "det_id": int(det_id),
+                    "det_score": float(getattr(det, "score", 0.0)),
+                    "det_tlwh": self._a37_tlwh_str(det),
+                    "candidate_rank": int(rank),
+                    "track_row": int(row_idx),
+                    "track_id": int(getattr(track, "track_id", -1)),
+                    "track_state": str(getattr(track, "state", "")),
+                    "track_age": int(self.frame_id) - int(getattr(track, "start_frame", self.frame_id)) if hasattr(track, "start_frame") else 0,
+                    "lost_age": max(0, int(self.frame_id) - int(getattr(track, "frame_id", self.frame_id))),
+                    "track_tlwh": self._a37_tlwh_str(track),
+                    "candidate_cost": float(dists_arr[row_idx, det_id]),
+                    "raw_iou_cost": raw_iou_cost,
+                    "emb_cost": emb_cost,
+                    "is_chosen": int(row_idx == chosen_row),
+                    "chosen_track_id": int(chosen_track_id),
+                    "row_best_cost": float(row_best),
+                    "row_second_cost": float(row_second),
+                    "row_margin": float(row_margin),
+                    "col_best_cost": float(col_best),
+                    "col_second_cost": float(col_second),
+                    "col_margin": float(col_margin),
+                })
+        if not rows:
+            return
+        write_header = not osp.isfile(self.a37_candidate_log_path)
+        with open(self.a37_candidate_log_path, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=self.a37_candidate_fieldnames)
+            if write_header:
+                writer.writeheader()
+            writer.writerows(rows)
+
     def update(self, output_results, img):
         self.frame_id += 1
         if self.reentry_memory_enable:
@@ -1227,6 +1489,8 @@ class BoTSORT(object):
             self.tcgau_stats["frames"] = int(self.tcgau_stats.get("frames", 0)) + 1
         if self.spot_enable:
             self.spot_stats["frames"] = int(self.spot_stats.get("frames", 0)) + 1
+        if self.overlap_correction_enable:
+            self.overlap_stats["frames"] = int(self.overlap_stats.get("frames", 0)) + 1
         self.fcaa_stats["frames"] = int(self.fcaa_stats["frames"]) + 1
         self.fgas_stats["frames"] = int(self.fgas_stats["frames"]) + 1
         activated_starcks = []
@@ -1313,6 +1577,8 @@ class BoTSORT(object):
         warp = self.gmc.apply(img, dets)
         STrack.multi_gmc(strack_pool, warp)
         STrack.multi_gmc(unconfirmed, warp)
+
+        overlap_freeze_track_ids = self._compute_overlap_freeze_track_ids(strack_pool)
 
         # Associate with high score detection boxes
         raw_ious_dists = matching.iou_distance(strack_pool, detections)
@@ -1671,6 +1937,16 @@ class BoTSORT(object):
         else:
             matches, u_track, u_detection = matching.linear_assignment(dists, thresh=self.args.match_thresh)
 
+        self._log_a37_candidate_set(
+            dists=dists,
+            raw_ious_dists=raw_ious_dists,
+            emb_dists=bc_raw_emb_dists if self.args.with_reid else None,
+            track_pool=strack_pool,
+            detections=detections,
+            matches=matches,
+            stage="primary_pre_commit",
+        )
+
         # CCRC: Platt-calibrated commit/abstain on primary matches
         if self.ccrc_enable and self.ccrc_tau_commit > 0 and len(matches) > 0 and laplace_debug is not None:
             anchor_sim = laplace_debug.get("anchor_sim")
@@ -1709,6 +1985,8 @@ class BoTSORT(object):
                 valid_mask=valid_mask,
                 assoc_stage="primary",
             )
+
+        matches = self._apply_overlap_pair_reassignment(matches, strack_pool, detections)
 
         competitive_recovered_tracks = []
         for itracked, idet in matches:
@@ -1819,6 +2097,43 @@ class BoTSORT(object):
                     det.spot_soft_app_skipped = True
                     self.spot_stats["soft_app_skipped_by_gate"] += 1
 
+            det.spot_risk_score = float("nan")
+            det.spot_risk_triggered = False
+            det.spot_risk_action = ""
+            if self.spot_enable and self.spot_risk_enabled:
+                risk_score, risk_triggered = self._compute_spot_risk_score(track, det)
+                det.spot_risk_score = risk_score
+                det.spot_risk_triggered = risk_triggered
+                det.spot_risk_action = "risk_observe" if risk_triggered else "observe"
+                if str(self.spot_risk_mode) == "soft" and risk_triggered:
+                    if det.tcgau_update_mode != "freeze":
+                        det.tcgau_update_mode = "soft"
+                        det.tcgau_append_history = True
+                        det.tcgau_alpha_override = float(self.spot_risk_soft_alpha)
+                        det.spot_risk_action = "risk_soft_app"
+                        self.spot_stats["risk_soft_updates"] += 1
+                    else:
+                        det.spot_risk_action = "risk_soft_skipped_freeze"
+                        self.spot_stats["risk_soft_skipped_by_gate"] += 1
+
+            if self.overlap_correction_enable and int(getattr(track, "track_id", -1)) in overlap_freeze_track_ids:
+                overlap_app_sim = self._safe_cosine_similarity(getattr(track, "smooth_feat", None), getattr(det, "curr_feat", None))
+                det.overlap_app_sim = float(overlap_app_sim)
+                app_gate_ok = (self.overlap_freeze_max_app_sim < 0.0) or (float(overlap_app_sim) <= float(self.overlap_freeze_max_app_sim))
+                if app_gate_ok:
+                    det.overlap_freeze_applied = True
+                    det.overlap_update_mode_before_freeze = str(getattr(det, "tcgau_update_mode", ""))
+                    if det.tcgau_update_mode != "freeze":
+                        det.tcgau_update_mode = "freeze"
+                        det.tcgau_append_history = False
+                        det.tcgau_alpha_override = None
+                        self.overlap_stats["freeze_updates"] += 1
+                else:
+                    det.overlap_freeze_applied = False
+                    self.overlap_stats["freeze_skipped_high_app"] += 1
+            else:
+                det.overlap_freeze_applied = False
+
             if self.spot_enable and self.spot_pair_rows is not None:
                 spot_cost = float(dists[int(itracked), int(idet)]) if 0 <= int(itracked) < dists.shape[0] and 0 <= int(idet) < dists.shape[1] else float("nan")
                 spot_triggered_final = bool(getattr(det, "spot_triggered", False))
@@ -1844,6 +2159,12 @@ class BoTSORT(object):
                     "spot_soft_app_alpha": float(self.spot_soft_app_alpha),
                     "spot_soft_app_applied": int(bool(getattr(det, "spot_soft_app_applied", False))),
                     "spot_soft_app_skipped": int(bool(getattr(det, "spot_soft_app_skipped", False))),
+                    "spot_risk_enabled": int(bool(self.spot_risk_enabled)),
+                    "spot_risk_mode": str(self.spot_risk_mode),
+                    "spot_risk_threshold": float(self.spot_risk_threshold),
+                    "spot_risk_score": float(getattr(det, "spot_risk_score", float("nan"))),
+                    "spot_risk_triggered": int(bool(getattr(det, "spot_risk_triggered", False))),
+                    "spot_risk_action": str(getattr(det, "spot_risk_action", "")),
                     "update_mode_observed": str(getattr(det, "spot_update_mode_observed", "")),
                     "update_mode_final": str(getattr(det, "tcgau_update_mode", "")),
                     "update_mode": str(getattr(det, "tcgau_update_mode", "")),
@@ -2237,6 +2558,70 @@ class BoTSORT(object):
         summary["disable_reentry"] = bool(self.tos_disable_reentry)
         return summary
 
+    def _spot_risk_feature_value(self, name, track, det):
+        det_score = float(getattr(det, "score", 0.0))
+        spot_margin = float(getattr(det, "spot_margin", float("inf")))
+        track_age = int(getattr(track, "tracklet_len", 0))
+        if name == "det_score":
+            return det_score
+        if name == "cost" or name == "cost_top1":
+            return float(getattr(det, "spot_cost_top1", 0.0))
+        if name == "cost_top2":
+            value = float(getattr(det, "spot_cost_top2", 0.0))
+            return value if np.isfinite(value) else 1.0
+        if name == "cost_margin" or name == "spot_margin":
+            return spot_margin if np.isfinite(spot_margin) else 1.0
+        if name == "row_margin":
+            value = float(getattr(det, "spot_row_margin", 0.0))
+            return value if np.isfinite(value) else 1.0
+        if name == "col_margin":
+            value = float(getattr(det, "spot_col_margin", 0.0))
+            return value if np.isfinite(value) else 1.0
+        if name == "spot_triggered":
+            return 1.0 if bool(getattr(det, "spot_triggered", False)) else 0.0
+        if name == "track_age":
+            return float(track_age)
+        if name == "lost_age":
+            return float(getattr(track, "time_since_update", 0))
+        if name == "append_history_is_true":
+            return 1.0 if bool(getattr(det, "tcgau_append_history", True)) else 0.0
+        if name == "update_mode_observed_normal":
+            return 1.0 if str(getattr(det, "spot_update_mode_observed", "")) == "normal" else 0.0
+        if name == "margin_lt_005":
+            return 1.0 if spot_margin < 0.05 else 0.0
+        if name == "margin_lt_003":
+            return 1.0 if spot_margin < 0.03 else 0.0
+        if name == "a3_rule":
+            return 1.0 if spot_margin < 0.03 and track_age >= 30 and det_score <= 0.75 else 0.0
+        return 0.0
+
+    def _compute_spot_risk_score(self, track, det):
+        if not self.spot_risk_enabled or self.spot_risk_model is None:
+            return float("nan"), False
+        values = np.asarray([self._spot_risk_feature_value(name, track, det) for name in self.spot_risk_features], dtype=float)
+        scale = self.spot_risk_model["scale"].copy()
+        scale[scale == 0] = 1.0
+        z = (values - self.spot_risk_model["mean"]) / scale
+        logit = float(np.dot(z, self.spot_risk_model["coef"]) + self.spot_risk_model["intercept"])
+        logit = max(-50.0, min(50.0, logit))
+        score = float(1.0 / (1.0 + math.exp(-logit)))
+        pre_cap_triggered = bool(score >= float(self.spot_risk_threshold))
+        self.spot_stats["risk_scored"] += 1
+        triggered = pre_cap_triggered
+        if pre_cap_triggered:
+            self.spot_stats["risk_pre_cap_triggered"] = int(self.spot_stats.get("risk_pre_cap_triggered", 0)) + 1
+            max_rate = float(getattr(self, "spot_risk_max_rate", 0.0) or 0.0)
+            if max_rate > 0.0:
+                scored = int(self.spot_stats.get("risk_scored", 0))
+                allowed = max(1, int(math.floor(max_rate * float(scored))))
+                already = int(self.spot_stats.get("risk_triggered", 0))
+                if already >= allowed:
+                    triggered = False
+                    self.spot_stats["risk_cap_blocked"] = int(self.spot_stats.get("risk_cap_blocked", 0)) + 1
+        if triggered:
+            self.spot_stats["risk_triggered"] += 1
+        return score, triggered
+
     def get_spot_summary(self):
         summary = dict(self.spot_stats)
         primary_matches = int(summary.get("primary_matches", 0))
@@ -2247,6 +2632,16 @@ class BoTSORT(object):
         summary["soft_min_track_age"] = int(self.spot_soft_min_track_age)
         summary["soft_max_det_score"] = float(self.spot_soft_max_det_score)
         summary["margin_thresh"] = float(self.spot_margin_thresh)
+        summary["risk_enabled"] = bool(self.spot_risk_enabled)
+        summary["risk_mode"] = str(self.spot_risk_mode)
+        summary["risk_model"] = str(self.spot_risk_model_path)
+        summary["risk_threshold"] = float(self.spot_risk_threshold)
+        summary["risk_max_rate"] = float(getattr(self, "spot_risk_max_rate", 0.0) or 0.0)
+        summary["risk_soft_alpha"] = float(self.spot_risk_soft_alpha)
+        summary["risk_pre_cap_trigger_rate"] = float(summary.get("risk_pre_cap_triggered", 0)) / float(primary_matches) if primary_matches > 0 else 0.0
+        summary["risk_cap_block_rate"] = float(summary.get("risk_cap_blocked", 0)) / float(primary_matches) if primary_matches > 0 else 0.0
+        summary["risk_trigger_rate"] = float(summary.get("risk_triggered", 0)) / float(primary_matches) if primary_matches > 0 else 0.0
+        summary["risk_soft_rate"] = float(summary.get("risk_soft_updates", 0)) / float(primary_matches) if primary_matches > 0 else 0.0
         summary["pair_rows_collected"] = int(len(self.spot_pair_rows or []))
         summary["ambiguity_rate"] = float(ambiguous_matches) / float(primary_matches) if primary_matches > 0 else 0.0
         summary["freeze_rate"] = float(summary.get("forced_freeze_updates", 0)) / float(primary_matches) if primary_matches > 0 else 0.0

@@ -1,0 +1,2 @@
+seq,status,frames_total,frames_processed,detections,detections_with_reid,feature_dim,npz_path,csv_path,manifest_path,started_at,finished_at,notes
+MOT20-01,completed,429,429,21423,21423,2048,outputs/dmm_phase0_mot20_01/MOT20-01/dump_yolox_reid.npz,,outputs/dmm_phase0_mot20_01/MOT20-01/manifest.json,2026-07-05T19:09:01+08:00,2026-07-05T19:12:15+08:00,failed_images=0; feature_dtype=float16

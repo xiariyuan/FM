@@ -102,6 +102,23 @@ def make_parser():
     parser.add_argument('--spot-soft-max-det-score', dest='spot_soft_max_det_score', type=float, default=1.01, help='maximum detection score allowed for SPOT soft appearance update gate')
     parser.add_argument('--spot-margin-thresh', dest='spot_margin_thresh', type=float, default=0.05, help='SPOT ambiguity threshold on min(row_margin, col_margin)')
     parser.add_argument('--spot-debug-dir', dest='spot_debug_dir', type=str, default='', help='optional SPOT debug output directory; reserved for paired-eval diagnostics')
+    parser.add_argument('--spot-risk-model', dest='spot_risk_model', type=str, default='', help='optional SPOT risk model json for observe-only scoring')
+    parser.add_argument('--spot-risk-mode', dest='spot_risk_mode', type=str, default='', choices=['', 'observe', 'soft'], help='SPOT risk mode; observe scores/logs risk, soft applies conservative soft appearance update')
+    parser.add_argument('--spot-risk-threshold', dest='spot_risk_threshold', type=float, default=1.01, help='SPOT risk trigger threshold')
+    parser.add_argument('--spot-risk-max-rate', dest='spot_risk_max_rate', type=float, default=0.0, help='Optional causal cap on SPOT risk triggers as a fraction of scored primary matches; 0 disables cap')
+    parser.add_argument('--spot-risk-soft-alpha', dest='spot_risk_soft_alpha', type=float, default=0.999, help='SPOT risk soft mode EMA alpha; only used when --spot-risk-mode soft')
+
+    # A31 overlap-aware online correction
+    parser.add_argument('--overlap-correction-enable', dest='overlap_correction_enable', default=False, action='store_true', help='A31: freeze appearance updates for tracks in high spatial overlap')
+    parser.add_argument('--overlap-freeze-ioa', dest='overlap_freeze_ioa', type=float, default=0.30, help='A31: min-area IoA threshold to freeze clean appearance prototype updates')
+    parser.add_argument('--overlap-pair-ioa', dest='overlap_pair_ioa', type=float, default=0.80, help='A31: high-overlap pair threshold reserved for reassignment stage')
+    parser.add_argument('--overlap-freeze-max-app-sim', dest='overlap_freeze_max_app_sim', type=float, default=-1.0, help='A31: if >=0, freeze only when cosine(track,det) <= this value')
+    parser.add_argument('--overlap-reassign-enable', dest='overlap_reassign_enable', default=False, action='store_true', help='A31: locally swap matched detections for high-overlap track pairs when clean-feature similarity strongly improves')
+    parser.add_argument('--overlap-reassign-margin', dest='overlap_reassign_margin', type=float, default=0.10, help='A31: minimum swapped-vs-current similarity gain')
+    parser.add_argument('--overlap-reassign-min-sim', dest='overlap_reassign_min_sim', type=float, default=0.45, help='A31: minimum individual clean-feature similarity after swap')
+    parser.add_argument('--a37-candidate-log-dir', dest='a37_candidate_log_dir', type=str, default='', help='A37 analysis: directory for top-k online candidate identity logs')
+    parser.add_argument('--a37-candidate-topk', dest='a37_candidate_topk', type=int, default=5, help='A37 analysis: number of candidate tracks to log per detection')
+    parser.add_argument('--a37-candidate-max-cost', dest='a37_candidate_max_cost', type=float, default=1.0, help='A37 analysis: max cost to include in candidate logs')
 
     # CMC
     parser.add_argument("--cmc-method", default="file", type=str, help="cmc method: files (Vidstab GMC) | sparseOptFlow | orb | ecc | none")
@@ -550,6 +567,16 @@ def build_sequence_manifest_entry(args, spec):
         "match_thresh": float(args.match_thresh),
         "proximity_thresh": float(args.proximity_thresh),
         "appearance_thresh": float(args.appearance_thresh),
+        "overlap_correction_enable": bool(getattr(args, "overlap_correction_enable", False)),
+        "overlap_freeze_ioa": float(getattr(args, "overlap_freeze_ioa", 0.30)),
+        "overlap_pair_ioa": float(getattr(args, "overlap_pair_ioa", 0.80)),
+        "overlap_freeze_max_app_sim": float(getattr(args, "overlap_freeze_max_app_sim", -1.0)),
+        "overlap_reassign_enable": bool(getattr(args, "overlap_reassign_enable", False)),
+        "overlap_reassign_margin": float(getattr(args, "overlap_reassign_margin", 0.10)),
+        "overlap_reassign_min_sim": float(getattr(args, "overlap_reassign_min_sim", 0.45)),
+        "a37_candidate_log_dir": str(getattr(args, "a37_candidate_log_dir", "") or ""),
+        "a37_candidate_topk": int(getattr(args, "a37_candidate_topk", 5)),
+        "a37_candidate_max_cost": float(getattr(args, "a37_candidate_max_cost", 1.0)),
         "assoc_mode": args.laplace_assoc_mode,
         "laplace_assoc": bool(args.laplace_assoc),
         "laplace_primary_only": bool(args.laplace_primary_only),
@@ -648,6 +675,16 @@ def write_run_manifest(manifest_path, args, dataset_root, sequence_specs, resolv
             "min_box_area": float(args.min_box_area),
             "proximity_thresh": float(args.proximity_thresh),
             "appearance_thresh": float(args.appearance_thresh),
+            "overlap_correction_enable": bool(getattr(args, "overlap_correction_enable", False)),
+            "overlap_freeze_ioa": float(getattr(args, "overlap_freeze_ioa", 0.30)),
+            "overlap_pair_ioa": float(getattr(args, "overlap_pair_ioa", 0.80)),
+            "overlap_freeze_max_app_sim": float(getattr(args, "overlap_freeze_max_app_sim", -1.0)),
+            "overlap_reassign_enable": bool(getattr(args, "overlap_reassign_enable", False)),
+            "overlap_reassign_margin": float(getattr(args, "overlap_reassign_margin", 0.10)),
+            "overlap_reassign_min_sim": float(getattr(args, "overlap_reassign_min_sim", 0.45)),
+            "a37_candidate_log_dir": str(getattr(args, "a37_candidate_log_dir", "") or ""),
+            "a37_candidate_topk": int(getattr(args, "a37_candidate_topk", 5)),
+            "a37_candidate_max_cost": float(getattr(args, "a37_candidate_max_cost", 1.0)),
             "cmc_method": args.cmc_method,
         },
         "association": {
@@ -1276,7 +1313,7 @@ def image_track(predictor, vis_folder, args):
                 _w.writerows(spot_rows)
         elif str(getattr(args, "spot_debug_dir", "") or ""):
             with open(spot_pairs_path, "w", encoding="utf-8") as _f:
-                _f.write("seq_name,frame,frame_id,track_id,det_id,det_score,cost,cost_top1,cost_top2,cost_margin,row_margin,col_margin,spot_margin,spot_triggered,spot_reason,spot_action,spot_freeze_app,spot_freeze_app_applied,spot_soft_app_alpha,spot_soft_app_applied,spot_soft_app_skipped,update_mode_observed,update_mode_final,update_mode,append_history,track_age,lost_age\n")
+                _f.write("seq_name,frame,frame_id,track_id,det_id,det_score,cost,cost_top1,cost_top2,cost_margin,row_margin,col_margin,spot_margin,spot_triggered,spot_reason,spot_action,spot_freeze_app,spot_freeze_app_applied,spot_soft_app_alpha,spot_soft_app_applied,spot_soft_app_skipped,spot_risk_enabled,spot_risk_mode,spot_risk_threshold,spot_risk_score,spot_risk_triggered,spot_risk_action,update_mode_observed,update_mode_final,update_mode,append_history,track_age,lost_age\n")
         logger.info(f"save SPOT analysis to {spot_summary_path}")
     if rgsa_or_tcgau:
         flush_tracking_checkpoint(num_frames, final=True)
