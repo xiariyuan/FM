@@ -1,0 +1,670 @@
+#!/usr/bin/env python3
+"""No-op memory-state snapshot wrapper for TrustTrack diagnostics.
+
+For pre-registered exact keys ``(frame, track_id, det_global_idx)``, record:
+- the real association state on the event frame;
+- identity prototype and feature history immediately before/after DMMTrack.update;
+- normal-alpha and soft-alpha theoretical prototype counterfactuals;
+- all association stages containing the same track for N following frames.
+
+The wrapper never reads GT and never changes matching, alpha, features,
+lifecycle, or output rows.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import math
+import sys
+from collections import Counter
+from pathlib import Path
+from typing import Dict, Iterable, List, Sequence, Set, Tuple
+
+import numpy as np
+
+import dmm_base_tracker_shadow_pda as spda
+import dmm_base_tracker_trusttrack_soft as soft
+
+Key = Tuple[int, int, int]
+
+_ORIGINAL_RECORD_ASSOC_DEBUG = spda.base.DMMBaseTracker._record_assoc_debug
+_ORIGINAL_TRACK_UPDATE = spda.base.DMMTrack.update
+_SOFT_UPDATE_IMPL = None
+_CONFIG = None
+_TARGET_KEYS: Set[Key] = set()
+_CURRENT_TARGETS: Dict[Tuple[int, int], List[Key]] = {}
+_FOLLOW_TARGETS: Dict[Tuple[int, int], List[Tuple[Key, int]]] = {}
+_EVENTS: Dict[Key, dict] = {}
+_STATS: dict = {}
+
+
+def _reset_soft_state() -> None:
+    soft._TRUST_SOFT_ALPHA_MAP = {}
+    soft._TRUST_SOFT_REASON_MAP = {}
+    soft._TRUST_PAIR_META = {}
+    soft._TRUST_MATCH_ROWS.clear()
+    soft._TRUST_STATS.clear()
+    soft._TRUST_STATS.update(
+        {
+            "frames": 0,
+            "candidate_pairs": 0,
+            "soft_pairs_predicted": 0,
+            "feature_updates_soft": 0,
+            "feature_updates_normal": 0,
+            "soft_alpha_sum": 0.0,
+        }
+    )
+    soft._PATCHED = False
+
+
+def _load_keys(path: str, direct: Sequence[str]) -> Set[Key]:
+    keys: Set[Key] = set()
+    for value in direct:
+        parts = value.split(":")
+        if len(parts) != 3:
+            raise ValueError(f"invalid key {value!r}; expected FRAME:TRACK:DET")
+        keys.add(tuple(int(part) for part in parts))
+    if path:
+        payload = json.loads(Path(path).read_text(encoding="utf-8"))
+        if isinstance(payload, dict):
+            payload = payload.get("keys", payload.get("events", []))
+        if not isinstance(payload, list):
+            raise ValueError("key JSON must be a list or dict with keys/events")
+        for item in payload:
+            if isinstance(item, dict):
+                keys.add(
+                    (
+                        int(item["frame"]),
+                        int(item.get("track_id", item.get("track"))),
+                        int(item.get("det_global_idx", item.get("det"))),
+                    )
+                )
+            elif isinstance(item, str):
+                parts = item.split(":")
+                if len(parts) != 3:
+                    raise ValueError(f"invalid key {item!r}")
+                keys.add(tuple(int(part) for part in parts))
+            elif isinstance(item, (list, tuple)) and len(item) == 3:
+                keys.add(tuple(int(part) for part in item))
+            else:
+                raise ValueError(f"unsupported key item: {item!r}")
+    if not keys:
+        raise ValueError("at least one snapshot key is required")
+    if any(frame < 1 for frame, _, _ in keys):
+        raise ValueError("frame IDs must be >=1")
+    return keys
+
+
+def _reset_snapshot_state(keys: Iterable[Key], follow_frames: int) -> None:
+    global _TARGET_KEYS, _CURRENT_TARGETS, _FOLLOW_TARGETS, _EVENTS, _STATS
+    _TARGET_KEYS = set(keys)
+    _CURRENT_TARGETS = {}
+    _FOLLOW_TARGETS = {}
+    _EVENTS = {}
+    for key in sorted(_TARGET_KEYS):
+        frame, track_id, _ = key
+        _CURRENT_TARGETS.setdefault((frame, track_id), []).append(key)
+        for offset in range(1, int(follow_frames) + 1):
+            _FOLLOW_TARGETS.setdefault((frame + offset, track_id), []).append(
+                (key, offset)
+            )
+        _EVENTS[key] = {
+            "key": list(key),
+            "update_snapshot": None,
+            "association_current": [],
+            "association_next": [],
+            "association_follow": [],
+        }
+    _STATS = {
+        "target_keys": len(_TARGET_KEYS),
+        "update_calls": 0,
+        "target_update_hits": 0,
+        "target_update_duplicates": 0,
+        "association_callbacks": 0,
+        "current_association_rows": 0,
+        "next_association_rows": 0,
+        "follow_association_rows": 0,
+        "stage_calls": Counter(),
+    }
+
+
+def _copy_array(value) -> np.ndarray | None:
+    if value is None:
+        return None
+    array = np.asarray(value, dtype=np.float32)
+    if array.size == 0:
+        return None
+    return array.copy()
+
+
+def _unit(value) -> np.ndarray | None:
+    array = _copy_array(value)
+    if array is None:
+        return None
+    norm = float(np.linalg.norm(array))
+    if norm < 1e-12:
+        return None
+    return array / norm
+
+
+def _hash(value) -> str | None:
+    array = _copy_array(value)
+    if array is None:
+        return None
+    digest = hashlib.sha256()
+    digest.update(str(array.shape).encode("ascii"))
+    digest.update(str(array.dtype).encode("ascii"))
+    digest.update(array.tobytes(order="C"))
+    return digest.hexdigest()
+
+
+def _cosine(a, b) -> float | None:
+    aa = _unit(a)
+    bb = _unit(b)
+    if aa is None or bb is None or aa.shape != bb.shape:
+        return None
+    return float(np.clip(np.dot(aa, bb), -1.0, 1.0))
+
+
+def _l2(a, b) -> float | None:
+    aa = _copy_array(a)
+    bb = _copy_array(b)
+    if aa is None or bb is None or aa.shape != bb.shape:
+        return None
+    return float(np.linalg.norm(aa - bb))
+
+
+def _prototype_after(before, current, alpha: float) -> np.ndarray | None:
+    current_unit = _unit(current)
+    if current_unit is None:
+        return _copy_array(before)
+    before_unit = _unit(before)
+    if before_unit is None:
+        return current_unit.copy()
+    value = float(alpha) * before_unit + (1.0 - float(alpha)) * current_unit
+    norm = float(np.linalg.norm(value))
+    if norm < 1e-12:
+        return None
+    return value / norm
+
+
+def _history_vectors(track) -> List[np.ndarray]:
+    try:
+        values = list(getattr(track, "features", ()))
+    except TypeError:
+        return []
+    result: List[np.ndarray] = []
+    for value in values:
+        unit = _unit(value)
+        if unit is not None:
+            result.append(unit)
+    return result
+
+
+def _history_summary(track, current, recent_count: int) -> dict:
+    values = _history_vectors(track)
+    recent = values[-recent_count:] if recent_count > 0 else []
+    current_cos = [
+        score for vector in recent if (score := _cosine(vector, current)) is not None
+    ]
+    consecutive = [
+        score
+        for left, right in zip(recent[:-1], recent[1:])
+        if (score := _cosine(left, right)) is not None
+    ]
+    return {
+        "history_len": len(values),
+        "recent_count": len(recent),
+        "recent_cos_current": current_cos,
+        "recent_cos_current_mean": float(np.mean(current_cos)) if current_cos else None,
+        "recent_cos_current_min": float(np.min(current_cos)) if current_cos else None,
+        "recent_cos_current_max": float(np.max(current_cos)) if current_cos else None,
+        "recent_consecutive_cos": consecutive,
+        "recent_consecutive_cos_mean": (
+            float(np.mean(consecutive)) if consecutive else None
+        ),
+    }
+
+
+def _alternative_min(values: np.ndarray, chosen_index: int) -> float | None:
+    values = np.asarray(values, dtype=np.float32).reshape(-1)
+    if values.size <= 1:
+        return None
+    mask = np.ones(values.size, dtype=bool)
+    mask[int(chosen_index)] = False
+    mask &= np.isfinite(values)
+    alternatives = values[mask]
+    return float(np.min(alternatives)) if alternatives.size else None
+
+
+def _signed_margin(alt: float | None, chosen: float) -> float | None:
+    if alt is None or not math.isfinite(chosen):
+        return None
+    return float(alt - chosen)
+
+
+def _pair_margin(row: float | None, col: float | None) -> float | None:
+    values = [value for value in (row, col) if value is not None]
+    return float(min(values)) if values else None
+
+
+def _rank(row: np.ndarray, column: int) -> int:
+    order = np.argsort(np.asarray(row, dtype=np.float32), kind="mergesort")
+    where = np.flatnonzero(order == int(column))
+    return int(where[0]) + 1 if where.size else -1
+
+
+def _matrix(debug: dict, name: str, shape: Tuple[int, int]) -> np.ndarray:
+    value = debug.get(name)
+    if value is None:
+        return np.full(shape, np.nan, dtype=np.float32)
+    matrix = np.asarray(value, dtype=np.float32)
+    if matrix.shape != shape:
+        return np.full(shape, np.nan, dtype=np.float32)
+    return matrix
+
+
+def _threshold(tracker, stage: str) -> float | None:
+    if stage.startswith("primary"):
+        return float(tracker.cfg.match_thresh)
+    if stage.startswith("secondary"):
+        return float(tracker.cfg.second_match_thresh)
+    if stage.startswith("unconfirmed"):
+        return float(tracker.cfg.unconfirmed_match_thresh)
+    return None
+
+
+def _association_row(
+    tracker,
+    stage: str,
+    track,
+    detection,
+    cost: np.ndarray,
+    raw_iou: np.ndarray,
+    embedding: np.ndarray,
+    track_row: int,
+    det_col: int,
+    *,
+    chosen: bool,
+    exact_target_det: bool,
+    role: str,
+) -> dict:
+    chosen_cost = float(cost[track_row, det_col])
+    row_margin = _signed_margin(
+        _alternative_min(cost[track_row, :], det_col), chosen_cost
+    )
+    col_margin = _signed_margin(
+        _alternative_min(cost[:, det_col], track_row), chosen_cost
+    )
+    threshold = _threshold(tracker, stage)
+    return {
+        "frame": int(tracker.frame_id),
+        "stage": str(stage),
+        "row_role": role,
+        "chosen": int(chosen),
+        "exact_target_det": int(exact_target_det),
+        "track_id": int(getattr(track, "track_id", -1)),
+        "det_global_idx": int(getattr(detection, "det_global_idx", -1)),
+        "det_score": float(getattr(detection, "score", math.nan)),
+        "chosen_rank": _rank(cost[track_row, :], det_col),
+        "final_cost": chosen_cost,
+        "assignment_threshold": threshold,
+        "final_valid": (
+            int(chosen_cost <= threshold + np.finfo(float).eps)
+            if threshold is not None
+            else None
+        ),
+        "raw_iou_cost": float(raw_iou[track_row, det_col]),
+        "embedding_cost": float(embedding[track_row, det_col]),
+        "row_signed_margin": row_margin,
+        "col_signed_margin": col_margin,
+        "pair_signed_margin": _pair_margin(row_margin, col_margin),
+        "smooth_current_cosine": _cosine(
+            getattr(track, "smooth_feat", None),
+            getattr(detection, "curr_feat", None),
+        ),
+        "track_smooth_hash": _hash(getattr(track, "smooth_feat", None)),
+        "track_frame_id_before_update": int(getattr(track, "frame_id", -1)),
+        "tracklet_len_before_update": int(getattr(track, "tracklet_len", -1)),
+    }
+
+
+def _record_assoc_debug(
+    self,
+    stage: str,
+    tracks: Sequence,
+    detections: Sequence,
+    cost: np.ndarray,
+    matches: np.ndarray,
+    row_m: np.ndarray,
+    col_m: np.ndarray,
+    debug: dict,
+) -> None:
+    del row_m, col_m
+    frame = int(self.frame_id)
+    stage = str(stage)
+    _STATS["association_callbacks"] += 1
+    _STATS["stage_calls"][stage] += 1
+    matrix = np.asarray(cost, dtype=np.float32)
+    if matrix.ndim != 2:
+        raise ValueError(f"association cost must be 2-D, got {matrix.shape}")
+    raw_iou = _matrix(debug, "raw_iou", matrix.shape)
+    embedding = _matrix(debug, "emb", matrix.shape)
+    match_array = np.asarray(matches, dtype=np.int64)
+    if match_array.size == 0:
+        match_array = np.zeros((0, 2), dtype=np.int64)
+    else:
+        match_array = match_array.reshape(-1, 2)
+    chosen_by_track = {int(i): int(j) for i, j in match_array.tolist()}
+
+    for track_row, track in enumerate(tracks):
+        track_id = int(getattr(track, "track_id", -1))
+        current_targets = _CURRENT_TARGETS.get((frame, track_id), [])
+        follow_targets = _FOLLOW_TARGETS.get((frame, track_id), [])
+        if not current_targets and not follow_targets:
+            continue
+        chosen_col = chosen_by_track.get(track_row)
+        best_col = None
+        if matrix.shape[1] > 0 and np.any(np.isfinite(matrix[track_row])):
+            best_col = int(np.argmin(matrix[track_row]))
+
+        for target in current_targets:
+            target_det = int(target[2])
+            for det_col, detection in enumerate(detections):
+                if int(getattr(detection, "det_global_idx", -1)) != target_det:
+                    continue
+                row = _association_row(
+                    self,
+                    stage,
+                    track,
+                    detection,
+                    matrix,
+                    raw_iou,
+                    embedding,
+                    track_row,
+                    det_col,
+                    chosen=chosen_col == det_col,
+                    exact_target_det=True,
+                    role="target_detection",
+                )
+                _EVENTS[target]["association_current"].append(row)
+                _STATS["current_association_rows"] += 1
+
+        for target, offset in follow_targets:
+            if chosen_col is not None:
+                det_col = chosen_col
+                role = "actual_chosen"
+            elif best_col is not None:
+                det_col = best_col
+                role = "unmatched_row_best"
+            else:
+                continue
+            row = _association_row(
+                self,
+                stage,
+                track,
+                detections[det_col],
+                matrix,
+                raw_iou,
+                embedding,
+                track_row,
+                det_col,
+                chosen=chosen_col == det_col,
+                exact_target_det=False,
+                role=role,
+            )
+            row["target_frame_offset"] = int(offset)
+            _EVENTS[target]["association_follow"].append(row)
+            _STATS["follow_association_rows"] += 1
+            if int(offset) == 1:
+                _EVENTS[target]["association_next"].append(row)
+                _STATS["next_association_rows"] += 1
+
+
+def _track_update(self, new_track, frame_id):
+    if _SOFT_UPDATE_IMPL is None:
+        raise RuntimeError("soft update implementation is not initialized")
+    frame = int(frame_id)
+    track_id = int(getattr(self, "track_id", -1))
+    det_global_idx = int(getattr(new_track, "det_global_idx", -1))
+    key = (frame, track_id, det_global_idx)
+    _STATS["update_calls"] += 1
+    if key not in _TARGET_KEYS:
+        return _SOFT_UPDATE_IMPL(self, new_track, frame_id)
+
+    event = _EVENTS[key]
+    if event["update_snapshot"] is not None:
+        _STATS["target_update_duplicates"] += 1
+        raise RuntimeError(f"duplicate target update: {key}")
+
+    before = _copy_array(getattr(self, "smooth_feat", None))
+    current = _copy_array(getattr(new_track, "curr_feat", None))
+    alpha_attr = float(getattr(self, "alpha", 0.9))
+    tracklet_before = int(getattr(self, "tracklet_len", 0))
+    soft_key = (track_id, det_global_idx)
+    soft_alpha = soft._TRUST_SOFT_ALPHA_MAP.get(soft_key)
+    feature_available = current is not None
+    alpha_used = (
+        float(soft_alpha)
+        if soft_alpha is not None and feature_available
+        else alpha_attr
+    )
+    history_before = _history_summary(self, current, int(_CONFIG.recent_count))
+    soft_meta = dict(soft._TRUST_PAIR_META.get(soft_key, {}))
+    predicted_actual = _prototype_after(before, current, alpha_used)
+    predicted_normal = _prototype_after(before, current, alpha_attr)
+    predicted_soft = (
+        _prototype_after(before, current, float(soft_alpha))
+        if soft_alpha is not None
+        else None
+    )
+
+    result = _SOFT_UPDATE_IMPL(self, new_track, frame_id)
+
+    after = _copy_array(getattr(self, "smooth_feat", None))
+    event["update_snapshot"] = {
+        "frame": frame,
+        "track_id": track_id,
+        "det_global_idx": det_global_idx,
+        "feature_available": int(feature_available),
+        "alpha_attr_before": alpha_attr,
+        "soft_planned": int(soft_alpha is not None),
+        "soft_alpha": float(soft_alpha) if soft_alpha is not None else None,
+        "soft_reason": str(soft._TRUST_SOFT_REASON_MAP.get(soft_key, "")),
+        "alpha_used": alpha_used,
+        "tracklet_len_before": tracklet_before,
+        "tracklet_len_after": int(getattr(self, "tracklet_len", 0)),
+        "smooth_before_hash": _hash(before),
+        "smooth_after_hash": _hash(after),
+        "current_feat_hash": _hash(current),
+        "smooth_before_norm": float(np.linalg.norm(before)) if before is not None else None,
+        "smooth_after_norm": float(np.linalg.norm(after)) if after is not None else None,
+        "current_feat_norm": float(np.linalg.norm(current)) if current is not None else None,
+        "cos_before_current": _cosine(before, current),
+        "cos_after_current": _cosine(after, current),
+        "cos_before_after": _cosine(before, after),
+        "l2_before_after": _l2(before, after),
+        "predicted_actual_hash": _hash(predicted_actual),
+        "actual_vs_predicted_l2": _l2(after, predicted_actual),
+        "actual_vs_predicted_cos": _cosine(after, predicted_actual),
+        "predicted_normal_hash": _hash(predicted_normal),
+        "predicted_soft_hash": _hash(predicted_soft),
+        "cos_predicted_normal_current": _cosine(predicted_normal, current),
+        "cos_predicted_soft_current": _cosine(predicted_soft, current),
+        "cos_predicted_normal_soft": _cosine(predicted_normal, predicted_soft),
+        "l2_predicted_normal_soft": _l2(predicted_normal, predicted_soft),
+        "history_before": history_before,
+        "history_after": _history_summary(self, current, int(_CONFIG.recent_count)),
+        "soft_pair_meta": soft_meta,
+    }
+    _STATS["target_update_hits"] += 1
+    return result
+
+
+def _jsonable_stats() -> dict:
+    result = dict(_STATS)
+    result["stage_calls"] = dict(result["stage_calls"])
+    result["missing_update_keys"] = [
+        list(key)
+        for key, event in sorted(_EVENTS.items())
+        if event["update_snapshot"] is None
+    ]
+    result["missing_current_association_keys"] = [
+        list(key)
+        for key, event in sorted(_EVENTS.items())
+        if not event["association_current"]
+    ]
+    result["missing_next_association_keys"] = [
+        list(key)
+        for key, event in sorted(_EVENTS.items())
+        if not event["association_next"]
+    ]
+    return result
+
+
+def _parse_args() -> Tuple[argparse.Namespace, List[str]]:
+    parser = argparse.ArgumentParser(add_help=False)
+    parser.add_argument("--snapshot-key", action="append", default=[])
+    parser.add_argument("--snapshot-keys-json", default="")
+    parser.add_argument("--snapshot-output-json", required=True)
+    parser.add_argument("--snapshot-summary-json", required=True)
+    parser.add_argument("--snapshot-recent-count", type=int, default=8)
+    parser.add_argument("--snapshot-follow-frames", type=int, default=1)
+    parser.add_argument(
+        "--snapshot-soft-ablation-mode", choices=("exclude", "only"), default=""
+    )
+    parser.add_argument("--snapshot-soft-ablation-key", action="append", default=[])
+    parser.add_argument("--snapshot-soft-ablation-keys-json", default="")
+    args, remaining = parser.parse_known_args()
+    if args.snapshot_recent_count < 0:
+        raise ValueError("--snapshot-recent-count must be >=0")
+    if args.snapshot_follow_frames < 1:
+        raise ValueError("--snapshot-follow-frames must be >=1")
+    ablation_direct = list(args.snapshot_soft_ablation_key)
+    ablation_path = str(args.snapshot_soft_ablation_keys_json)
+    if args.snapshot_soft_ablation_mode:
+        ablation_keys = sorted(_load_keys(ablation_path, ablation_direct))
+    else:
+        if ablation_direct or ablation_path:
+            raise ValueError("ablation keys require --snapshot-soft-ablation-mode")
+        ablation_keys = []
+    config = argparse.Namespace(
+        output_json=str(args.snapshot_output_json),
+        summary_json=str(args.snapshot_summary_json),
+        recent_count=int(args.snapshot_recent_count),
+        follow_frames=int(args.snapshot_follow_frames),
+        keys=sorted(_load_keys(str(args.snapshot_keys_json), list(args.snapshot_key))),
+        ablation_mode=str(args.snapshot_soft_ablation_mode),
+        ablation_keys=ablation_keys,
+    )
+    return config, remaining
+
+
+def main() -> None:
+    global _CONFIG, _SOFT_UPDATE_IMPL
+    config, remaining = _parse_args()
+    if "--debug-csv" in remaining:
+        raise ValueError("--debug-csv is not supported by memory snapshot wrapper")
+    if "--debug-assoc" not in remaining:
+        remaining.append("--debug-assoc")
+
+    _CONFIG = config
+    _reset_snapshot_state(config.keys, config.follow_frames)
+    _reset_soft_state()
+    soft._ensure_patch()
+    _SOFT_UPDATE_IMPL = spda.base.DMMTrack.update
+
+    old_argv = sys.argv
+    failure: str | None = None
+    original_compute = soft.compute_soft_map
+    ablation_stats = {
+        "compute_calls": 0,
+        "planned_before_filter": 0,
+        "planned_after_filter": 0,
+        "selected_key_hits": 0,
+    }
+    selected_ablation_keys = set(config.ablation_keys)
+
+    def filtered_compute(tracker, boxes, scores, feats, det_ids, trust_cfg):
+        alpha_map, reason_map = original_compute(
+            tracker, boxes, scores, feats, det_ids, trust_cfg
+        )
+        frame = int(getattr(tracker, "frame_id", 0)) + 1
+        ablation_stats["compute_calls"] += 1
+        ablation_stats["planned_before_filter"] += len(alpha_map)
+        hits = {
+            pair
+            for pair in alpha_map
+            if (frame, int(pair[0]), int(pair[1])) in selected_ablation_keys
+        }
+        ablation_stats["selected_key_hits"] += len(hits)
+        keep = hits if config.ablation_mode == "only" else set(alpha_map) - hits
+        filtered_alpha = {key: value for key, value in alpha_map.items() if key in keep}
+        filtered_reason = {key: value for key, value in reason_map.items() if key in keep}
+        soft._TRUST_PAIR_META = {
+            key: value for key, value in soft._TRUST_PAIR_META.items() if key in keep
+        }
+        ablation_stats["planned_after_filter"] += len(filtered_alpha)
+        return filtered_alpha, filtered_reason
+
+    if config.ablation_mode:
+        soft.compute_soft_map = filtered_compute
+    spda.base.DMMBaseTracker._record_assoc_debug = _record_assoc_debug
+    spda.base.DMMTrack.update = _track_update
+    try:
+        sys.argv = [sys.argv[0]] + remaining
+        soft.main()
+    except Exception as exc:
+        failure = f"{type(exc).__name__}: {exc}"
+        raise
+    finally:
+        sys.argv = old_argv
+        spda.base.DMMBaseTracker._record_assoc_debug = _ORIGINAL_RECORD_ASSOC_DEBUG
+        spda.base.DMMTrack.update = _ORIGINAL_TRACK_UPDATE
+        soft.compute_soft_map = original_compute
+        soft._PATCHED = False
+
+        output = Path(config.output_json)
+        summary = Path(config.summary_json)
+        output.parent.mkdir(parents=True, exist_ok=True)
+        summary.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(
+            json.dumps(
+                {"events": [event for _, event in sorted(_EVENTS.items())]},
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+        summary.write_text(
+            json.dumps(
+                {
+                    "failure": failure,
+                    "config": {
+                        "keys": [list(key) for key in config.keys],
+                        "recent_count": config.recent_count,
+                        "follow_frames": config.follow_frames,
+                        "ablation_mode": config.ablation_mode,
+                        "ablation_keys": [list(key) for key in config.ablation_keys],
+                    },
+                    "ablation_stats": ablation_stats,
+                    "stats": _jsonable_stats(),
+                    "diagnostic_only": True,
+                    "uses_ground_truth": False,
+                },
+                indent=2,
+                sort_keys=True,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+
+    stats = _jsonable_stats()
+    if int(stats["target_update_duplicates"]) != 0:
+        raise RuntimeError(f"duplicate target updates: {stats}")
+
+
+if __name__ == "__main__":
+    main()
