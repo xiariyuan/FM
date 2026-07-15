@@ -64,6 +64,9 @@ def main():
 
     out = Path(args.out_dir); out.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(args.features_csv)
+    seq_values = sorted(df['seq'].astype(str).unique().tolist()) if 'seq' in df.columns else []
+    seq_name = seq_values[0] if len(seq_values) == 1 else 'multi-sequence'
+    seq_stem = seq_name.lower().replace('mot20-', 'm').replace('-', '_')
     if args.debt_csv:
         debt = pd.read_csv(args.debt_csv)
         if 'seq' in debt.columns and 'seq' in df.columns:
@@ -152,14 +155,14 @@ def main():
         for row in metrics:
             policy_reports.append({'score': score_col, **row})
 
-    pool.to_csv(out / 'm02_grouped_oof_change_scores.csv', index=False)
+    pool.to_csv(out / f'{seq_stem}_grouped_oof_change_scores.csv', index=False)
     pd.DataFrame(fold_reports).to_csv(out / 'fold_metrics.csv', index=False)
     pd.DataFrame(policy_reports).to_csv(out / 'event_budget_metrics.csv', index=False)
     pd.DataFrame({'feature': features, 'importance': importance}).sort_values(
         'importance', ascending=False).to_csv(out / 'feature_importance.csv', index=False)
     report = {
         'protocol': {
-            'scope': 'MOT20-02 diagnostic pilot only; not a deployable cross-sequence validation',
+            'scope': f'{seq_name} same-sequence diagnostic only; not a deployable cross-sequence validation',
             'validation': 'GroupKFold by tracker ID',
             'labels': f'persistent GT switch p{args.persistence} within +/-{args.label_window} frames',
             'candidate_rule': f'overlap_max_ioa >= {args.candidate_ioa}; debt_pct >= {args.min_debt_pct}',

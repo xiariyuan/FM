@@ -52,6 +52,9 @@ def main():
 
     out = Path(args.out_dir); out.mkdir(parents=True, exist_ok=True)
     df = pd.read_csv(args.pair_bank)
+    seq_values = sorted(df['seq'].astype(str).unique().tolist()) if 'seq' in df.columns else []
+    seq_name = seq_values[0] if len(seq_values) == 1 else 'multi-sequence'
+    seq_stem = seq_name.lower().replace('mot20-', 'm').replace('-', '_')
     numeric = [c for c in df.columns if pd.api.types.is_numeric_dtype(df[c])]
     features = [c for c in numeric if c not in ID_COLS | FORBIDDEN_EXACT
                 and not c.startswith(FORBIDDEN_PREFIXES)]
@@ -134,14 +137,14 @@ def main():
             budget_rows.extend(event_budget_metrics(df, score, target_col,
                                                     [25,50,100,200,500,1000]))
 
-    df.to_csv(out / 'm02_pair_state_oof_scores.csv', index=False)
+    df.to_csv(out / f'{seq_stem}_pair_state_oof_scores.csv', index=False)
     pd.DataFrame(fold_reports).to_csv(out / 'fold_metrics.csv', index=False)
     pd.DataFrame(budget_rows).to_csv(out / 'event_budget_metrics.csv', index=False)
     importance_df = pd.DataFrame(all_importance).sort_values(['target','importance'], ascending=[True,False])
     importance_df.to_csv(out / 'feature_importance.csv', index=False)
     report = {
         'protocol': {
-            'scope': 'MOT20-02 diagnostic pilot only',
+            'scope': f'{seq_name} same-sequence diagnostic only',
             'validation': 'GroupKFold by changed-track track_a',
             'candidate_bank': 'top-5000 unary NMS proposals x top-3 observable overlap partners',
             'GT_policy': 'GT labels excluded from features; diagnostic OOF unary score is retained and is not yet cross-sequence deployable.',

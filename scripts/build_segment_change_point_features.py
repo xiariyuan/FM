@@ -143,6 +143,12 @@ def main():
     ap.add_argument('--window', type=int, default=5)
     ap.add_argument('--min-iou', type=float, default=.5)
     ap.add_argument('--max-frame-gap', type=int, default=10)
+    ap.add_argument('--track-index-start', type=int, default=1,
+                    help='1-based inclusive index in sorted tracker-ID order')
+    ap.add_argument('--track-index-end', type=int, default=0,
+                    help='1-based inclusive index; 0 means all remaining tracks')
+    ap.add_argument('--output-stem', default='',
+                    help='Output filename stem; defaults to sequence name')
     args = ap.parse_args()
 
     seq = args.seq; out = Path(args.out_dir); out.mkdir(parents=True, exist_ok=True)
@@ -158,9 +164,20 @@ def main():
     matches = matches[matches.seq == seq]
     switch_sets = {p: persistent_switches(matches, p) for p in [1, 3, 5, 10]}
 
+    all_track_items = sorted(tracks.items())
+    start_index = max(1, int(args.track_index_start))
+    end_index = int(args.track_index_end) if int(args.track_index_end) > 0 else len(all_track_items)
+    if start_index > end_index or start_index > len(all_track_items):
+        raise ValueError(f'invalid track shard {start_index}:{end_index} for {len(all_track_items)} tracks')
+    end_index = min(end_index, len(all_track_items))
+    selected_items = all_track_items[start_index - 1:end_index]
+    selected_tids = {int(tid) for tid, _ in selected_items}
+    output_stem = args.output_stem or seq
+
     total_rows = matched_rows = low_iou_rows = zero_feature_rows = 0
     records = []
-    for track_index, (tid, rows) in enumerate(sorted(tracks.items()), 1):
+    for local_index, (tid, rows) in enumerate(selected_items, 1):
+        track_index = start_index + local_index - 1
         n = len(rows); total_rows += n
         det_idx = np.full(n, -1, dtype=np.int64); match_iou = np.zeros(n, dtype=np.float32)
         for i, row in enumerate(rows):
@@ -249,21 +266,27 @@ def main():
                 rec[f'label_switch_p{p}'] = int(frame in switches)
                 rec[f'distance_to_switch_p{p}'] = min([abs(frame - x) for x in switches] or [10**9])
             records.append(rec)
-        if track_index % 50 == 0:
-            print(json.dumps({'tracks_done': track_index, 'tracks_total': len(tracks),
+        if local_index % 50 == 0 or local_index == len(selected_items):
+            print(json.dumps({'tracks_done_in_shard': local_index, 'tracks_in_shard': len(selected_items),
+                              'global_track_index': track_index, 'tracks_total': len(all_track_items),
                               'records': len(records), 'matched_rows': matched_rows}), flush=True)
 
-    write_csv(out / f'{seq}_segment_change_features.csv', records)
+    write_csv(out / f'{output_stem}_segment_change_features.csv', records)
     df = pd.DataFrame(records)
     summary = {
         'seq': seq, 'track_rows': total_rows, 'matched_reid_rows': matched_rows,
         'reid_match_coverage': matched_rows / max(1, total_rows),
         'low_iou_rows': low_iou_rows, 'zero_feature_rows': zero_feature_rows,
         'feature_boundaries': len(records), 'window': args.window, 'min_iou': args.min_iou,
-        'persistent_switches': {str(p): int(sum(len(v) for v in switch_sets[p].values())) for p in [1,3,5,10]},
+        'track_index_start': start_index, 'track_index_end': end_index,
+        'tracks_in_shard': len(selected_items), 'tracks_total': len(all_track_items),
+        'selected_track_ids': sorted(selected_tids),
+        'persistent_switches': {str(p): int(sum(len(v) for tid, v in switch_sets[p].items()
+                                                 if int(tid) in selected_tids))
+                                for p in [1,3,5,10]},
         'positive_boundaries': {str(p): int(df[f'label_switch_p{p}'].sum()) if len(df) else 0 for p in [1,3,5,10]},
     }
-    (out / f'{seq}_summary.json').write_text(json.dumps(summary, indent=2) + '\n')
+    (out / f'{output_stem}_summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     print(json.dumps(summary, indent=2), flush=True)
 
 if __name__ == '__main__':

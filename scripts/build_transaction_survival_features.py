@@ -32,7 +32,10 @@ def main():
     args = ap.parse_args()
 
     events = pd.read_csv(args.events).head(args.top_k).copy().reset_index(drop=True)
-    events.insert(0, 'canonical_rank', np.arange(1, len(events) + 1, dtype=int))
+    if 'canonical_rank' not in events.columns:
+        events.insert(0, 'canonical_rank', np.arange(1, len(events) + 1, dtype=int))
+    else:
+        events['canonical_rank'] = events['canonical_rank'].astype(int)
     tracks = read_tracks(Path(args.track_file))
     npz = Path(args.dump_npz)
     det = npy_member_memmap(npz, 'detections.npy')

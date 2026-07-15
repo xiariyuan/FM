@@ -109,6 +109,12 @@ def main():
     ap.add_argument('--proposal-scores', required=True)
     ap.add_argument('--proposal-score-col', default='oof_hgb')
     ap.add_argument('--proposal-limit', type=int, default=5000)
+    ap.add_argument('--proposal-index-start', type=int, default=1,
+                    help='1-based inclusive index after global NMS/ranking')
+    ap.add_argument('--proposal-index-end', type=int, default=0,
+                    help='1-based inclusive index; 0 means all remaining proposals')
+    ap.add_argument('--output-stem', default='',
+                    help='Output filename stem; defaults to sequence name')
     ap.add_argument('--proposal-nms-radius', type=int, default=10)
     ap.add_argument('--top-k-partners', type=int, default=3)
     ap.add_argument('--partner-frame-pad', type=int, default=1)
@@ -124,8 +130,15 @@ def main():
     seq = args.seq; out = Path(args.out_dir); out.mkdir(parents=True, exist_ok=True)
     proposal_df = pd.read_csv(args.proposal_scores)
     proposal_df = proposal_df[proposal_df.seq == seq].copy() if 'seq' in proposal_df else proposal_df
-    proposals = nms_proposals(proposal_df, args.proposal_score_col,
-                              args.proposal_nms_radius, args.proposal_limit)
+    all_proposals = nms_proposals(proposal_df, args.proposal_score_col,
+                                  args.proposal_nms_radius, args.proposal_limit)
+    proposal_start = max(1, int(args.proposal_index_start))
+    proposal_end = int(args.proposal_index_end) if int(args.proposal_index_end) > 0 else len(all_proposals)
+    if proposal_start > proposal_end or proposal_start > len(all_proposals):
+        raise ValueError(f'invalid proposal shard {proposal_start}:{proposal_end} for {len(all_proposals)} proposals')
+    proposal_end = min(proposal_end, len(all_proposals))
+    proposals = all_proposals[proposal_start - 1:proposal_end]
+    output_stem = args.output_stem or seq
     tracks = read_tracks(Path(args.track_file))
     overlap = load_overlap_partners(Path(args.overlap_events), seq)
 
@@ -180,7 +193,8 @@ def main():
         return proto_cache[key]
 
     rows = []; proposals_with_partner = 0
-    for pi, proposal in enumerate(proposals, 1):
+    for local_pi, proposal in enumerate(proposals, 1):
+        pi = proposal_start + local_pi - 1
         a = int(proposal['track_id']); frame = int(proposal['boundary_frame'])
         partners = top_partners(overlap, a, frame, args.top_k_partners, args.partner_frame_pad)
         if partners:
@@ -236,7 +250,9 @@ def main():
                 area_log_ratio_abs = float(abs(np.log(max(ar['area'], 1e-6) / max(br['area'], 1e-6))))
 
             base = {k: v for k, v in proposal.items()
-                    if not k.startswith('label_switch_') and not k.startswith('distance_to_switch_')}
+                    if k != 'target'
+                    and not k.startswith('label_switch_')
+                    and not k.startswith('distance_to_switch_')}
             rows.append({
                 **base,
                 'proposal_rank': pi, 'track_a': a, 'track_b': b,
@@ -276,15 +292,30 @@ def main():
                 'label_pair_related': int(old_carrier or new_source),
                 'label_pair_class': pair_class,
             })
-        if pi % 500 == 0:
-            print(json.dumps({'proposals_done': pi, 'pair_rows': len(rows),
+        if local_pi % 250 == 0 or local_pi == len(proposals):
+            print(json.dumps({'proposals_done_in_shard': local_pi,
+                              'proposals_in_shard': len(proposals),
+                              'global_proposal_index': pi,
+                              'pair_rows': len(rows),
                               'feature_cache': len(feature_cache)}), flush=True)
 
-    write_csv(out / f'{seq}_segment_pair_state_bank.csv', rows)
+    write_csv(out / f'{output_stem}_segment_pair_state_bank.csv', rows)
     bank = pd.DataFrame(rows)
+    if args.proposal_score_col.startswith('loso_unary_'):
+        leakage_policy = (
+            f'Candidate proposals for {seq} use unary scores trained on the other sequences only. '
+            'Held-out GT-derived columns are emitted only for diagnostic labels and must be excluded from models.'
+        )
+    else:
+        leakage_policy = (
+            f'Candidate proposals for {seq} use diagnostic same-sequence grouped-OOF unary scores. '
+            'GT-derived columns are emitted only for diagnostic labels and must be excluded from models.'
+        )
     summary = {
         'seq': seq, 'proposal_score_col': args.proposal_score_col,
-        'proposal_limit': args.proposal_limit, 'proposals_selected': len(proposals),
+        'proposal_limit': args.proposal_limit,
+        'proposal_index_start': proposal_start, 'proposal_index_end': proposal_end,
+        'proposals_total': len(all_proposals), 'proposals_selected': len(proposals),
         'proposals_with_partner': proposals_with_partner,
         'proposal_partner_coverage': proposals_with_partner / max(1, len(proposals)),
         'top_k_partners': args.top_k_partners, 'pair_rows': len(rows),
@@ -295,9 +326,9 @@ def main():
         'related_pairs': int(bank.label_pair_related.sum()) if len(bank) else 0,
         'unique_reciprocal_events': int(bank[bank.label_reciprocal_swap == 1][['track_a','boundary_frame']].drop_duplicates().shape[0]) if len(bank) else 0,
         'unique_related_events': int(bank[bank.label_pair_related == 1][['track_a','boundary_frame']].drop_duplicates().shape[0]) if len(bank) else 0,
-        'leakage_policy': 'Candidate proposals use diagnostic OOF unary scores and observable overlap only. GT columns are emitted strictly for M02 pilot labels and must be excluded from models.',
+        'leakage_policy': leakage_policy,
     }
-    (out / f'{seq}_summary.json').write_text(json.dumps(summary, indent=2) + '\n')
+    (out / f'{output_stem}_summary.json').write_text(json.dumps(summary, indent=2) + '\n')
     print(json.dumps(summary, indent=2), flush=True)
 
 if __name__ == '__main__':
