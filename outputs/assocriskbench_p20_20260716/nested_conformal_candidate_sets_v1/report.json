@@ -1,0 +1,84 @@
+{
+  "block_ood_certificate": {
+    "certified_blocks": 24,
+    "certified_positive_blocks": 22,
+    "certified_sequences": 7,
+    "conditional_positive_coverage": 0.9545454545454546,
+    "covered_certified_positive_blocks": 21,
+    "missed_certified_positive_blocks": 1
+  },
+  "dataset": {
+    "events": 11705,
+    "negative_events": 10147,
+    "positive_events": 1050,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "temporal_blocks": 28,
+    "zero_events": 508
+  },
+  "decision": {
+    "current_block_ood_certificate_retained": false,
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "next_stage": "Build receiver change-point and ephemeral-anchor split features, then use them as a mechanism-specific rescue head inside the conformal candidate set. Do not enlarge the generic rank radius or tune scalar gates.",
+    "p15_policy_changed": false,
+    "positive_support_set_retained": false,
+    "rank_conformal_set_retained": true,
+    "reason": "The nested rank set exceeds the fixed 90% conditional coverage target with substantially smaller sets, but it is not an executable single-action policy. The positive-support set closes the one remaining coverage miss only by expanding to hundreds of candidates, and the block-level OOD certificate does not identify the miss."
+  },
+  "positive_support_set": {
+    "blocks": 28,
+    "conditional_positive_coverage": 1.0,
+    "covered_positive_blocks": 23,
+    "maximum_set_size": 647,
+    "mean_set_size": 310.57142857142856,
+    "median_set_size": 293.0,
+    "negative_members": 7392,
+    "oracle_set_utility_sum": 7.249349152834,
+    "oracle_set_worst_sequence": 0.27011022514099997,
+    "positive_available_blocks": 23,
+    "positive_members": 939
+  },
+  "protocol": {
+    "alpha": 0.1,
+    "block_ood": "Nearest cross-sequence block descriptor distance with a pooled conformal p-value.",
+    "block_ood_p_min": 0.1,
+    "global_trackeval_calls": 0,
+    "model_or_threshold_sweep": false,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "pca_components": 15,
+    "positive_support_set": "Cross-sequence positive-vs-negative nearest-neighbor nonconformity in source-only robust-scaled PCA space.",
+    "rank_radius_calibration": "Finite-sample higher conformal quantile of the minimum positive union rank in completely inner-OOF source blocks.",
+    "rank_set": "Union of the top-k events from three fixed P19 views, represented by minimum within-block rank.",
+    "scope": "Strict nested sequence-LOSO set-valued candidate retrieval audit."
+  },
+  "rank_conformal_set": {
+    "blocks": 28,
+    "conditional_positive_coverage": 0.9565217391304348,
+    "covered_positive_blocks": 22,
+    "maximum_set_size": 87,
+    "mean_set_size": 46.57142857142857,
+    "median_set_size": 50.0,
+    "negative_members": 932,
+    "oracle_set_utility_sum": 6.314904058444999,
+    "oracle_set_worst_sequence": 0.286057692308,
+    "positive_available_blocks": 23,
+    "positive_members": 207
+  },
+  "uncovered_positive_forensic": {
+    "events": 3,
+    "mechanism_counts": {
+      "ephemeral_anchor_receiver_split": 2,
+      "same_identity_merge": 1
+    }
+  }
+}
