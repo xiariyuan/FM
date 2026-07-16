@@ -1,0 +1,202 @@
+{
+  "calibration_diagnostics": {
+    "all_calibrations_use_maximum_rank": true,
+    "calibrations_using_maximum_rank": 14,
+    "interpretation": "At alpha=0.10, fewer than 19 positive calibration blocks force the finite-sample higher conformal quantile to equal the maximum observed positive rank.",
+    "median_receiver_split_radius_to_median_ratio": 13.5,
+    "median_same_identity_merge_radius_to_median_ratio": 13.5,
+    "minimum_positive_blocks_for_nonmaximum_quantile": 19,
+    "outer_mechanism_calibrations": 14
+  },
+  "dataset": {
+    "events": 11705,
+    "forbidden_model_features": [],
+    "model_features": 130,
+    "positive_available_blocks": 23,
+    "receiver_split_positive_events": 301,
+    "same_identity_merge_positive_events": 24,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "temporal_blocks": 28
+  },
+  "decision": {
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "mechanism_rescue_set_retained": false,
+    "next_stage": "Replace block-rank conformal calibration with cluster-aware event-level risk control or structured pairwise mechanism certificates; keep the P20 generic radius frozen and do not tune scalar utility gates.",
+    "p15_policy_changed": false,
+    "reason": "The mechanism models close the remaining positive-block coverage gap, but block-level finite-sample conformal calibration is forced to use the maximum source-block rank and violates the preregistered efficiency limits."
+  },
+  "feature_bank": {
+    "formal_hashes": {
+      "feature_list.csv": "b310aa0529857d25d96cfb9d3f99c112c1ff1777ab680eceed3f21dad6b2372a",
+      "prediction_manifest.json": "72bdda219bda52113ab4ce852486be1816409d98dd4bd541bdc5eb6a64fe8685",
+      "receiver_change_mechanism_features.csv": "a070d6a7f16336d2459ae0ab7a26efce96809c879a16ba8338cc3956caf2dca3",
+      "report.json": "4e1a52057a51307fc3c0206f252548485cd3c6cea97153d9c2969f72ff9306bb"
+    },
+    "formal_reproduction_all_files_equal": true,
+    "manifest_sha256": "72bdda219bda52113ab4ce852486be1816409d98dd4bd541bdc5eb6a64fe8685",
+    "manifest_valid": true,
+    "report": {
+      "dataset": {
+        "duplicate_keys": 0,
+        "events": 11705,
+        "features": 75,
+        "forbidden_features": [],
+        "maximum_missing_fraction": 0.19957283212302435,
+        "sequences": [
+          "MOT17-02-FRCNN",
+          "MOT17-04-FRCNN",
+          "MOT17-05-FRCNN",
+          "MOT17-09-FRCNN",
+          "MOT17-10-FRCNN",
+          "MOT17-11-FRCNN",
+          "MOT17-13-FRCNN"
+        ]
+      },
+      "protocol": {
+        "ground_truth_inputs": 0,
+        "horizons": [
+          5,
+          20
+        ],
+        "inputs": "Frozen executable event metadata and raw tracker rows only.",
+        "p15_locked_labels_read": 0,
+        "p15_locked_trackeval_calls": 0,
+        "p15_remaining_locked_rows_untouched": 156,
+        "scope": "Deployable receiver change-point, ephemeral-anchor, and pair-overlap features.",
+        "trackeval_calls": 0,
+        "utility_inputs": 0,
+        "windows": [
+          5,
+          20
+        ]
+      }
+    },
+    "report_sha256": "4e1a52057a51307fc3c0206f252548485cd3c6cea97153d9c2969f72ff9306bb"
+  },
+  "integrity": {
+    "audit_formal_hashes": {
+      "block_summary.csv": "5430b57cdb2190d394b5ae363e9205e860489c39a21749aa2e5f61a09f240c50",
+      "combined_set_members.csv": "9f7570c063c28bbfd2171e4701b0a2c72fe38f332acca11823831b4c59e397ab",
+      "inner_positive_rank_calibration.csv": "6eddc4cec0057eb7a5aec4e589abfbed55f0b13a85bf82ccc54aecb0ffb92228",
+      "mechanism_summary.csv": "233b3a8ee722c03d482f2ee93262901d576a6c5712b4ba86ba1510233d30fe3f",
+      "model_feature_list.csv": "8061b36f238e499046216a9cf423e925a3c6a569593cbe8080e378c70f0e7b36",
+      "outer_mechanism_predictions.csv": "5ff0a0c623b78b949c4d413584749c79240c96bdf46d470f088c4c0b2fed8f6b",
+      "outer_rank_radii.csv": "59ec3f7b636c715f832a8e82f018ff56248f4b0c085d54e4ea71627766f90dfb",
+      "prediction_manifest.json": "44a68b225acfded36c181c2ea19c57d54cee779ae9e8ad49ff8b5e43ada22325",
+      "report.json": "26cc7d7d0cc8b2ae93fed3da6b12c61e8d447ff508c494154f263df61c81378a",
+      "rescue_set_members.csv": "1bf0f0f239b3a9609c2b4bb03ff8eba33229b37dfb7816d81945ce2d9a385306"
+    },
+    "audit_manifest_sha256": "44a68b225acfded36c181c2ea19c57d54cee779ae9e8ad49ff8b5e43ada22325",
+    "audit_manifest_valid": true,
+    "audit_report_sha256": "26cc7d7d0cc8b2ae93fed3da6b12c61e8d447ff508c494154f263df61c81378a",
+    "audit_reproduction_all_files_equal": true,
+    "audit_script_sha256": "855e2d6f52ff1d56c4add87e50bd25b279a66b44c01349b53cc0fedd81c7b7c5",
+    "builder_script_sha256": "d9428ee224b2c86d24a6c91dade9070d16e0f1fe7ee895a44d08b102366547e1",
+    "duplicate_feature_keys": 0,
+    "duplicate_rescue_keys": 0,
+    "forbidden_model_features": [],
+    "p20_base_report_sha256": "b69e52c52ae9084839aa2da58860e8fec4ac387d73c7981cf26f9b65666c1564"
+  },
+  "locked": {
+    "locked_manifest_created": false,
+    "new_global_trackeval_calls": 0,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "newly_covered_blocks": [
+    {
+      "base_has_positive": 0,
+      "base_set_size": 31,
+      "block_has_positive": 1,
+      "combined_has_positive": 1,
+      "combined_negative_events": 130,
+      "combined_oracle_utility": 0.194915254237,
+      "combined_positive_events": 3,
+      "combined_set_size": 135,
+      "combined_zero_events": 2,
+      "events": 176,
+      "rescue_added": 104,
+      "seq": "MOT17-11-FRCNN",
+      "temporal_block": 3
+    }
+  ],
+  "protocol": {
+    "alpha": 0.1,
+    "base_set": "Frozen P20 rank-conformal candidate set; its generic radius is not changed.",
+    "fixed_acceptance": {
+      "maximum_combined_set_size": 100,
+      "maximum_mean_added_candidates": 12.0,
+      "minimum_newly_covered_blocks": 1,
+      "minimum_worst_sequence_set_oracle_utility": 0.0,
+      "positive_block_coverage": 1.0
+    },
+    "global_trackeval_calls": 0,
+    "mechanisms": {
+      "receiver_split": "Positive intervention with unmatched donor history and a receiver-history to future dominant-identity change.",
+      "same_identity_merge": "Positive intervention whose donor, receiver, and future teacher identities agree."
+    },
+    "model": {
+      "class_weight": "balanced",
+      "family": "ExtraTreesClassifier",
+      "max_depth": 10,
+      "max_features": 0.75,
+      "min_samples_leaf": 3,
+      "n_estimators": 256,
+      "sequence_equal_weighting": true
+    },
+    "model_or_threshold_sweep": false,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "rank_calibration": "Finite-sample higher conformal quantile of the minimum mechanism-positive rank in completely inner-OOF source blocks.",
+    "scope": "Strict nested sequence-LOSO mechanism-aware conformal rescue set."
+  },
+  "results": {
+    "base_covered_positive_blocks": 22,
+    "combined_covered_positive_blocks": 23,
+    "combined_negative_events": 3301,
+    "combined_positive_events": 545,
+    "combined_set_oracle_utility_sum": 7.350931296431,
+    "combined_set_oracle_worst_sequence": 0.286057692308,
+    "combined_zero_events": 226,
+    "conditional_positive_coverage": 1.0,
+    "maximum_combined_set_size": 218,
+    "mean_base_set_size": 46.57142857142857,
+    "mean_combined_set_size": 145.42857142857142,
+    "mean_rescue_added": 98.85714285714286,
+    "mechanism_summary": [
+      {
+        "block_recall": 0.944444444444,
+        "covered_positive_blocks": 17,
+        "covered_positive_events": 163,
+        "event_recall": 0.541528239203,
+        "mechanism": "receiver_split",
+        "positive_blocks": 18,
+        "positive_events": 301
+      },
+      {
+        "block_recall": 1.0,
+        "covered_positive_blocks": 12,
+        "covered_positive_events": 21,
+        "event_recall": 0.875,
+        "mechanism": "same_identity_merge",
+        "positive_blocks": 12,
+        "positive_events": 24
+      }
+    ],
+    "newly_covered_blocks": 1,
+    "rescue_unique_events": 2768
+  },
+  "stage": "P21 mechanism-aware conformal rescue sets"
+}

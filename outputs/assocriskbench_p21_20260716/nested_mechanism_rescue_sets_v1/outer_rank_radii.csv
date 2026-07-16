@@ -1,0 +1,15 @@
+outer_sequence,mechanism,calibration_positive_blocks,conformal_rank_radius,maximum_calibration_rank,median_calibration_rank,quantile_uses_maximum,radius_to_median_ratio
+MOT17-02-FRCNN,receiver_split,14,138,138,9.0,1,15.333333333333
+MOT17-02-FRCNN,same_identity_merge,8,30,30,3.0,1,10.0
+MOT17-04-FRCNN,receiver_split,17,108,108,8.0,1,13.5
+MOT17-04-FRCNN,same_identity_merge,11,27,27,2.0,1,13.5
+MOT17-05-FRCNN,receiver_split,16,76,76,10.0,1,7.6
+MOT17-05-FRCNN,same_identity_merge,10,52,52,3.0,1,17.333333333333
+MOT17-09-FRCNN,receiver_split,15,162,162,7.0,1,23.142857142857
+MOT17-09-FRCNN,same_identity_merge,11,39,39,5.0,1,7.8
+MOT17-10-FRCNN,receiver_split,14,102,102,10.0,1,10.2
+MOT17-10-FRCNN,same_identity_merge,11,24,24,3.0,1,8.0
+MOT17-11-FRCNN,receiver_split,17,126,126,5.0,1,25.2
+MOT17-11-FRCNN,same_identity_merge,10,28,28,2.0,1,14.0
+MOT17-13-FRCNN,receiver_split,15,87,87,8.0,1,10.875
+MOT17-13-FRCNN,same_identity_merge,11,30,30,2.0,1,15.0

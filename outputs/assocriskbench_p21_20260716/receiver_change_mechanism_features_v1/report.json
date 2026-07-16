@@ -1,0 +1,36 @@
+{
+  "dataset": {
+    "duplicate_keys": 0,
+    "events": 11705,
+    "features": 75,
+    "forbidden_features": [],
+    "maximum_missing_fraction": 0.19957283212302435,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ]
+  },
+  "protocol": {
+    "ground_truth_inputs": 0,
+    "horizons": [
+      5,
+      20
+    ],
+    "inputs": "Frozen executable event metadata and raw tracker rows only.",
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "scope": "Deployable receiver change-point, ephemeral-anchor, and pair-overlap features.",
+    "trackeval_calls": 0,
+    "utility_inputs": 0,
+    "windows": [
+      5,
+      20
+    ]
+  }
+}

@@ -1,0 +1,246 @@
+{
+  "calibration_diagnostics": {
+    "all_calibrations_use_maximum_rank": true,
+    "calibrations_using_maximum_rank": 14,
+    "interpretation": "At alpha=0.10, fewer than 19 positive calibration blocks force the finite-sample higher conformal quantile to equal the maximum observed positive rank.",
+    "median_receiver_split_radius_to_median_ratio": 13.5,
+    "median_same_identity_merge_radius_to_median_ratio": 13.5,
+    "minimum_positive_blocks_for_nonmaximum_quantile": 19,
+    "outer_mechanism_calibrations": 14
+  },
+  "dataset": {
+    "events": 11705,
+    "forbidden_model_features": [],
+    "model_features": 130,
+    "positive_available_blocks": 23,
+    "receiver_split_positive_events": 301,
+    "same_identity_merge_positive_events": 24,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "temporal_blocks": 28
+  },
+  "decision": {
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "mechanism_rescue_set_retained": false,
+    "next_stage": "Replace block-rank conformal calibration with cluster-aware event-level risk control or structured pairwise mechanism certificates; keep the P20 generic radius frozen and do not tune scalar utility gates.",
+    "p15_policy_changed": false,
+    "reason": "The mechanism models close the remaining positive-block coverage gap, but block-level finite-sample conformal calibration is forced to use the maximum source-block rank and violates the preregistered efficiency limits."
+  },
+  "protocol": {
+    "alpha": 0.1,
+    "base_set": "Frozen P20 rank-conformal candidate set; its generic radius is not changed.",
+    "fixed_acceptance": {
+      "maximum_combined_set_size": 100,
+      "maximum_mean_added_candidates": 12.0,
+      "minimum_newly_covered_blocks": 1,
+      "minimum_worst_sequence_set_oracle_utility": 0.0,
+      "positive_block_coverage": 1.0
+    },
+    "global_trackeval_calls": 0,
+    "mechanisms": {
+      "receiver_split": "Positive intervention with unmatched donor history and a receiver-history to future dominant-identity change.",
+      "same_identity_merge": "Positive intervention whose donor, receiver, and future teacher identities agree."
+    },
+    "model": {
+      "class_weight": "balanced",
+      "family": "ExtraTreesClassifier",
+      "max_depth": 10,
+      "max_features": 0.75,
+      "min_samples_leaf": 3,
+      "n_estimators": 256,
+      "sequence_equal_weighting": true
+    },
+    "model_or_threshold_sweep": false,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "rank_calibration": "Finite-sample higher conformal quantile of the minimum mechanism-positive rank in completely inner-OOF source blocks.",
+    "scope": "Strict nested sequence-LOSO mechanism-aware conformal rescue set."
+  },
+  "rank_radii": [
+    {
+      "calibration_positive_blocks": 14,
+      "conformal_rank_radius": 138,
+      "maximum_calibration_rank": 138,
+      "mechanism": "receiver_split",
+      "median_calibration_rank": 9.0,
+      "outer_sequence": "MOT17-02-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 15.333333333333
+    },
+    {
+      "calibration_positive_blocks": 8,
+      "conformal_rank_radius": 30,
+      "maximum_calibration_rank": 30,
+      "mechanism": "same_identity_merge",
+      "median_calibration_rank": 3.0,
+      "outer_sequence": "MOT17-02-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 10.0
+    },
+    {
+      "calibration_positive_blocks": 17,
+      "conformal_rank_radius": 108,
+      "maximum_calibration_rank": 108,
+      "mechanism": "receiver_split",
+      "median_calibration_rank": 8.0,
+      "outer_sequence": "MOT17-04-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 13.5
+    },
+    {
+      "calibration_positive_blocks": 11,
+      "conformal_rank_radius": 27,
+      "maximum_calibration_rank": 27,
+      "mechanism": "same_identity_merge",
+      "median_calibration_rank": 2.0,
+      "outer_sequence": "MOT17-04-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 13.5
+    },
+    {
+      "calibration_positive_blocks": 16,
+      "conformal_rank_radius": 76,
+      "maximum_calibration_rank": 76,
+      "mechanism": "receiver_split",
+      "median_calibration_rank": 10.0,
+      "outer_sequence": "MOT17-05-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 7.6
+    },
+    {
+      "calibration_positive_blocks": 10,
+      "conformal_rank_radius": 52,
+      "maximum_calibration_rank": 52,
+      "mechanism": "same_identity_merge",
+      "median_calibration_rank": 3.0,
+      "outer_sequence": "MOT17-05-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 17.333333333333
+    },
+    {
+      "calibration_positive_blocks": 15,
+      "conformal_rank_radius": 162,
+      "maximum_calibration_rank": 162,
+      "mechanism": "receiver_split",
+      "median_calibration_rank": 7.0,
+      "outer_sequence": "MOT17-09-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 23.142857142857
+    },
+    {
+      "calibration_positive_blocks": 11,
+      "conformal_rank_radius": 39,
+      "maximum_calibration_rank": 39,
+      "mechanism": "same_identity_merge",
+      "median_calibration_rank": 5.0,
+      "outer_sequence": "MOT17-09-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 7.8
+    },
+    {
+      "calibration_positive_blocks": 14,
+      "conformal_rank_radius": 102,
+      "maximum_calibration_rank": 102,
+      "mechanism": "receiver_split",
+      "median_calibration_rank": 10.0,
+      "outer_sequence": "MOT17-10-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 10.2
+    },
+    {
+      "calibration_positive_blocks": 11,
+      "conformal_rank_radius": 24,
+      "maximum_calibration_rank": 24,
+      "mechanism": "same_identity_merge",
+      "median_calibration_rank": 3.0,
+      "outer_sequence": "MOT17-10-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 8.0
+    },
+    {
+      "calibration_positive_blocks": 17,
+      "conformal_rank_radius": 126,
+      "maximum_calibration_rank": 126,
+      "mechanism": "receiver_split",
+      "median_calibration_rank": 5.0,
+      "outer_sequence": "MOT17-11-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 25.2
+    },
+    {
+      "calibration_positive_blocks": 10,
+      "conformal_rank_radius": 28,
+      "maximum_calibration_rank": 28,
+      "mechanism": "same_identity_merge",
+      "median_calibration_rank": 2.0,
+      "outer_sequence": "MOT17-11-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 14.0
+    },
+    {
+      "calibration_positive_blocks": 15,
+      "conformal_rank_radius": 87,
+      "maximum_calibration_rank": 87,
+      "mechanism": "receiver_split",
+      "median_calibration_rank": 8.0,
+      "outer_sequence": "MOT17-13-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 10.875
+    },
+    {
+      "calibration_positive_blocks": 11,
+      "conformal_rank_radius": 30,
+      "maximum_calibration_rank": 30,
+      "mechanism": "same_identity_merge",
+      "median_calibration_rank": 2.0,
+      "outer_sequence": "MOT17-13-FRCNN",
+      "quantile_uses_maximum": 1,
+      "radius_to_median_ratio": 15.0
+    }
+  ],
+  "result": {
+    "base_covered_positive_blocks": 22,
+    "combined_covered_positive_blocks": 23,
+    "combined_negative_events": 3301,
+    "combined_positive_events": 545,
+    "combined_set_oracle_utility_sum": 7.350931296431,
+    "combined_set_oracle_worst_sequence": 0.286057692308,
+    "combined_zero_events": 226,
+    "conditional_positive_coverage": 1.0,
+    "maximum_combined_set_size": 218,
+    "mean_base_set_size": 46.57142857142857,
+    "mean_combined_set_size": 145.42857142857142,
+    "mean_rescue_added": 98.85714285714286,
+    "mechanism_summary": [
+      {
+        "block_recall": 0.944444444444,
+        "covered_positive_blocks": 17,
+        "covered_positive_events": 163,
+        "event_recall": 0.541528239203,
+        "mechanism": "receiver_split",
+        "positive_blocks": 18,
+        "positive_events": 301
+      },
+      {
+        "block_recall": 1.0,
+        "covered_positive_blocks": 12,
+        "covered_positive_events": 21,
+        "event_recall": 0.875,
+        "mechanism": "same_identity_merge",
+        "positive_blocks": 12,
+        "positive_events": 24
+      }
+    ],
+    "newly_covered_blocks": 1,
+    "rescue_unique_events": 2768
+  }
+}
