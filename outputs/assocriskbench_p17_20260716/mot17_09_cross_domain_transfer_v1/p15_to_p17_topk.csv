@@ -1,0 +1,11 @@
+evaluation,score,top_k,selected,positive,negative,zero,positive_precision,utility_sum,utility_minimum
+P15_to_P17_zero_shot,pred_reg,5,5,0,5,0,0.0,-0.656105267171,-0.225563909774
+P15_to_P17_zero_shot,pred_reg,10,10,0,10,0,0.0,-2.082441100494,-0.467128027682
+P15_to_P17_zero_shot,pred_reg,20,20,0,20,0,0.0,-4.514720348355,-0.467128027682
+P15_to_P17_zero_shot,pred_reg,40,40,3,36,1,0.075,-8.025842216968,-0.467128027682
+P15_to_P17_zero_shot,pred_reg,80,80,9,65,6,0.1125,-14.080940046095,-0.490654205607
+P15_to_P17_zero_shot,pred_clf,5,5,0,5,0,0.0,-1.577810416789,-0.445255474453
+P15_to_P17_zero_shot,pred_clf,10,10,1,9,0,0.1,-2.684204358846,-0.445255474453
+P15_to_P17_zero_shot,pred_clf,20,20,1,18,1,0.05,-4.735493906848,-0.4604743083
+P15_to_P17_zero_shot,pred_clf,40,40,3,35,2,0.075,-8.410576038809,-0.4604743083
+P15_to_P17_zero_shot,pred_clf,80,80,10,61,9,0.125,-11.892497725998,-0.481818181818

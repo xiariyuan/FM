@@ -1,0 +1,325 @@
+{
+  "decision": {
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "naive_or_multitask_pooling_promoted": false,
+    "next_stage": "Learn domain-conditioned calibration or invariant mechanism representations using the seven-domain bank, with nested leave-one-sequence-out authorization before any P15 locked manifest.",
+    "p15_policy_changed": false,
+    "p17_bank_retained": true,
+    "reason": "Neither fixed model family achieves nonnegative worst-sequence utility on all seven P17 domains and all four P15 domains. Cross-domain event discrimination improves for the multitask model, but top-one lower-tail risk remains negative."
+  },
+  "leakage_and_integrity": {
+    "candidate_selection_uses_gt": false,
+    "gt_teacher_applied_after_candidate_freeze": true,
+    "motion_duplicate_keys": 0,
+    "motion_feature_columns": 367,
+    "motion_forbidden_columns": [],
+    "motion_rows": 705,
+    "p16_motion_generic_regression": {
+      "all_hashes_equal": true,
+      "files_equal": true,
+      "motion_feature_sha256": "932f4ea78c73a23745f8799c8e6bf10f2ce1b2b478524894cfbd0f8eade1b9f3"
+    }
+  },
+  "pilot_zero_shot": {
+    "auc_regression": 0.5743906299461855,
+    "average_precision_regression": 0.12123312995964536,
+    "spearman": 0.07442095432976663,
+    "top20_positive": 0,
+    "top20_utility_sum": -4.514720348355
+  },
+  "protocol": {
+    "locked_manifest_created": false,
+    "new_global_trackeval_calls": 0,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_policy_changed": false,
+    "p15_remaining_locked_rows_untouched": 156
+  },
+  "reproduction": {
+    "mot17_09_actual_anchor_motion_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true,
+      "formal_report_sha256": "6716800e45fd1e3e7bc2d6f14038323bd4b0e4c3ddedb1bda1f6da1d793f5ab4",
+      "manifest_entries": 3,
+      "manifest_valid": true
+    },
+    "mot17_09_cross_domain_transfer_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true,
+      "formal_report_sha256": "bdcd77198583de56eb8b023d57c71ece3a9ba5c4a05bed3de882019fbef47051",
+      "manifest_entries": 11,
+      "manifest_valid": true
+    },
+    "mot17_09_directional_local_counterfactual_bank_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true,
+      "formal_report_sha256": "1c6eee941a7e3da159fc296be7a2ddeb86e6f0c29b19e9f41cb504564a3f7bb6",
+      "manifest_entries": 6,
+      "manifest_valid": true
+    },
+    "mot17_train7_actual_anchor_motion_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true,
+      "formal_report_sha256": "a014a58cdb676411b2b63a2d415a82c4587b3134d2e82a97a87a22108ed3937f",
+      "manifest_entries": 3,
+      "manifest_valid": true
+    },
+    "mot17_train7_directional_local_counterfactual_bank_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true,
+      "formal_report_sha256": "6c494f4890717ae09b54d610bc73743e170dbbb694fcee83ae7dd41511c4296d",
+      "manifest_entries": 7,
+      "manifest_valid": true
+    },
+    "mot17_train7_domain_generalization_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true,
+      "formal_report_sha256": "c0d4e5fda0571a588b6ca1a391f102bc8a408981d09a06ff9a6472407c809e65",
+      "manifest_entries": 9,
+      "manifest_valid": true
+    }
+  },
+  "train7_bank": {
+    "changed_rows_labeled": 85291,
+    "executable_events_before_canonicalization": 11705,
+    "negative_events": 571,
+    "ordered_candidate_directions": 27336,
+    "positive_events": 104,
+    "positive_fraction": 0.1475177304964539,
+    "selected_events": 705,
+    "sequence_count": 7,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "zero_events": 30
+  },
+  "train7_generalization": {
+    "eligible_p15_augmented_models": 0,
+    "eligible_p17_models": 0,
+    "p15_event_metrics": [
+      {
+        "evaluation": "P15_sequence_LOSO_augmented_p17",
+        "events": 225,
+        "model_mode": "multitask",
+        "positive_auc": 0.5983992467043314,
+        "positive_average_precision": 0.2633727222515239,
+        "positive_events": 48,
+        "positive_fraction": 0.21333333333333335,
+        "sequences": 4,
+        "spearman": 0.3175095766168206,
+        "training_mode": "augmented_p17"
+      },
+      {
+        "evaluation": "P15_sequence_LOSO_p15_only",
+        "events": 225,
+        "model_mode": "multitask",
+        "positive_auc": 0.5581450094161959,
+        "positive_average_precision": 0.25065379005969896,
+        "positive_events": 48,
+        "positive_fraction": 0.21333333333333335,
+        "sequences": 4,
+        "spearman": 0.30368061248582473,
+        "training_mode": "p15_only"
+      },
+      {
+        "evaluation": "P15_sequence_LOSO_augmented_p17",
+        "events": 225,
+        "model_mode": "raw",
+        "positive_auc": 0.5509651600753296,
+        "positive_average_precision": 0.2532780112084275,
+        "positive_events": 48,
+        "positive_fraction": 0.21333333333333335,
+        "sequences": 4,
+        "spearman": 0.2570044292644959,
+        "training_mode": "augmented_p17"
+      },
+      {
+        "evaluation": "P15_sequence_LOSO_p15_only",
+        "events": 225,
+        "model_mode": "raw",
+        "positive_auc": 0.5596751412429379,
+        "positive_average_precision": 0.26459961226787687,
+        "positive_events": 48,
+        "positive_fraction": 0.21333333333333335,
+        "sequences": 4,
+        "spearman": 0.3105761016202714,
+        "training_mode": "p15_only"
+      }
+    ],
+    "p15_topone_summary": [
+      {
+        "MOT20-01_hota": 0.002102000000000055,
+        "MOT20-01_local": 0.086636118712,
+        "MOT20-02_hota": -0.056276999999999994,
+        "MOT20-02_local": 0.104656050114,
+        "MOT20-03_hota": -0.046284,
+        "MOT20-03_local": -0.334844787747,
+        "MOT20-05_hota": -0.007353999999999999,
+        "MOT20-05_local": -0.15225276089999998,
+        "covered_sequences": 4,
+        "eligible": 0,
+        "hota_catastrophic_windows": 2,
+        "hota_negative_windows": 10,
+        "hota_positive_windows": 6,
+        "hota_sum": -0.10781299999999988,
+        "hota_worst_sequence": -0.056276999999999994,
+        "hota_zero_windows": 0,
+        "local_negative_windows": 9,
+        "local_positive_windows": 4,
+        "local_utility_sum": -0.29580537982099997,
+        "local_worst_sequence": -0.334844787747,
+        "local_zero_windows": 3,
+        "model_mode": "multitask",
+        "selected_windows": 16,
+        "training_mode": "augmented_p17"
+      },
+      {
+        "MOT20-01_hota": 0.002102000000000055,
+        "MOT20-01_local": 0.086636118712,
+        "MOT20-02_hota": -0.04058,
+        "MOT20-02_local": -0.043058746376000004,
+        "MOT20-03_hota": -0.066016,
+        "MOT20-03_local": -0.146394756009,
+        "MOT20-05_hota": -0.010086,
+        "MOT20-05_local": -0.233681424726,
+        "covered_sequences": 4,
+        "eligible": 0,
+        "hota_catastrophic_windows": 2,
+        "hota_negative_windows": 11,
+        "hota_positive_windows": 5,
+        "hota_sum": -0.11457999999999997,
+        "hota_worst_sequence": -0.066016,
+        "hota_zero_windows": 0,
+        "local_negative_windows": 8,
+        "local_positive_windows": 2,
+        "local_utility_sum": -0.33649880839900004,
+        "local_worst_sequence": -0.233681424726,
+        "local_zero_windows": 6,
+        "model_mode": "multitask",
+        "selected_windows": 16,
+        "training_mode": "p15_only"
+      },
+      {
+        "MOT20-01_hota": 0.174448,
+        "MOT20-01_local": 0.023880597014,
+        "MOT20-02_hota": -0.140528,
+        "MOT20-02_local": -0.372345251686,
+        "MOT20-03_hota": -0.000655,
+        "MOT20-03_local": -0.051813758018000006,
+        "MOT20-05_hota": -0.00798,
+        "MOT20-05_local": -0.173908019415,
+        "covered_sequences": 4,
+        "eligible": 0,
+        "hota_catastrophic_windows": 1,
+        "hota_negative_windows": 7,
+        "hota_positive_windows": 9,
+        "hota_sum": 0.025285000000000002,
+        "hota_worst_sequence": -0.140528,
+        "hota_zero_windows": 0,
+        "local_negative_windows": 6,
+        "local_positive_windows": 5,
+        "local_utility_sum": -0.5741864321050001,
+        "local_worst_sequence": -0.372345251686,
+        "local_zero_windows": 5,
+        "model_mode": "raw",
+        "selected_windows": 16,
+        "training_mode": "augmented_p17"
+      },
+      {
+        "MOT20-01_hota": 0.0017119999999999913,
+        "MOT20-01_local": -0.151291512915,
+        "MOT20-02_hota": -0.057386999999999994,
+        "MOT20-02_local": 0.10202022394800003,
+        "MOT20-03_hota": -0.104836,
+        "MOT20-03_local": -0.33356053140999997,
+        "MOT20-05_hota": 0.01585,
+        "MOT20-05_local": 0.058374592175999995,
+        "covered_sequences": 4,
+        "eligible": 0,
+        "hota_catastrophic_windows": 3,
+        "hota_negative_windows": 10,
+        "hota_positive_windows": 6,
+        "hota_sum": -0.14466099999999998,
+        "hota_worst_sequence": -0.104836,
+        "hota_zero_windows": 0,
+        "local_negative_windows": 6,
+        "local_positive_windows": 4,
+        "local_utility_sum": -0.3244572282009999,
+        "local_worst_sequence": -0.33356053140999997,
+        "local_zero_windows": 6,
+        "model_mode": "raw",
+        "selected_windows": 16,
+        "training_mode": "p15_only"
+      }
+    ],
+    "p17_event_metrics": [
+      {
+        "evaluation": "MOT17_train7_sequence_LOSO",
+        "events": 705,
+        "model_mode": "raw",
+        "positive_auc": 0.5249904006143608,
+        "positive_average_precision": 0.1602872697778521,
+        "positive_events": 104,
+        "positive_fraction": 0.1475177304964539,
+        "sequences": 7,
+        "spearman": 0.17977126616260516
+      },
+      {
+        "evaluation": "MOT17_train7_sequence_LOSO",
+        "events": 705,
+        "model_mode": "multitask",
+        "positive_auc": 0.7020510687316012,
+        "positive_average_precision": 0.26089087509100073,
+        "positive_events": 104,
+        "positive_fraction": 0.1475177304964539,
+        "sequences": 7,
+        "spearman": 0.22297693164356053
+      }
+    ],
+    "p17_topone_summary": [
+      {
+        "MOT17-02-FRCNN_utility": -0.340548914991,
+        "MOT17-04-FRCNN_utility": -0.642163011554,
+        "MOT17-05-FRCNN_utility": -0.15649621582200002,
+        "MOT17-09-FRCNN_utility": -0.25630044564099996,
+        "MOT17-10-FRCNN_utility": -0.583718208279,
+        "MOT17-11-FRCNN_utility": -0.34677400641399997,
+        "MOT17-13-FRCNN_utility": 0.039890964770999994,
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_mode": "multitask",
+        "negative_windows": 18,
+        "positive_windows": 7,
+        "selected_windows": 28,
+        "utility_sum": -2.28610983793,
+        "worst_sequence_utility": -0.642163011554,
+        "zero_windows": 3
+      },
+      {
+        "MOT17-02-FRCNN_utility": -0.122427215945,
+        "MOT17-04-FRCNN_utility": -0.642163011554,
+        "MOT17-05-FRCNN_utility": -0.15649621582200002,
+        "MOT17-09-FRCNN_utility": -1.076623592349,
+        "MOT17-10-FRCNN_utility": -0.370362043895,
+        "MOT17-11-FRCNN_utility": -0.34677400641399997,
+        "MOT17-13-FRCNN_utility": 0.054097478977,
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_mode": "raw",
+        "negative_windows": 22,
+        "positive_windows": 5,
+        "selected_windows": 28,
+        "utility_sum": -2.660748607002,
+        "worst_sequence_utility": -1.076623592349,
+        "zero_windows": 1
+      }
+    ]
+  }
+}

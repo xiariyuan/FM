@@ -1,0 +1,3 @@
+evaluation,model_mode,events,sequences,positive_events,positive_fraction,spearman,positive_auc,positive_average_precision
+MOT17_train7_sequence_LOSO,raw,705,7,104,0.147517730496,0.179771266163,0.524990400614,0.160287269778
+MOT17_train7_sequence_LOSO,multitask,705,7,104,0.147517730496,0.222976931644,0.702051068732,0.260890875091

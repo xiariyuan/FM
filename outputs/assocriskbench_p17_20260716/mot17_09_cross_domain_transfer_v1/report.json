@@ -1,0 +1,158 @@
+{
+  "dataset": {
+    "combined_events": 588,
+    "compact_features": 36,
+    "p15_events": 225,
+    "p15_sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "p17_events": 363,
+    "p17_sequences": [
+      "MOT17-09-FRCNN"
+    ]
+  },
+  "decision": {
+    "locked_manifest_created": false,
+    "naive_pooling_into_p15_model": false,
+    "next_model_family": "Domain-conditioned or hierarchical utility model with domain-specific calibration and shared representation; no pooled threshold tuning on frozen P15.",
+    "p15_policy_changed": false,
+    "p17_bank_retained": true
+  },
+  "domain_shift": {
+    "top_shifted_features": [
+      {
+        "feature": "receiver_speed_mean_20",
+        "ks_statistic": 0.4064646464646465,
+        "standardized_median_shift": 0.8441457829380129
+      },
+      {
+        "feature": "future_receiver_velocity_gap_20_h60",
+        "ks_statistic": 0.41922430905481756,
+        "standardized_median_shift": 0.715211035471024
+      },
+      {
+        "feature": "future_source_velocity_gap_20_h60",
+        "ks_statistic": 0.35654298366162773,
+        "standardized_median_shift": 0.6761860491083076
+      },
+      {
+        "feature": "future_source_velocity_gap_20_full",
+        "ks_statistic": 0.3548633379141854,
+        "standardized_median_shift": 0.6065166969137527
+      },
+      {
+        "feature": "motion_margin_20_h30_min",
+        "ks_statistic": 0.3006795224977043,
+        "standardized_median_shift": -0.5675605884884778
+      },
+      {
+        "feature": "motion_margin_20_h30_mean",
+        "ks_statistic": 0.2949127640036731,
+        "standardized_median_shift": -0.5244229371210315
+      },
+      {
+        "feature": "source_center_resid_20_h30_mean",
+        "ks_statistic": 0.2739393939393939,
+        "standardized_median_shift": 0.5232261840470551
+      },
+      {
+        "feature": "motion_margin_20_h30_q25",
+        "ks_statistic": 0.2844077134986226,
+        "standardized_median_shift": -0.5163875768263642
+      },
+      {
+        "feature": "future_receiver_velocity_gap_20_full",
+        "ks_statistic": 0.4013589861047488,
+        "standardized_median_shift": 0.5108935850482593
+      },
+      {
+        "feature": "motion_margin_20_h60_min",
+        "ks_statistic": 0.2740863177226814,
+        "standardized_median_shift": -0.4966037572272701
+      }
+    ]
+  },
+  "p15_incremental_loso": {
+    "augmented_p17_regression": {
+      "MOT20-01_hota": 0.388272,
+      "MOT20-01_local": 0.17537694010600002,
+      "MOT20-02_hota": -0.160374,
+      "MOT20-02_local": -0.46515962294300006,
+      "MOT20-03_hota": -0.103436,
+      "MOT20-03_local": -0.33356053140999997,
+      "MOT20-05_hota": 0.001965999999999999,
+      "MOT20-05_local": -0.200208338113,
+      "hota_catastrophic": 3,
+      "hota_negative": 12,
+      "hota_positive": 4,
+      "hota_sum": 0.12642799999999998,
+      "hota_worst_sequence": -0.160374,
+      "hota_zero": 0,
+      "local_negative": 9,
+      "local_positive": 3,
+      "local_sum": -0.8235515523599999,
+      "local_worst_sequence": -0.46515962294300006,
+      "local_zero": 4,
+      "score": "pred_reg",
+      "selected_windows": 16,
+      "training_mode": "augmented_p17"
+    },
+    "naive_pooling_allowed": false,
+    "p15_only_regression": {
+      "MOT20-01_hota": 0.0017119999999999913,
+      "MOT20-01_local": -0.151291512915,
+      "MOT20-02_hota": -0.012657,
+      "MOT20-02_local": -0.013909301073,
+      "MOT20-03_hota": -0.104836,
+      "MOT20-03_local": -0.33356053140999997,
+      "MOT20-05_hota": 0.01585,
+      "MOT20-05_local": 0.058374592175999995,
+      "hota_catastrophic": 2,
+      "hota_negative": 10,
+      "hota_positive": 6,
+      "hota_sum": -0.099931,
+      "hota_worst_sequence": -0.104836,
+      "hota_zero": 0,
+      "local_negative": 5,
+      "local_positive": 3,
+      "local_sum": -0.44038675322199994,
+      "local_worst_sequence": -0.33356053140999997,
+      "local_zero": 8,
+      "score": "pred_reg",
+      "selected_windows": 16,
+      "training_mode": "p15_only"
+    }
+  },
+  "p17_temporal_oof": {
+    "auc_regression": 0.7153371320037987,
+    "average_precision_regression": 0.23538365588168225,
+    "regression_top5_each_block_utility": {
+      "0": -0.653030183193,
+      "1": 0.14377091924699997,
+      "2": 0.225038236899,
+      "3": -0.654665254101
+    },
+    "spearman": 0.40931443326911415
+  },
+  "protocol": {
+    "features": "The 36 preregistered P16 compact actual-anchor motion features.",
+    "model": "ExtraTreesRegressor/Classifier with 500 trees, max_depth=7, min_samples_leaf=3, max_features=0.65. No hyperparameter or threshold sweep.",
+    "p15_incremental_evaluation": "P15 sequence LOSO, comparing P15-only training against P15 plus all MOT17-09 events.",
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "p17_temporal_evaluation": "Four deterministic equal-count temporal blocks ordered by effective handoff frame; each block is held out once.",
+    "scope": "Fixed-model cross-domain audit for the independent MOT17-09 directional local teacher bank.",
+    "weighting": "Equal total sample weight per training sequence/domain label."
+  },
+  "zero_shot_P15_to_P17": {
+    "auc_regression": 0.5743906299461855,
+    "average_precision_regression": 0.12123312995964536,
+    "spearman": 0.07442095432976663,
+    "top20_positive": 0,
+    "top20_utility_sum": -4.514720348355
+  }
+}

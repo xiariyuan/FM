@@ -1,0 +1,5 @@
+evaluation,model_mode,events,sequences,positive_events,positive_fraction,spearman,positive_auc,positive_average_precision,training_mode
+P15_sequence_LOSO_augmented_p17,multitask,225,4,48,0.213333333333,0.317509576617,0.598399246704,0.263372722252,augmented_p17
+P15_sequence_LOSO_p15_only,multitask,225,4,48,0.213333333333,0.303680612486,0.558145009416,0.25065379006,p15_only
+P15_sequence_LOSO_augmented_p17,raw,225,4,48,0.213333333333,0.257004429264,0.550965160075,0.253278011208,augmented_p17
+P15_sequence_LOSO_p15_only,raw,225,4,48,0.213333333333,0.31057610162,0.559675141243,0.264599612268,p15_only

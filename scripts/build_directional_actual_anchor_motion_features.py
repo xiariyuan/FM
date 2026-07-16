@@ -8,8 +8,6 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from train_loso_local_counterfactual_ensemble import SEQUENCES
-
 
 KEYS = ['seq', 'canonical_rank', 'u', 'v', 'boundary_frame', 'transaction_type']
 HISTORY_SIZES = [5, 20]
@@ -24,7 +22,9 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def parse_mapping(values: list[str], label: str) -> dict[str, Path]:
+def parse_mapping(
+    values: list[str], label: str, expected_sequences: list[str]
+) -> dict[str, Path]:
     mapping: dict[str, Path] = {}
     for value in values:
         if '=' not in value:
@@ -33,9 +33,12 @@ def parse_mapping(values: list[str], label: str) -> dict[str, Path]:
         if seq in mapping:
             raise RuntimeError(f'duplicate {label} sequence: {seq}')
         mapping[seq] = Path(raw_path)
-    missing = sorted(set(SEQUENCES) - set(mapping))
+    missing = sorted(set(expected_sequences) - set(mapping))
     if missing:
         raise RuntimeError(f'{label} missing sequences: {missing}')
+    extra = sorted(set(mapping) - set(expected_sequences))
+    if extra:
+        raise RuntimeError(f'{label} has unexpected sequences: {extra}')
     return mapping
 
 
@@ -108,7 +111,10 @@ def build_features(
     track_paths: dict[str, Path],
 ) -> pd.DataFrame:
     outputs: list[dict[str, object]] = []
-    for seq in SEQUENCES:
+    sequences = sorted(executability.seq.astype(str).unique().tolist())
+    if set(track_paths) != set(sequences):
+        raise RuntimeError('track-result mappings do not match executability sequences')
+    for seq in sequences:
         tracks = load_tracks(track_paths[seq])
         by_track = {
             int(track_id): group.sort_values('frame')
@@ -310,9 +316,10 @@ def main() -> None:
 
     executability_path = Path(args.executability)
     changed_path = Path(args.changed_rows)
-    track_paths = parse_mapping(args.track_result, 'track-result')
     executability = pd.read_csv(executability_path)
     executability = executability[executability.accepted == 1].copy()
+    sequences = sorted(executability.seq.astype(str).unique().tolist())
+    track_paths = parse_mapping(args.track_result, 'track-result', sequences)
     changed = pd.read_csv(
         changed_path,
         usecols=KEYS + ['frame', 'frames_after_handoff', 'baseline_label', 'edited_label'],
