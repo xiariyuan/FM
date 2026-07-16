@@ -1,0 +1,17 @@
+seq,rank_start,rank_end,chosen_retrieval_spec,eligible_inner_specs,outer_selected
+MOT20-01,21,40,compact_standard_k1_nearest_positive,1,1
+MOT20-01,41,60,compact_standard_k3_vote67,4,0
+MOT20-01,61,80,compact_standard_k3_vote67,1,1
+MOT20-01,81,100,no_op,0,0
+MOT20-02,21,40,no_op,0,0
+MOT20-02,41,60,no_op,0,0
+MOT20-02,61,80,compact_standard_k3_vote67,1,1
+MOT20-02,81,100,no_op,0,0
+MOT20-03,21,40,no_op,0,0
+MOT20-03,41,60,no_op,0,0
+MOT20-03,61,80,no_op,0,0
+MOT20-03,81,100,no_op,0,0
+MOT20-05,21,40,no_op,0,0
+MOT20-05,41,60,mechanism_robust_k5_vote,2,1
+MOT20-05,61,80,mechanism_robust_k5_vote,4,1
+MOT20-05,81,100,compact_standard_k3_vote67,4,0

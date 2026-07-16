@@ -1,0 +1,5 @@
+seq,chosen_retrieval_spec,eligible_train_specs,locked_candidate_count
+MOT20-01,compact_standard_k3_vote67,1,1
+MOT20-02,no_op,0,0
+MOT20-03,no_op,0,0
+MOT20-05,mechanism_robust_k5_pmean,7,1

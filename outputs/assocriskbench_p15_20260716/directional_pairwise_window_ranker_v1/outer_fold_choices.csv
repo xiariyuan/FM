@@ -1,0 +1,5 @@
+held_out_seq,chosen_ranker,chosen_gate,eligible_config_gates,fallback_no_op,pairwise_train_examples,outer_topone_windows,outer_selected_windows,locked_topone_candidates,locked_selected_by_fold_gate
+MOT20-01,no_op,no_op,0,1,0,0,0,0,0
+MOT20-02,no_op,no_op,0,1,0,0,0,0,0
+MOT20-03,extra_raw_capped,changed_ge_4_margin_ge_002,4,0,2326,4,3,1,1
+MOT20-05,no_op,no_op,0,1,0,0,0,0,0

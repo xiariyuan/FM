@@ -1,0 +1,77 @@
+{
+  "protocol": {
+    "previously_revealed_locked_rows_excluded": 4,
+    "remaining_locked_rows_audited_without_labels": 156,
+    "scope": "Locked prediction stability audit only; no locked utility or TrackEval labels are read.",
+    "stability_rule": "At least 3 eligible specs; >=80% full-train consensus; >=70% leave-one-window consensus; >=70% overall consensus on one directional key."
+  },
+  "remaining_locked_labels_unread": 156,
+  "selected_transactions": 0,
+  "sequence_summaries": [
+    {
+      "eligible_specs": 1,
+      "full_train_mode_fraction": 1.0,
+      "full_train_predictions": 1,
+      "leave_window_mode_fraction": 0.75,
+      "leave_window_predictions": 4,
+      "mode_boundary_frame": 111,
+      "mode_canonical_rank": 12,
+      "mode_count": 4,
+      "mode_fraction": 0.8,
+      "mode_seq": "MOT20-01",
+      "mode_transaction_type": "v_to_u",
+      "mode_u": 17,
+      "mode_v": 29,
+      "predictions": 5,
+      "seq": "MOT20-01",
+      "stable_candidate": 0,
+      "unique_candidates": 2
+    },
+    {
+      "eligible_specs": 0,
+      "full_train_mode_fraction": 0.0,
+      "full_train_predictions": 0,
+      "leave_window_mode_fraction": 0.0,
+      "leave_window_predictions": 0,
+      "mode_count": 0,
+      "mode_fraction": 0.0,
+      "predictions": 0,
+      "seq": "MOT20-02",
+      "stable_candidate": 0,
+      "unique_candidates": 0
+    },
+    {
+      "eligible_specs": 0,
+      "full_train_mode_fraction": 0.0,
+      "full_train_predictions": 0,
+      "leave_window_mode_fraction": 0.0,
+      "leave_window_predictions": 0,
+      "mode_count": 0,
+      "mode_fraction": 0.0,
+      "predictions": 0,
+      "seq": "MOT20-03",
+      "stable_candidate": 0,
+      "unique_candidates": 0
+    },
+    {
+      "eligible_specs": 7,
+      "full_train_mode_fraction": 0.5,
+      "full_train_predictions": 6,
+      "leave_window_mode_fraction": 0.25925925925925924,
+      "leave_window_predictions": 27,
+      "mode_boundary_frame": 2591,
+      "mode_canonical_rank": 13,
+      "mode_count": 10,
+      "mode_fraction": 0.30303030303030304,
+      "mode_seq": "MOT20-05",
+      "mode_transaction_type": "v_to_u",
+      "mode_u": 1353,
+      "mode_v": 1385,
+      "predictions": 33,
+      "seq": "MOT20-05",
+      "stable_candidate": 0,
+      "unique_candidates": 7
+    }
+  ],
+  "stable_sequences": []
+}

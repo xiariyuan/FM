@@ -1,0 +1,5 @@
+seq,eligible_specs,predictions,unique_candidates,mode_count,mode_fraction,full_train_predictions,full_train_mode_fraction,leave_window_predictions,leave_window_mode_fraction,stable_candidate,mode_seq,mode_canonical_rank,mode_u,mode_v,mode_boundary_frame,mode_transaction_type
+MOT20-01,1,5,2,4,0.8,1,1.0,4,0.75,0,MOT20-01,12.0,17.0,29.0,111.0,v_to_u
+MOT20-02,0,0,0,0,0.0,0,0.0,0,0.0,0,,,,,,
+MOT20-03,0,0,0,0,0.0,0,0.0,0,0.0,0,,,,,,
+MOT20-05,7,33,7,10,0.30303030303,6,0.5,27,0.259259259259,0,MOT20-05,13.0,1353.0,1385.0,2591.0,v_to_u

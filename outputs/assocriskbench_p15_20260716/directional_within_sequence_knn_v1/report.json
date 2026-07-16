@@ -1,0 +1,159 @@
+{
+  "dataset": {
+    "locked_executable_rows_after_exclusion": 64,
+    "locked_rows_after_exclusion": 156,
+    "locked_rows_before_exclusion": 160,
+    "previously_revealed_locked_rows_excluded": 4,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "training_directional_rows": 640,
+    "training_executable_rows": 225
+  },
+  "deployment_allowed": false,
+  "final_sequence_choices": [
+    {
+      "chosen_retrieval_spec": "compact_standard_k3_vote67",
+      "eligible_train_specs": 1,
+      "locked_candidate_count": 1,
+      "seq": "MOT20-01"
+    },
+    {
+      "chosen_retrieval_spec": "no_op",
+      "eligible_train_specs": 0,
+      "locked_candidate_count": 0,
+      "seq": "MOT20-02"
+    },
+    {
+      "chosen_retrieval_spec": "no_op",
+      "eligible_train_specs": 0,
+      "locked_candidate_count": 0,
+      "seq": "MOT20-03"
+    },
+    {
+      "chosen_retrieval_spec": "mechanism_robust_k5_pmean",
+      "eligible_train_specs": 7,
+      "locked_candidate_count": 1,
+      "seq": "MOT20-05"
+    }
+  ],
+  "locked_candidate_count": 2,
+  "locked_selected_after_global_gate": 0,
+  "outer_oof_summary": {
+    "eligible": 0,
+    "negative_mass": 0.0253589999999945,
+    "negative_windows": 2,
+    "positive_precision": 0.6,
+    "positive_sum": 0.053647999999995394,
+    "positive_windows": 3,
+    "selected_sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-05"
+    ],
+    "selected_windows": 5,
+    "sequence_utility": {
+      "MOT20-01": 0.024537999999992698,
+      "MOT20-02": -0.009539999999987,
+      "MOT20-03": 0.0,
+      "MOT20-05": 0.0132909999999952
+    },
+    "utility_sum": 0.0282890000000009,
+    "worst_selected_sequence_utility": -0.009539999999987
+  },
+  "protocol": {
+    "final_sequence_eligibility": "At least three of four train windows selected; every selected utility strictly positive.",
+    "global_eligibility": "At least six outer selections across at least two sequences, precision>=0.90, positive total and every selected-sequence utility, negative mass<=10% positive sum.",
+    "inner_eligibility": "At least two of three windows selected; every selected utility strictly positive.",
+    "locked_utility_or_trackeval_labels_read": false,
+    "outer_evaluation": "For each sequence and each 20-rank train window, the other three windows form outer training. A nested leave-one-window-out over those three selects the retrieval spec.",
+    "retrieval_specs_preregistered": [
+      {
+        "certificate": "q25_positive",
+        "feature_set": "compact",
+        "name": "compact_standard_k1_nearest_positive",
+        "neighbors": 1,
+        "scaler": "standard",
+        "score": "mean"
+      },
+      {
+        "certificate": "p67",
+        "feature_set": "compact",
+        "name": "compact_standard_k3_vote67",
+        "neighbors": 3,
+        "scaler": "standard",
+        "score": "positive_fraction"
+      },
+      {
+        "certificate": "q25_positive",
+        "feature_set": "compact",
+        "name": "compact_standard_k3_q25",
+        "neighbors": 3,
+        "scaler": "standard",
+        "score": "q25"
+      },
+      {
+        "certificate": "q25_positive",
+        "feature_set": "compact",
+        "name": "compact_robust_k3_q25",
+        "neighbors": 3,
+        "scaler": "robust",
+        "score": "q25"
+      },
+      {
+        "certificate": "score_positive",
+        "feature_set": "compact",
+        "name": "compact_robust_k7_vote",
+        "neighbors": 7,
+        "scaler": "robust",
+        "score": "p_mean"
+      },
+      {
+        "certificate": "score_positive",
+        "feature_set": "mechanism",
+        "name": "mechanism_robust_k5_pmean",
+        "neighbors": 5,
+        "scaler": "robust",
+        "score": "p_mean"
+      },
+      {
+        "certificate": "score_positive",
+        "feature_set": "mechanism",
+        "name": "mechanism_robust_k5_vote",
+        "neighbors": 5,
+        "scaler": "robust",
+        "score": "positive_fraction"
+      },
+      {
+        "certificate": "score_positive",
+        "feature_set": "mechanism",
+        "name": "mechanism_robust_k7_pmean",
+        "neighbors": 7,
+        "scaler": "robust",
+        "score": "p_mean"
+      },
+      {
+        "certificate": "mean_positive",
+        "feature_set": "mechanism",
+        "name": "mechanism_standard_k5_mean",
+        "neighbors": 5,
+        "scaler": "standard",
+        "score": "mean"
+      },
+      {
+        "certificate": "score_positive",
+        "feature_set": "mechanism",
+        "name": "mechanism_standard_k7_pmean",
+        "neighbors": 7,
+        "scaler": "standard",
+        "score": "p_mean"
+      }
+    ],
+    "scope": "Sequence-conditioned nearest-neighbor utility retrieval using train ranks21-100 only; previously revealed locked rows are excluded before prediction.",
+    "selective_deployment": "Sequences without local positive evidence remain no-op; coverage of all four sequences is not required."
+  },
+  "remaining_locked_labels_unread_before_new_reveal": 156
+}

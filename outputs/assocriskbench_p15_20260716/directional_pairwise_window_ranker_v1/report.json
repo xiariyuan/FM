@@ -1,0 +1,158 @@
+{
+  "dataset": {
+    "locked_directional_rows_after_exclusion": 156,
+    "locked_directional_rows_before_exclusion": 160,
+    "locked_excluded_previously_revealed": 4,
+    "locked_executable_rows_after_exclusion": 64,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "train_windows": 16,
+    "training_directional_rows": 640,
+    "training_executable_rows": 225
+  },
+  "deployment_allowed": false,
+  "locked_fold_gate_passes": 1,
+  "locked_selected_after_global_gate": 0,
+  "outer_folds": [
+    {
+      "chosen_gate": "no_op",
+      "chosen_ranker": "no_op",
+      "eligible_config_gates": 0,
+      "fallback_no_op": 1,
+      "held_out_seq": "MOT20-01",
+      "locked_selected_by_fold_gate": 0,
+      "locked_topone_candidates": 0,
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0,
+      "pairwise_train_examples": 0
+    },
+    {
+      "chosen_gate": "no_op",
+      "chosen_ranker": "no_op",
+      "eligible_config_gates": 0,
+      "fallback_no_op": 1,
+      "held_out_seq": "MOT20-02",
+      "locked_selected_by_fold_gate": 0,
+      "locked_topone_candidates": 0,
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0,
+      "pairwise_train_examples": 0
+    },
+    {
+      "chosen_gate": "changed_ge_4_margin_ge_002",
+      "chosen_ranker": "extra_raw_capped",
+      "eligible_config_gates": 4,
+      "fallback_no_op": 0,
+      "held_out_seq": "MOT20-03",
+      "locked_selected_by_fold_gate": 1,
+      "locked_topone_candidates": 1,
+      "outer_selected_windows": 3,
+      "outer_topone_windows": 4,
+      "pairwise_train_examples": 2326
+    },
+    {
+      "chosen_gate": "no_op",
+      "chosen_ranker": "no_op",
+      "eligible_config_gates": 0,
+      "fallback_no_op": 1,
+      "held_out_seq": "MOT20-05",
+      "locked_selected_by_fold_gate": 0,
+      "locked_topone_candidates": 0,
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0,
+      "pairwise_train_examples": 0
+    }
+  ],
+  "outer_oof_summary": {
+    "covered_sequences": 1,
+    "eligible": 0,
+    "negative_mass": 0.040210000000016,
+    "negative_windows": 1,
+    "positive_precision": 0.6666666666666666,
+    "positive_sum": 0.000394999999983236,
+    "positive_windows": 2,
+    "robust_score": -0.360310000000211,
+    "selected_windows": 3,
+    "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": 0.0, \"MOT20-03\": -0.03981500000003276, \"MOT20-05\": 0.0}",
+    "utility_sum": -0.03981500000003276,
+    "worst_sequence_utility": -0.03981500000003276,
+    "zero_windows": 0
+  },
+  "protocol": {
+    "gate_family_preregistered": [
+      "all",
+      "changed_ge_2",
+      "changed_ge_4",
+      "changed_ge_8",
+      "changed_ge_12",
+      "impact_receiver_le_080",
+      "changed_ge_4_impact_receiver_le_080",
+      "changed_ge_4_impact_pair_le_050",
+      "changed_ge_4_margin_ge_002",
+      "changed_ge_4_score_ge_070"
+    ],
+    "global_eligibility": "outer OOF selected>=8, all four sequences covered, precision>=0.65, positive and total utility>0, worst sequence>=0, negative mass<=25% positive sum.",
+    "inner_eligibility": "selected>=6, all three inner sequences covered, precision>=0.65, positive and total utility>0, worst sequence>=0, negative mass<=25% positive sum.",
+    "inner_selection": "Within each outer fold, three-way inner LOSO selects ranker and gate. Each 20-rank window contributes one pairwise top-one candidate before abstention.",
+    "locked_utility_or_trackeval_labels_read": false,
+    "pair_weighting": "Pair weights are normalized within each sequence-window. Tail variants upweight comparisons containing negative and catastrophic utility.",
+    "previously_revealed_locked_candidates_excluded": 4,
+    "ranker_family_preregistered": [
+      {
+        "family": "extra",
+        "name": "extra_raw_capped",
+        "target_scale": "raw",
+        "weight_scheme": "capped"
+      },
+      {
+        "family": "extra",
+        "name": "extra_raw_tail",
+        "target_scale": "raw",
+        "weight_scheme": "tail"
+      },
+      {
+        "family": "extra",
+        "name": "extra_norm_capped",
+        "target_scale": "normalized",
+        "weight_scheme": "capped"
+      },
+      {
+        "family": "extra",
+        "name": "extra_norm_tail",
+        "target_scale": "normalized",
+        "weight_scheme": "tail"
+      },
+      {
+        "family": "hist",
+        "name": "hist_raw_capped",
+        "target_scale": "raw",
+        "weight_scheme": "capped"
+      },
+      {
+        "family": "hist",
+        "name": "hist_raw_tail",
+        "target_scale": "raw",
+        "weight_scheme": "tail"
+      },
+      {
+        "family": "hist",
+        "name": "hist_norm_capped",
+        "target_scale": "normalized",
+        "weight_scheme": "capped"
+      },
+      {
+        "family": "hist",
+        "name": "hist_norm_tail",
+        "target_scale": "normalized",
+        "weight_scheme": "tail"
+      }
+    ],
+    "remaining_locked_directional_rows": 156,
+    "scope": "Nested LOSO pairwise/listwise directional window ranking on train ranks21-100, followed by frozen prediction on previously unread locked rows only."
+  },
+  "remaining_locked_labels_unread_before_new_reveal": 156
+}
