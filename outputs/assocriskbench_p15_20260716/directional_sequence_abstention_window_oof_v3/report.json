@@ -1,0 +1,280 @@
+{
+  "protocol": {
+    "scope": "Train-only sequence-aware abstention audit. Each held-out sequence ranks 21-100 is partitioned into four rank windows of 20 base events (40 directional rows), mimicking a locked top20 deployment unit.",
+    "locked_rank1_20_labels_read": false,
+    "nested_loso": "Outer sequence is never used for model/policy selection. Inner LOSO on the other three sequences chooses feature variant, candidate policy, and cap.",
+    "gate_family_preregistered": [
+      "base",
+      "regression_any_positive",
+      "median_positive",
+      "expected_positive",
+      "regression_consensus",
+      "q25_positive",
+      "classifier_strict",
+      "hybrid_safe",
+      "unique_signal",
+      "sparse_signal",
+      "score_gap_010",
+      "sparse_regression_any"
+    ],
+    "gate_eligibility": "At least four selected windows; positive precision >=0.75; total utility >0; worst sequence utility >=0; negative mass <=25% of positive sum.",
+    "window_definition": [
+      [
+        21,
+        40
+      ],
+      [
+        41,
+        60
+      ],
+      [
+        61,
+        80
+      ],
+      [
+        81,
+        100
+      ]
+    ]
+  },
+  "dataset": {
+    "directional_rows": 640,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "deployment_units": 16
+  },
+  "chosen_abstention_gate": "no_op",
+  "eligible_gates": [],
+  "gate_summary": [
+    {
+      "gate": "base",
+      "selected_windows": 4,
+      "positive_windows": 1,
+      "negative_windows": 3,
+      "positive_precision": 0.25,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011904,
+      "utility_sum": -0.011849,
+      "utility_mean_per_selected": -0.00296225,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078545,
+      "eligible": 0
+    },
+    {
+      "gate": "regression_any_positive",
+      "selected_windows": 4,
+      "positive_windows": 1,
+      "negative_windows": 3,
+      "positive_precision": 0.25,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011904,
+      "utility_sum": -0.011849,
+      "utility_mean_per_selected": -0.00296225,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078545,
+      "eligible": 0
+    },
+    {
+      "gate": "median_positive",
+      "selected_windows": 4,
+      "positive_windows": 1,
+      "negative_windows": 3,
+      "positive_precision": 0.25,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011904,
+      "utility_sum": -0.011849,
+      "utility_mean_per_selected": -0.00296225,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078545,
+      "eligible": 0
+    },
+    {
+      "gate": "expected_positive",
+      "selected_windows": 3,
+      "positive_windows": 1,
+      "negative_windows": 2,
+      "positive_precision": 0.333333333333,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.00964,
+      "utility_sum": -0.009585,
+      "utility_mean_per_selected": -0.003195,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": 0.0}",
+      "robust_score": -0.067225,
+      "eligible": 0
+    },
+    {
+      "gate": "regression_consensus",
+      "selected_windows": 3,
+      "positive_windows": 1,
+      "negative_windows": 2,
+      "positive_precision": 0.333333333333,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.00964,
+      "utility_sum": -0.009585,
+      "utility_mean_per_selected": -0.003195,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": 0.0}",
+      "robust_score": -0.067225,
+      "eligible": 0
+    },
+    {
+      "gate": "q25_positive",
+      "selected_windows": 0,
+      "positive_windows": 0,
+      "negative_windows": 0,
+      "positive_precision": 0.0,
+      "positive_sum": 0.0,
+      "negative_mass": 0.0,
+      "utility_sum": 0.0,
+      "utility_mean_per_selected": 0.0,
+      "worst_window_utility": 0.0,
+      "worst_sequence_utility": 0.0,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": 0.0, \"MOT20-03\": 0.0, \"MOT20-05\": 0.0}",
+      "robust_score": 0.0,
+      "eligible": 0
+    },
+    {
+      "gate": "classifier_strict",
+      "selected_windows": 2,
+      "positive_windows": 1,
+      "negative_windows": 1,
+      "positive_precision": 0.5,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.00954,
+      "utility_sum": -0.009485,
+      "utility_mean_per_selected": -0.0047425,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": 5.5e-05, \"MOT20-05\": 0.0}",
+      "robust_score": -0.066725,
+      "eligible": 0
+    },
+    {
+      "gate": "hybrid_safe",
+      "selected_windows": 3,
+      "positive_windows": 1,
+      "negative_windows": 2,
+      "positive_precision": 0.333333333333,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011804,
+      "utility_sum": -0.011749,
+      "utility_mean_per_selected": -0.003916333333,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": 5.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078045,
+      "eligible": 0
+    },
+    {
+      "gate": "unique_signal",
+      "selected_windows": 4,
+      "positive_windows": 1,
+      "negative_windows": 3,
+      "positive_precision": 0.25,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011904,
+      "utility_sum": -0.011849,
+      "utility_mean_per_selected": -0.00296225,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078545,
+      "eligible": 0
+    },
+    {
+      "gate": "sparse_signal",
+      "selected_windows": 4,
+      "positive_windows": 1,
+      "negative_windows": 3,
+      "positive_precision": 0.25,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011904,
+      "utility_sum": -0.011849,
+      "utility_mean_per_selected": -0.00296225,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078545,
+      "eligible": 0
+    },
+    {
+      "gate": "score_gap_010",
+      "selected_windows": 4,
+      "positive_windows": 1,
+      "negative_windows": 3,
+      "positive_precision": 0.25,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011904,
+      "utility_sum": -0.011849,
+      "utility_mean_per_selected": -0.00296225,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078545,
+      "eligible": 0
+    },
+    {
+      "gate": "sparse_regression_any",
+      "selected_windows": 4,
+      "positive_windows": 1,
+      "negative_windows": 3,
+      "positive_precision": 0.25,
+      "positive_sum": 5.5e-05,
+      "negative_mass": 0.011904,
+      "utility_sum": -0.011849,
+      "utility_mean_per_selected": -0.00296225,
+      "worst_window_utility": -0.00954,
+      "worst_sequence_utility": -0.00954,
+      "sequence_utility": "{\"MOT20-01\": 0.0, \"MOT20-02\": -0.00954, \"MOT20-03\": -4.5e-05, \"MOT20-05\": -0.002264}",
+      "robust_score": -0.078545,
+      "eligible": 0
+    }
+  ],
+  "folds": [
+    {
+      "held_out_seq": "MOT20-01",
+      "variant": "compact_directional",
+      "policy": "prob_margin_40",
+      "cap": 1,
+      "fallback_no_op": 0,
+      "inner_eligible_policies": 4
+    },
+    {
+      "held_out_seq": "MOT20-02",
+      "variant": "full_directional",
+      "policy": "median_p60_cat10",
+      "cap": 1,
+      "fallback_no_op": 0,
+      "inner_eligible_policies": 4
+    },
+    {
+      "held_out_seq": "MOT20-03",
+      "variant": "full_directional",
+      "policy": "prob_margin_40",
+      "cap": 1,
+      "fallback_no_op": 0,
+      "inner_eligible_policies": 1
+    },
+    {
+      "held_out_seq": "MOT20-05",
+      "variant": "compact_directional",
+      "policy": "median_p60_cat10",
+      "cap": 1,
+      "fallback_no_op": 0,
+      "inner_eligible_policies": 8
+    }
+  ]
+}

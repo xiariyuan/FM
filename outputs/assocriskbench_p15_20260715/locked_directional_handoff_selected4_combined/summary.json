@@ -1,0 +1,111 @@
+{
+  "protocol": {
+    "scope": "Combined TrackEval replay of the frozen LOSO-selected directional handoff set.",
+    "selection_sha256": "1a2739ded2c752c06ab4bca52b25d26a44095c3a883dfb77d96027bd1e9e5db4",
+    "locked_rows_consumed": 4,
+    "remaining_locked_directional_rows_unread": 156
+  },
+  "copied_tracks": [
+    {
+      "seq": "MOT20-01",
+      "name": "mot20_01_r0002_60_61_f354_u_to_v",
+      "source": "outputs/assocriskbench_p15_20260715/locked_directional_handoff_selected4_audit/MOT20-01/mot20_01_r0002_60_61_f354_u_to_v/track_results/MOT20-01.txt",
+      "track_sha256": "76fa13a73a99fab3619aa0809ba354a6d4fc7276799c67cb65a4a0c894037d20"
+    },
+    {
+      "seq": "MOT20-02",
+      "name": "mot20_02_r0010_338_386_f1918_u_to_v",
+      "source": "outputs/assocriskbench_p15_20260715/locked_directional_handoff_selected4_audit/MOT20-02/mot20_02_r0010_338_386_f1918_u_to_v/track_results/MOT20-02.txt",
+      "track_sha256": "d85357ffcba631b4ea0296f5e6dc147f7d0f9b46dcc950fce13e13587b256173"
+    },
+    {
+      "seq": "MOT20-03",
+      "name": "mot20_03_r0013_513_737_f2247_u_to_v",
+      "source": "outputs/assocriskbench_p15_20260715/locked_directional_handoff_selected4_audit/MOT20-03/mot20_03_r0013_513_737_f2247_u_to_v/track_results/MOT20-03.txt",
+      "track_sha256": "b6199083ad8e48cef5cd776cd86f292b42fd9d7b3cce157f5ce8d519233b5370"
+    },
+    {
+      "seq": "MOT20-05",
+      "name": "mot20_05_r0020_1313_1414_f2859_v_to_u",
+      "source": "outputs/assocriskbench_p15_20260715/locked_directional_handoff_selected4_audit/MOT20-05/mot20_05_r0020_1313_1414_f2859_v_to_u/track_results/MOT20-05.txt",
+      "track_sha256": "ffd4092ce1d40ddca8b4e59e6931c1c9fe510ad0fdb8a36bc6f5b2bb54304921"
+    }
+  ],
+  "eval": {
+    "MOT20-01": {
+      "HOTA": 78.76989,
+      "DetA": 81.79650000000001,
+      "AssA": 76.01397,
+      "IDF1": 90.59672198006679,
+      "IDSW": 42
+    },
+    "MOT20-02": {
+      "HOTA": 71.574026,
+      "DetA": 80.630606,
+      "AssA": 63.64125000000001,
+      "IDF1": 79.19722948026593,
+      "IDSW": 291
+    },
+    "MOT20-03": {
+      "HOTA": 80.575573,
+      "DetA": 81.185156,
+      "AssA": 80.00425,
+      "IDF1": 94.7363834000707,
+      "IDSW": 139
+    },
+    "MOT20-05": {
+      "HOTA": 79.58197,
+      "DetA": 81.95727000000001,
+      "AssA": 77.319455,
+      "IDF1": 91.87044143632217,
+      "IDSW": 431
+    },
+    "COMBINED": {
+      "HOTA": 78.81567000000001,
+      "DetA": 81.553507,
+      "AssA": 76.22212999999999,
+      "IDF1": 90.91475735622654,
+      "IDSW": 903
+    }
+  },
+  "delta_vs_aggressive15_merge_then_swap": {
+    "MOT20-01": {
+      "HOTA": -0.02008299999999963,
+      "DetA": -0.008759999999995216,
+      "AssA": -0.030090000000001282,
+      "IDF1": -0.08156814763833609,
+      "IDSW": 1
+    },
+    "MOT20-02": {
+      "HOTA": 0.0032060000000058153,
+      "DetA": 0.0018960000000021182,
+      "AssA": 0.004120000000007451,
+      "IDF1": 0.0,
+      "IDSW": 1
+    },
+    "MOT20-03": {
+      "HOTA": 0.005162999999996032,
+      "DetA": -0.0009599999999920783,
+      "AssA": 0.011139999999997485,
+      "IDF1": 0.012588909171014961,
+      "IDSW": 1
+    },
+    "MOT20-05": {
+      "HOTA": 0.0005359999999967613,
+      "DetA": 0.00018599999999935335,
+      "AssA": 0.0008650000000045566,
+      "IDF1": 0.0006227280157560244,
+      "IDSW": 1
+    },
+    "COMBINED": {
+      "HOTA": 0.0018300000000124328,
+      "DetA": -4.800000000670934e-05,
+      "AssA": 0.0035699999999962984,
+      "IDF1": 0.0024007629091045146,
+      "IDSW": 4
+    }
+  },
+  "simple_avg_HOTA": 77.62536475,
+  "baseline_simple_avg_HOTA": 77.62815925000001,
+  "delta_simple_avg_HOTA": -0.0027945000000073605
+}

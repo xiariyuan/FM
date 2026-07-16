@@ -1,0 +1,17 @@
+seq,rank_start,rank_end,chosen_variant,chosen_policy,chosen_cap,active_candidates,top_score,second_score,score_gap,executable_rate,selected,delta_HOTA,pass__base,pass__regression_any_positive,pass__median_positive,pass__expected_positive,pass__regression_consensus,pass__q25_positive,pass__classifier_strict,pass__hybrid_safe,pass__unique_signal,pass__sparse_signal,pass__score_gap_010,pass__sparse_regression_any,canonical_rank,u,v,boundary_frame,transaction_type,pred_expected,pred_q25,pred_median,prob_positive,prob_negative,prob_catastrophic,prob_margin,selection_score
+MOT20-01,21,40,compact_directional,prob_margin_40,1,0,,,,0.225,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-01,41,60,compact_directional,prob_margin_40,1,0,,,,0.2,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-01,61,80,compact_directional,prob_margin_40,1,0,,,,0.325,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-01,81,100,compact_directional,prob_margin_40,1,0,,,,0.4,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-02,21,40,full_directional,median_p60_cat10,1,0,,,,0.475,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-02,41,60,full_directional,median_p60_cat10,1,0,,,,0.375,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-02,61,80,full_directional,median_p60_cat10,1,1,0.174205085272,,inf,0.45,1,-0.00954,1,1,1,1,1,0,1,1,1,1,1,1,73.0,312.0,412.0,2043.0,v_to_u,0.01078229398,-0.021968116704,0.033539245371,0.773495300553,0.206477294111,0.002177323421,0.562663359601,0.174205085272
+MOT20-02,81,100,full_directional,median_p60_cat10,1,0,,,,0.425,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-03,21,40,full_directional,prob_margin_40,1,1,0.654708154391,,inf,0.4,1,5.5e-05,1,1,1,1,1,0,1,1,1,1,1,1,27.0,355.0,403.0,2122.0,v_to_u,0.009829659496,-0.0831355414,0.012696634644,0.871817248137,0.152251172957,0.032920443369,0.653725188441,0.654708154391
+MOT20-03,41,60,full_directional,prob_margin_40,1,0,,,,0.325,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-03,61,80,full_directional,prob_margin_40,1,0,,,,0.3,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-03,81,100,full_directional,prob_margin_40,1,1,0.426056121712,,inf,0.35,1,-0.0001,1,1,1,1,1,0,0,0,1,1,1,1,94.0,131.0,280.0,1199.0,u_to_v,0.0318365479,-0.124162780036,0.013628700839,0.735086481229,0.180268873576,0.065972570366,0.422872466922,0.426056121712
+MOT20-05,21,40,compact_directional,median_p60_cat10,1,0,,,,0.45,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-05,41,60,compact_directional,median_p60_cat10,1,0,,,,0.325,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-05,61,80,compact_directional,median_p60_cat10,1,0,,,,0.3,0,0.0,0,0,0,0,0,0,0,0,0,0,0,0,,,,,,,,,,,,,
+MOT20-05,81,100,compact_directional,median_p60_cat10,1,1,0.121284760283,,inf,0.3,1,-0.002264,1,1,1,0,0,0,0,1,1,1,1,1,96.0,1377.0,1380.0,3218.0,v_to_u,-0.018182923506,-0.032719860644,0.019709976181,0.704218122254,0.283955976358,0.006981504745,0.406299136407,0.121284760283

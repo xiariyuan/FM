@@ -1,0 +1,74 @@
+{
+  "protocol": {
+    "scope": "Directional handoff locked LOSO: train utility on frozen ranks 21-100 from the three non-held-out sequences; select only from frozen ranks 1-20 of the held-out sequence.",
+    "locked_label_policy": "This script never accepts or reads a locked rank1-20 utility/TrackEval label file.",
+    "inner_selection": "Leave-one-training-sequence-out chooses a whitelisted feature variant, fixed gate, and cap. If no policy satisfies conservative eligibility constraints, the fold is a no-op.",
+    "eligibility": "Positive precision >=0.60, negative mass <= max(0.02, 0.5*positive sum), worst training-sequence utility >= -0.02.",
+    "executor_features": "Only deterministic directional replay metadata available before TrackEval is used; GT/evaluation columns are excluded by an explicit feature whitelist.",
+    "conflict_policy": "At most the calibrated cap per sequence; selected transactions may not share either track ID, which also prevents choosing both directions of the same pair.",
+    "feature_variants": {
+      "compact_directional": 54,
+      "full_directional": 90
+    },
+    "policies": [
+      "q25_positive",
+      "q25_p55",
+      "median_p60_cat10",
+      "consensus_safe",
+      "prob_margin_25",
+      "prob_margin_40"
+    ],
+    "caps": [
+      1,
+      2,
+      3
+    ]
+  },
+  "dataset": {
+    "training_directional_events": 640,
+    "training_executable": 225,
+    "training_positive": 48,
+    "training_negative": 176,
+    "locked_directional_events": 160,
+    "locked_executable": 68
+  },
+  "folds": [
+    {
+      "held_out_seq": "MOT20-01",
+      "chosen_variant": "compact_directional",
+      "chosen_policy": "prob_margin_40",
+      "chosen_cap": 1,
+      "inner_eligible_policies": 4,
+      "outer_selected": 1,
+      "fallback_no_op": 0
+    },
+    {
+      "held_out_seq": "MOT20-02",
+      "chosen_variant": "full_directional",
+      "chosen_policy": "median_p60_cat10",
+      "chosen_cap": 1,
+      "inner_eligible_policies": 4,
+      "outer_selected": 1,
+      "fallback_no_op": 0
+    },
+    {
+      "held_out_seq": "MOT20-03",
+      "chosen_variant": "full_directional",
+      "chosen_policy": "prob_margin_40",
+      "chosen_cap": 1,
+      "inner_eligible_policies": 1,
+      "outer_selected": 1,
+      "fallback_no_op": 0
+    },
+    {
+      "held_out_seq": "MOT20-05",
+      "chosen_variant": "compact_directional",
+      "chosen_policy": "median_p60_cat10",
+      "chosen_cap": 1,
+      "inner_eligible_policies": 8,
+      "outer_selected": 1,
+      "fallback_no_op": 0
+    }
+  ],
+  "selected_transactions": 4
+}

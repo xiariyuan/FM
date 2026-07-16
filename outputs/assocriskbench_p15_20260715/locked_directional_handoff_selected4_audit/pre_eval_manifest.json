@@ -1,0 +1,8 @@
+{
+  "selection_source": "outputs/assocriskbench_p15_20260715/locked_loso_directional_handoff_utility_v2/selected_transactions.csv",
+  "selection_sha256": "1a2739ded2c752c06ab4bca52b25d26a44095c3a883dfb77d96027bd1e9e5db4",
+  "selected_executability_sha256": "f59d356e3470ada2ff9caf9dca553b611435ca6eab07d01c849774437c930a98",
+  "selected_rows": 4,
+  "locked_rows_consumed": 4,
+  "remaining_locked_directional_rows_unread": 156
+}

@@ -1,0 +1,18 @@
+{
+  "protocol": {
+    "scope": "Fail-closed sequence-level abstention applied to frozen locked rank1-20 directional predictions.",
+    "locked_utility_or_trackeval_labels_read": false,
+    "selection_rule": "The train-only pseudo-deployment window audit selected no_op because no preregistered abstention gate satisfied the robust eligibility constraints.",
+    "remaining_locked_directional_labels_unread": 156
+  },
+  "train_abstention_gate": "no_op",
+  "previous_selected_transactions": 4,
+  "selected_transactions_after_abstention": 0,
+  "suppressed_transactions": 4,
+  "suppressed_sequences": [
+    "MOT20-01",
+    "MOT20-02",
+    "MOT20-03",
+    "MOT20-05"
+  ]
+}

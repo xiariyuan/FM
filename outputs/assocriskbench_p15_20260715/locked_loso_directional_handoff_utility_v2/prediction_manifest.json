@@ -1,0 +1,30 @@
+{
+  "predictions_frozen_before_locked_evaluation": true,
+  "locked_utility_or_trackeval_labels_read": false,
+  "directional_keys": [
+    "seq",
+    "canonical_rank",
+    "u",
+    "v",
+    "boundary_frame",
+    "transaction_type"
+  ],
+  "output_sha256": {
+    "locked_test_predictions.csv": "de8b8caa48712c25b6416d27fa7a5103e3856b7e128da511d2be9ebd6376f91c",
+    "selected_transactions.csv": "1a2739ded2c752c06ab4bca52b25d26a44095c3a883dfb77d96027bd1e9e5db4",
+    "report.json": "41558c1e758691fa8a06355a79cd5d899a422f222ab3eea1213e2700a96bcdf7"
+  },
+  "input_sha256": {
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_train_rank21_100/MOT20-01_survival_features.csv": "74f507642dd447ac587b76432397b50100e6e8af1cbedacc34a843c5aebf02df",
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_train_rank21_100/MOT20-02_survival_features.csv": "cc695cd298323336cf4d65751b66251a29d15540635bdd3123458b95a9fbcdce",
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_train_rank21_100/MOT20-03_survival_features.csv": "a35b27942074b9c214f337df801357c25ac1b185d8c34a442f44db8c396b0fb4",
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_train_rank21_100/MOT20-05_survival_features.csv": "c3d098ca09b2698ba4f9a8b1be3c561274a071171ac781703326a41e3596892c",
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_top20/MOT20-01_survival_features.csv": "9193531f06444121fae3458a4b07309f82bb983af63cbf1a2bf54ba398dab194",
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_top20/MOT20-02_survival_features.csv": "37eca104412f2e8cb2fbf6cbebbb87a2ccda65a328f0ee3fc4880988f793c359",
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_top20/MOT20-03_survival_features.csv": "6316ecefa9d0c0e7841a61b98746409704d6b059e4898cbfe04bcfe01e356d65",
+    "outputs/assocriskbench_p15_20260715/outer_clean_transaction_survival_top20/MOT20-05_survival_features.csv": "dc330b1b4cac3f76335c84c5dc034eebf1a2c6aec1d8e5e1c382ddff72609aca",
+    "outputs/assocriskbench_p15_20260715/directional_handoff_executability_train_rank21_100/executability.csv": "559274c617faf38dfd5d3d800a470d85d03e633bf261adcc064db6528a94c515",
+    "outputs/assocriskbench_p15_20260715/directional_handoff_executability_locked_rank1_20/executability.csv": "74b21142cbc272227ee98e0eea7e9e3ab9d433ca1923801a9bb51706e19027a7",
+    "outputs/assocriskbench_p15_20260715/directional_handoff_utility_train_rank21_100/directional_utility.csv": "18083dd38d152501d5b4b80f07bb405aa090243ab4270a9f51c9b7feec9ed6a6"
+  }
+}

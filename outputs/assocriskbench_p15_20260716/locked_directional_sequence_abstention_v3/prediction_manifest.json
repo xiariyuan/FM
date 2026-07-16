@@ -1,0 +1,14 @@
+{
+  "frozen_before_any_additional_locked_evaluation": true,
+  "locked_utility_or_trackeval_labels_read": false,
+  "train_abstention_report_sha256": "433fc5d99136b80025819ccf7489748245354679d1f80cf4318f3dd8d3d7e7e9",
+  "source_prediction_sha256": "de8b8caa48712c25b6416d27fa7a5103e3856b7e128da511d2be9ebd6376f91c",
+  "source_selected_sha256": "1a2739ded2c752c06ab4bca52b25d26a44095c3a883dfb77d96027bd1e9e5db4",
+  "source_manifest_sha256": "bcf49c22c197d654dbcbe33e011cc12fb5b864b28a490cac430eb8fbe325bdf6",
+  "source_manifest_declares_locked_labels_unread": true,
+  "output_sha256": {
+    "locked_test_predictions.csv": "e7f3a4fb9ffe4a67572f69ab25a04e3b70a9d17adcbbbf2c1ce853f283ebd8c8",
+    "selected_transactions.csv": "ff02bb8cfd146d95d294d01a0c8cfe960d5b37cd711f2c906dba3a1ebef2a5fb",
+    "report.json": "12b6a5a5eb3b14c409be38b7428d9fd19c032d85f089dde07a71dba31c0cc895"
+  }
+}

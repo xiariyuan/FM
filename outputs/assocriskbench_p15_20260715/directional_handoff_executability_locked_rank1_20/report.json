@@ -1,0 +1,83 @@
+{
+  "scope": "Frozen locked ranks 1-20 directional executability only; no TrackEval metrics or GT labels are read.",
+  "summary": [
+    {
+      "seq": "MOT20-01",
+      "transaction_type": "u_to_v",
+      "events": 20,
+      "accepted": 4,
+      "mean_changed_rows": 12.8
+    },
+    {
+      "seq": "MOT20-01",
+      "transaction_type": "v_to_u",
+      "events": 20,
+      "accepted": 9,
+      "mean_changed_rows": 32.7
+    },
+    {
+      "seq": "MOT20-02",
+      "transaction_type": "u_to_v",
+      "events": 20,
+      "accepted": 11,
+      "mean_changed_rows": 71.55
+    },
+    {
+      "seq": "MOT20-02",
+      "transaction_type": "v_to_u",
+      "events": 20,
+      "accepted": 8,
+      "mean_changed_rows": 79.0
+    },
+    {
+      "seq": "MOT20-03",
+      "transaction_type": "u_to_v",
+      "events": 20,
+      "accepted": 8,
+      "mean_changed_rows": 19.35
+    },
+    {
+      "seq": "MOT20-03",
+      "transaction_type": "v_to_u",
+      "events": 20,
+      "accepted": 10,
+      "mean_changed_rows": 36.35
+    },
+    {
+      "seq": "MOT20-05",
+      "transaction_type": "u_to_v",
+      "events": 20,
+      "accepted": 9,
+      "mean_changed_rows": 105.2
+    },
+    {
+      "seq": "MOT20-05",
+      "transaction_type": "v_to_u",
+      "events": 20,
+      "accepted": 9,
+      "mean_changed_rows": 40.45
+    }
+  ],
+  "reject_reasons": [
+    {
+      "transaction_type": "u_to_v",
+      "reject_reason": "missing_pair_at_boundary",
+      "count": 3
+    },
+    {
+      "transaction_type": "u_to_v",
+      "reject_reason": "no_post_boundary_handoff_frame",
+      "count": 45
+    },
+    {
+      "transaction_type": "v_to_u",
+      "reject_reason": "missing_pair_at_boundary",
+      "count": 3
+    },
+    {
+      "transaction_type": "v_to_u",
+      "reject_reason": "no_post_boundary_handoff_frame",
+      "count": 41
+    }
+  ]
+}

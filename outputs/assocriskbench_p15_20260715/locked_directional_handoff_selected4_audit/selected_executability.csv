@@ -1,0 +1,5 @@
+seq,canonical_rank,u,v,boundary_frame,transaction_type,accepted,changed_rows,effective_start_frame,reject_reason
+MOT20-01,2,60,61,354,u_to_v,1,62,368.0,
+MOT20-02,10,338,386,1918,u_to_v,1,41,1972.0,
+MOT20-03,13,513,737,2247,u_to_v,1,39,2367.0,
+MOT20-05,20,1313,1414,2859,v_to_u,1,6,2991.0,

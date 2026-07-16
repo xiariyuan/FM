@@ -1,0 +1,5 @@
+held_out_seq,chosen_variant,chosen_policy,chosen_cap,inner_eligible_policies,outer_selected,fallback_no_op
+MOT20-01,compact_directional,prob_margin_40,1,4,1,0
+MOT20-02,full_directional,median_p60_cat10,1,4,1,0
+MOT20-03,full_directional,prob_margin_40,1,1,1,0
+MOT20-05,compact_directional,median_p60_cat10,1,8,1,0
