@@ -1,0 +1,4 @@
+model_name,threshold,eligible,selected_blocks,covered_sequences,positive_blocks,negative_blocks,zero_blocks,utility_sum,worst_sequence_utility
+geometry_positive,0.794437810148,0,17,7,4,13,0,-2.307014176834,-1.080373231207
+geometry_utility,-0.005308003035,0,19,7,1,9,9,-0.673910258266,-0.629744651484
+motion_multitask,1.022570102562,0,24,7,12,8,4,0.995300019135,-0.643855691403

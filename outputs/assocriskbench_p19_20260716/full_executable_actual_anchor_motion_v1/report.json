@@ -1,0 +1,46 @@
+{
+  "dataset": {
+    "aggregate_anchor_events": 0,
+    "events": 11705,
+    "feature_columns": 367,
+    "maximum_missing_fraction": 0.010422896198205895,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ]
+  },
+  "protocol": {
+    "actual_source": "Unique edited_label from the executor geometry diff.",
+    "forbidden_inputs": [
+      "matched_gt_id",
+      "matched_gt_iou",
+      "dominant_gt",
+      "row_class",
+      "utility labels",
+      "TrackEval metrics",
+      "locked artifacts"
+    ],
+    "future_horizons": [
+      "h30",
+      "h60",
+      "h120",
+      "full"
+    ],
+    "history_sizes": [
+      5,
+      20
+    ],
+    "input_mode": "event_metadata_reconstruction",
+    "locked_labels_read": 0,
+    "locked_trackeval_calls": 0,
+    "metadata_reconstruction": "For each event, reconstruct receiver rows at and after effective_start_frame and relabel them from receiver_anchor to donor_anchor.",
+    "motion_error": "center residual + 0.25*bottom residual + 0.10*log-size residual.",
+    "receiver_family": "Per-row baseline_label from the executor geometry diff.",
+    "scope": "Train-only actual-anchor future motion transfer features."
+  }
+}

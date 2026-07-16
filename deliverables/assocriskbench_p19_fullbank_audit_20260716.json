@@ -1,0 +1,301 @@
+{
+  "canonical_recall": {
+    "canonical_events": 705,
+    "canonical_positive_events": 104,
+    "full_events": 11705,
+    "full_positive_events": 1050,
+    "positive_recall": 0.099047619048
+  },
+  "decision": {
+    "deployment_allowed": false,
+    "fixed_model_promoted": false,
+    "next_stage": "Set-valued selective prediction and explicit support/OOD certificates for extreme false-positive tail risk; scalar threshold tuning is closed.",
+    "p18_canonical_calibration_closed": true,
+    "p19_full_motion_retained": true,
+    "p19_full_teacher_retained": true
+  },
+  "integrity": {
+    "candidate_selection_uses_gt": false,
+    "formal_chains": {
+      "full_executable_actual_anchor_motion_v1": {
+        "all_hashes_equal": true,
+        "entries": 3,
+        "files_equal": true,
+        "manifest_file": "prediction_manifest.json",
+        "manifest_sha256": "3da6867cd8d36b956abdbf37c5293526f0c500fdf7c3df23655a93fb7a7f9346",
+        "report_sha256": "6b05378baeb5a775449dccc9cc6f20d8fe386d53e2a0ce4017c6bbec5b1c1f68",
+        "valid": true
+      },
+      "full_executable_domain_generalization_v1": {
+        "all_hashes_equal": true,
+        "entries": 8,
+        "files_equal": true,
+        "manifest_file": "prediction_manifest.json",
+        "manifest_sha256": "350824b648f49042d2c15608de26e74da33a5111c7fbf1456414c2c206db91d0",
+        "report_sha256": "890cab3bb87b720c2c9056766ed2cf59c5886584d7a2cc8542a856ca44ae4ab3",
+        "valid": true
+      },
+      "full_executable_event_teacher_v1": {
+        "all_hashes_equal": true,
+        "entries": 6,
+        "files_equal": true,
+        "manifest_file": "manifest.json",
+        "manifest_sha256": "87257174adc0dcdeef468c0608be2f09cce81b3d5a4f708ba316e918dcdbc79e",
+        "report_sha256": "a95321588811c15b77e7599b4dbd862521c82218c3aa40c95b16f56875052d20",
+        "valid": true
+      },
+      "nested_domain_calibration_v1": {
+        "all_hashes_equal": true,
+        "entries": 4,
+        "files_equal": true,
+        "manifest_file": "prediction_manifest.json",
+        "manifest_sha256": "e3661025276550b5461961b8e5b6d3df07132c296a0388f73ecd22fa692041a0",
+        "report_sha256": "d094618a6e70849ae60df02309c5d70402e1226bafdde926941af142efbddcd0",
+        "valid": true
+      }
+    },
+    "full_motion_duplicate_event_keys": 0,
+    "full_motion_forbidden_columns": [],
+    "motion_builder_original_mode_regression": {
+      "P16": {
+        "all_hashes_equal": true,
+        "feature_sha256": "932f4ea78c73a23745f8799c8e6bf10f2ce1b2b478524894cfbd0f8eade1b9f3",
+        "files_equal": true,
+        "report_sha256": "8f98886a6562e9f0db8264ae40ce2c2b7e8ec4e82eb6eea3828d33011d59bb40"
+      },
+      "P17": {
+        "all_hashes_equal": true,
+        "feature_sha256": "cff6631654548365075b74357dcb187ea92e3a59055f437de0362b9d1f62368a",
+        "files_equal": true,
+        "report_sha256": "a014a58cdb676411b2b63a2d415a82c4587b3134d2e82a97a87a22108ed3937f"
+      }
+    },
+    "teacher_gt_read_after_full_event_freeze": true
+  },
+  "p18_nested_calibration": {
+    "authorization": {
+      "authorized_outer_folds": 0,
+      "selected_negative_blocks": 0,
+      "selected_outer_blocks": 0,
+      "selected_positive_blocks": 0,
+      "selected_utility_sum": 0.0,
+      "selected_worst_sequence_utility": 0.0
+    },
+    "dataset": {
+      "compact_features": 36,
+      "events": 705,
+      "qualified_targets": 13,
+      "sequences": [
+        "MOT17-02-FRCNN",
+        "MOT17-04-FRCNN",
+        "MOT17-05-FRCNN",
+        "MOT17-09-FRCNN",
+        "MOT17-10-FRCNN",
+        "MOT17-11-FRCNN",
+        "MOT17-13-FRCNN"
+      ],
+      "temporal_blocks": 28
+    },
+    "decision": {
+      "canonical_calibration_family_closed": true,
+      "deployment_allowed": false,
+      "locked_manifest_created": false,
+      "p15_policy_changed": false,
+      "reason": "No outer fold finds an inner threshold satisfying source-domain coverage and nonnegative worst-source-domain utility. The nested policy therefore fails closed with zero selected blocks."
+    },
+    "event_metrics": {
+      "positive_auc": 0.6425188787917574,
+      "positive_average_precision": 0.22343841683422055,
+      "spearman": 0.06355188967464898
+    }
+  },
+  "p19_full_motion": {
+    "aggregate_anchor_events": 0,
+    "events": 11705,
+    "feature_columns": 367,
+    "maximum_missing_fraction": 0.010422896198205895,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ]
+  },
+  "p19_full_teacher": {
+    "changed_rows_represented": 1786622,
+    "executable_events": 11705,
+    "negative_events": 10147,
+    "ordered_candidate_directions": 27336,
+    "positive_events": 1050,
+    "positive_fraction": 0.0897052541648868,
+    "sequence_count": 7,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "zero_events": 508
+  },
+  "p19_generalization": {
+    "decision": {
+      "deployment_allowed": false,
+      "fixed_model_promoted": false,
+      "full_event_teacher_retained": true,
+      "full_motion_bank_retained": true,
+      "locked_manifest_created": false,
+      "next_stage": "Model extreme false-positive tail risk with set-valued selective prediction or explicit support/OOD certificates; do not continue scalar threshold tuning.",
+      "p15_policy_changed": false,
+      "reason": "The full executable bank recovers most positive teacher events and exposes complementary geometry and motion signals, but no fixed model and no retrospective single-score abstention threshold achieves seven-sequence coverage with nonnegative worst-sequence utility."
+    },
+    "eligible_fixed_models": 0,
+    "eligible_single_score_gates": 0,
+    "event_metrics": [
+      {
+        "events": 11705,
+        "model_name": "geometry_positive",
+        "positive_auc": 0.845246095059,
+        "positive_average_precision": 0.276505391758,
+        "positive_events": 1050,
+        "positive_fraction": 0.089705254165,
+        "spearman": 0.003642949269
+      },
+      {
+        "events": 11705,
+        "model_name": "geometry_utility",
+        "positive_auc": 0.499531541195,
+        "positive_average_precision": 0.083500431583,
+        "positive_events": 1050,
+        "positive_fraction": 0.089705254165,
+        "spearman": 0.673479981514
+      },
+      {
+        "events": 11705,
+        "model_name": "motion_multitask",
+        "positive_auc": 0.53658680253,
+        "positive_average_precision": 0.125215379431,
+        "positive_events": 1050,
+        "positive_fraction": 0.089705254165,
+        "spearman": 0.083582183215
+      }
+    ],
+    "oracle": {
+      "blocks": 28,
+      "blocks_without_positive_event": 5,
+      "topone_utility_sum": 7.372291515160001,
+      "worst_sequence_topone_utility": 0.286057692308
+    },
+    "retrospective_gate_feasibility": [
+      {
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_name": "geometry_positive",
+        "negative_blocks": 13,
+        "positive_blocks": 4,
+        "selected_blocks": 17,
+        "threshold": 0.794437810148,
+        "utility_sum": -2.307014176834,
+        "worst_sequence_utility": -1.080373231207,
+        "zero_blocks": 0
+      },
+      {
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_name": "geometry_utility",
+        "negative_blocks": 9,
+        "positive_blocks": 1,
+        "selected_blocks": 19,
+        "threshold": -0.005308003035,
+        "utility_sum": -0.673910258266,
+        "worst_sequence_utility": -0.629744651484,
+        "zero_blocks": 9
+      },
+      {
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_name": "motion_multitask",
+        "negative_blocks": 8,
+        "positive_blocks": 12,
+        "selected_blocks": 24,
+        "threshold": 1.022570102562,
+        "utility_sum": 0.995300019135,
+        "worst_sequence_utility": -0.643855691403,
+        "zero_blocks": 4
+      }
+    ],
+    "topone_summary": [
+      {
+        "MOT17-02-FRCNN_utility": -0.268840778779,
+        "MOT17-04-FRCNN_utility": -1.066462094369,
+        "MOT17-05-FRCNN_utility": -0.520174864687,
+        "MOT17-09-FRCNN_utility": -1.072460821853,
+        "MOT17-10-FRCNN_utility": -1.080373231207,
+        "MOT17-11-FRCNN_utility": -1.028183586953,
+        "MOT17-13-FRCNN_utility": 0.126202790587,
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_name": "geometry_positive",
+        "negative_blocks": 23,
+        "positive_blocks": 5,
+        "positive_sequences": 1,
+        "selected_blocks": 28,
+        "utility_sum": -4.910292587261,
+        "worst_sequence_utility": -1.080373231207,
+        "zero_blocks": 0
+      },
+      {
+        "MOT17-02-FRCNN_utility": -0.00607160652,
+        "MOT17-04-FRCNN_utility": -0.031376919061,
+        "MOT17-05-FRCNN_utility": -0.006845982764,
+        "MOT17-09-FRCNN_utility": -0.035778030043,
+        "MOT17-10-FRCNN_utility": -0.671411318151,
+        "MOT17-11-FRCNN_utility": -0.003488372093,
+        "MOT17-13-FRCNN_utility": -0.002079002079,
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_name": "geometry_utility",
+        "negative_blocks": 14,
+        "positive_blocks": 1,
+        "positive_sequences": 0,
+        "selected_blocks": 28,
+        "utility_sum": -0.757051230711,
+        "worst_sequence_utility": -0.671411318151,
+        "zero_blocks": 13
+      },
+      {
+        "MOT17-02-FRCNN_utility": 0.259471338932,
+        "MOT17-04-FRCNN_utility": -0.769903076275,
+        "MOT17-05-FRCNN_utility": 0.15499172642,
+        "MOT17-09-FRCNN_utility": -0.264061582533,
+        "MOT17-10-FRCNN_utility": 0.769612168,
+        "MOT17-11-FRCNN_utility": -0.643855691403,
+        "MOT17-13-FRCNN_utility": 0.695886245766,
+        "covered_sequences": 7,
+        "eligible": 0,
+        "model_name": "motion_multitask",
+        "negative_blocks": 12,
+        "positive_blocks": 12,
+        "positive_sequences": 4,
+        "selected_blocks": 28,
+        "utility_sum": 0.202141128907,
+        "worst_sequence_utility": -0.769903076275,
+        "zero_blocks": 4
+      }
+    ]
+  },
+  "protocol": {
+    "locked_manifest_created": false,
+    "new_global_trackeval_calls": 0,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "p15_policy_changed": false,
+    "p15_remaining_locked_rows_untouched": 156
+  }
+}

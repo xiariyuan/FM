@@ -1,0 +1,52 @@
+{
+  "authorization": {
+    "authorized_outer_folds": 0,
+    "selected_negative_blocks": 0,
+    "selected_outer_blocks": 0,
+    "selected_positive_blocks": 0,
+    "selected_utility_sum": 0.0,
+    "selected_worst_sequence_utility": 0.0
+  },
+  "dataset": {
+    "compact_features": 36,
+    "events": 705,
+    "qualified_targets": 13,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "temporal_blocks": 28
+  },
+  "decision": {
+    "canonical_calibration_family_closed": true,
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "p15_policy_changed": false,
+    "reason": "No outer fold finds an inner threshold satisfying source-domain coverage and nonnegative worst-source-domain utility. The nested policy therefore fails closed with zero selected blocks."
+  },
+  "event_metrics": {
+    "positive_auc": 0.6425188787917574,
+    "positive_average_precision": 0.22343841683422055,
+    "spearman": 0.06355188967464898
+  },
+  "protocol": {
+    "authorization": "An outer fold is authorized only if one inner threshold covers every source sequence, has positive total local utility, and has nonnegative worst-source-sequence utility.",
+    "base_views": [
+      "raw utility",
+      "13-target multitask",
+      "sequence-rank positive probability"
+    ],
+    "global_trackeval_calls": 0,
+    "meta_model": "Standardized logistic regression on completely inner-OOF base-view predictions and block-relative agreement features.",
+    "model_or_threshold_sweep": false,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "scope": "Strict nested sequence-level domain calibration on the 705-event canonical P17 bank."
+  }
+}

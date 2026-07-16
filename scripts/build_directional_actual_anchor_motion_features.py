@@ -105,6 +105,70 @@ def load_tracks(path: Path) -> pd.DataFrame:
     return frame
 
 
+def reconstruct_changed_rows_from_event_metadata(
+    executability: pd.DataFrame,
+    track_paths: dict[str, Path],
+) -> pd.DataFrame:
+    required = KEYS + [
+        'effective_start_frame',
+        'donor_anchor',
+        'receiver_anchor',
+        'changed_rows',
+    ]
+    missing = [column for column in required if column not in executability.columns]
+    if missing:
+        raise RuntimeError(f'event metadata missing columns: {missing}')
+    outputs: list[pd.DataFrame] = []
+    for seq in sorted(executability.seq.astype(str).unique()):
+        tracks = load_tracks(track_paths[seq])
+        by_track = {
+            int(track_id): group.sort_values('frame')
+            for track_id, group in tracks.groupby('track_id', sort=False)
+        }
+        for _, event in executability[executability.seq == seq].iterrows():
+            receiver = int(event.receiver_anchor)
+            source = int(event.donor_anchor)
+            start = int(event.effective_start_frame)
+            if receiver not in by_track:
+                raise RuntimeError(f'missing receiver track {receiver}: {seq}')
+            future = by_track[receiver][by_track[receiver].frame >= start]
+            expected = int(event.changed_rows)
+            if len(future) != expected:
+                key = tuple(event[column] for column in KEYS)
+                raise RuntimeError(
+                    f'event metadata changed-row mismatch: {key}: '
+                    f'future={len(future)}, expected={expected}'
+                )
+            part = future[['frame']].copy()
+            for column in KEYS:
+                part[column] = event[column]
+            part['frames_after_handoff'] = part.frame.astype(int) - start
+            part['baseline_label'] = receiver
+            part['edited_label'] = source
+            outputs.append(
+                part[
+                    KEYS
+                    + [
+                        'frame',
+                        'frames_after_handoff',
+                        'baseline_label',
+                        'edited_label',
+                    ]
+                ]
+            )
+    if not outputs:
+        return pd.DataFrame(
+            columns=KEYS
+            + [
+                'frame',
+                'frames_after_handoff',
+                'baseline_label',
+                'edited_label',
+            ]
+        )
+    return pd.concat(outputs, ignore_index=True)
+
+
 def build_features(
     executability: pd.DataFrame,
     changed: pd.DataFrame,
@@ -309,21 +373,32 @@ def compact_features() -> list[str]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument('--executability', required=True)
-    parser.add_argument('--changed-rows', required=True)
+    parser.add_argument('--changed-rows')
+    parser.add_argument('--event-metadata')
     parser.add_argument('--track-result', action='append', required=True, help='SEQ=PATH')
     parser.add_argument('--out-dir', required=True)
     args = parser.parse_args()
 
     executability_path = Path(args.executability)
-    changed_path = Path(args.changed_rows)
+    if bool(args.changed_rows) == bool(args.event_metadata):
+        raise RuntimeError('provide exactly one of --changed-rows or --event-metadata')
     executability = pd.read_csv(executability_path)
     executability = executability[executability.accepted == 1].copy()
     sequences = sorted(executability.seq.astype(str).unique().tolist())
     track_paths = parse_mapping(args.track_result, 'track-result', sequences)
-    changed = pd.read_csv(
-        changed_path,
-        usecols=KEYS + ['frame', 'frames_after_handoff', 'baseline_label', 'edited_label'],
-    )
+    input_mode = 'changed_rows'
+    if args.changed_rows:
+        changed = pd.read_csv(
+            Path(args.changed_rows),
+            usecols=KEYS
+            + ['frame', 'frames_after_handoff', 'baseline_label', 'edited_label'],
+        )
+    else:
+        metadata_path = Path(args.event_metadata)
+        metadata = pd.read_csv(metadata_path)
+        metadata = metadata[metadata.accepted == 1].copy()
+        changed = reconstruct_changed_rows_from_event_metadata(metadata, track_paths)
+        input_mode = 'event_metadata_reconstruction'
     features = build_features(executability, changed, track_paths)
     if len(features) != len(executability):
         raise RuntimeError(f'feature/event row mismatch: {len(features)} != {len(executability)}')
@@ -359,6 +434,12 @@ def main() -> None:
             'locked_trackeval_calls': 0,
         },
     }
+    if input_mode != 'changed_rows':
+        report['protocol']['input_mode'] = input_mode
+        report['protocol']['metadata_reconstruction'] = (
+            'For each event, reconstruct receiver rows at and after '
+            'effective_start_frame and relabel them from receiver_anchor to donor_anchor.'
+        )
     report_path = out_dir / 'report.json'
     report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + '\n', encoding='utf-8')
     manifest = {

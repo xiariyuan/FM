@@ -1,0 +1,8 @@
+held_out_seq,threshold,inner_authorized,inner_selected,inner_utility_sum,inner_worst_sequence_utility
+MOT17-02-FRCNN,1.0,0,0,0.0,0.0
+MOT17-04-FRCNN,1.0,0,0,0.0,0.0
+MOT17-05-FRCNN,1.0,0,0,0.0,0.0
+MOT17-09-FRCNN,1.0,0,0,0.0,0.0
+MOT17-10-FRCNN,1.0,0,0,0.0,0.0
+MOT17-11-FRCNN,1.0,0,0,0.0,0.0
+MOT17-13-FRCNN,1.0,0,0,0.0,0.0
