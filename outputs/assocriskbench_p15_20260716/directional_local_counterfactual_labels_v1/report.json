@@ -1,0 +1,82 @@
+{
+  "dataset": {
+    "accepted_train_events": 225,
+    "changed_rows_labeled": 31711,
+    "counterfactual_sha_verified": 225,
+    "replay_changed_row_mismatches": 0,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "utility_rows_total": 640
+  },
+  "gt_matching": [
+    {
+      "evaluated_frames": 429,
+      "matched_tracker_rows": 19087,
+      "seq": "MOT20-01",
+      "tracker_rows": 19372
+    },
+    {
+      "evaluated_frames": 2782,
+      "matched_tracker_rows": 148089,
+      "seq": "MOT20-02",
+      "tracker_rows": 151152
+    },
+    {
+      "evaluated_frames": 2405,
+      "matched_tracker_rows": 301574,
+      "seq": "MOT20-03",
+      "tracker_rows": 305937
+    },
+    {
+      "evaluated_frames": 3315,
+      "matched_tracker_rows": 625796,
+      "seq": "MOT20-05",
+      "tracker_rows": 638588
+    }
+  ],
+  "locked_artifacts_read": false,
+  "next_step_allowed": true,
+  "protocol": {
+    "baseline": "identity_transaction_fusion_eval_v2/aggressive15_merge_then_swap",
+    "counterfactual_source": "Previously audited accepted train-event track files; every file is SHA-verified and geometry-matched to the formal baseline.",
+    "gt_matching": "Per-frame Hungarian assignment at IoU >= threshold; MOT mark=1,class=1 only.",
+    "horizons": {
+      "full": null,
+      "h120": 120,
+      "h30": 30,
+      "h300": 300,
+      "h60": 60
+    },
+    "local_idtp_delta": "Change in maximum local tracker-to-GT assignment support under baseline versus edited two-cluster partitions.",
+    "local_pairwise_delta": "Net change in correct-minus-incorrect cross-cluster GT association pairs when future receiver rows move from receiver anchor to donor anchor.",
+    "qualification_thresholds_preregistered": {
+      "pooled_spearman_delta_AssA": 0.5,
+      "positive_hota_auc": 0.75,
+      "positive_sequence_spearman_count": 3,
+      "window_topone_positive_windows_min": 8,
+      "window_topone_utility_sum_strictly_positive": true,
+      "window_topone_worst_sequence_nonnegative": true
+    },
+    "scope": "Train ranks21-100 only. No locked feature, utility, or TrackEval artifact is read."
+  },
+  "qualified_auxiliary_target_count": 13,
+  "qualified_auxiliary_targets": [
+    "full_idtp_delta_norm",
+    "h300_idtp_delta_norm",
+    "h120_idtp_delta_norm",
+    "full_donor_minus_receiver_support_frac",
+    "full_row_net",
+    "h60_idtp_delta_norm",
+    "h300_donor_minus_receiver_support_frac",
+    "h300_pairwise_net_norm",
+    "full_pairwise_net_norm",
+    "h300_row_net",
+    "h120_donor_minus_receiver_support_frac",
+    "h120_pairwise_net_norm",
+    "h120_row_net"
+  ]
+}

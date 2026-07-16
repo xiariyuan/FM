@@ -1,0 +1,5 @@
+held_out_seq,chosen_threshold,fallback_no_op,outer_test_events,outer_selected_windows,pairwise_train_examples
+MOT20-01,,1,46,0,2498
+MOT20-02,,1,69,0,1868
+MOT20-03,,1,55,0,2304
+MOT20-05,,1,55,0,2264

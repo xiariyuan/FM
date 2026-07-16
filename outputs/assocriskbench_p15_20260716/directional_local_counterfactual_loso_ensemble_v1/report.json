@@ -1,0 +1,84 @@
+{
+  "dataset": {
+    "events": 225,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "windows": 16
+  },
+  "deployment_allowed": false,
+  "event_metrics": {
+    "delta_AssA_spearman": 0.4059382491026832,
+    "delta_HOTA_spearman": 0.41423625630773997,
+    "positive_HOTA_auc": 0.6781426553672316,
+    "target_spearman": 0.3574702368688285
+  },
+  "local_target_oracle_topone": {
+    "catastrophic_windows": 0,
+    "negative_mass": 0.002394,
+    "negative_mass_fraction": 0.003391789998044832,
+    "negative_windows": 1,
+    "positive_sum": 0.7058220000000001,
+    "positive_windows": 15,
+    "selected_windows": 16,
+    "sequence_utility": {
+      "MOT20-01": 0.524388,
+      "MOT20-02": 0.13430999999999998,
+      "MOT20-03": 0.032115,
+      "MOT20-05": 0.012615000000000001
+    },
+    "utility_sum": 0.703428,
+    "worst_sequence_utility": 0.012615000000000001,
+    "zero_windows": 0
+  },
+  "next_step": "do not access locked labels; diagnose observable-feature predictability",
+  "outer_topone": {
+    "catastrophic_windows": 0,
+    "negative_mass": 0.058202000000000004,
+    "negative_mass_fraction": 0.299129880609135,
+    "negative_windows": 6,
+    "positive_sum": 0.194571,
+    "positive_windows": 9,
+    "selected_windows": 16,
+    "sequence_utility": {
+      "MOT20-01": 0.167938,
+      "MOT20-02": -0.009058,
+      "MOT20-03": -0.040599,
+      "MOT20-05": 0.018088
+    },
+    "utility_sum": 0.136369,
+    "worst_sequence_utility": -0.040599,
+    "zero_windows": 1
+  },
+  "protocol": {
+    "components": [
+      "extra_reg_s17",
+      "extra_reg_s53",
+      "hist_reg",
+      "extra_pair_s17",
+      "extra_pair_s53",
+      "hist_pair"
+    ],
+    "deployment_thresholds_preregistered": {
+      "catastrophic_delta_HOTA_threshold": -0.05,
+      "catastrophic_windows_max": 0,
+      "event_target_spearman_min": 0.35,
+      "negative_mass_max_fraction_of_positive_sum": 0.2,
+      "positive_HOTA_auc_min": 0.7,
+      "positive_windows_min": 12,
+      "selected_windows": 16,
+      "utility_sum_strictly_positive": true,
+      "worst_sequence_utility_nonnegative": true
+    },
+    "ensemble": "Within each held-out sequence-window, convert every component score to percentile rank and use the component 25th percentile as the robust score.",
+    "feature_count": 90,
+    "feature_whitelist_sha256": "629ffce761b739e45e4df0a19708c7834ced3f4d59cbe3c82b52974b6a191c02",
+    "locked_artifacts_read": false,
+    "primary_auxiliary_target": "full_idtp_delta_norm",
+    "scope": "Sequence-disjoint outer LOSO on train ranks21-100 only. No locked artifact is read.",
+    "target_selection_rule": "Highest preregistered pooled Spearman with delta_AssA among qualified local targets; ties by positive-HOTA AUC."
+  }
+}

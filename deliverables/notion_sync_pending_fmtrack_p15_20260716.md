@@ -25,3 +25,18 @@ Source of truth: `deliverables/assocriskbench_p15_directional_risk_model_closure
 - No new locked utility labels or TrackEval results were read.
 - All 156 remaining locked directional rows remain unread.
 - Decision: close the current directional utility-learning family on frozen P15; next work must expand train-only counterfactual supervision rather than tune against the locked pool.
+
+## Pending section｜Local Counterfactual Supervision
+
+Source of truth: `deliverables/assocriskbench_p15_local_counterfactual_supervision_20260716.md`
+
+- Built exact dense local counterfactual supervision for 225 accepted ranks21–100 directional events.
+- Verified 225/225 edited trajectory SHA values and recovered 31,711 changed-row labels with zero replay-count mismatches.
+- Generalized the label definition to support one event containing multiple baseline receiver anchors merged into one donor.
+- `full_idtp_delta_norm` strongly matches global association utility: Spearman with delta_AssA 0.803645, positive-HOTA AUC 0.950506, 15/16 positive train-window top-one choices, and +0.703428 HOTA total.
+- Thirteen preregistered local targets passed all qualification constraints.
+- The sequence-disjoint observable-feature ensemble learned partial signal but failed deployment: +0.136369 HOTA total, 9/16 positive windows, worst sequence -0.040599, positive-HOTA AUC 0.678143.
+- A nested local-positive gate found no eligible threshold in any outer fold; all four folds selected no-op.
+- All three formal evidence chains reproduced byte-identically.
+- No locked artifact, locked utility label, or new locked TrackEval result was read; all 156 remaining locked directional rows remain unread.
+- Decision: preserve the dense labels as a train-only teacher, stop the current threshold/gate family, and next expand independent counterfactual domains plus hierarchical/domain-generalized observable features.

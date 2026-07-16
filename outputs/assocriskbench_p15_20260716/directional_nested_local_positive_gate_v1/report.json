@@ -1,0 +1,113 @@
+{
+  "dataset": {
+    "events": 225,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "windows": 16
+  },
+  "deployment_allowed": false,
+  "event_metrics": {
+    "local_positive_auc": 0.6744350282485876,
+    "positive_HOTA_auc": 0.6288841807909604
+  },
+  "next_step": "keep locked pool untouched and stop this gate family",
+  "outer_folds": [
+    {
+      "chosen_threshold": null,
+      "fallback_no_op": 1,
+      "held_out_seq": "MOT20-01",
+      "outer_selected_windows": 0,
+      "outer_test_events": 46,
+      "pairwise_train_examples": 2498
+    },
+    {
+      "chosen_threshold": null,
+      "fallback_no_op": 1,
+      "held_out_seq": "MOT20-02",
+      "outer_selected_windows": 0,
+      "outer_test_events": 69,
+      "pairwise_train_examples": 1868
+    },
+    {
+      "chosen_threshold": null,
+      "fallback_no_op": 1,
+      "held_out_seq": "MOT20-03",
+      "outer_selected_windows": 0,
+      "outer_test_events": 55,
+      "pairwise_train_examples": 2304
+    },
+    {
+      "chosen_threshold": null,
+      "fallback_no_op": 1,
+      "held_out_seq": "MOT20-05",
+      "outer_selected_windows": 0,
+      "outer_test_events": 55,
+      "pairwise_train_examples": 2264
+    }
+  ],
+  "outer_selection": {
+    "catastrophic_windows": 0,
+    "covered_sequences": 0,
+    "negative_mass": 0.0,
+    "negative_mass_fraction": 0.0,
+    "negative_windows": 0,
+    "positive_precision": 0.0,
+    "positive_sum": 0.0,
+    "positive_windows": 0,
+    "selected_windows": 0,
+    "sequence_utility": {
+      "MOT20-01": 0.0,
+      "MOT20-02": 0.0,
+      "MOT20-03": 0.0,
+      "MOT20-05": 0.0
+    },
+    "utility_sum": 0.0,
+    "worst_selected_sequence_utility": 0.0,
+    "zero_windows": 0
+  },
+  "protocol": {
+    "gate": "Minimum probability from two ExtraTrees local-positive classifiers.",
+    "inner_eligibility": {
+      "catastrophic_local_target_threshold": -0.1,
+      "catastrophic_selected_max": 0,
+      "covered_sequences": 3,
+      "local_positive_precision_min": 0.85,
+      "local_utility_strictly_positive": true,
+      "negative_mass_max_fraction_of_positive_sum": 0.1,
+      "selected_windows_min": 6,
+      "worst_sequence_local_utility_nonnegative": true
+    },
+    "inner_threshold_selection": "Choose the highest-coverage eligible threshold using local counterfactual labels only; ties by worst-sequence local utility, total local utility, then lower threshold.",
+    "locked_artifacts_read": false,
+    "outer_deployment_thresholds_preregistered": {
+      "catastrophic_delta_HOTA_threshold": -0.05,
+      "catastrophic_windows_max": 0,
+      "covered_sequences_min": 2,
+      "event_local_positive_auc_min": 0.75,
+      "event_positive_HOTA_auc_min": 0.7,
+      "negative_mass_max_fraction_of_positive_sum": 0.2,
+      "positive_HOTA_precision_min": 0.75,
+      "selected_windows_min": 6,
+      "utility_sum_strictly_positive": true,
+      "worst_selected_sequence_utility_nonnegative": true
+    },
+    "ranker": "Mean win score from two ExtraTrees local-target pairwise rankers.",
+    "scope": "Nested sequence-disjoint local-positive gate plus pairwise ranker on train ranks21-100 only. No locked artifact is read.",
+    "target": "full_idtp_delta_norm",
+    "threshold_grid": [
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6,
+      0.65,
+      0.7,
+      0.75,
+      0.8
+    ]
+  }
+}
