@@ -1,0 +1,12 @@
+{
+  "feature": "pair_vs_third_h120_q25",
+  "foreign_event_oriented_auc": 0.7057613168724279,
+  "problem_event": {
+    "canonical_rank": 72,
+    "delta_HOTA": -0.05585,
+    "foreign_event": 1,
+    "full_idtp_delta_norm": -0.136960600375,
+    "pair_vs_third_h120_q25": 0.220322966576,
+    "seq": "MOT20-02"
+  }
+}

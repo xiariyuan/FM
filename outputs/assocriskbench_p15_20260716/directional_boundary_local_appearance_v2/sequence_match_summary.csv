@@ -1,0 +1,5 @@
+seq,events,relevant_track_ids,needed_baseline_rows,matched_baseline_rows,baseline_row_match_rate,mean_future_full_coverage,minimum_future_full_coverage,events_with_zero_future_reid,events_with_missing_source20,events_with_missing_receiver_family20,events_using_aggregate_anchor,mean_third_party_candidates,minimum_third_party_candidates,events_with_zero_third_party_candidates
+MOT20-01,46,32,4295,4289,0.998603026775,0.998998427186,0.971962616822,0,0,0,0,61.804347826087,37,0
+MOT20-02,69,89,15746,15644,0.993522164359,0.997590629075,0.943722943723,0,0,0,2,250.376811594203,44,0
+MOT20-03,55,86,9477,9265,0.977630051704,0.993334885424,0.875,0,0,0,0,521.527272727273,180,0
+MOT20-05,55,102,12026,11953,0.993929818726,0.993352122952,0.948275862069,0,0,0,13,804.0,278,0

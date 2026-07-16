@@ -1,0 +1,71 @@
+{
+  "appearance": {
+    "aggregate_anchor_events": 15,
+    "columns": 562,
+    "duplicates": 0,
+    "feature_columns": 556,
+    "forbidden_columns": [],
+    "future_reid_mean": 0.9958020734105288,
+    "future_reid_min": 0.875,
+    "rows": 225,
+    "third_party_min": 37
+  },
+  "closure": {
+    "decision": "no_op",
+    "locked_manifest_created": false,
+    "simultaneous_nonnegative_fallback_configs": 0
+  },
+  "locked": {
+    "new_labels_read": 0,
+    "new_trackeval_calls": 0,
+    "remaining_unread": 156
+  },
+  "motion": {
+    "aggregate_anchor_events": 15,
+    "columns": 373,
+    "duplicates": 0,
+    "feature_columns": 367,
+    "forbidden_columns": [],
+    "max_missing_fraction": 0.013333333333333334,
+    "rows": 225
+  },
+  "motion_veto": {
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "outer_choices": [
+      "no_op",
+      "no_op",
+      "no_op",
+      "no_op"
+    ],
+    "selected_windows": 0
+  },
+  "reproduction": {
+    "directional_actual_anchor_motion_closure_diagnostics_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true
+    },
+    "directional_actual_anchor_motion_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true
+    },
+    "directional_boundary_local_appearance_v2": {
+      "all_hashes_equal": true,
+      "files_equal": true
+    },
+    "directional_nested_multitask_motion_hazard_veto_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true
+    },
+    "directional_nested_multitask_uncertainty_gate_v1": {
+      "all_hashes_equal": true,
+      "files_equal": true
+    }
+  },
+  "uncertainty_gate": {
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "selected_windows": 4,
+    "worst_hota": -0.06266500000000001
+  }
+}

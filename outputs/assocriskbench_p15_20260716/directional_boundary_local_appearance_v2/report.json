@@ -1,0 +1,134 @@
+{
+  "dataset": {
+    "changed_rows": 31711,
+    "events": 225,
+    "feature_columns": 556,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ]
+  },
+  "overall": {
+    "events_using_aggregate_anchor": 15,
+    "events_with_missing_receiver_family20": 0,
+    "events_with_missing_source20": 0,
+    "events_with_zero_future_reid": 0,
+    "events_with_zero_third_party_candidates": 0,
+    "mean_future_full_coverage": 0.9958020734105434,
+    "mean_third_party_candidates": 413.43555555555554,
+    "minimum_future_full_coverage": 0.875,
+    "minimum_third_party_candidates": 37
+  },
+  "protocol": {
+    "allowed_changed_row_columns": [
+      "seq",
+      "canonical_rank",
+      "u",
+      "v",
+      "boundary_frame",
+      "transaction_type",
+      "frame",
+      "frames_after_handoff",
+      "baseline_label",
+      "edited_label"
+    ],
+    "feature_source": "Memory-mapped YOLOX FastReID detection features; event-pre source/receiver histories, event-post changed receiver rows, and third-party tracklet start prototypes whose fifth baseline row predates the event.",
+    "forbidden_inputs": [
+      "matched_gt_id",
+      "matched_gt_iou",
+      "dominant_gt",
+      "row_class",
+      "utility labels",
+      "TrackEval metrics",
+      "locked artifacts"
+    ],
+    "future_horizons": [
+      "h30",
+      "h60",
+      "h120",
+      "h300",
+      "full"
+    ],
+    "history_sizes": [
+      5,
+      20,
+      60
+    ],
+    "locked_labels_read": 0,
+    "locked_rows_read": 0,
+    "minimum_detection_iou": 0.5,
+    "scope": "Train-only boundary-local appearance features for accepted directional events."
+  },
+  "sequence_reports": [
+    {
+      "baseline_row_match_rate": 0.9986030267753201,
+      "events": 46,
+      "events_using_aggregate_anchor": 0,
+      "events_with_missing_receiver_family20": 0,
+      "events_with_missing_source20": 0,
+      "events_with_zero_future_reid": 0,
+      "events_with_zero_third_party_candidates": 0,
+      "matched_baseline_rows": 4289,
+      "mean_future_full_coverage": 0.9989984271860785,
+      "mean_third_party_candidates": 61.80434782608695,
+      "minimum_future_full_coverage": 0.9719626168224299,
+      "minimum_third_party_candidates": 37,
+      "needed_baseline_rows": 4295,
+      "relevant_track_ids": 32,
+      "seq": "MOT20-01"
+    },
+    {
+      "baseline_row_match_rate": 0.9935221643592024,
+      "events": 69,
+      "events_using_aggregate_anchor": 2,
+      "events_with_missing_receiver_family20": 0,
+      "events_with_missing_source20": 0,
+      "events_with_zero_future_reid": 0,
+      "events_with_zero_third_party_candidates": 0,
+      "matched_baseline_rows": 15644,
+      "mean_future_full_coverage": 0.9975906290746823,
+      "mean_third_party_candidates": 250.3768115942029,
+      "minimum_future_full_coverage": 0.9437229437229437,
+      "minimum_third_party_candidates": 44,
+      "needed_baseline_rows": 15746,
+      "relevant_track_ids": 89,
+      "seq": "MOT20-02"
+    },
+    {
+      "baseline_row_match_rate": 0.9776300517041258,
+      "events": 55,
+      "events_using_aggregate_anchor": 0,
+      "events_with_missing_receiver_family20": 0,
+      "events_with_missing_source20": 0,
+      "events_with_zero_future_reid": 0,
+      "events_with_zero_third_party_candidates": 0,
+      "matched_baseline_rows": 9265,
+      "mean_future_full_coverage": 0.9933348854237952,
+      "mean_third_party_candidates": 521.5272727272727,
+      "minimum_future_full_coverage": 0.875,
+      "minimum_third_party_candidates": 180,
+      "needed_baseline_rows": 9477,
+      "relevant_track_ids": 86,
+      "seq": "MOT20-03"
+    },
+    {
+      "baseline_row_match_rate": 0.9939298187260934,
+      "events": 55,
+      "events_using_aggregate_anchor": 13,
+      "events_with_missing_receiver_family20": 0,
+      "events_with_missing_source20": 0,
+      "events_with_zero_future_reid": 0,
+      "events_with_zero_third_party_candidates": 0,
+      "matched_baseline_rows": 11953,
+      "mean_future_full_coverage": 0.9933521229518331,
+      "mean_third_party_candidates": 804.0,
+      "minimum_future_full_coverage": 0.9482758620689655,
+      "minimum_third_party_candidates": 278,
+      "needed_baseline_rows": 12026,
+      "relevant_track_ids": 102,
+      "seq": "MOT20-05"
+    }
+  ]
+}

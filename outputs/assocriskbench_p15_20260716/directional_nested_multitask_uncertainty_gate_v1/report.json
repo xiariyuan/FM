@@ -1,0 +1,242 @@
+{
+  "dataset": {
+    "events": 225,
+    "observable_features": 90,
+    "qualified_targets": 13,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "windows": 16
+  },
+  "deployment_allowed": false,
+  "locked_manifest_created": false,
+  "outer_fold_choices": [
+    {
+      "chosen_gate_config": "no_op",
+      "chosen_model_config": "no_op",
+      "chosen_score_config": "no_op",
+      "eligible_config_gates": 0,
+      "held_out_seq": "MOT20-01",
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0
+    },
+    {
+      "chosen_gate_config": "no_op",
+      "chosen_model_config": "no_op",
+      "chosen_score_config": "no_op",
+      "eligible_config_gates": 0,
+      "held_out_seq": "MOT20-02",
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0
+    },
+    {
+      "chosen_gate_config": "disp_le_030_stable_080",
+      "chosen_model_config": "extra_full_l5",
+      "chosen_score_config": "mean_positive_fraction",
+      "eligible_config_gates": 12,
+      "held_out_seq": "MOT20-03",
+      "outer_selected_windows": 4,
+      "outer_topone_windows": 4
+    },
+    {
+      "chosen_gate_config": "no_op",
+      "chosen_model_config": "no_op",
+      "chosen_score_config": "no_op",
+      "eligible_config_gates": 0,
+      "held_out_seq": "MOT20-05",
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0
+    }
+  ],
+  "outer_hota_summary": {
+    "candidate_stability_mean": 1.0,
+    "candidate_stability_min": 1.0,
+    "catastrophic_windows": 1,
+    "covered_sequences": 1,
+    "negative_mass": 0.06306,
+    "negative_windows": 2,
+    "positive_precision": 0.5,
+    "positive_sum": 0.000395,
+    "positive_windows": 2,
+    "selected_windows": 4,
+    "sequence_utility": {
+      "MOT20-01": 0.0,
+      "MOT20-02": 0.0,
+      "MOT20-03": -0.06266500000000001,
+      "MOT20-05": 0.0
+    },
+    "utility_sum": -0.06266500000000001,
+    "worst_sequence_utility": -0.06266500000000001,
+    "zero_windows": 0
+  },
+  "outer_local_summary": {
+    "candidate_stability_mean": 1.0,
+    "candidate_stability_min": 1.0,
+    "covered_sequences": 1,
+    "negative_mass": 0.146394756009,
+    "negative_windows": 1,
+    "positive_precision": 0.5,
+    "positive_sum": 0.001216545012,
+    "positive_windows": 1,
+    "selected_sequences": [
+      "MOT20-03"
+    ],
+    "selected_windows": 4,
+    "sequence_utility": {
+      "MOT20-01": 0.0,
+      "MOT20-02": 0.0,
+      "MOT20-03": -0.145178210997,
+      "MOT20-05": 0.0
+    },
+    "utility_sum": -0.145178210997,
+    "worst_sequence_utility": -0.145178210997,
+    "zero_windows": 2
+  },
+  "protocol": {
+    "gate_configs": [
+      {
+        "dispersion_cap": null,
+        "name": "all",
+        "require_q25_positive": false,
+        "stability_floor": null
+      },
+      {
+        "dispersion_cap": 0.015,
+        "name": "disp_le_015",
+        "require_q25_positive": false,
+        "stability_floor": null
+      },
+      {
+        "dispersion_cap": 0.02,
+        "name": "disp_le_020",
+        "require_q25_positive": false,
+        "stability_floor": null
+      },
+      {
+        "dispersion_cap": 0.025,
+        "name": "disp_le_025",
+        "require_q25_positive": false,
+        "stability_floor": null
+      },
+      {
+        "dispersion_cap": 0.03,
+        "name": "disp_le_030",
+        "require_q25_positive": false,
+        "stability_floor": null
+      },
+      {
+        "dispersion_cap": 0.04,
+        "name": "disp_le_040",
+        "require_q25_positive": false,
+        "stability_floor": null
+      },
+      {
+        "dispersion_cap": null,
+        "name": "stable_080",
+        "require_q25_positive": false,
+        "stability_floor": 0.8
+      },
+      {
+        "dispersion_cap": 0.02,
+        "name": "disp_le_020_stable_080",
+        "require_q25_positive": false,
+        "stability_floor": 0.8
+      },
+      {
+        "dispersion_cap": 0.025,
+        "name": "disp_le_025_stable_080",
+        "require_q25_positive": false,
+        "stability_floor": 0.8
+      },
+      {
+        "dispersion_cap": 0.03,
+        "name": "disp_le_030_stable_080",
+        "require_q25_positive": false,
+        "stability_floor": 0.8
+      },
+      {
+        "dispersion_cap": 0.025,
+        "name": "q25_pos_disp_le_025_stable_080",
+        "require_q25_positive": true,
+        "stability_floor": 0.8
+      },
+      {
+        "dispersion_cap": 0.03,
+        "name": "q25_pos_disp_le_030_stable_080",
+        "require_q25_positive": true,
+        "stability_floor": 0.8
+      }
+    ],
+    "global_eligibility": "selected>=8, all 4 sequences covered, HOTA precision>=0.60, total and positive HOTA>0, worst sequence>=0, negative mass<=25% positive sum, no HOTA<=-0.05, minimum seed stability>=0.80, and local utility total/worst>=(0,0).",
+    "inner_eligibility": "selected>=6, all 3 inner sequences covered, local positive precision>=0.70, positive and total local utility>0, worst inner sequence>=0, negative mass<=20% positive sum, minimum seed candidate stability>=0.80.",
+    "inner_selection": "Three-way inner sequence LOSO inside every outer sequence fold. Eligibility and selection use full_idtp_delta_norm only, never delta_HOTA.",
+    "locked_labels_read": 0,
+    "locked_trackeval_calls": 0,
+    "model_configs": [
+      {
+        "max_depth": 7,
+        "max_features": 0.7,
+        "min_samples_leaf": 3,
+        "name": "extra_d7_l3"
+      },
+      {
+        "max_depth": 10,
+        "max_features": 0.7,
+        "min_samples_leaf": 5,
+        "name": "extra_d10_l5"
+      },
+      {
+        "max_depth": null,
+        "max_features": 0.7,
+        "min_samples_leaf": 5,
+        "name": "extra_full_l5"
+      }
+    ],
+    "qualified_targets": [
+      "full_idtp_delta_norm",
+      "h300_idtp_delta_norm",
+      "h120_idtp_delta_norm",
+      "full_donor_minus_receiver_support_frac",
+      "full_row_net",
+      "h60_idtp_delta_norm",
+      "h300_donor_minus_receiver_support_frac",
+      "h300_pairwise_net_norm",
+      "full_pairwise_net_norm",
+      "h300_row_net",
+      "h120_donor_minus_receiver_support_frac",
+      "h120_pairwise_net_norm",
+      "h120_row_net"
+    ],
+    "remaining_locked_rows_untouched": 156,
+    "scope": "Train-only nested sequence-disjoint multitask local utility student. No locked feature, utility, or TrackEval artifact is read.",
+    "score_configs": [
+      {
+        "name": "mean_positive_fraction",
+        "primary": "mean_positive_fraction",
+        "tie_break": "mean_target_q25"
+      },
+      {
+        "name": "seedq25_positive_fraction",
+        "primary": "seedq25_positive_fraction",
+        "tie_break": "seedq25_target_q25"
+      },
+      {
+        "name": "mean_target_q25",
+        "primary": "mean_target_q25",
+        "tie_break": "mean_positive_fraction"
+      }
+    ],
+    "seeds": [
+      17,
+      53,
+      89,
+      131,
+      173
+    ],
+    "target_normalization": "Per training sequence and target: median/IQR robust normalization, clipped to [-5,5]. Held-out labels are never used for normalization or prediction."
+  },
+  "remaining_locked_labels_unread": 156
+}

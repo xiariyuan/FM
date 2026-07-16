@@ -1,0 +1,5 @@
+held_out_seq,chosen_model_config,chosen_score_config,chosen_gate_config,eligible_config_gates,outer_topone_windows,outer_selected_windows
+MOT20-01,no_op,no_op,no_op,0,0,0
+MOT20-02,no_op,no_op,no_op,0,0,0
+MOT20-03,extra_full_l5,mean_positive_fraction,disp_le_030_stable_080,12,4,4
+MOT20-05,no_op,no_op,no_op,0,0,0

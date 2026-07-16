@@ -1,0 +1,204 @@
+{
+  "dataset": {
+    "events": 225,
+    "existing_features": 90,
+    "motion_features": 36,
+    "qualified_targets": 13,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "total_model_features": 126,
+    "windows": 16
+  },
+  "deployment_allowed": false,
+  "locked_manifest_created": false,
+  "outer_fold_choices": [
+    {
+      "chosen_gate_config": "no_op",
+      "eligible_gates": 0,
+      "held_out_seq": "MOT20-01",
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0
+    },
+    {
+      "chosen_gate_config": "no_op",
+      "eligible_gates": 0,
+      "held_out_seq": "MOT20-02",
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0
+    },
+    {
+      "chosen_gate_config": "no_op",
+      "eligible_gates": 0,
+      "held_out_seq": "MOT20-03",
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0
+    },
+    {
+      "chosen_gate_config": "no_op",
+      "eligible_gates": 0,
+      "held_out_seq": "MOT20-05",
+      "outer_selected_windows": 0,
+      "outer_topone_windows": 0
+    }
+  ],
+  "outer_hota_summary": {
+    "candidate_stability_min": 0.0,
+    "catastrophic_windows": 0,
+    "covered_sequences": 0,
+    "negative_mass": 0.0,
+    "negative_windows": 0,
+    "positive_precision": 0.0,
+    "positive_sum": 0.0,
+    "positive_windows": 0,
+    "selected_windows": 0,
+    "sequence_utility": {
+      "MOT20-01": 0.0,
+      "MOT20-02": 0.0,
+      "MOT20-03": 0.0,
+      "MOT20-05": 0.0
+    },
+    "utility_sum": 0.0,
+    "worst_sequence_utility": 0.0,
+    "zero_windows": 0
+  },
+  "outer_local_summary": {
+    "candidate_stability_mean": 0.0,
+    "candidate_stability_min": 0.0,
+    "catastrophic_local_windows": 0,
+    "covered_sequences": 0,
+    "motion_min_min": 0.0,
+    "motion_q25_min": 0.0,
+    "negative_mass": 0.0,
+    "negative_windows": 0,
+    "positive_precision": 0.0,
+    "positive_sum": 0.0,
+    "positive_windows": 0,
+    "selected_sequences": [],
+    "selected_windows": 0,
+    "sequence_utility": {
+      "MOT20-01": 0.0,
+      "MOT20-02": 0.0,
+      "MOT20-03": 0.0,
+      "MOT20-05": 0.0
+    },
+    "utility_sum": 0.0,
+    "worst_sequence_utility": 0.0,
+    "zero_windows": 0
+  },
+  "protocol": {
+    "gate_configs": [
+      {
+        "minimum_motion_min": null,
+        "minimum_motion_q25": null,
+        "name": "stable080_no_motion_veto"
+      },
+      {
+        "minimum_motion_min": 0.1,
+        "minimum_motion_q25": null,
+        "name": "stable080_motion_min_ge_010"
+      },
+      {
+        "minimum_motion_min": 0.15,
+        "minimum_motion_q25": null,
+        "name": "stable080_motion_min_ge_015"
+      },
+      {
+        "minimum_motion_min": 0.2,
+        "minimum_motion_q25": null,
+        "name": "stable080_motion_min_ge_020"
+      },
+      {
+        "minimum_motion_min": 0.25,
+        "minimum_motion_q25": null,
+        "name": "stable080_motion_min_ge_025"
+      },
+      {
+        "minimum_motion_min": 0.3,
+        "minimum_motion_q25": null,
+        "name": "stable080_motion_min_ge_030"
+      },
+      {
+        "minimum_motion_min": null,
+        "minimum_motion_q25": 0.2,
+        "name": "stable080_motion_q25_ge_020"
+      },
+      {
+        "minimum_motion_min": null,
+        "minimum_motion_q25": 0.25,
+        "name": "stable080_motion_q25_ge_025"
+      },
+      {
+        "minimum_motion_min": null,
+        "minimum_motion_q25": 0.3,
+        "name": "stable080_motion_q25_ge_030"
+      },
+      {
+        "minimum_motion_min": null,
+        "minimum_motion_q25": 0.35,
+        "name": "stable080_motion_q25_ge_035"
+      },
+      {
+        "minimum_motion_min": 0.15,
+        "minimum_motion_q25": 0.25,
+        "name": "stable080_min015_q25_025"
+      },
+      {
+        "minimum_motion_min": 0.2,
+        "minimum_motion_q25": 0.3,
+        "name": "stable080_min020_q25_030"
+      }
+    ],
+    "global_eligibility": "selected>=8, all 4 sequences covered, HOTA precision>=0.60, positive/total HOTA>0, worst sequence>=0, negative mass<=25% positive sum, no HOTA<=-0.05, stability>=0.80, and local total/worst>=0 with no local catastrophe.",
+    "inner_eligibility": "selected>=6, all 3 inner sequences covered, local precision>=0.70, positive/total utility>0, worst sequence>=0, negative mass<=20% positive sum, no local utility<=-0.05, stability>=0.80.",
+    "inner_selection": "For each outer sequence, three inner sequence-disjoint folds choose the veto using full_idtp_delta_norm only. delta_HOTA is outer audit only.",
+    "locked_labels_read": 0,
+    "locked_trackeval_calls": 0,
+    "motion_certificate_components": [
+      {
+        "feature": "source_center_resid_20_h120_std",
+        "higher_is_better": false,
+        "name": "source_stability"
+      },
+      {
+        "feature": "source_center_resid_20_full_mean",
+        "higher_is_better": false,
+        "name": "source_residual"
+      },
+      {
+        "feature": "motion_margin_20_full_q25",
+        "higher_is_better": true,
+        "name": "transfer_margin"
+      },
+      {
+        "feature": "velocity_margin_20_h60",
+        "higher_is_better": true,
+        "name": "velocity_margin"
+      },
+      {
+        "feature": "motion_source_win_fraction_20_h120",
+        "higher_is_better": true,
+        "name": "source_win_fraction"
+      }
+    ],
+    "motion_policy": "Motion never reranks candidates. The multitask top-one is either retained or abstained.",
+    "ranker": {
+      "features": "90 existing observable features plus 36 preregistered actual-anchor motion features.",
+      "model": "ExtraTreesRegressor(n_estimators=300,max_depth=7,min_samples_leaf=3,max_features=0.65).",
+      "score": "Mean normalized prediction across 13 qualified local teacher targets.",
+      "seeds": [
+        17,
+        53,
+        89,
+        131,
+        173
+      ]
+    },
+    "remaining_locked_rows_untouched": 156,
+    "scope": "Train-only nested sequence-disjoint multitask ranker with post-ranking actual-anchor motion hazard veto."
+  },
+  "remaining_locked_labels_unread": 156
+}

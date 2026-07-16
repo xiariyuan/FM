@@ -1,0 +1,102 @@
+{
+  "appearance_foreign_diagnostic": {
+    "feature": "pair_vs_third_h120_q25",
+    "foreign_event_oriented_auc": 0.7057613168724279,
+    "problem_event": {
+      "canonical_rank": 72,
+      "delta_HOTA": -0.05585,
+      "foreign_event": 1,
+      "full_idtp_delta_norm": -0.136960600375,
+      "pair_vs_third_h120_q25": 0.220322966576,
+      "seq": "MOT20-02"
+    }
+  },
+  "best_constrained_fallback": {
+    "abstains": 4,
+    "fallback_rule": "max_motion_min",
+    "fallbacks": 3,
+    "hota_catastrophic_windows": 0,
+    "hota_negative_windows": 5,
+    "hota_positive_windows": 6,
+    "hota_sum": 0.12821,
+    "hota_worst_sequence": -0.004005,
+    "local_negative_windows": 2,
+    "local_positive_windows": 6,
+    "local_sum": 0.38144051782400007,
+    "local_worst_sequence": -0.035279805353,
+    "mot20_01_hota": 0.080714,
+    "mot20_02_hota": 0.033037,
+    "mot20_03_hota": -0.004005,
+    "mot20_05_hota": 0.018463999999999998,
+    "threshold": 0.4,
+    "topk": 2
+  },
+  "best_non_nested_multitask": {
+    "hota_catastrophic_windows": 1,
+    "hota_negative_windows": 7,
+    "hota_positive_windows": 8,
+    "hota_sum": 0.497074,
+    "hota_worst_sequence": -0.064545,
+    "hota_zero_windows": 1,
+    "local_negative_windows": 3,
+    "local_positive_windows": 5,
+    "local_sum": 0.225135181879,
+    "local_worst_sequence": -0.145178210997,
+    "mode": "expanded_motion",
+    "mot20_01_hota": 0.570522,
+    "mot20_02_hota": -0.027367,
+    "mot20_03_hota": -0.064545,
+    "mot20_05_hota": 0.018463999999999998,
+    "score": "mean_target_mean"
+  },
+  "closure_decision": "no_op",
+  "locked_manifest_created": false,
+  "motion_loso": {
+    "existing": {
+      "auc_hota_classifier": 0.597575329566855,
+      "auc_hota_from_local": 0.6410075329566856,
+      "features": 90,
+      "spearman_hota": 0.47638616766306024,
+      "spearman_local": 0.4176560476608712
+    },
+    "expanded": {
+      "auc_hota_classifier": 0.6092278719397363,
+      "auc_hota_from_local": 0.6993879472693032,
+      "features": 126,
+      "spearman_hota": 0.5489143228407661,
+      "spearman_local": 0.4954642966740619
+    },
+    "motion": {
+      "auc_hota_classifier": 0.4975282485875706,
+      "auc_hota_from_local": 0.6104048964218456,
+      "features": 36,
+      "spearman_hota": 0.34665530132216493,
+      "spearman_local": 0.3152578591244091
+    }
+  },
+  "protocol": {
+    "fallback_rules": [
+      "max_motion_min",
+      "max_motion_q25",
+      "lexicographic_min_q25"
+    ],
+    "fallback_thresholds": [
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4
+    ],
+    "fallback_topk": [
+      2,
+      3,
+      5
+    ],
+    "locked_labels_read": 0,
+    "locked_trackeval_calls": 0,
+    "remaining_locked_rows_untouched": 156,
+    "scope": "Train-only closure diagnostics. This script replays only the already registered fixed LOSO, multitask top-one, and constrained fallback configurations."
+  },
+  "simultaneous_nonnegative_fallback_configs": 0
+}

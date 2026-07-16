@@ -1,0 +1,41 @@
+{
+  "dataset": {
+    "aggregate_anchor_events": 15,
+    "events": 225,
+    "feature_columns": 367,
+    "maximum_missing_fraction": 0.013333333333333334,
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ]
+  },
+  "protocol": {
+    "actual_source": "Unique edited_label from the executor geometry diff.",
+    "forbidden_inputs": [
+      "matched_gt_id",
+      "matched_gt_iou",
+      "dominant_gt",
+      "row_class",
+      "utility labels",
+      "TrackEval metrics",
+      "locked artifacts"
+    ],
+    "future_horizons": [
+      "h30",
+      "h60",
+      "h120",
+      "full"
+    ],
+    "history_sizes": [
+      5,
+      20
+    ],
+    "locked_labels_read": 0,
+    "locked_trackeval_calls": 0,
+    "motion_error": "center residual + 0.25*bottom residual + 0.10*log-size residual.",
+    "receiver_family": "Per-row baseline_label from the executor geometry diff.",
+    "scope": "Train-only actual-anchor future motion transfer features."
+  }
+}
