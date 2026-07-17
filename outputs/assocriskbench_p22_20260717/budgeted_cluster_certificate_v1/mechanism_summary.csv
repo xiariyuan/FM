@@ -1,0 +1,3 @@
+mechanism,positive_events,selected_positive_events,event_recall,positive_blocks,covered_positive_blocks,block_recall
+receiver_split,301,59,0.196013289037,18,14,0.777777777778
+same_identity_merge,24,17,0.708333333333,12,12,1.0

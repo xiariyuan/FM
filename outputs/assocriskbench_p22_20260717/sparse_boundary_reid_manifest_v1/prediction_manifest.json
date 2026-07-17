@@ -1,0 +1,9 @@
+{
+  "files": {
+    "event_window_index.csv": "c6b22cf71abae92486f9f91e5c3b96797b2d173947719b183c66153c488fe50d",
+    "report.json": "dc3df76f527d454dfc7a8a99e384e1ddd3b47d9fe5ffdd090fc8a681535befa9",
+    "sequence_crop_summary.csv": "b7c58ef4ff91f002e0353a5bb60e70c147ca6bd5499c5c1a0b81eeedcaa2075c",
+    "sparse_crop_manifest.csv": "d056f30dd48267e7e0b6a2c00bf0318f6c14158a8bafd8be98db14ea04131977"
+  },
+  "schema_version": 1
+}

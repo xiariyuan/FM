@@ -1,0 +1,13 @@
+seq,canonical_rank,u,v,boundary_frame,transaction_type,temporal_block,full_idtp_delta_norm,receiver_split_label,same_identity_merge_label,receiver_split_score,same_identity_merge_score,receiver_split_rank,same_identity_merge_rank,base_member,outer_sequence,union_rank,budget_rank,rescue_reason
+MOT17-11-FRCNN,567,61,64,754,u_to_v,3,-0.217391304348,0,0,0.036756871137,0.56049874707,45,1,0,MOT17-11-FRCNN,1,1,same_identity_merge
+MOT17-11-FRCNN,601,58,69,837,u_to_v,3,-0.203821656051,0,0,0.0,0.404476139217,133,2,0,MOT17-11-FRCNN,2,2,same_identity_merge
+MOT17-11-FRCNN,609,64,69,845,u_to_v,3,-0.176470588235,0,0,0.0,0.37734552417,140,3,0,MOT17-11-FRCNN,3,3,same_identity_merge
+MOT17-11-FRCNN,648,73,74,855,v_to_u,3,-0.307692307692,0,0,0.027059161741,0.221115012702,52,4,0,MOT17-11-FRCNN,4,4,same_identity_merge
+MOT17-11-FRCNN,573,59,60,763,v_to_u,3,-0.328431372549,0,0,0.008157184989,0.15479998424,63,6,0,MOT17-11-FRCNN,6,5,same_identity_merge
+MOT17-11-FRCNN,532,1,59,736,u_to_v,3,0.183035714286,0,1,0.00021972812,0.123294980473,88,7,0,MOT17-11-FRCNN,7,6,same_identity_merge
+MOT17-11-FRCNN,696,72,83,897,v_to_u,3,-0.052631578947,0,0,0.134527633106,0.0,9,168,0,MOT17-11-FRCNN,9,7,receiver_split
+MOT17-11-FRCNN,637,74,75,854,v_to_u,3,0.0,0,0,0.031395628724,0.080136958211,48,9,0,MOT17-11-FRCNN,9,8,same_identity_merge
+MOT17-11-FRCNN,633,70,75,854,v_to_u,3,-0.404255319149,0,0,0.128829701152,0.0,10,109,0,MOT17-11-FRCNN,10,9,receiver_split
+MOT17-11-FRCNN,574,60,64,763,u_to_v,3,-0.352,0,0,0.008054277263,0.060195352754,64,10,0,MOT17-11-FRCNN,10,10,same_identity_merge
+MOT17-11-FRCNN,631,68,75,854,v_to_u,3,-0.429906542056,0,0,0.122769746217,0.0,12,107,0,MOT17-11-FRCNN,12,11,receiver_split
+MOT17-11-FRCNN,572,58,60,763,v_to_u,3,-0.178082191781,0,0,0.003647513974,0.019329837294,77,12,0,MOT17-11-FRCNN,12,12,same_identity_merge

@@ -1,0 +1,63 @@
+{
+  "dataset": {
+    "events": 11705,
+    "frozen_base_members": 1304,
+    "positive_available_blocks": 23,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "temporal_blocks": 28
+  },
+  "decision": {
+    "cluster_risk_certificate_passed": false,
+    "compact_candidate_set_retained": true,
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "next_stage": "Use appearance or original association evidence to reduce the rescue false-positive burden and collect additional independent domains before attempting deployment authorization.",
+    "p15_policy_changed": false,
+    "reason": "The fixed 12-event budget closes the P20 retrieval miss within the efficiency limits, but seven independent sequence clusters are insufficient to certify a 10% sequence-level miss risk at 90% confidence."
+  },
+  "protocol": {
+    "base_set": "Frozen P20 rank-conformal members; no generic radius change.",
+    "budget_origin": "Inherited unchanged from the preregistered P21 maximum mean-addition limit.",
+    "budget_per_temporal_block": 12,
+    "cluster_unit": "Sequence; any missed positive block makes the sequence cluster fail.",
+    "confidence": 0.9,
+    "global_trackeval_calls": 0,
+    "mechanism_scores": "Frozen P21 strict sequence-OOF receiver-split and same-identity-merge scores.",
+    "model_or_budget_sweep": false,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "ranking": "Minimum P21 mechanism rank, then receiver-split rank, same-identity-merge rank, and deterministic event keys.",
+    "scope": "Budgeted mechanism-aware rescue over the frozen P20 candidate set.",
+    "target_miss_risk": 0.1
+  },
+  "result": {
+    "base_covered_positive_blocks": 22,
+    "block_level_upper_miss_bound_90pct": 0.0952642757650703,
+    "combined_covered_positive_blocks": 23,
+    "combined_negative_events": 1225,
+    "combined_positive_events": 246,
+    "combined_set_oracle_utility_sum": 6.778675128283999,
+    "combined_set_oracle_worst_sequence": 0.286057692308,
+    "combined_zero_events": 169,
+    "conditional_positive_coverage": 1.0,
+    "maximum_combined_set_size": 99,
+    "maximum_rescue_added": 12,
+    "mean_combined_set_size": 58.57142857142857,
+    "mean_rescue_added": 12.0,
+    "newly_covered_blocks": 1,
+    "rescue_members": 336,
+    "rescue_negative_events": 293,
+    "rescue_positive_events": 39,
+    "rescue_zero_events": 4,
+    "sequence_cluster_upper_miss_bound_90pct": 0.28031432699884795
+  }
+}

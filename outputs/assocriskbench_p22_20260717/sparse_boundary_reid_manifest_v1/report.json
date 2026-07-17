@@ -1,0 +1,59 @@
+{
+  "dataset": {
+    "duplicate_crop_keys": 0,
+    "duplicate_event_role_positions": 0,
+    "event_window_rows": 163958,
+    "events": 11705,
+    "maximum_event_window_rows": 175575,
+    "maximum_rows_per_event_role": 5,
+    "minimum_rows_per_event_role": 1,
+    "sequences": [
+      "MOT17-02-FRCNN",
+      "MOT17-04-FRCNN",
+      "MOT17-05-FRCNN",
+      "MOT17-09-FRCNN",
+      "MOT17-10-FRCNN",
+      "MOT17-11-FRCNN",
+      "MOT17-13-FRCNN"
+    ],
+    "unique_crops": 60708,
+    "unique_image_frames": 3284
+  },
+  "decision": {
+    "appearance_features_ready": false,
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "manifest_ready": true,
+    "next_stage": "Run deterministic sparse FastReID extraction when the host inference service is available, then audit appearance-conditioned rescue under strict sequence-LOSO.",
+    "p15_policy_changed": false
+  },
+  "protocol": {
+    "deduplication_key": [
+      "seq",
+      "frame",
+      "track_id"
+    ],
+    "feature_extraction_performed": false,
+    "ground_truth_inputs": 0,
+    "p15_locked_labels_read": 0,
+    "p15_locked_trackeval_calls": 0,
+    "p15_remaining_locked_rows_untouched": 156,
+    "roles": [
+      "donor_history",
+      "receiver_history",
+      "receiver_future"
+    ],
+    "runtime_status": "vm_service_unavailable_before_inference",
+    "scope": "Sparse appearance-observation manifest for P22/P23 boundary events.",
+    "selection": "Last five pre-boundary rows for donor and receiver; first five receiver rows at or after the effective start.",
+    "trackeval_calls": 0,
+    "utility_inputs": 0,
+    "window_rows_per_role": 5
+  },
+  "reid_assets": {
+    "config_path": "external/BoT-SORT-main/fast_reid/configs/MOT17/sbs_S50.yml",
+    "config_sha256": "5410bfe270162e062ca2e6d14c73a8bcb9f9bb8fb3eabb8650329c2afac4168d",
+    "weights_path": "external/BoT-SORT-main/pretrained/mot17_sbs_S50.pth",
+    "weights_sha256": "eb2e83afe774c85f20b735a7fabc423659c022387187eba449419c18dd6b4fa9"
+  }
+}
