@@ -1,0 +1,49 @@
+{
+  "file_hashes": {
+    "chain_segments.csv": "7824508c1bf9956b6f57498c0f72ca7151071f9f834fe7843a90edf5cee770a6",
+    "chain_summary.csv": "3c7a0e42799462c0b31b09d17276829b0cc200372cfef5c9dbeb6ea4234a5e20",
+    "per_sequence_metrics.csv": "e3c17203254875df27d94eecd4d32ff1c37ab26a5be6c42ccea22d4147e8699f",
+    "report.json": "18e38562f26f1cfe0e758f3bdb6d856eabd0f6a2154e0630a3acfc500b884824",
+    "variant_metrics.csv": "a0973870c6a661462efdc5486c1762488bacbe0f13332b0ef1b983236c945b43"
+  },
+  "plan_hashes": {
+    "full_identity_rows": "1e5a384b5a33c5d7519daee355397cd1331bb923c96a203918cfaa5dd13802db",
+    "modal_core_rows": "8138c2e9bb3bd874414c3ed7a36d4db2d76b6db8c6a369ba6640873968061ea1",
+    "modal_segment_chain": "ab8a54b77a234c8b7b557998c07b256ff0053c203cbb202eb8679518398f16ae",
+    "pure_segment_chain": "4472a2e5c417a3f733dd50315210b8cc6a01729190dbaf742800f268d13a4937"
+  },
+  "report_sha256": "18e38562f26f1cfe0e758f3bdb6d856eabd0f6a2154e0630a3acfc500b884824",
+  "schema": "fmtrack.m23_6.long_horizon_tracklet_chain.manifest.v1",
+  "tracker_hashes": {
+    "all_additions_context": {
+      "MOT20-01": "c298c2cfb5ad1b017102602e84975ed17dbea82d7c7d379a1f063cc7585ed1e0",
+      "MOT20-02": "6878d6645745689020cd5ff6204d4c8f373b4fe1c3633a8c81f5fd9c367bc393",
+      "MOT20-03": "63b621a23139380392651196e94d59ee84b3b40cfc520632291a8ef6a07faeb2",
+      "MOT20-05": "ecfcf70c87023a6f794728468ef830f8557c2eb618da63b72b496cd7323ef8fe"
+    },
+    "full_matched_identity_ceiling": {
+      "MOT20-01": "f70cfc64131c42c7b561a669c87faa74a0351d33a096bab4e3d155e71f8a29c7",
+      "MOT20-02": "8263548138a34bbaf7b199f81b85d885f89fb4e46a94ed9767ad572efc54345c",
+      "MOT20-03": "fa190b0f851cf514a593e7fa14f7f44de7eaf4dfa4340cd891e7d89123f4e259",
+      "MOT20-05": "0f8da362d8f6e4571aa1c878776521261d618b0b6240d2322abc06710dd0ccbe"
+    },
+    "modal_core_chain_oracle": {
+      "MOT20-01": "49dd4c6cf300e5890c56dbe5d3421cca6705276cd35ddcc45977dd10c9df3aa8",
+      "MOT20-02": "6cb84855f1da9050c5f6baea1cf3a63d4b3a0806c922cf00402b1b02427deafa",
+      "MOT20-03": "9db12518d843e11a024e83625ab081f7897e7bf53e12fbde0d527bd816601e92",
+      "MOT20-05": "19e7a2c1b454eb5bc8a5c5fb4a6b5cc0325dc38b2c1d1c5d8fdf77c0e967377d"
+    },
+    "modal_segment_chain_oracle": {
+      "MOT20-01": "843b2cfb9cbf3113998c6be49532f90a1c39775ab287fba852b45220cfd7bf0d",
+      "MOT20-02": "62a2c2494de59bdc1e7020b5049e36a786fc377ce9897bcd02fdba08159a297a",
+      "MOT20-03": "70dd65d9233b68bd474bc127676f9bdae3e34ecb7302da0f7f6debcd903dc7d5",
+      "MOT20-05": "a1196c0d59ade0d15575a81d557a1472fd3d0d5a479872369ab06e7f07244fd8"
+    },
+    "pure_segment_chain_oracle": {
+      "MOT20-01": "63c894689cf2a920c19fda9dd35e27a04036cdde1d21d75935f1193702f5b538",
+      "MOT20-02": "8d9eda77c52eac152eb3fe33586025a43db80f3f98b9abff285c24a69bb84a98",
+      "MOT20-03": "d5d001cd6790b40538e03a910340b9704e6b53913901654f37c518869dbdcaf8",
+      "MOT20-05": "4579c1f714417a281c5dbde93ae10aebd2f63a6a1da61245f1f87c623a797f1e"
+    }
+  }
+}

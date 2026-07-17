@@ -1,0 +1,147 @@
+{
+  "counts": {
+    "duplicate_gt_frame_excess": 7056,
+    "duplicate_gt_frames": 7036,
+    "full_identity_row_actions": 1086684,
+    "matched_rows_not_modal_core": 16895,
+    "modal_chain_modal_match_recall_pp": 98.45586372639838,
+    "modal_chain_modal_matches": 1053270,
+    "modal_chain_relink_edges": 1495,
+    "modal_chain_rows": 1081035,
+    "modal_chain_segments": 3639,
+    "modal_core_row_actions": 1069789,
+    "overlapping_segment_pairs": 321,
+    "positive_modal_matches": 1069789,
+    "positive_segment_rows": 1101627,
+    "preproc_removed_rows": 261,
+    "pure_chain_modal_match_recall_pp": 70.37051231598006,
+    "pure_chain_modal_matches": 752816,
+    "pure_chain_relink_edges": 1082,
+    "pure_chain_rows": 763884,
+    "pure_chain_segments": 2957,
+    "segments_positive": 3914,
+    "segments_pure": 3013,
+    "segments_support_zero_or_tied": 433,
+    "segments_total": 4347,
+    "sequence": "COMBINED",
+    "source_rows": 1104528
+  },
+  "decision": {
+    "deployment_allowed": false,
+    "full_identity_gate_passed": true,
+    "full_identity_hota": 83.08602,
+    "full_identity_hota_gain": 4.946480000000008,
+    "full_identity_idsw": 4,
+    "full_identity_sequence_hota_deltas": {
+      "MOT20-01": 5.139566000000002,
+      "MOT20-02": 13.124387999999996,
+      "MOT20-03": 2.16477399999998,
+      "MOT20-05": 4.47878399999999
+    },
+    "locked_manifest_created": false,
+    "long_horizon_chain_ceiling_passed": false,
+    "modal_core_gate_passed": false,
+    "modal_core_hota": 82.29819499999999,
+    "modal_core_hota_gain": 4.158654999999996,
+    "modal_core_idsw": 2623,
+    "modal_core_sequence_hota_deltas": {
+      "MOT20-01": 3.4665099999999995,
+      "MOT20-02": 10.889652999999996,
+      "MOT20-03": 1.6952879999999908,
+      "MOT20-05": 3.898239999999987
+    },
+    "modal_segment_gate_passed": false,
+    "modal_segment_hota": 80.99495,
+    "modal_segment_hota_gain": 2.855410000000006,
+    "modal_segment_idsw": 949,
+    "modal_segment_sequence_hota_deltas": {
+      "MOT20-01": 2.299599999999998,
+      "MOT20-02": 8.303763000000004,
+      "MOT20-03": 1.0881139999999903,
+      "MOT20-05": 2.549769999999995
+    },
+    "next_stage": "close current segment-chain representation and acquire stronger tracklet purification/evidence before graph training",
+    "source_context_reproduced": true
+  },
+  "gate_rationale": {
+    "idsw_reduction_thresholds": "modal segment <=50% source; modal core <=25% source",
+    "modal_core_gate_residual_to_target": 0.5,
+    "modal_segment_gate_recovered_gap_fraction": 0.4266659939547667,
+    "source_hota": 78.13954,
+    "source_to_target_gap": 4.360460000000003,
+    "target_hota": 82.5
+  },
+  "gates": {
+    "full_identity_all_sequence_hota_nonnegative_vs_source": true,
+    "full_identity_combined_hota_min": 82.5,
+    "modal_core_all_sequence_hota_nonnegative_vs_source": true,
+    "modal_core_combined_hota_min": 82.0,
+    "modal_core_idsw_max": 276,
+    "modal_segment_all_sequence_hota_nonnegative_vs_source": true,
+    "modal_segment_combined_hota_min": 80.0,
+    "modal_segment_idsw_max": 552
+  },
+  "locked_policy": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_no_op": true,
+    "remaining_locked_rows_unread": 156
+  },
+  "plan_hashes": {
+    "full_identity_rows": "1e5a384b5a33c5d7519daee355397cd1331bb923c96a203918cfaa5dd13802db",
+    "modal_core_rows": "8138c2e9bb3bd874414c3ed7a36d4db2d76b6db8c6a369ba6640873968061ea1",
+    "modal_segment_chain": "ab8a54b77a234c8b7b557998c07b256ff0053c203cbb202eb8679518398f16ae",
+    "pure_segment_chain": "4472a2e5c417a3f733dd50315210b8cc6a01729190dbaf742800f268d13a4937"
+  },
+  "protocol": {
+    "box_changes": 0,
+    "chain_solver": "per-GT weighted interval scheduling; maximize modal matches, then rows, then fewer segments",
+    "full_identity": "relabel every Hungarian-matched row to its matched GT chain",
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "modal_chain": "all positive-modal segments; relabel every row in selected non-overlapping segments",
+    "modal_core_chain": "relabel rows only when their Hungarian match equals their segment modal GT",
+    "models_trained": 0,
+    "parameter_sweeps": 0,
+    "pure_chain": "purity exactly 1.0; relabel every row in selected segments",
+    "row_additions": 0,
+    "row_deletions": 0,
+    "segment_definition": "contiguous tracker ID; frame gap >1 starts a new segment",
+    "segment_support": "unique modal valid-GT identity among frame-level threshold-before-Hungarian matches",
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "synthetic_id_base": 10000000,
+    "synthetic_sequence_stride": 1000000,
+    "threshold_sweeps": 0,
+    "variants": [
+      "all_additions_context",
+      "pure_segment_chain_oracle",
+      "modal_segment_chain_oracle",
+      "modal_core_chain_oracle",
+      "full_matched_identity_ceiling"
+    ]
+  },
+  "schema": "fmtrack.m23_6.long_horizon_tracklet_chain.report.v1",
+  "source_hashes": {
+    "gt": {
+      "MOT20-01": "89fd0196d67a5eb6011a470dc2a49b02255403b49e8848031cdf99add8a36d9c",
+      "MOT20-02": "10abe457a67d9919a9cbfe821d3619c8e6174c2b0ed7ecf4cb68c1fd6cad58de",
+      "MOT20-03": "350fbc950c6dc00e3cc8a71358b3d0b8958906c8be57a7bf5fb9db34bff70f28",
+      "MOT20-05": "6da1ad9a528c39203c181aa93fc492d194358c50856695a7fe17656c928f5c17"
+    },
+    "m23_script": "d9472db58eb27a712bcd7d65040b0f2d0c3183d6c3a35aea5b6c5e430047342b",
+    "parent_manifest": "09dcd13bc9b3afefc3283c09bddff0fcfa8813774f97a57d95e52d3776f3f290",
+    "parent_report": "4408d6928fb35025a5d6b79a89c61ff6789cbc25ebabd84a194228cfb08567f2",
+    "segment_script": "6bd62425faa18fd916540dc6e92e2bb091db44e71b52de7ad473410748f294f0",
+    "source_trackers": {
+      "MOT20-01": "c298c2cfb5ad1b017102602e84975ed17dbea82d7c7d379a1f063cc7585ed1e0",
+      "MOT20-02": "6878d6645745689020cd5ff6204d4c8f373b4fe1c3633a8c81f5fd9c367bc393",
+      "MOT20-03": "63b621a23139380392651196e94d59ee84b3b40cfc520632291a8ef6a07faeb2",
+      "MOT20-05": "ecfcf70c87023a6f794728468ef830f8557c2eb618da63b72b496cd7323ef8fe"
+    }
+  }
+}

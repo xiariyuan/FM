@@ -1,0 +1,697 @@
+{
+  "all_checks_passed": true,
+  "check_results": [
+    {
+      "detail": {
+        "actual": "6ca22bf2328ce6fd6e2b932299499ac1730b414e56cbd8bc94786437d759c649",
+        "expected": "6ca22bf2328ce6fd6e2b932299499ac1730b414e56cbd8bc94786437d759c649"
+      },
+      "name": "script_sha_matches_preregister",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_sha_matches_manifest",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_plan_matches_preregister",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_sources_match_preregister",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_counts_match_preregister",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "3c7a0e42799462c0b31b09d17276829b0cc200372cfef5c9dbeb6ea4234a5e20",
+        "repro": "3c7a0e42799462c0b31b09d17276829b0cc200372cfef5c9dbeb6ea4234a5e20"
+      },
+      "name": "compact_byte_identical::chain_summary.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "7824508c1bf9956b6f57498c0f72ca7151071f9f834fe7843a90edf5cee770a6",
+        "repro": "7824508c1bf9956b6f57498c0f72ca7151071f9f834fe7843a90edf5cee770a6"
+      },
+      "name": "compact_byte_identical::chain_segments.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "e3c17203254875df27d94eecd4d32ff1c37ab26a5be6c42ccea22d4147e8699f",
+        "repro": "e3c17203254875df27d94eecd4d32ff1c37ab26a5be6c42ccea22d4147e8699f"
+      },
+      "name": "compact_byte_identical::per_sequence_metrics.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "a0973870c6a661462efdc5486c1762488bacbe0f13332b0ef1b983236c945b43",
+        "repro": "a0973870c6a661462efdc5486c1762488bacbe0f13332b0ef1b983236c945b43"
+      },
+      "name": "compact_byte_identical::variant_metrics.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "18e38562f26f1cfe0e758f3bdb6d856eabd0f6a2154e0630a3acfc500b884824",
+        "repro": "18e38562f26f1cfe0e758f3bdb6d856eabd0f6a2154e0630a3acfc500b884824"
+      },
+      "name": "compact_byte_identical::report.json",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "94bc44098966ec6e04cd67d09f45b0a15d9cdbe255ea79c2df6f5cc41febb449",
+        "repro": "94bc44098966ec6e04cd67d09f45b0a15d9cdbe255ea79c2df6f5cc41febb449"
+      },
+      "name": "compact_byte_identical::manifest.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::pure_segment_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::pure_segment_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::pure_segment_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::pure_segment_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_segment_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_segment_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_segment_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_segment_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_core_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_core_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_core_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::modal_core_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::full_matched_identity_ceiling::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::full_matched_identity_ceiling::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::full_matched_identity_ceiling::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::full_matched_identity_ceiling::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::all_additions_context::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::all_additions_context::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::pure_segment_chain_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::pure_segment_chain_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::modal_segment_chain_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::modal_segment_chain_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::modal_core_chain_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::modal_core_chain_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::full_matched_identity_ceiling::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::full_matched_identity_ceiling::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "source_tracker_exact::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 0,
+        "rows": 18944,
+        "synthetic_changed_ids": 0
+      },
+      "name": "identity_only_semantics::all_additions_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": 18944,
+      "name": "row_count_preserved::all_additions_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 13240,
+        "rows": 18944,
+        "synthetic_changed_ids": 13240
+      },
+      "name": "identity_only_semantics::pure_segment_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": 18944,
+      "name": "row_count_preserved::pure_segment_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 18543,
+        "rows": 18944,
+        "synthetic_changed_ids": 18543
+      },
+      "name": "identity_only_semantics::modal_segment_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": 18944,
+      "name": "row_count_preserved::modal_segment_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 17999,
+        "rows": 18944,
+        "synthetic_changed_ids": 17999
+      },
+      "name": "identity_only_semantics::modal_core_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": 18944,
+      "name": "row_count_preserved::modal_core_chain_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 18726,
+        "rows": 18944,
+        "synthetic_changed_ids": 18726
+      },
+      "name": "identity_only_semantics::full_matched_identity_ceiling::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": 18944,
+      "name": "row_count_preserved::full_matched_identity_ceiling::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "source_tracker_exact::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 0,
+        "rows": 146447,
+        "synthetic_changed_ids": 0
+      },
+      "name": "identity_only_semantics::all_additions_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": 146447,
+      "name": "row_count_preserved::all_additions_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 80408,
+        "rows": 146447,
+        "synthetic_changed_ids": 80408
+      },
+      "name": "identity_only_semantics::pure_segment_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": 146447,
+      "name": "row_count_preserved::pure_segment_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 139226,
+        "rows": 146447,
+        "synthetic_changed_ids": 139226
+      },
+      "name": "identity_only_semantics::modal_segment_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": 146447,
+      "name": "row_count_preserved::modal_segment_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 138445,
+        "rows": 146447,
+        "synthetic_changed_ids": 138445
+      },
+      "name": "identity_only_semantics::modal_core_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": 146447,
+      "name": "row_count_preserved::modal_core_chain_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 144442,
+        "rows": 146447,
+        "synthetic_changed_ids": 144442
+      },
+      "name": "identity_only_semantics::full_matched_identity_ceiling::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": 146447,
+      "name": "row_count_preserved::full_matched_identity_ceiling::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "source_tracker_exact::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 0,
+        "rows": 304151,
+        "synthetic_changed_ids": 0
+      },
+      "name": "identity_only_semantics::all_additions_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": 304151,
+      "name": "row_count_preserved::all_additions_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 239404,
+        "rows": 304151,
+        "synthetic_changed_ids": 239404
+      },
+      "name": "identity_only_semantics::pure_segment_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": 304151,
+      "name": "row_count_preserved::pure_segment_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 301714,
+        "rows": 304151,
+        "synthetic_changed_ids": 301714
+      },
+      "name": "identity_only_semantics::modal_segment_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": 304151,
+      "name": "row_count_preserved::modal_segment_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 297621,
+        "rows": 304151,
+        "synthetic_changed_ids": 297621
+      },
+      "name": "identity_only_semantics::modal_core_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": 304151,
+      "name": "row_count_preserved::modal_core_chain_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 300586,
+        "rows": 304151,
+        "synthetic_changed_ids": 300586
+      },
+      "name": "identity_only_semantics::full_matched_identity_ceiling::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": 304151,
+      "name": "row_count_preserved::full_matched_identity_ceiling::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "source_tracker_exact::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 0,
+        "rows": 634986,
+        "synthetic_changed_ids": 0
+      },
+      "name": "identity_only_semantics::all_additions_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": 634986,
+      "name": "row_count_preserved::all_additions_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 430832,
+        "rows": 634986,
+        "synthetic_changed_ids": 430832
+      },
+      "name": "identity_only_semantics::pure_segment_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": 634986,
+      "name": "row_count_preserved::pure_segment_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 621552,
+        "rows": 634986,
+        "synthetic_changed_ids": 621552
+      },
+      "name": "identity_only_semantics::modal_segment_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": 634986,
+      "name": "row_count_preserved::modal_segment_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 615724,
+        "rows": 634986,
+        "synthetic_changed_ids": 615724
+      },
+      "name": "identity_only_semantics::modal_core_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": 634986,
+      "name": "row_count_preserved::modal_core_chain_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "changed_ids": 622930,
+        "rows": 634986,
+        "synthetic_changed_ids": 622930
+      },
+      "name": "identity_only_semantics::full_matched_identity_ceiling::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": 634986,
+      "name": "row_count_preserved::full_matched_identity_ceiling::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": 0,
+        "expected": 0
+      },
+      "name": "changed_row_count::all_additions_context",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": 763884,
+        "expected": 763884
+      },
+      "name": "changed_row_count::pure_segment_chain_oracle",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": 1081035,
+        "expected": 1081035
+      },
+      "name": "changed_row_count::modal_segment_chain_oracle",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": 1069789,
+        "expected": 1069789
+      },
+      "name": "changed_row_count::modal_core_chain_oracle",
+      "passed": true
+    },
+    {
+      "detail": {
+        "actual": 1086684,
+        "expected": 1086684
+      },
+      "name": "changed_row_count::full_matched_identity_ceiling",
+      "passed": true
+    },
+    {
+      "detail": 4347,
+      "name": "segment_row_count",
+      "passed": true
+    },
+    {
+      "detail": 2957,
+      "name": "pure_selected_count",
+      "passed": true
+    },
+    {
+      "detail": 3639,
+      "name": "modal_selected_count",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "pure_selection_is_pure",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "modal_selection_positive",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "synthetic_segment_ids_exact_range",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "modal_selected_nonoverlap",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "source_reproduced",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "modal_segment_gate_failed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "modal_core_gate_failed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "full_identity_gate_passed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "overall_ceiling_failed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "deployment_disallowed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "locked_manifest_absent",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "all_hota_deltas_positive",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "modal_segment_hota_threshold_pass_only",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "modal_core_hota_threshold_pass_only",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_row_or_box_changes",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_locked_access",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_models_or_sweeps",
+      "passed": true
+    }
+  ],
+  "checks": 110,
+  "interpretation": {
+    "formal_repro_compact_identical": 6,
+    "formal_repro_tracker_identical": 20,
+    "formal_repro_trackeval_identical": 10,
+    "full_identity_hota_gain": 4.946480000000008,
+    "full_identity_idsw_change": -1100,
+    "modal_core_hota_gain": 4.158654999999996,
+    "modal_core_idsw_change": 1519,
+    "modal_core_to_full_hota_gap": 0.7878250000000122,
+    "modal_segment_hota_gain": 2.855410000000006,
+    "modal_segment_idsw_change": -155,
+    "pure_hota_gain": 0.5082340000000016
+  },
+  "research_decision": {
+    "current_segment_chain_representation_closed": true,
+    "deployment_allowed": false,
+    "do_not_train_current_graph": true,
+    "evidence": "full matched identity ceiling reaches 83.08602 HOTA with IDSW 4",
+    "identity_target_feasible": true,
+    "locked_manifest_created": false,
+    "next_stage": "M23-7-0 purified support-span chain oracle: other-GT hard boundaries, unmatched-hole filling, span-level WIS relinking",
+    "p15_policy": "no_op; 156 locked rows untouched",
+    "reason": "modal segment reaches 80.99495 but IDSW 949; modal core reaches 82.298195 but IDSW 2623, violating preregistered identity-safety gates"
+  },
+  "schema": "fmtrack.m23_6.unified_audit.v1"
+}
