@@ -1,0 +1,6 @@
+sequence,candidate_rows,selected_rows,candidate_track_missing,candidate_track_observed,baseline_row_missing,segment_support_missing,target_gt_absent,eligible_candidates,positive_utility_candidates,selected_eligible_candidates,selected_positive_utility_candidates,dense_groups,dense_positive_groups,selected_groups,selected_positive_groups
+MOT20-01,6712,2487,812,5900,,9,73,5818,2240,2349,2106,5611,2212,2344,2104
+MOT20-02,57734,23705,5481,52253,,237,604,51412,20221,22997,19432,50117,20103,22939,19429
+MOT20-03,122108,49314,13946,108162,,417,1749,105996,45958,46729,45219,104919,45829,46696,45217
+MOT20-05,273345,112090,15107,258238,,1413,5664,251161,106689,109128,104473,247375,106353,108999,104462
+COMBINED,459899,187596,35346,424553,,2076,8090,414387,175108,181203,171230,408022,174497,180978,171212

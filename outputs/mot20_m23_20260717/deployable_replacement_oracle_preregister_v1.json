@@ -1,0 +1,156 @@
+{
+  "acceptance": {
+    "baseline_reproduction_tolerance": 1e-06,
+    "minimum_dense_combined_hota": 78.5,
+    "minimum_selected_combined_hota": 78.2,
+    "require_dense_all_sequence_hota_nonnegative": true,
+    "require_selected_all_sequence_hota_nonnegative": true
+  },
+  "protocol": {
+    "allowed_action": "replace box and score for the same frame and baseline tracker ID",
+    "graph_variant_sweeps": 0,
+    "group": "sequence, frame, baseline tracker ID",
+    "identity_changes": 0,
+    "locked_p15_policy": "no_op",
+    "models_trained": 0,
+    "parameter_sweeps": 0,
+    "positive_utility_bin_edges": [
+      0.0,
+      0.01,
+      0.02,
+      0.05,
+      0.1,
+      0.2,
+      0.4
+    ],
+    "positive_utility_threshold": 0.0,
+    "row_additions": 0,
+    "row_deletions": 0,
+    "segment_gap_rule": "new segment when observed frame gap > 1",
+    "segment_support": "unique modal MOT20-train GT among same-frame IoU>=0.5 Hungarian matches; tied mode unlabeled",
+    "selection": "maximum utility if and only if utility > 0; deterministic tie by candidate IoU, score, lower global_pre_idx",
+    "spawn_enabled": false,
+    "starting_tracker": "frozen raw baseline",
+    "suppressor_enabled": false,
+    "tail_column_changes": 0,
+    "threshold_sweeps": 0,
+    "utility": "candidate IoU to modal segment-support GT minus baseline-row IoU to same GT",
+    "utility_bin_labels": [
+      "(-inf,0]",
+      "(0,0.01]",
+      "(0.01,0.02]",
+      "(0.02,0.05]",
+      "(0.05,0.10]",
+      "(0.10,0.20]",
+      "(0.20,0.40]",
+      "(0.40,inf)"
+    ],
+    "variants": [
+      "baseline_raw",
+      "m23_selected_replacement_oracle",
+      "dense_replacement_oracle"
+    ]
+  },
+  "references": {
+    "baseline_combined": {
+      "AssA": 74.672127,
+      "DetA": 80.90724,
+      "HOTA": 77.69901999999999,
+      "IDF1": 89.30846875223709,
+      "MOTA": 93.60645999432407
+    },
+    "baseline_per_sequence": {
+      "MOT20-01": {
+        "AssA": 73.92996,
+        "DetA": 80.422163,
+        "HOTA": 77.029973,
+        "IDF1": 88.33255825970134,
+        "MOTA": 92.06844489179667
+      },
+      "MOT20-02": {
+        "AssA": 60.05281,
+        "DetA": 78.84434999999999,
+        "HOTA": 68.74833,
+        "IDF1": 75.20490779565505,
+        "MOTA": 90.75041036047098
+      },
+      "MOT20-03": {
+        "AssA": 79.24064,
+        "DetA": 80.91087300000001,
+        "HOTA": 80.05449,
+        "IDF1": 94.16899509247794,
+        "MOTA": 94.3059000567497
+      },
+      "MOT20-05": {
+        "AssA": 75.80161,
+        "DetA": 81.42686,
+        "HOTA": 78.53901,
+        "IDF1": 90.304089315242,
+        "MOTA": 93.99808770561806
+      }
+    }
+  },
+  "schema": "fmtrack.m23_3_1.deployable_replacement_oracle.preregister.v1",
+  "script_sha256": "b69ddb43eb012519df03c939f9c797873d34a46a0f41ae73a8f43a05d3694104",
+  "sources": {
+    "baseline": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "candidate_keys": {
+      "path": "outputs/mot20_m23_20260717/compact_appearance_features_v1/candidate_keys.npy",
+      "sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56"
+    },
+    "candidate_manifest": {
+      "path": "outputs/mot20_m23_20260717/appearance_manifest_v1/candidate_manifest.npy",
+      "sha256": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6"
+    },
+    "gt": {
+      "MOT20-01": "89fd0196d67a5eb6011a470dc2a49b02255403b49e8848031cdf99add8a36d9c",
+      "MOT20-02": "10abe457a67d9919a9cbfe821d3619c8e6174c2b0ed7ecf4cb68c1fd6cad58de",
+      "MOT20-03": "350fbc950c6dc00e3cc8a71358b3d0b8958906c8be57a7bf5fb9db34bff70f28",
+      "MOT20-05": "6da1ad9a528c39203c181aa93fc492d194358c50856695a7fe17656c928f5c17"
+    },
+    "m23_1_events": {
+      "path": "outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/oracle_selected_events.csv",
+      "sha256": "5454624f792d1ab7c00b7998ea9295552bb7af3b0c3650194d45ad7f2a1b1a21"
+    },
+    "segment_script": {
+      "path": "scripts/audit_m23_3_candidate_default_action_space.py",
+      "sha256": "6bd62425faa18fd916540dc6e92e2bb091db44e71b52de7ad473410748f294f0"
+    }
+  },
+  "stage": "M23-3-1 deployable-form oracle preregistered after GT structural/utility preflight and before any M23-3-1 TrackEval",
+  "structural_preflight": {
+    "candidate_rows": 459899,
+    "dense_positive_groups": 174497,
+    "eligible_candidates": 414387,
+    "m23_selected_keys": 187596,
+    "note": "Counts and GT IoU utilities were inspected before fixing TrackEval gates. No M23-3-1 tracker variant had been generated or evaluated.",
+    "per_sequence": {
+      "MOT20-01": {
+        "candidate_rows": 6712,
+        "dense_positive_groups": 2212,
+        "selected_positive_groups": 2104
+      },
+      "MOT20-02": {
+        "candidate_rows": 57734,
+        "dense_positive_groups": 20103,
+        "selected_positive_groups": 19429
+      },
+      "MOT20-03": {
+        "candidate_rows": 122108,
+        "dense_positive_groups": 45829,
+        "selected_positive_groups": 45217
+      },
+      "MOT20-05": {
+        "candidate_rows": 273345,
+        "dense_positive_groups": 106353,
+        "selected_positive_groups": 104462
+      }
+    },
+    "selected_positive_groups": 171212
+  }
+}

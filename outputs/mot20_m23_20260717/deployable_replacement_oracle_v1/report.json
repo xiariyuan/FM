@@ -1,0 +1,269 @@
+{
+  "acceptance": {
+    "baseline_reproduction_tolerance": 1e-06,
+    "minimum_dense_combined_hota": 78.5,
+    "minimum_selected_combined_hota": 78.2,
+    "require_dense_all_sequence_hota_nonnegative": true,
+    "require_selected_all_sequence_hota_nonnegative": true
+  },
+  "counts": {
+    "candidate_rows": 459899,
+    "candidate_track_missing": 35346,
+    "candidate_track_observed": 424553,
+    "dense_groups": 408022,
+    "dense_positive_groups": 174497,
+    "dense_replacement_plan_rows": 174497,
+    "eligible_candidates": 414387,
+    "positive_utility_candidates": 175108,
+    "segment_support_missing": 2076,
+    "selected_eligible_candidates": 181203,
+    "selected_groups": 180978,
+    "selected_positive_groups": 171212,
+    "selected_positive_utility_candidates": 171230,
+    "selected_replacement_plan_rows": 171212,
+    "selected_rows": 187596,
+    "target_gt_absent": 8090
+  },
+  "decision": {
+    "baseline_combined_reproduced": true,
+    "baseline_metric_deltas": {
+      "AssA": 0.0,
+      "DetA": 0.0,
+      "HOTA": 0.0,
+      "IDF1": 0.0,
+      "MOTA": 0.0
+    },
+    "baseline_sequence_metric_deltas": {
+      "MOT20-01": {
+        "AssA": 0.0,
+        "DetA": 0.0,
+        "HOTA": 0.0,
+        "IDF1": 0.0,
+        "MOTA": 0.0
+      },
+      "MOT20-02": {
+        "AssA": 0.0,
+        "DetA": 0.0,
+        "HOTA": 0.0,
+        "IDF1": 0.0,
+        "MOTA": 0.0
+      },
+      "MOT20-03": {
+        "AssA": 0.0,
+        "DetA": 0.0,
+        "HOTA": 0.0,
+        "IDF1": 0.0,
+        "MOTA": 0.0
+      },
+      "MOT20-05": {
+        "AssA": 0.0,
+        "DetA": 0.0,
+        "HOTA": 0.0,
+        "IDF1": 0.0,
+        "MOTA": 0.0
+      }
+    },
+    "baseline_sequences_reproduced": true,
+    "dense_all_sequence_hota_nonnegative": true,
+    "dense_combined_hota": 78.00133,
+    "dense_combined_hota_passed": false,
+    "dense_sequence_hota_deltas": {
+      "MOT20-01": 0.2815610000000106,
+      "MOT20-02": 0.21859500000000764,
+      "MOT20-03": 0.28356000000000847,
+      "MOT20-05": 0.332144999999997
+    },
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "next_stage": "close direct replacement graph and acquire stronger deployable evidence before training",
+    "replacement_graph_ceiling_passed": false,
+    "selected_all_sequence_hota_nonnegative": true,
+    "selected_combined_hota": 77.98707,
+    "selected_combined_hota_passed": false,
+    "selected_sequence_hota_deltas": {
+      "MOT20-01": 0.2365170000000063,
+      "MOT20-02": 0.2097440000000006,
+      "MOT20-03": 0.2689400000000006,
+      "MOT20-05": 0.31770999999999106
+    }
+  },
+  "exact_combined_metrics": {
+    "baseline_raw": {
+      "AssA": 74.672127,
+      "CLR_FN": 52754,
+      "CLR_FP": 18566,
+      "DetA": 80.90724,
+      "Dets": 1100426,
+      "HOTA": 77.69901999999999,
+      "IDF1": 89.30846875223709,
+      "IDSW": 1222,
+      "MOTA": 93.60645999432407,
+      "sequence": "COMBINED",
+      "variant": "baseline_raw"
+    },
+    "dense_replacement_oracle": {
+      "AssA": 74.91532,
+      "CLR_FN": 52276,
+      "CLR_FP": 18118,
+      "DetA": 81.267375,
+      "Dets": 1100456,
+      "HOTA": 78.00133,
+      "IDF1": 89.33688877753269,
+      "IDSW": 1220,
+      "MOTA": 93.68824992464397,
+      "sequence": "COMBINED",
+      "variant": "dense_replacement_oracle"
+    },
+    "m23_selected_replacement_oracle": {
+      "AssA": 74.90114,
+      "CLR_FN": 52451,
+      "CLR_FP": 18288,
+      "DetA": 81.25291999999999,
+      "Dets": 1100451,
+      "HOTA": 77.98707,
+      "IDF1": 89.32465051351974,
+      "IDSW": 1219,
+      "MOTA": 93.65793124357711,
+      "sequence": "COMBINED",
+      "variant": "m23_selected_replacement_oracle"
+    }
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "allowed_action": "replace box and score at the same frame and baseline tracker ID",
+    "graph_variant_sweeps": 0,
+    "group": "sequence, frame, baseline tracker ID",
+    "identity_changes": 0,
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "m23_selected_scope": "suppressed keys in frozen M23-1 prenms_budget_replace_add_oracle",
+    "models_trained": 0,
+    "mot20_train_trackeval_invocations": 1,
+    "parameter_sweeps": 0,
+    "row_additions": 0,
+    "row_deletions": 0,
+    "segment_definition": "baseline original track ID split whenever observed frame gap > 1",
+    "segment_support": "unique modal MOT20-train GT identity among same-frame IoU>=0.5 Hungarian matches; ties unlabeled",
+    "selection": "maximum strictly positive utility; deterministic ties by candidate IoU, score, then lower global_pre_idx",
+    "spawn_enabled": false,
+    "starting_tracker": "frozen raw baseline",
+    "suppressor_enabled": false,
+    "tail_column_changes": 0,
+    "threshold_sweeps": 0,
+    "utility": "candidate IoU to segment-support GT minus baseline-row IoU to the same GT"
+  },
+  "replacement_plan_hashes": {
+    "dense_replacement_oracle": {
+      "COMBINED": "ae3eae66bc227499900f9462be48f14b97d480b3a8ac5872c61a9d0e618c456e",
+      "MOT20-01": "f5c0c5d1bebc1ae4f2a7ef42304f181b7aad042792ae2ef9a67d9a31e665fd46",
+      "MOT20-02": "85f0ae9069482a82fa3e010c403329144629391dbe0dac5beb38c4d5cc33104c",
+      "MOT20-03": "d1dff94c89e10f2b5259f3ae82b34e2d37c4a5e73162b6b89311de75c8ccb9a3",
+      "MOT20-05": "2686c081d4616a24171805169d8930b1bd48ba3576e95d8fc942f33899a53a80"
+    },
+    "m23_selected_replacement_oracle": {
+      "COMBINED": "58ce86be7760bb2aaf36392539656bcf20c54313f43ad158c1d8d353856bc96b",
+      "MOT20-01": "4fa60410b44966f0a2e6b36031ffc0cfa017f373a6edc003d2bf4755db1a5ac1",
+      "MOT20-02": "bb121fd1149c7aa932af2e587bbb932463127531b9b4a3d2f24ad619f2f9eafd",
+      "MOT20-03": "59bcaebca17765346a980f3ecfaaccb3b5edd4b7c80e0566dccb0783c3d75218",
+      "MOT20-05": "48998b6297b4f48e40f672cd91fa95060b92e2ec201019508fc3554828ec5941"
+    }
+  },
+  "schema": "fmtrack.m23_3_1.deployable_replacement_oracle.v1",
+  "sources": {
+    "baseline": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "candidate_keys": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/compact_appearance_features_v1/candidate_keys.npy",
+      "sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56"
+    },
+    "candidate_manifest": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/appearance_manifest_v1/candidate_manifest.npy",
+      "sha256": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6"
+    },
+    "gt": {
+      "MOT20-01": "89fd0196d67a5eb6011a470dc2a49b02255403b49e8848031cdf99add8a36d9c",
+      "MOT20-02": "10abe457a67d9919a9cbfe821d3619c8e6174c2b0ed7ecf4cb68c1fd6cad58de",
+      "MOT20-03": "350fbc950c6dc00e3cc8a71358b3d0b8958906c8be57a7bf5fb9db34bff70f28",
+      "MOT20-05": "6da1ad9a528c39203c181aa93fc492d194358c50856695a7fe17656c928f5c17"
+    },
+    "m23_1_events": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/oracle_selected_events.csv",
+      "sha256": "5454624f792d1ab7c00b7998ea9295552bb7af3b0c3650194d45ad7f2a1b1a21"
+    },
+    "preregister": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/deployable_replacement_oracle_preregister_v2.json",
+      "sha256": "79115f2f16c4fbd91f8b16b381fca50a95d864f8c75ba54aecea99fd28849efe"
+    },
+    "segment_script": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/scripts/audit_m23_3_candidate_default_action_space.py",
+      "sha256": "6bd62425faa18fd916540dc6e92e2bb091db44e71b52de7ad473410748f294f0"
+    }
+  },
+  "tracker_hashes": {
+    "baseline_raw": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "dense_replacement_oracle": {
+      "MOT20-01": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8",
+      "MOT20-02": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16",
+      "MOT20-03": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e",
+      "MOT20-05": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178"
+    },
+    "m23_selected_replacement_oracle": {
+      "MOT20-01": "911da138c160ac576f19c3ac5382aaa4978987d3c268c4df44afba2c632643dc",
+      "MOT20-02": "d7090b3d7b920596bbb64d3fa418acda941140adae64f57bd2803da9762f3f96",
+      "MOT20-03": "e638b272cefa4ad823fb0c47c8ee7e2a12f40296cde895f044f1ffc75d155ab4",
+      "MOT20-05": "a57ea4a3245f8d72571ac1d5854a612c289a2609e66bf70afbb4d314d0d17b1c"
+    }
+  },
+  "variant_metrics": {
+    "baseline_raw": {
+      "AssA": 74.672,
+      "CLR_FN": 52754,
+      "CLR_FP": 18566,
+      "DetA": 80.907,
+      "Dets": 1100426,
+      "HOTA": 77.699,
+      "IDF1": 89.308,
+      "IDSW": 1222,
+      "MOTA": 93.606,
+      "variant": "baseline_raw"
+    },
+    "dense_replacement_oracle": {
+      "AssA": 74.915,
+      "CLR_FN": 52276,
+      "CLR_FP": 18118,
+      "DetA": 81.267,
+      "Dets": 1100456,
+      "HOTA": 78.001,
+      "IDF1": 89.337,
+      "IDSW": 1220,
+      "MOTA": 93.688,
+      "variant": "dense_replacement_oracle"
+    },
+    "m23_selected_replacement_oracle": {
+      "AssA": 74.901,
+      "CLR_FN": 52451,
+      "CLR_FP": 18288,
+      "DetA": 81.253,
+      "Dets": 1100451,
+      "HOTA": 77.987,
+      "IDF1": 89.325,
+      "IDSW": 1219,
+      "MOTA": 93.658,
+      "variant": "m23_selected_replacement_oracle"
+    }
+  }
+}
