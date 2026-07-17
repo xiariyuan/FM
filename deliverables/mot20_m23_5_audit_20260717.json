@@ -1,0 +1,612 @@
+{
+  "all_checks_passed": true,
+  "check_results": [
+    {
+      "detail": {
+        "actual": "f14a2275e7501b1701d850571c76eba9a7e2220ad2ff4d810c1e7c1309449d14",
+        "expected": "f14a2275e7501b1701d850571c76eba9a7e2220ad2ff4d810c1e7c1309449d14"
+      },
+      "name": "script_sha_matches_preregister",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_sha_matches_manifest",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_plan_matches_preregister",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_sources_match_preregister",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "report_counts_match_preregister",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "2d578848fee36001fd9b4d192f31950c66668773c65a9d944d9d135dec3ced7f",
+        "repro": "2d578848fee36001fd9b4d192f31950c66668773c65a9d944d9d135dec3ced7f"
+      },
+      "name": "compact_byte_identical::conflict_summary.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "2c77b323fe5a66d294e2c3a300556e4d1be82561d0515fd4f9fef9c0f67d34b1",
+        "repro": "2c77b323fe5a66d294e2c3a300556e4d1be82561d0515fd4f9fef9c0f67d34b1"
+      },
+      "name": "compact_byte_identical::mechanism_actions.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "b84595f1c273a5da703b1b11cb6f7d96416cfc23ec88775af5b0a4903f1f87c8",
+        "repro": "b84595f1c273a5da703b1b11cb6f7d96416cfc23ec88775af5b0a4903f1f87c8"
+      },
+      "name": "compact_byte_identical::per_sequence_metrics.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "5a14b2f47715b0791a386902ae7a19ef5c70c6d450dfe5749ed1233f96fb7169",
+        "repro": "5a14b2f47715b0791a386902ae7a19ef5c70c6d450dfe5749ed1233f96fb7169"
+      },
+      "name": "compact_byte_identical::variant_metrics.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "a5aeefc673ba1e189741e44b1888c3ca1217110e434fe72546c53baa83050082",
+        "repro": "a5aeefc673ba1e189741e44b1888c3ca1217110e434fe72546c53baa83050082"
+      },
+      "name": "compact_byte_identical::report.json",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "06ef361a5599529347836e5cb1787150ceb6c6be875be936b8f5da078d05a16e",
+        "repro": "06ef361a5599529347836e5cb1787150ceb6c6be875be936b8f5da078d05a16e"
+      },
+      "name": "compact_byte_identical::manifest.json",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_reference::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_reference::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_reference::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::all_additions_reference::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::distinct_person_dual_retention_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::distinct_person_dual_retention_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::distinct_person_dual_retention_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::distinct_person_dual_retention_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::mechanism_decomposed_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::mechanism_decomposed_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::mechanism_decomposed_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::mechanism_decomposed_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_plus_mechanism_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_plus_mechanism_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_plus_mechanism_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "tracker_byte_identical::safe_gap_plus_mechanism_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::dense_replacement_context::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::dense_replacement_context::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::safe_gap_context::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::safe_gap_context::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::all_additions_reference::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::all_additions_reference::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::distinct_person_dual_retention_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::distinct_person_dual_retention_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::mechanism_decomposed_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::mechanism_decomposed_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::safe_gap_plus_mechanism_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "trackeval_byte_identical::safe_gap_plus_mechanism_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": 2994,
+      "name": "action_count",
+      "passed": true
+    },
+    {
+      "detail": {
+        "other_target": 2603,
+        "same_target": 384,
+        "unmatched": 7
+      },
+      "name": "mechanism_counts",
+      "passed": true
+    },
+    {
+      "detail": {
+        "candidate": 2782,
+        "source": 212
+      },
+      "name": "box_choice_counts",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "unique_source_actions",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "unique_target_frame_ids",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "candidate_target_iou_gate",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "candidate_host_iou_gate",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "source_box_only_same_target",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::dense_replacement_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::safe_gap_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::all_additions_reference::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_row_delta::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_row_delta::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_row_delta::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_preserves_dense::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_preserves_unedited::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "expected": 4,
+        "observed": 4
+      },
+      "name": "mechanism_removes_edited_source_keys::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_preserves_unedited::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_removes_edited_source_keys::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::dense_replacement_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::safe_gap_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::all_additions_reference::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_row_delta::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_row_delta::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_row_delta::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_preserves_dense::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_preserves_unedited::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "expected": 101,
+        "observed": 101
+      },
+      "name": "mechanism_removes_edited_source_keys::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_preserves_unedited::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_removes_edited_source_keys::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::dense_replacement_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::safe_gap_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::all_additions_reference::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_row_delta::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_row_delta::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_row_delta::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_preserves_dense::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_preserves_unedited::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "expected": 78,
+        "observed": 78
+      },
+      "name": "mechanism_removes_edited_source_keys::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_preserves_unedited::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_removes_edited_source_keys::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::dense_replacement_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::safe_gap_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "reference_tracker_exact::all_additions_reference::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_row_delta::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_row_delta::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_row_delta::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dual_preserves_dense::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_preserves_unedited::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "expected": 208,
+        "observed": 208
+      },
+      "name": "mechanism_removes_edited_source_keys::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_preserves_unedited::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_removes_edited_source_keys::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "references_reproduced",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "mechanism_gate_failed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "combined_gate_failed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "ceiling_failed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "deployment_disallowed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "locked_manifest_absent",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "all_sequence_deltas_positive",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "idsw_nonincreasing",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_locked_access",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_models_or_sweeps",
+      "passed": true
+    }
+  ],
+  "checks": 109,
+  "interpretation": {
+    "all_additions_advantage_over_safe_plus_mechanism": 0.0024700000000024147,
+    "all_additions_idsw_advantage": 59,
+    "dual_retention_hota_gain_over_dense": 0.09514000000000067,
+    "formal_repro_compact_identical": 6,
+    "formal_repro_tracker_identical": 24,
+    "formal_repro_trackeval_identical": 12,
+    "mechanism_hota_gain_over_dense": 0.10151500000000624,
+    "mechanism_increment_over_dual_retention": 0.006375000000005571,
+    "safe_plus_mechanism_hota_gain_over_safe": 0.10164000000000328
+  },
+  "research_decision": {
+    "deployment_allowed": false,
+    "do_not_train_local_mechanism_selector": true,
+    "local_nms_conflict_action_space_closed": true,
+    "locked_manifest_created": false,
+    "next_stage": "M23-6-0 longer-horizon cross-tracklet identity graph oracle using segment/episode actions rather than frame-local edits",
+    "p15_policy": "no_op; 156 locked rows untouched",
+    "reason": "mechanism 78.102845 < 78.20 and safe+mechanism 78.137070 < 78.25 despite positive sequence deltas and lower IDSW"
+  },
+  "schema": "fmtrack.m23_5.unified_audit.v1"
+}

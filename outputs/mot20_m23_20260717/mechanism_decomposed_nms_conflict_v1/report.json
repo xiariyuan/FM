@@ -1,0 +1,128 @@
+{
+  "counts": {
+    "raw_conflict_events": 2996,
+    "raw_other_target": 2605,
+    "raw_same_target": 384,
+    "raw_unmatched": 7,
+    "selected_actions": 2994,
+    "selected_box_candidate": 2782,
+    "selected_box_source": 212,
+    "selected_other_target": 2603,
+    "selected_same_target": 384,
+    "selected_unmatched": 7,
+    "sequence": "COMBINED",
+    "source_row_collisions": 2,
+    "unique_source_rows": 2994
+  },
+  "decision": {
+    "all_additions_reference_reproduced": true,
+    "dense_context_reproduced": true,
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "mechanism_action_space_ceiling_passed": false,
+    "mechanism_combined_hota": 78.102845,
+    "mechanism_gate_passed": false,
+    "mechanism_hota_gain_over_dense": 0.10151500000000624,
+    "mechanism_idsw_change_vs_dense": -53,
+    "mechanism_sequence_hota_deltas": {
+      "MOT20-01": 0.21801599999999155,
+      "MOT20-02": 0.18659499999999696,
+      "MOT20-03": 0.0576899999999938,
+      "MOT20-05": 0.10312499999999147
+    },
+    "next_stage": "close local NMS-conflict actions and audit longer-horizon tracklet graph evidence",
+    "safe_context_reproduced": true,
+    "safe_plus_mechanism_gate_passed": false,
+    "safe_plus_mechanism_hota": 78.13707,
+    "safe_plus_mechanism_hota_gain_over_safe": 0.10164000000000328,
+    "safe_plus_mechanism_idsw_change_vs_safe": -65,
+    "safe_plus_mechanism_sequence_hota_deltas": {
+      "MOT20-01": 0.22054899999999122,
+      "MOT20-02": 0.1866899999999987,
+      "MOT20-03": 0.05771599999999921,
+      "MOT20-05": 0.1032600000000059
+    }
+  },
+  "gates": {
+    "mechanism_all_sequence_hota_nonnegative_vs_dense": true,
+    "mechanism_combined_hota_min": 78.2,
+    "mechanism_idsw_nonincreasing_vs_dense": true,
+    "safe_plus_mechanism_all_sequence_hota_nonnegative_vs_safe": true,
+    "safe_plus_mechanism_hota_min": 78.25,
+    "safe_plus_mechanism_idsw_nonincreasing_vs_safe": true
+  },
+  "locked_policy": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_no_op": true,
+    "remaining_locked_rows_unread": 156
+  },
+  "plan_hashes": {
+    "COMBINED": "38bfa03683131e0d1710e59065d97c1b890e996e4e2c0d703e1d0259bc54cd7b",
+    "MOT20-01": "4b891f817dc5c9d21afe3daa2597ed6593258ad1b7a6433b0d22dcd7aa979ce9",
+    "MOT20-02": "f81b85a1c0d5664662894f57978059da756dafa4416825a8d7bc215a1e09ef60",
+    "MOT20-03": "d04f529727dcea34d53fc7182c30518e2a142c1126bdfbb80456935b272f7d71",
+    "MOT20-05": "9e69d37bd9b07df17e3c1a3349869b20e4d3eb8a536ff61b8f85ca77d0de7367"
+  },
+  "protocol": {
+    "collision_resolution": "higher candidate target IoU, host IoU, shorter gap, inherited purity/support, lower inherited ID/candidate index",
+    "conflict_iou": 0.5,
+    "host_selection": "maximum candidate/host IoU, lower host ID, lower source line index",
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "models_trained": 0,
+    "new_identity_namespace": false,
+    "other_target_action": "retain host and add candidate under inherited existing ID",
+    "parameter_sweeps": 0,
+    "same_target_action": "migrate host to inherited ID and use higher-target-IoU source/candidate box; ties keep source",
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "threshold_sweeps": 0,
+    "unmatched_action": "replace unmatched host with candidate under inherited existing ID",
+    "valid_gt_iou": 0.5,
+    "variants": [
+      "dense_replacement_context",
+      "safe_gap_context",
+      "all_additions_reference",
+      "distinct_person_dual_retention_oracle",
+      "mechanism_decomposed_oracle",
+      "safe_gap_plus_mechanism_oracle"
+    ]
+  },
+  "schema": "fmtrack.m23_5.mechanism_decomposed_nms_conflict.report.v1",
+  "source_hashes": {
+    "all_addition_trackers": {
+      "MOT20-01": "c298c2cfb5ad1b017102602e84975ed17dbea82d7c7d379a1f063cc7585ed1e0",
+      "MOT20-02": "6878d6645745689020cd5ff6204d4c8f373b4fe1c3633a8c81f5fd9c367bc393",
+      "MOT20-03": "63b621a23139380392651196e94d59ee84b3b40cfc520632291a8ef6a07faeb2",
+      "MOT20-05": "ecfcf70c87023a6f794728468ef830f8557c2eb618da63b72b496cd7323ef8fe"
+    },
+    "bridge_events": "1d80f3488dfc8033f29e81eff039e102ee90558376642a6508bf3475d2e74489",
+    "candidate_keys": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56",
+    "candidate_manifest": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6",
+    "dense_trackers": {
+      "MOT20-01": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8",
+      "MOT20-02": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16",
+      "MOT20-03": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e",
+      "MOT20-05": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178"
+    },
+    "gap_manifest": "09dcd13bc9b3afefc3283c09bddff0fcfa8813774f97a57d95e52d3776f3f290",
+    "gap_report": "4408d6928fb35025a5d6b79a89c61ff6789cbc25ebabd84a194228cfb08567f2",
+    "gt": {
+      "MOT20-01": "89fd0196d67a5eb6011a470dc2a49b02255403b49e8848031cdf99add8a36d9c",
+      "MOT20-02": "10abe457a67d9919a9cbfe821d3619c8e6174c2b0ed7ecf4cb68c1fd6cad58de",
+      "MOT20-03": "350fbc950c6dc00e3cc8a71358b3d0b8958906c8be57a7bf5fb9db34bff70f28",
+      "MOT20-05": "6da1ad9a528c39203c181aa93fc492d194358c50856695a7fe17656c928f5c17"
+    },
+    "safe_trackers": {
+      "MOT20-01": "bdcd69a0c4dd3e90755058b85a891606c1a9154f69f21d8033a1891926a7bcab",
+      "MOT20-02": "91c410eed8ff1ba838c51e47cc4b0103fbd5e8a3c0661f8259dca8262e94325f",
+      "MOT20-03": "00a30aa2a03b12f3e38a3e227ecdfa8cc14de5e57a159870a01de82115f303f8",
+      "MOT20-05": "4fd2fcb921d88a888c5bf5cb23c97a4396a1133edf4c2a49a21dc8e9b7d6fdec"
+    }
+  }
+}

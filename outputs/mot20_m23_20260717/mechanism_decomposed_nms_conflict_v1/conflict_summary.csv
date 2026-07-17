@@ -1,0 +1,6 @@
+sequence,raw_conflict_events,unique_source_rows,source_row_collisions,selected_actions,raw_other_target,raw_same_target,raw_unmatched,selected_other_target,selected_same_target,selected_unmatched,selected_box_candidate,selected_box_source
+MOT20-01,84,84,0,84,80,4,,80,4,,83,1
+MOT20-02,846,846,0,846,745,101,,745,101,,788,58
+MOT20-03,462,462,0,462,384,78,,384,78,,421,41
+MOT20-05,1604,1602,2,1602,1396,201,7,1394,201,7,1490,112
+COMBINED,2996,2994,2,2994,2605,384,7,2603,384,7,2782,212
