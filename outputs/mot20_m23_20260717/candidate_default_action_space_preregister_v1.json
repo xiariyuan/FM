@@ -1,0 +1,107 @@
+{
+  "acceptance": {
+    "minimum_candidate_suppressor_combined_hota": 84.0,
+    "minimum_candidate_suppressor_worst_sequence_hota": 83.5,
+    "minimum_episode_spawn_combined_hota": 84.3,
+    "minimum_episode_spawn_worst_sequence_hota": 84.0,
+    "oracle_linked_reproduction_tolerance": 1e-06,
+    "require_candidate_suppressor_all_sequence_increment_vs_postnms_nonnegative": true
+  },
+  "protocol": {
+    "action_priority": [
+      "candidate_default",
+      "suppressor_override",
+      "spawn"
+    ],
+    "locked_p15_policy": "no_op",
+    "models_trained": 0,
+    "parameter_sweeps": 0,
+    "safe_fallback": "restore target row from fixed post-NMS oracle context when available, otherwise abstain",
+    "segment_gap_rule": "new segment when frame gap > 1",
+    "segment_support": "unique modal train-GT identity among same-frame IoU>=0.5 Hungarian matches; tied mode unlabeled",
+    "spawn_episode_max_gap": 30,
+    "threshold_sweeps": 0,
+    "variants": [
+      "postnms_context",
+      "candidate_default_safe",
+      "candidate_suppressor_safe",
+      "candidate_suppressor_episode_spawn",
+      "oracle_linked_spawn"
+    ]
+  },
+  "references": {
+    "m23_1_budget_replace_add": {
+      "AssA": 85.738,
+      "DetA": 83.357,
+      "HOTA": 84.523,
+      "IDF1": 98.396,
+      "MOTA": 96.792
+    },
+    "m23_1_postnms_context": {
+      "AssA": 84.924,
+      "DetA": 82.48,
+      "HOTA": 83.676,
+      "IDF1": 97.881,
+      "MOTA": 95.784
+    }
+  },
+  "schema": "fmtrack.m23_3.candidate_default_action_space.preregister.v1",
+  "script_sha256": "a3203739c61c4aec6d875540c8aa00add4af8624afd8842a0ceda141be128841",
+  "sources": {
+    "baseline": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "candidate_keys": {
+      "path": "outputs/mot20_m23_20260717/compact_appearance_features_v1/candidate_keys.npy",
+      "sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56"
+    },
+    "candidate_manifest": {
+      "path": "outputs/mot20_m23_20260717/appearance_manifest_v1/candidate_manifest.npy",
+      "sha256": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6"
+    },
+    "context_trackers": {
+      "MOT20-01": "5c4a1e4fa71b2177896239c11d759d553b7a073be3026850b77022c30ee7b087",
+      "MOT20-02": "550393ddfff83c8f582218e526ce5d57d1442ec765a69ad33385425871cc5604",
+      "MOT20-03": "a4b933242804258857c93319f3455b136723558a06690b26cce2a01c9d4be36d",
+      "MOT20-05": "18cbb21dc72a02268f2e774e1d01ca53837684aa0e92d5ee0283f8714a2c65eb"
+    },
+    "full_trackers": {
+      "MOT20-01": "644897d246b5cd932220ebcb05057a3962f49378ac9c4bbdde03c2c1f9990f62",
+      "MOT20-02": "2cf512e14dc990972011922cfd9761b839117fcf4affd68c80dd4fe00095bdf8",
+      "MOT20-03": "b08e1ab5817866fdece1b82c29c8f58d3e9fc13755c1d346b8cad2833803d82e",
+      "MOT20-05": "bc7be62c70be44525779998eb647578070b8e5060d06a62c5c2cad37a5de1afd"
+    },
+    "gt": {
+      "MOT20-01": "89fd0196d67a5eb6011a470dc2a49b02255403b49e8848031cdf99add8a36d9c",
+      "MOT20-02": "10abe457a67d9919a9cbfe821d3619c8e6174c2b0ed7ecf4cb68c1fd6cad58de",
+      "MOT20-03": "350fbc950c6dc00e3cc8a71358b3d0b8958906c8be57a7bf5fb9db34bff70f28",
+      "MOT20-05": "6da1ad9a528c39203c181aa93fc492d194358c50856695a7fe17656c928f5c17"
+    },
+    "m23_1_manifest": {
+      "path": "outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/manifest.json",
+      "sha256": "c72676559c5dde842a6dec77082950ece703d7edb1af8e58cc822b7dc8930c50"
+    },
+    "m23_1_report": {
+      "path": "outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/report.json",
+      "sha256": "5d5acf57f6cbf6434916b9964366ab334ccd7a382e9d7133cf017e9fe3e1ba28"
+    },
+    "oracle_events": {
+      "path": "outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/oracle_selected_events.csv",
+      "sha256": "5454624f792d1ab7c00b7998ea9295552bb7af3b0c3650194d45ad7f2a1b1a21"
+    }
+  },
+  "stage": "M23-3-0 TrackEval phase preregistered after structural action-count preflight and before any M23-3 TrackEval",
+  "structural_preflight": {
+    "candidate_default": 170809,
+    "candidate_default_fraction": 0.9105151495767501,
+    "note": "These action counts were inspected before fixing TrackEval acceptance gates; no tracker metrics for the new variants had been computed.",
+    "selected_suppressed_events": 187596,
+    "spawn": 16664,
+    "spawn_fraction": 0.0888291861233715,
+    "suppressor_override": 123,
+    "suppressor_override_fraction": 0.0006556642998784623
+  }
+}

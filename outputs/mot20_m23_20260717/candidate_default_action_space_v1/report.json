@@ -1,0 +1,254 @@
+{
+  "acceptance": {
+    "minimum_candidate_suppressor_combined_hota": 84.0,
+    "minimum_candidate_suppressor_worst_sequence_hota": 83.5,
+    "minimum_episode_spawn_combined_hota": 84.3,
+    "minimum_episode_spawn_worst_sequence_hota": 84.0,
+    "oracle_linked_reproduction_tolerance": 1e-06,
+    "require_candidate_suppressor_all_sequence_increment_vs_postnms_nonnegative": true
+  },
+  "counts": {
+    "actions": {
+      "candidate_default": 170809,
+      "spawn": 16664,
+      "suppressor_override": 123
+    },
+    "candidate_rows": 459899,
+    "segments_with_support": 4358,
+    "segments_with_tied_mode": 26,
+    "selected_suppressed_events": 187596,
+    "spawn_episodes": 2527,
+    "tracklet_segments": 4775
+  },
+  "decision": {
+    "candidate_default_fraction": 0.9105151495767501,
+    "candidate_suppressor_all_sequence_increment_nonnegative": true,
+    "candidate_suppressor_combined_hota": 84.227,
+    "candidate_suppressor_combined_hota_passed": true,
+    "candidate_suppressor_sequence_hota_delta_vs_postnms": {
+      "MOT20-01": 0.5718639999999908,
+      "MOT20-02": 0.9087839999999971,
+      "MOT20-03": 0.41800999999999533,
+      "MOT20-05": 0.531870000000012
+    },
+    "candidate_suppressor_worst_sequence_hota": 83.89316,
+    "candidate_suppressor_worst_sequence_hota_passed": true,
+    "deployment_allowed": false,
+    "direct_candidate_suppressor_graph_sufficient": true,
+    "episode_spawn_combined_hota": 83.597,
+    "episode_spawn_combined_hota_passed": false,
+    "episode_spawn_worst_sequence_hota": 82.81557600000001,
+    "episode_spawn_worst_sequence_hota_passed": false,
+    "locked_manifest_created": false,
+    "next_stage": "cross-fitted candidate-default graph scoring with spawn linkage as a separate abstaining module",
+    "oracle_linked_spawn_metric_deltas": {
+      "AssA": 0.0,
+      "DetA": 0.0,
+      "HOTA": 0.0,
+      "IDF1": 0.0,
+      "MOTA": 0.0
+    },
+    "oracle_linked_spawn_reproduced": true,
+    "spawn_fraction": 0.0888291861233715,
+    "suppressor_override_fraction": 0.0006556642998784623
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "action_priority": [
+      "candidate_default",
+      "suppressor_override",
+      "spawn"
+    ],
+    "audit_scope": "MOT20-train oracle action-space audit under fixed post-NMS oracle context",
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "models_trained": 0,
+    "mot20_train_trackeval_invocations": 1,
+    "parameter_sweeps": 0,
+    "safe_fallback": "restore post-NMS oracle-context target row when present, otherwise abstain",
+    "segment_definition": "baseline original track ID split whenever consecutive observed frames have gap > 1",
+    "segment_support": "unique modal GT identity among same-frame IoU>=0.5 Hungarian matches; ties are unlabeled",
+    "spawn_episode_grouping": "same sequence and oracle target GT; new episode when frame gap > 30",
+    "spawn_episode_max_gap": 30,
+    "synthetic_ids_below_exact_float32_limit": true,
+    "synthetic_sequence_stride": 1000000,
+    "synthetic_spawn_id_base": 10000000,
+    "threshold_sweeps": 0
+  },
+  "schema": "fmtrack.m23_3.candidate_default_action_space.v1",
+  "sources": {
+    "candidate_keys": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/compact_appearance_features_v1/candidate_keys.npy",
+      "sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56"
+    },
+    "candidate_manifest": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/appearance_manifest_v1/candidate_manifest.npy",
+      "sha256": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6"
+    },
+    "m23_1_manifest": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/manifest.json",
+      "sha256": "c72676559c5dde842a6dec77082950ece703d7edb1af8e58cc822b7dc8930c50"
+    },
+    "m23_1_report": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/report.json",
+      "sha256": "5d5acf57f6cbf6434916b9964366ab334ccd7a382e9d7133cf017e9fe3e1ba28"
+    },
+    "oracle_events": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/oracle_selected_events.csv",
+      "sha256": "5454624f792d1ab7c00b7998ea9295552bb7af3b0c3650194d45ad7f2a1b1a21"
+    },
+    "preregister": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/candidate_default_action_space_preregister_v2.json",
+      "sha256": "b2f90ad8770c5a25aa7295b1a12512e12a8bfd5ba73bcd7142ac4417acac776f"
+    },
+    "tracker_sources": {
+      "MOT20-01": {
+        "context": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/postnms_replace_add_oracle/data/MOT20-01.txt",
+          "rows": 19395,
+          "sha256": "5c4a1e4fa71b2177896239c11d759d553b7a073be3026850b77022c30ee7b087"
+        },
+        "full": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/prenms_budget_replace_add_oracle/data/MOT20-01.txt",
+          "rows": 19644,
+          "sha256": "644897d246b5cd932220ebcb05057a3962f49378ac9c4bbdde03c2c1f9990f62"
+        }
+      },
+      "MOT20-02": {
+        "context": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/postnms_replace_add_oracle/data/MOT20-02.txt",
+          "rows": 149267,
+          "sha256": "550393ddfff83c8f582218e526ce5d57d1442ec765a69ad33385425871cc5604"
+        },
+        "full": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/prenms_budget_replace_add_oracle/data/MOT20-02.txt",
+          "rows": 153071,
+          "sha256": "2cf512e14dc990972011922cfd9761b839117fcf4affd68c80dd4fe00095bdf8"
+        }
+      },
+      "MOT20-03": {
+        "context": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/postnms_replace_add_oracle/data/MOT20-03.txt",
+          "rows": 311128,
+          "sha256": "a4b933242804258857c93319f3455b136723558a06690b26cce2a01c9d4be36d"
+        },
+        "full": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/prenms_budget_replace_add_oracle/data/MOT20-03.txt",
+          "rows": 313049,
+          "sha256": "b08e1ab5817866fdece1b82c29c8f58d3e9fc13755c1d346b8cad2833803d82e"
+        }
+      },
+      "MOT20-05": {
+        "context": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/postnms_replace_add_oracle/data/MOT20-05.txt",
+          "rows": 642791,
+          "sha256": "18cbb21dc72a02268f2e774e1d01ca53837684aa0e92d5ee0283f8714a2c65eb"
+        },
+        "full": {
+          "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1/eval_work/trackers/prenms_budget_replace_add_oracle/data/MOT20-05.txt",
+          "rows": 648270,
+          "sha256": "bc7be62c70be44525779998eb647578070b8e5060d06a62c5c2cad37a5de1afd"
+        }
+      }
+    }
+  },
+  "tracker_hashes": {
+    "candidate_default_safe": {
+      "MOT20-01": "430b20328ff7b6c677cd3b048d33cccb1652b9410c32b4e7e85bb5aa622fb10a",
+      "MOT20-02": "8fdefcfd1fe79dc53221206870511484fef9048e188b091a19fed83b868c42a4",
+      "MOT20-03": "70b58e7a7b515a61f20529c171e576495e62c0502c6e2c969e0ca11503ab5e0f",
+      "MOT20-05": "36a733f1e1ff8b9768fc2219b6d5b4fb6ea2216a8a93a423eb53a209495cbfb5"
+    },
+    "candidate_suppressor_episode_spawn": {
+      "MOT20-01": "6128500e21e99f14ab3c9e720517d535d9d96d9bbca66dbe10f5cf6468367666",
+      "MOT20-02": "f473de215e820c904bd413942147003f9628702940a7ead733ad2ceffcb9d8de",
+      "MOT20-03": "eb6e424306614b511cdab0973cf7befe520581a7cd2cc9805a7a395d100f3917",
+      "MOT20-05": "232da181f088881e87adb852f82c20fdaa92acee159bff524e8b80898bdb3618"
+    },
+    "candidate_suppressor_safe": {
+      "MOT20-01": "259bc854c26decd06322aa089668895c3d5d7e250ea5aa9878c95036ad94a059",
+      "MOT20-02": "4c49961a1fdb10a24450dfb9c2bed2e0c475133d46da06b11592f3842b2ce696",
+      "MOT20-03": "a6eb164fd74ebdb70fe2bfe21427891270886b030f79eeb86a5f0438442eeb45",
+      "MOT20-05": "7077047b697f38a96282d0eb1b5f44513c7f11d724d17ece59ccd9e6c0c769d8"
+    },
+    "oracle_linked_spawn": {
+      "MOT20-01": "644897d246b5cd932220ebcb05057a3962f49378ac9c4bbdde03c2c1f9990f62",
+      "MOT20-02": "2cf512e14dc990972011922cfd9761b839117fcf4affd68c80dd4fe00095bdf8",
+      "MOT20-03": "b08e1ab5817866fdece1b82c29c8f58d3e9fc13755c1d346b8cad2833803d82e",
+      "MOT20-05": "bc7be62c70be44525779998eb647578070b8e5060d06a62c5c2cad37a5de1afd"
+    },
+    "postnms_context": {
+      "MOT20-01": "5c4a1e4fa71b2177896239c11d759d553b7a073be3026850b77022c30ee7b087",
+      "MOT20-02": "550393ddfff83c8f582218e526ce5d57d1442ec765a69ad33385425871cc5604",
+      "MOT20-03": "a4b933242804258857c93319f3455b136723558a06690b26cce2a01c9d4be36d",
+      "MOT20-05": "18cbb21dc72a02268f2e774e1d01ca53837684aa0e92d5ee0283f8714a2c65eb"
+    }
+  },
+  "variant_metrics": {
+    "candidate_default_safe": {
+      "AssA": 85.447,
+      "CLR_FN": 24304,
+      "CLR_FP": 17767,
+      "DetA": 83.054,
+      "Dets": 1128077,
+      "HOTA": 84.226,
+      "IDF1": 98.142,
+      "IDSW": 71,
+      "MOTA": 96.286,
+      "variant": "candidate_default_safe"
+    },
+    "candidate_suppressor_episode_spawn": {
+      "AssA": 83.887,
+      "CLR_FN": 18629,
+      "CLR_FP": 17754,
+      "DetA": 83.352,
+      "Dets": 1133739,
+      "HOTA": 83.597,
+      "IDF1": 96.931,
+      "IDSW": 17190,
+      "MOTA": 95.278,
+      "variant": "candidate_suppressor_episode_spawn"
+    },
+    "candidate_suppressor_safe": {
+      "AssA": 85.448,
+      "CLR_FN": 24302,
+      "CLR_FP": 17767,
+      "DetA": 83.054,
+      "Dets": 1128079,
+      "HOTA": 84.227,
+      "IDF1": 98.142,
+      "IDSW": 71,
+      "MOTA": 96.286,
+      "variant": "candidate_suppressor_safe"
+    },
+    "oracle_linked_spawn": {
+      "AssA": 85.738,
+      "CLR_FN": 18630,
+      "CLR_FP": 17755,
+      "DetA": 83.357,
+      "Dets": 1133739,
+      "HOTA": 84.523,
+      "IDF1": 98.396,
+      "IDSW": 8,
+      "MOTA": 96.792,
+      "variant": "oracle_linked_spawn"
+    },
+    "postnms_context": {
+      "AssA": 84.924,
+      "CLR_FN": 30071,
+      "CLR_FP": 17753,
+      "DetA": 82.48,
+      "Dets": 1122296,
+      "HOTA": 83.676,
+      "IDF1": 97.881,
+      "IDSW": 6,
+      "MOTA": 95.784,
+      "variant": "postnms_context"
+    }
+  }
+}
