@@ -1,0 +1,14 @@
+{
+  "completed_crops": 459891,
+  "completed_frames": 8931,
+  "dtype": "little-endian float16",
+  "embedding_dim": 2048,
+  "frame": 3315,
+  "global_completed_crops": 459891,
+  "global_crop_end": 459891,
+  "global_crop_start": 0,
+  "layout": "contiguous_shards",
+  "sequence": "MOT20-05",
+  "shard_count": 12,
+  "total_crops": 459891
+}

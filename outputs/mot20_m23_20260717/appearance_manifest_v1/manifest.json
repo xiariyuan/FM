@@ -1,0 +1,10 @@
+{
+  "file_hashes": {
+    "candidate_manifest.npy": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6",
+    "report.json": "4c9281f3ac9d4ac635dba30e9a1d2e4efb7f8a0a7b86915d0c0dbf860f77e7eb",
+    "sequence_summary.csv": "cb96eed713fd9b6e4e6e10b204cf00ec3cb039bb3f134eec7aa9ba36b08bd7e3",
+    "unique_candidate_crops.npy": "69722c256e0e78ae9bcdfe96884556ceb04e2c17ca070d44471fe2dc8b617088"
+  },
+  "report_sha256": "4c9281f3ac9d4ac635dba30e9a1d2e4efb7f8a0a7b86915d0c0dbf860f77e7eb",
+  "schema": "fmtrack.m23_2.suppression_appearance_manifest.manifest.v1"
+}

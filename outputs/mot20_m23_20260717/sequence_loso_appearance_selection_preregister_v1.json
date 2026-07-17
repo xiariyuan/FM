@@ -1,0 +1,171 @@
+{
+  "acceptance": {
+    "minimum_combined_ap_gain": 0.02,
+    "minimum_combined_top10_precision": 0.2,
+    "minimum_combined_top10_precision_gain": 0.02,
+    "minimum_combined_top10_recall": 0.4,
+    "minimum_identity_accuracy_gain": 0.05,
+    "minimum_identity_cases": 100,
+    "minimum_worst_sequence_ap_gain": 0.0,
+    "minimum_worst_sequence_precision_gain": 0.0,
+    "minimum_worst_sequence_top10_precision": 0.1,
+    "minimum_worst_sequence_top10_recall": 0.2
+  },
+  "binding_added_before_predictions": true,
+  "created_before_predictions": true,
+  "feature_sets": {
+    "appearance": [
+      "candidate_score",
+      "suppressor_score",
+      "score_diff",
+      "score_ratio",
+      "suppressor_iou",
+      "priority",
+      "family_rank",
+      "local_rank",
+      "candidate_track_iou",
+      "suppressor_track_iou",
+      "candidate_has_track",
+      "suppressor_has_track",
+      "same_track",
+      "different_tracks",
+      "candidate_suppressor_cos",
+      "candidate_suppressor_l2",
+      "candidate_to_candidate_track_cos",
+      "candidate_to_suppressor_track_cos",
+      "suppressor_to_candidate_track_cos",
+      "suppressor_to_suppressor_track_cos",
+      "candidate_track_margin",
+      "suppressor_track_margin",
+      "candidate_best_track_cos",
+      "candidate_second_track_margin",
+      "candidate_track_count_log1p",
+      "suppressor_track_count_log1p",
+      "candidate_track_coherence",
+      "suppressor_track_coherence",
+      "center_dx_norm",
+      "center_dy_norm",
+      "center_distance_norm",
+      "log_area_ratio",
+      "log_aspect_ratio",
+      "candidate_log_area",
+      "suppressor_log_area"
+    ],
+    "geometry": [
+      "candidate_score",
+      "suppressor_score",
+      "score_diff",
+      "score_ratio",
+      "suppressor_iou",
+      "priority",
+      "family_rank",
+      "local_rank",
+      "candidate_track_iou",
+      "suppressor_track_iou",
+      "candidate_has_track",
+      "suppressor_has_track",
+      "same_track",
+      "different_tracks",
+      "center_dx_norm",
+      "center_dy_norm",
+      "center_distance_norm",
+      "log_area_ratio",
+      "log_aspect_ratio",
+      "candidate_log_area",
+      "suppressor_log_area"
+    ]
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "preflight": {
+    "additive_missing": 0,
+    "additive_positive_keys": 17715,
+    "candidate_rows": 459899,
+    "duplicate_candidate_keys": 0,
+    "field_matches": {
+      "candidate_track_id": true,
+      "crop_index": true,
+      "frame": true,
+      "phase0_suppressor_global_index": true,
+      "sequence_id": true,
+      "suppressed_index": true,
+      "suppressor_track_id": true
+    },
+    "per_sequence": [
+      {
+        "additive_positives": 390,
+        "candidates": 6712,
+        "max_additive_recall": 1.0,
+        "replace_add_positives": 2487,
+        "sequence": "MOT20-01",
+        "top10_selected": 672
+      },
+      {
+        "additive_positives": 4812,
+        "candidates": 57734,
+        "max_additive_recall": 1.0,
+        "replace_add_positives": 23705,
+        "sequence": "MOT20-02",
+        "top10_selected": 5774
+      },
+      {
+        "additive_positives": 4271,
+        "candidates": 122108,
+        "max_additive_recall": 1.0,
+        "replace_add_positives": 49314,
+        "sequence": "MOT20-03",
+        "top10_selected": 12211
+      },
+      {
+        "additive_positives": 8242,
+        "candidates": 273345,
+        "max_additive_recall": 1.0,
+        "replace_add_positives": 112090,
+        "sequence": "MOT20-05",
+        "top10_selected": 27335
+      }
+    ],
+    "replace_add_missing": 0,
+    "replace_add_positive_keys": 187596,
+    "unique_candidate_keys": 459899
+  },
+  "protocol": {
+    "fixed_outer_selection_rate": 0.1,
+    "identity_target": "prenms_budget_replace_add_oracle different-track cases",
+    "locked_label_reads": 0,
+    "model_class": "sklearn HistGradientBoostingClassifier",
+    "model_parameters": {
+      "early_stopping": false,
+      "l2_regularization": 1.0,
+      "learning_rate": 0.06,
+      "max_iter": 160,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 64,
+      "random_state": 2302
+    },
+    "models": [
+      "geometry",
+      "appearance"
+    ],
+    "outer_split": "four-fold MOT20 sequence LOSO",
+    "parameter_sweep": false,
+    "selector_target": "prenms_budget_additive_oracle suppressed candidates",
+    "threshold_sweep": false,
+    "trackeval_calls": 0,
+    "training_weight": "equal total mass per source sequence and class"
+  },
+  "schema": "fmtrack.m23_2.sequence_loso_appearance_selection.preregister.v1",
+  "sources": {
+    "appearance_features_sha256": "baf5b01387084211a3246fbe8f4f096dc6d21f5f3028509733be5bd508a9dd0e",
+    "audit_script_sha256": "e06e69418c5c65ef2d10c72be9fec8961e1b7071b875d24be1dd7884b9c14338",
+    "candidate_keys_sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56",
+    "feature_manifest_sha256": "aadaf687ac53c7e835a4713c197df8ec0e2f36a672e676673fffd50c8df64c51",
+    "feature_report_sha256": "dcf476fcbebaad215056045c54b754803dbf1505d5b00ac7fff0ba872f4fbb57",
+    "oracle_events_sha256": "5454624f792d1ab7c00b7998ea9295552bb7af3b0c3650194d45ad7f2a1b1a21"
+  },
+  "supersedes_prebinding_sha256": "841427a1bc3dbdfa1b7d3825e8756878238456907b3db138958213f56aab5a31"
+}

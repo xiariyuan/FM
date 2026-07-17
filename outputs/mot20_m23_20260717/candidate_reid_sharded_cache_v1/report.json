@@ -1,0 +1,219 @@
+{
+  "counts": {
+    "candidate_crops": 459891,
+    "frames_processed": 8931,
+    "nonfinite_values": 0,
+    "raw_bytes": 1883713536,
+    "shards": 12
+  },
+  "decision": {
+    "candidate_embeddings_ready": true,
+    "compact_appearance_features_ready": false,
+    "deployment_allowed": false,
+    "locked_manifest_created": false
+  },
+  "files": {
+    "frame_summary.csv": {
+      "rows": 8931,
+      "sha256": "fda280a11fa13a0263734d805fcf6b70ef30bbffea877faabd306ce383505c45"
+    },
+    "progress.json": {
+      "sha256": "0ac460f3ff12886d18e34a9ea297927c1c1dc40481c8c5cf8c04028af68c1b8c"
+    },
+    "shard_catalog.csv": {
+      "rows": 12,
+      "sha256": "71431a63a99ec263272ea76f95df0cebc4131b2469d793e1c3c3c5953051f81c"
+    }
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "appearance_manifest_sha256": "26c55dd63fb912ef3900869fe14c8687b08220fcca8b307848ece1d5f1092dd7",
+    "batch_size": 128,
+    "candidate_plan_recomputed": false,
+    "candidate_pool_changed": false,
+    "embedding_dim": 2048,
+    "embedding_dtype": "little-endian float16",
+    "engine": "efficient",
+    "global_embedding_order": "unique_candidate_crops.npy row order",
+    "ground_truth_read": false,
+    "raw_cache_layout": "contiguous complete-frame shards",
+    "shard_plan_sha256": "1fb8306151ed9227acd5c2af8d095eb2e1f21acd1ad3a88b931e9fc068864695",
+    "trackeval_calls": 0
+  },
+  "schema": "fmtrack.m23_2.candidate_reid_sharded_cache.v1",
+  "shards": [
+    {
+      "crops": 36707,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_00/candidate_embeddings.f16",
+      "embedding_sha256": "ac4a217fcb58c24a06e98efa1d22ec809d8bb09f1a9e9fcfde0c664e3c75366d",
+      "embedding_size_bytes": 150351872,
+      "end_crop": 36707,
+      "frame_summary_sha256": "5b8367605559b3b22ce998e078a95c943db0c616687c2ebb31ae9578f2170fa4",
+      "frames": 1884,
+      "manifest_sha256": "4d8adee8748616fa0f171542bdeae0d28af2739a34583fdb95156485e55e3c35",
+      "report_sha256": "8a4de2914ca596557cbe557408013ddc8f6620579d579036df89c7a9b10fe76a",
+      "shard": 0,
+      "start_crop": 0
+    },
+    {
+      "crops": 5187,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_00/candidate_embeddings.f16",
+      "embedding_sha256": "e8644c2af21b9ded1599868f17887a693a7f418d4ef9ca4f47508d8774111f80",
+      "embedding_size_bytes": 21245952,
+      "end_crop": 41894,
+      "frame_summary_sha256": "c7fb6be6d22264f6d4d60b39f652e22318997ac1c77c2b2eb31cb359e5a849a0",
+      "frames": 247,
+      "manifest_sha256": "009cc18647afa4f51e3343aa263cb647d035601d879bd7cfdf210be42674b0fa",
+      "report_sha256": "a2388e90c57d7e2c970e6e11415be3abb117e69404a81bb89eb330fa01402e66",
+      "shard": 1,
+      "start_crop": 36707
+    },
+    {
+      "crops": 5208,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_01/candidate_embeddings.f16",
+      "embedding_sha256": "2ba22065031fbe9d4b75c83d54de25e258f924894f1efb0b6c797cfbf67ee657",
+      "embedding_size_bytes": 21331968,
+      "end_crop": 47102,
+      "frame_summary_sha256": "92d12f05214e61c8b0cfd369bff511b1273ef5ee99a2122828ccaa5faeb6ccd4",
+      "frames": 248,
+      "manifest_sha256": "bac42e612a8cbfecbfb74170db1199bf73eec6fa060b79e1a641fa421dbb9902",
+      "report_sha256": "bd4cf713220fc12d67f027e1723cc9fc407c1f05e2bc5cec3b1b309cc8e707c1",
+      "shard": 2,
+      "start_crop": 41894
+    },
+    {
+      "crops": 5187,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_02/candidate_embeddings.f16",
+      "embedding_sha256": "50b64460592b03e4c074da097918a5213363da461987bac7232654d1e0bc053f",
+      "embedding_size_bytes": 21245952,
+      "end_crop": 52289,
+      "frame_summary_sha256": "10fdb178f4026d0d3c90e8fbe08bc88ab97dab2195592480a20ec8bcc852ed25",
+      "frames": 247,
+      "manifest_sha256": "2c86bb3aec97908e3484b68766dbece68c6d342322be4bb4d89003642dd35d2f",
+      "report_sha256": "9bb0fc591f298a136f6b4279914d4c3cdc27aa1d487645f3ddab6701e768f7c8",
+      "shard": 3,
+      "start_crop": 47102
+    },
+    {
+      "crops": 5205,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_03/candidate_embeddings.f16",
+      "embedding_sha256": "935a175e507d16b080bc11cac231ad16574d7eabbfd07c413f818c6be3313214",
+      "embedding_size_bytes": 21319680,
+      "end_crop": 57494,
+      "frame_summary_sha256": "e4dc92b7a7062fc24072ff72038fe29078488fef9f22ebdc342cdce0884f6bc7",
+      "frames": 248,
+      "manifest_sha256": "96bf2c40a443a09971ac07b28de3b2bec2a200d339b4a02502ac2ccececb2a0b",
+      "report_sha256": "7f5279d1774ef645d52ccae4ef39a7c27ea65d4b25854e677185bb2d69852474",
+      "shard": 4,
+      "start_crop": 52289
+    },
+    {
+      "crops": 57463,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_01/candidate_embeddings.f16",
+      "embedding_sha256": "e7f622989f7c3b8253d576101bcb92e6ad5906af3da87fb8bdd5de8e3b638aa1",
+      "embedding_size_bytes": 235368448,
+      "end_crop": 114957,
+      "frame_summary_sha256": "11b671642aca456a47cf28c721fef2b586eb8ab5e4802390584b3e84266ae083",
+      "frames": 1338,
+      "manifest_sha256": "a7a8014550e1d1a7d2a2cb80271f998ad7c15737f256b5bd10fe434a872c5e99",
+      "report_sha256": "b43e447c507238eeec22dde1014ab3498db4195bd37bafbd6f9d098d214ad7bd",
+      "shard": 5,
+      "start_crop": 57494
+    },
+    {
+      "crops": 57519,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_02/candidate_embeddings.f16",
+      "embedding_sha256": "fcb0fee48271ee294ebcd91272a8790de416968ef56d8706cfbd24921db60159",
+      "embedding_size_bytes": 235597824,
+      "end_crop": 172476,
+      "frame_summary_sha256": "5275ffd6b3d3dd4d6b4e9a398281902b2bb07d350cfd97950798f0a75a306240",
+      "frames": 1128,
+      "manifest_sha256": "f0d1363924291ae15b7ae4a9f0531a0475971aa1a90c380ecf85817413ea0df5",
+      "report_sha256": "9344377089d55c04e58d7b73990475ab376706891975d543f8f483179fd1e7c5",
+      "shard": 6,
+      "start_crop": 114957
+    },
+    {
+      "crops": 57504,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_03/candidate_embeddings.f16",
+      "embedding_sha256": "7b04d337a297cda7ac0726ca833cd38edc9e7828259a6965c100e2ec38bd3daf",
+      "embedding_size_bytes": 235536384,
+      "end_crop": 229980,
+      "frame_summary_sha256": "25da768cd2f41aaf9cc08956186f94d804371a2148d064858e8bf8c78d1593fb",
+      "frames": 804,
+      "manifest_sha256": "5f3eb9d070fec619220b2eacbe1dc84354f8707b919d595da2f97d59815346b2",
+      "report_sha256": "8651803f72ac0bbaa591373c077d71c4fa440a4bb2e1cf6dc2db06e376b53766",
+      "shard": 7,
+      "start_crop": 172476
+    },
+    {
+      "crops": 57437,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_04/candidate_embeddings.f16",
+      "embedding_sha256": "6a8d30e66cbfa55261b68ef7970d129791eb9c27c1f0874114bbcfb5fc061716",
+      "embedding_size_bytes": 235261952,
+      "end_crop": 287417,
+      "frame_summary_sha256": "8ff8191d636325bce35f959e56b728ff805e6dd0bf0a420f546e665d2230cbeb",
+      "frames": 694,
+      "manifest_sha256": "2e21b444e348b69d31070bdc2e1e26a9414950dd19eaaf0c7e2989946febae4b",
+      "report_sha256": "628539cae2111efd69f6b21f5f4a11266c5e8c64bfcaaca6397dcca15de999a0",
+      "shard": 8,
+      "start_crop": 229980
+    },
+    {
+      "crops": 57535,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_05/candidate_embeddings.f16",
+      "embedding_sha256": "c6528022baf90265aa8cafec1085c8e2c222b6739169b0e53e3f868448fa299b",
+      "embedding_size_bytes": 235663360,
+      "end_crop": 344952,
+      "frame_summary_sha256": "d5a87b1fd542a3202b63ae15540a949f710ce7d67bea434d9b6ec17e2d402c19",
+      "frames": 697,
+      "manifest_sha256": "73aa7cf044d602ca37f80bded2543157bbe558f4c76638bbd5f611978f7029c7",
+      "report_sha256": "e07588effcbdea4eeaad155913a71fc75a52ccb2bbb630268c030c3d4fd7491a",
+      "shard": 9,
+      "start_crop": 287417
+    },
+    {
+      "crops": 57469,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_06/candidate_embeddings.f16",
+      "embedding_sha256": "a71f77784a24a79f8a65ca76e4396e9e821243a30c32c072d157e6ddc2b05e3c",
+      "embedding_size_bytes": 235393024,
+      "end_crop": 402421,
+      "frame_summary_sha256": "25889d661ad57df791fded193333ee71c7702a43626fe594724703039d1adb12",
+      "frames": 699,
+      "manifest_sha256": "3841620375cda542c2f6fd2d61d50125eb5b65652deb6dd4b21b70f8f70cd86f",
+      "report_sha256": "ec98dbb45a2d36e84b898c8b6549d793882281324c50ab2eeb1548372c5df34d",
+      "shard": 10,
+      "start_crop": 344952
+    },
+    {
+      "crops": 57470,
+      "embedding_path": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_07/candidate_embeddings.f16",
+      "embedding_sha256": "5f02f8efb26ffd101cb2c9cfe462544b98a8f8101c3b34af0fe86195e028f5a3",
+      "embedding_size_bytes": 235397120,
+      "end_crop": 459891,
+      "frame_summary_sha256": "7d227b9f16f5e5d573c90eea20f596d7957daf7af1e24d697f0357ce8deeb088",
+      "frames": 697,
+      "manifest_sha256": "a5923d04d7ac4db6547f7f71d1e7ee030f91f759ae6eed123f98a9ed5e8acc18",
+      "report_sha256": "bee295e6fb9fd86f603eeb251d98ec35ea3f5da41067d75e05cd5953771286ca",
+      "shard": 11,
+      "start_crop": 402421
+    }
+  ],
+  "validation": {
+    "all_shards_complete": true,
+    "all_shards_finite": true,
+    "byte_sizes_exact": true,
+    "frame_summaries_contiguous": true,
+    "norm_max": 1.000472068786621,
+    "norm_mean": 0.9999996074347535,
+    "norm_min": 0.9995280504226685,
+    "ranges_contiguous": true,
+    "report_manifest_contracts_valid": true,
+    "sharded_content_merkle_sha256": "b9b1daae691c7aa9594c3db6456c21592709cb7e2f4d49a91e6cdc9601be0ca3"
+  }
+}

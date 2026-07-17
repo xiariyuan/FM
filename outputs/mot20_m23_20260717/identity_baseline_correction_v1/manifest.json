@@ -1,0 +1,11 @@
+{
+  "file_hashes": {
+    "appearance_margin_bins.csv": "5fa39ae67dd10fa67a0340bca7e67ffda0cdf6ea6ecff75e3ad0f64030572651",
+    "identity_baseline_summary.csv": "402a30569de465291a3441725bae8736935216019d69f40bdcf604b598bf0cea",
+    "paired_comparisons.csv": "86edb944c1b1f113f8659e412f6a1b09e5e43766744551fb37a7c3d7930f8d23",
+    "prototype_support_summary.csv": "be27c9b37283cab6f7b354c62168641e9216d31a0e3ea74807743e7812501da5",
+    "report.json": "eae1fe345bca21a015cfa7e634828669fa460337c932ee265357dfd974333b36"
+  },
+  "report_sha256": "eae1fe345bca21a015cfa7e634828669fa460337c932ee265357dfd974333b36",
+  "schema": "fmtrack.m23_2.identity_baseline_correction.manifest.v1"
+}

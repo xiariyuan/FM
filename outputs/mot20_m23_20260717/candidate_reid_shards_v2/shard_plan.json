@@ -1,0 +1,110 @@
+{
+  "appearance_manifest_sha256": "26c55dd63fb912ef3900869fe14c8687b08220fcca8b307848ece1d5f1092dd7",
+  "batch_size": 128,
+  "candidate_crops_sha256": "69722c256e0e78ae9bcdfe96884556ceb04e2c17ca070d44471fe2dc8b617088",
+  "candidate_pool_changed": false,
+  "complete_frame_boundaries": true,
+  "engine": "efficient",
+  "execution_only_repartition": true,
+  "extractor_sha256": "45f0964e564f23323364057aed832085d46bf2c2df974964df6e9f2a68fe20df",
+  "ground_truth_read": false,
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "parent_plan_sha256": "7a2a6022489aedf82caf3b6feca7b481a3513a5c85b41e647beeaafb6fb9c769",
+  "prefix_finalizer_sha256": "5a02ffc8fa46176dcf3c5b62d22fa8fe15d14d30202633f1c5ee04fc4abe6bb3",
+  "reason": "execution-only repartition of the slow MOT20-02 tail; crop order, complete-frame semantics, model, engine, and batch size unchanged",
+  "schema": "fmtrack.m23_2.candidate_reid_shard_plan.v2",
+  "shard_count": 12,
+  "shards": [
+    {
+      "crops": 36707,
+      "end_crop": 36707,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_00",
+      "shard": 0,
+      "start_crop": 0
+    },
+    {
+      "crops": 5187,
+      "end_crop": 41894,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_00",
+      "shard": 1,
+      "start_crop": 36707
+    },
+    {
+      "crops": 5208,
+      "end_crop": 47102,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_01",
+      "shard": 2,
+      "start_crop": 41894
+    },
+    {
+      "crops": 5187,
+      "end_crop": 52289,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_02",
+      "shard": 3,
+      "start_crop": 47102
+    },
+    {
+      "crops": 5205,
+      "end_crop": 57494,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/tail_03",
+      "shard": 4,
+      "start_crop": 52289
+    },
+    {
+      "crops": 57463,
+      "end_crop": 114957,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_01",
+      "shard": 5,
+      "start_crop": 57494
+    },
+    {
+      "crops": 57519,
+      "end_crop": 172476,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_02",
+      "shard": 6,
+      "start_crop": 114957
+    },
+    {
+      "crops": 57504,
+      "end_crop": 229980,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_03",
+      "shard": 7,
+      "start_crop": 172476
+    },
+    {
+      "crops": 57437,
+      "end_crop": 287417,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_04",
+      "shard": 8,
+      "start_crop": 229980
+    },
+    {
+      "crops": 57535,
+      "end_crop": 344952,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_05",
+      "shard": 9,
+      "start_crop": 287417
+    },
+    {
+      "crops": 57469,
+      "end_crop": 402421,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_06",
+      "shard": 10,
+      "start_crop": 344952
+    },
+    {
+      "crops": 57470,
+      "end_crop": 459891,
+      "output_dir": "outputs/mot20_m23_20260717/candidate_reid_shards_v1/shard_07",
+      "shard": 11,
+      "start_crop": 402421
+    }
+  ],
+  "total_crops": 459891,
+  "trackeval_calls": 0
+}

@@ -1,0 +1,223 @@
+{
+  "acceptance": {
+    "minimum_ap_gain": 0.02,
+    "minimum_identity_accuracy_gain": 0.05,
+    "minimum_identity_cases": 100,
+    "minimum_top10_precision": 0.2,
+    "minimum_top10_precision_gain": 0.02,
+    "minimum_top10_recall": 0.4,
+    "minimum_worst_sequence_ap_gain": 0.0,
+    "minimum_worst_sequence_precision": 0.1,
+    "minimum_worst_sequence_precision_gain": 0.0,
+    "minimum_worst_sequence_recall": 0.2
+  },
+  "combined_metrics": {
+    "appearance": {
+      "ap": 0.09659600442803809,
+      "auc": 0.6776788488206991,
+      "model": "appearance",
+      "outer_sequence": "COMBINED",
+      "positives": 17715,
+      "rows": 459899
+    },
+    "geometry": {
+      "ap": 0.10292200819283709,
+      "auc": 0.6913848449003333,
+      "model": "geometry",
+      "outer_sequence": "COMBINED",
+      "positives": 17715,
+      "rows": 459899
+    }
+  },
+  "combined_selection": {
+    "appearance": {
+      "model": "appearance",
+      "negative_reduction": 0.9102545546650264,
+      "negatives_selected": 39684,
+      "negatives_total": 442184,
+      "positives_selected": 6308,
+      "positives_total": 17715,
+      "precision": 0.13715428770220908,
+      "recall": 0.3560824160316116,
+      "selected": 45992,
+      "sequence": "COMBINED"
+    },
+    "geometry": {
+      "model": "geometry",
+      "negative_reduction": 0.9102839541910155,
+      "negatives_selected": 39671,
+      "negatives_total": 442184,
+      "positives_selected": 6321,
+      "positives_total": 17715,
+      "precision": 0.1374369455557488,
+      "recall": 0.35681625740897543,
+      "selected": 45992,
+      "sequence": "COMBINED"
+    }
+  },
+  "counts": {
+    "additive_oracle_negative_candidates": 442184,
+    "additive_oracle_positive_candidates": 17715,
+    "candidates": 459899,
+    "identity_cases": 857,
+    "replace_add_oracle_positive_candidates": 187596
+  },
+  "decision": {
+    "appearance_ap_gain": -0.006326003764798999,
+    "appearance_ap_gain_passed": false,
+    "appearance_identity_router_retained": true,
+    "appearance_selector_retained": false,
+    "appearance_top10_precision": 0.13715428770220908,
+    "appearance_top10_precision_gain": -0.0002826578535397306,
+    "appearance_top10_precision_gain_passed": false,
+    "appearance_top10_precision_passed": false,
+    "appearance_top10_recall": 0.3560824160316116,
+    "appearance_top10_recall_passed": false,
+    "deployment_allowed": false,
+    "identity_accuracy_gain": 0.42123687281213534,
+    "identity_accuracy_gain_passed": true,
+    "identity_case_count_passed": true,
+    "identity_cases": 857,
+    "locked_manifest_created": false,
+    "next_stage": "global tracklet graph integration only for retained appearance components",
+    "sequence_ap_gains": {
+      "MOT20-01": 0.012110184274584213,
+      "MOT20-02": -0.0028356222681649723,
+      "MOT20-03": -0.003314037465999231,
+      "MOT20-05": -0.002776894384834444
+    },
+    "sequence_precision_gains": {
+      "MOT20-01": 0.022321428571428548,
+      "MOT20-02": -0.023207481815032918,
+      "MOT20-03": 0.007370403734337894,
+      "MOT20-05": 0.0005853301627949531
+    },
+    "worst_sequence_ap_gain": -0.003314037465999231,
+    "worst_sequence_ap_gain_passed": false,
+    "worst_sequence_precision_gain": -0.023207481815032918,
+    "worst_sequence_precision_gain_passed": false,
+    "worst_sequence_precision_passed": true,
+    "worst_sequence_recall_passed": false,
+    "worst_sequence_top10_precision": 0.12157949428472463,
+    "worst_sequence_top10_recall": 0.14588528678304238
+  },
+  "feasibility": {
+    "additive_positive_prevalence": 0.0385193270696392,
+    "fixed_top_selection_count": 45992,
+    "maximum_possible_top_recall": 1.0,
+    "recall_gate_mathematically_feasible": true
+  },
+  "feature_sets": {
+    "appearance": [
+      "candidate_score",
+      "suppressor_score",
+      "score_diff",
+      "score_ratio",
+      "suppressor_iou",
+      "priority",
+      "family_rank",
+      "local_rank",
+      "candidate_track_iou",
+      "suppressor_track_iou",
+      "candidate_has_track",
+      "suppressor_has_track",
+      "same_track",
+      "different_tracks",
+      "candidate_suppressor_cos",
+      "candidate_suppressor_l2",
+      "candidate_to_candidate_track_cos",
+      "candidate_to_suppressor_track_cos",
+      "suppressor_to_candidate_track_cos",
+      "suppressor_to_suppressor_track_cos",
+      "candidate_track_margin",
+      "suppressor_track_margin",
+      "candidate_best_track_cos",
+      "candidate_second_track_margin",
+      "candidate_track_count_log1p",
+      "suppressor_track_count_log1p",
+      "candidate_track_coherence",
+      "suppressor_track_coherence",
+      "center_dx_norm",
+      "center_dy_norm",
+      "center_distance_norm",
+      "log_area_ratio",
+      "log_aspect_ratio",
+      "candidate_log_area",
+      "suppressor_log_area"
+    ],
+    "geometry": [
+      "candidate_score",
+      "suppressor_score",
+      "score_diff",
+      "score_ratio",
+      "suppressor_iou",
+      "priority",
+      "family_rank",
+      "local_rank",
+      "candidate_track_iou",
+      "suppressor_track_iou",
+      "candidate_has_track",
+      "suppressor_has_track",
+      "same_track",
+      "different_tracks",
+      "center_dx_norm",
+      "center_dy_norm",
+      "center_distance_norm",
+      "log_area_ratio",
+      "log_aspect_ratio",
+      "candidate_log_area",
+      "suppressor_log_area"
+    ]
+  },
+  "identity_combined": {
+    "accuracy_gain": 0.42123687281213534,
+    "appearance_accuracy": 0.6184364060676779,
+    "appearance_correct": 530,
+    "cases": 857,
+    "geometry_accuracy": 0.1971995332555426,
+    "geometry_correct": 169,
+    "sequence": "COMBINED"
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "fixed_outer_selection_rate": 0.1,
+    "identity_attribution_scope": "oracle-positive different-track cases with exactly one same-frame baseline track mapped to target GT",
+    "identity_attribution_target": "prenms_budget_replace_add_oracle suppressed candidates",
+    "locked_label_reads": 0,
+    "model_class": "sklearn HistGradientBoostingClassifier",
+    "model_parameters": {
+      "early_stopping": false,
+      "l2_regularization": 1.0,
+      "learning_rate": 0.06,
+      "max_iter": 160,
+      "max_leaf_nodes": 31,
+      "min_samples_leaf": 64,
+      "random_state": 2302
+    },
+    "models": [
+      "geometry",
+      "appearance"
+    ],
+    "outer_split": "MOT20 sequence LOSO",
+    "outer_threshold_sweep": false,
+    "parameter_sweep": false,
+    "preregister_sha256": "2639a91c6965d656ac0e149b6ab1d274df031abc440cab19f20952c216046f1d",
+    "preregistered_before_predictions": true,
+    "selector_target": "prenms_budget_additive_oracle suppressed candidates that recover baseline-unmatched GT",
+    "sequence_and_class_balanced_training_weight": true,
+    "trackeval_calls": 0
+  },
+  "schema": "fmtrack.m23_2.sequence_loso_appearance_selection.v1",
+  "sources": {
+    "appearance_manifest_sha256": "26c55dd63fb912ef3900869fe14c8687b08220fcca8b307848ece1d5f1092dd7",
+    "feature_manifest_sha256": "aadaf687ac53c7e835a4713c197df8ec0e2f36a672e676673fffd50c8df64c51",
+    "feature_report_sha256": "dcf476fcbebaad215056045c54b754803dbf1505d5b00ac7fff0ba872f4fbb57",
+    "oracle_events_sha256": "5454624f792d1ab7c00b7998ea9295552bb7af3b0c3650194d45ad7f2a1b1a21",
+    "preregister_sha256": "2639a91c6965d656ac0e149b6ab1d274df031abc440cab19f20952c216046f1d"
+  }
+}

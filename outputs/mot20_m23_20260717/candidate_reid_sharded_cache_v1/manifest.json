@@ -1,0 +1,11 @@
+{
+  "file_hashes": {
+    "frame_summary.csv": "fda280a11fa13a0263734d805fcf6b70ef30bbffea877faabd306ce383505c45",
+    "progress.json": "0ac460f3ff12886d18e34a9ea297927c1c1dc40481c8c5cf8c04028af68c1b8c",
+    "report.json": "da5607236b926dc3c3cb9696ffc1feb7996fa15d934f0bb6c0c6937f688b66b4",
+    "shard_catalog.csv": "71431a63a99ec263272ea76f95df0cebc4131b2469d793e1c3c3c5953051f81c"
+  },
+  "report_sha256": "da5607236b926dc3c3cb9696ffc1feb7996fa15d934f0bb6c0c6937f688b66b4",
+  "schema": "fmtrack.m23_2.candidate_reid_sharded_cache.manifest.v1",
+  "sharded_content_merkle_sha256": "b9b1daae691c7aa9594c3db6456c21592709cb7e2f4d49a91e6cdc9601be0ca3"
+}

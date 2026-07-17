@@ -1,0 +1,110 @@
+{
+  "combined_summary": {
+    "appearance": {
+      "accuracy": 0.6184364060676779,
+      "cases": 857,
+      "correct": 530,
+      "model": "appearance",
+      "oracle_candidate_cases": 762,
+      "oracle_suppressor_cases": 95,
+      "sequence": "COMBINED",
+      "wilson95_lower": 0.5854533776857311,
+      "wilson95_upper": 0.6503624022351138
+    },
+    "candidate_only": {
+      "accuracy": 0.8891481913652275,
+      "cases": 857,
+      "correct": 762,
+      "model": "candidate_only",
+      "oracle_candidate_cases": 762,
+      "oracle_suppressor_cases": 95,
+      "sequence": "COMBINED",
+      "wilson95_lower": 0.8663676185654252,
+      "wilson95_upper": 0.9084556583173513
+    },
+    "geometry": {
+      "accuracy": 0.1971995332555426,
+      "cases": 857,
+      "correct": 169,
+      "model": "geometry",
+      "oracle_candidate_cases": 762,
+      "oracle_suppressor_cases": 95,
+      "sequence": "COMBINED",
+      "wilson95_lower": 0.1719371569885889,
+      "wilson95_upper": 0.22516437119407823
+    },
+    "suppressor_only": {
+      "accuracy": 0.11085180863477247,
+      "cases": 857,
+      "correct": 95,
+      "model": "suppressor_only",
+      "oracle_candidate_cases": 762,
+      "oracle_suppressor_cases": 95,
+      "sequence": "COMBINED",
+      "wilson95_lower": 0.09154434168264867,
+      "wilson95_upper": 0.13363238143457476
+    }
+  },
+  "corrected_decision": {
+    "appearance_accuracy": 0.6184364060676779,
+    "appearance_feature_bank_retained_as_auxiliary_evidence": true,
+    "appearance_feature_bank_role": "auxiliary evidence for calibrated selective override or global graph; not a direct selector/router",
+    "appearance_gain_vs_candidate_only": -0.2707117852975496,
+    "appearance_gain_vs_geometry": 0.4212368728121353,
+    "appearance_identity_router_reason": "appearance margin beats geometry but underperforms the construction-aware candidate-only prior",
+    "appearance_identity_router_retained": false,
+    "appearance_selector_reason": "preregistered sequence-LOSO authenticity ranking failed",
+    "appearance_selector_retained": false,
+    "best_deterministic_baseline": "candidate_only",
+    "best_deterministic_baseline_accuracy": 0.8891481913652275,
+    "candidate_only_accuracy": 0.8891481913652275,
+    "candidate_only_at_least_appearance_in_every_sequence": true,
+    "deployment_allowed": false,
+    "geometry_accuracy": 0.1971995332555426,
+    "locked_manifest_created": false,
+    "next_stage": "counterfactual global tracklet graph with candidate-default edges and learned evidence only for selective overrides",
+    "original_preregistered_identity_router_retained": true,
+    "original_preregistered_selector_retained": false,
+    "suppressor_only_accuracy": 0.11085180863477247
+  },
+  "counts": {
+    "identity_cases": 857,
+    "oracle_candidate_cases": 762,
+    "oracle_suppressor_cases": 95,
+    "unique_identity_keys": 857
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "analysis_status": "post_hoc_strong_baseline_correction",
+    "candidate_only_definition": "always assign the suppressed observation to its observable candidate_track_id",
+    "derived_oracle_labels_read": true,
+    "direct_ground_truth_read": false,
+    "models": [
+      "appearance",
+      "geometry",
+      "candidate_only",
+      "suppressor_only"
+    ],
+    "original_preregistered_outputs_modified": false,
+    "paired_test": "exact McNemar/binomial test on discordant correctness",
+    "post_hoc_disclosed": true,
+    "suppressor_only_definition": "always assign the suppressed observation to its observable suppressor_track_id",
+    "trackeval_calls": 0
+  },
+  "schema": "fmtrack.m23_2.identity_baseline_correction.v1",
+  "sources": {
+    "appearance_features_sha256": "baf5b01387084211a3246fbe8f4f096dc6d21f5f3028509733be5bd508a9dd0e",
+    "candidate_keys_sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56",
+    "correction_script_sha256": "a23d90cacd6ca3928498c50c69f277e651ec2aa1928f39d86efd278800bb5f03",
+    "feature_report_sha256": "dcf476fcbebaad215056045c54b754803dbf1505d5b00ac7fff0ba872f4fbb57",
+    "identity_events_sha256": "8b41f5d435cd37d3af1480e1090813696dd9c6dcf8095057dfdf58706d125a38",
+    "identity_summary_sha256": "b23e1265cc191c1a939a80fb9de9d2f75fe66757170fc17d3ea38c5d015eb8c9",
+    "original_loso_manifest_sha256": "06810b08c3256970f3b996321411c20f199fb514279ef9718b38b3abc5027582",
+    "original_loso_report_sha256": "d850149759b2e417174f37f2be5575d1021a294e03ec5b8819cf2dca7eb57c21"
+  }
+}

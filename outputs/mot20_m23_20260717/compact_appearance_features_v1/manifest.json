@@ -1,0 +1,12 @@
+{
+  "file_hashes": {
+    "appearance_features.f32": "baf5b01387084211a3246fbe8f4f096dc6d21f5f3028509733be5bd508a9dd0e",
+    "candidate_keys.npy": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56",
+    "feature_columns.json": "a85a6c738b07376b0d1f027ee730af5a83c16f76fe8614e022e4909866e6e782",
+    "key_rebuild_report.json": "118f964402ce54e6da6870f53bc8008506d13ee7d375e9d57dc787f2b37581ec",
+    "report.json": "dcf476fcbebaad215056045c54b754803dbf1505d5b00ac7fff0ba872f4fbb57",
+    "sequence_summary.csv": "0b115a076253e79c7ed641a6604e1a4887151a3c969ada909948590f2b334a32"
+  },
+  "report_sha256": "dcf476fcbebaad215056045c54b754803dbf1505d5b00ac7fff0ba872f4fbb57",
+  "schema": "fmtrack.m23_2.compact_appearance_features.manifest.v1"
+}

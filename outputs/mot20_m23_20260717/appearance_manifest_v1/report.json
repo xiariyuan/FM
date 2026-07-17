@@ -1,0 +1,294 @@
+{
+  "assets": {
+    "fast_reid_config": {
+      "path": "external/BoT-SORT-main/fast_reid/configs/MOT20/sbs_S50.yml",
+      "sha256": "900ab06e87e407b30b1a5ee6167d2de543c9039d1a6d64254f4a62f150276065"
+    },
+    "fast_reid_interface": {
+      "path": "external/BoT-SORT-main/fast_reid/fast_reid_interfece.py",
+      "sha256": "821a921b116b4ae2e4e1a0b32855180e29d534d35f5b32f4be009bdd8c0aa191"
+    },
+    "fast_reid_weights": {
+      "path": "external/BoT-SORT-main/pretrained/mot20_sbs_S50.pth",
+      "sha256": "d3a39a1ab54a63ac6724f2864a36485b0b5762fefced98941fca2a0784180656"
+    }
+  },
+  "counts": {
+    "budget_candidates": 459899,
+    "candidate_track_match_ge_0p50": 424553,
+    "candidate_track_match_rate": 0.923143994659697,
+    "max_suppressor_box_abs_diff": 0.0001220703125,
+    "max_suppressor_score_abs_diff": 0.0,
+    "sequence": "COMBINED",
+    "suppressor_track_match_ge_0p50": 425412,
+    "suppressor_track_match_rate": 0.9250117960682671,
+    "unique_candidate_crops_added": 459891,
+    "unique_suppressor_phase0_rows": 459899
+  },
+  "decision": {
+    "appearance_features_ready": false,
+    "appearance_manifest_ready": true,
+    "candidate_plan_verified": true,
+    "deployment_allowed": false,
+    "locked_manifest_created": false
+  },
+  "files": {
+    "candidate_manifest.npy": {
+      "dtype": [
+        [
+          "sequence_id",
+          "|u1"
+        ],
+        [
+          "frame",
+          "<i4"
+        ],
+        [
+          "suppressed_index",
+          "<i8"
+        ],
+        [
+          "crop_index",
+          "<i8"
+        ],
+        [
+          "phase0_suppressor_global_index",
+          "<i8"
+        ],
+        [
+          "candidate_track_id",
+          "<i4"
+        ],
+        [
+          "candidate_track_iou",
+          "<f4"
+        ],
+        [
+          "suppressor_track_id",
+          "<i4"
+        ],
+        [
+          "suppressor_track_iou",
+          "<f4"
+        ],
+        [
+          "candidate_x1",
+          "<f4"
+        ],
+        [
+          "candidate_y1",
+          "<f4"
+        ],
+        [
+          "candidate_x2",
+          "<f4"
+        ],
+        [
+          "candidate_y2",
+          "<f4"
+        ],
+        [
+          "candidate_score",
+          "<f4"
+        ],
+        [
+          "suppressor_x1",
+          "<f4"
+        ],
+        [
+          "suppressor_y1",
+          "<f4"
+        ],
+        [
+          "suppressor_x2",
+          "<f4"
+        ],
+        [
+          "suppressor_y2",
+          "<f4"
+        ],
+        [
+          "suppressor_score",
+          "<f4"
+        ],
+        [
+          "suppressor_iou",
+          "<f4"
+        ],
+        [
+          "priority",
+          "<f4"
+        ],
+        [
+          "family_rank",
+          "<i2"
+        ],
+        [
+          "local_rank",
+          "<i2"
+        ]
+      ],
+      "sha256": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6",
+      "shape": [
+        459899
+      ],
+      "size_bytes": 44610971
+    },
+    "sequence_summary.csv": {
+      "rows": 5,
+      "sha256": "cb96eed713fd9b6e4e6e10b204cf00ec3cb039bb3f134eec7aa9ba36b08bd7e3"
+    },
+    "unique_candidate_crops.npy": {
+      "dtype": [
+        [
+          "sequence_id",
+          "|u1"
+        ],
+        [
+          "frame",
+          "<i4"
+        ],
+        [
+          "x1",
+          "<i4"
+        ],
+        [
+          "y1",
+          "<i4"
+        ],
+        [
+          "x2",
+          "<i4"
+        ],
+        [
+          "y2",
+          "<i4"
+        ],
+        [
+          "first_suppressed_index",
+          "<i8"
+        ]
+      ],
+      "sha256": "69722c256e0e78ae9bcdfe96884556ceb04e2c17ca070d44471fe2dc8b617088",
+      "shape": [
+        459891
+      ],
+      "size_bytes": 13337095
+    }
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "baseline_match_iou": 0.5,
+    "candidate_crop_semantics": "FastReID integer truncation and image-bound clipping",
+    "candidate_plan_manifest_sha256": "c9dab3959da330ef5ca5bebc85a0d87807666cc6db82e3d70f07e724e2b9a7ad",
+    "candidate_plan_recomputed": false,
+    "candidate_pool_changed": false,
+    "ground_truth_read": false,
+    "suppressor_feature_source": "frozen Phase-0 FastReID feature row addressed by frame offset plus NMS rank",
+    "trackeval_calls": 0
+  },
+  "schema": "fmtrack.m23_2.suppression_appearance_manifest.v1",
+  "sequence_summary": [
+    {
+      "budget_candidates": 6712,
+      "candidate_track_match_ge_0p50": 5900,
+      "candidate_track_match_rate": 0.8790226460071514,
+      "max_suppressor_box_abs_diff": 0.0001220703125,
+      "max_suppressor_score_abs_diff": 0.0,
+      "sequence": "MOT20-01",
+      "suppressor_track_match_ge_0p50": 5948,
+      "suppressor_track_match_rate": 0.8861740166865316,
+      "unique_candidate_crops_added": 6712,
+      "unique_suppressor_phase0_rows": 6712
+    },
+    {
+      "budget_candidates": 57734,
+      "candidate_track_match_ge_0p50": 52253,
+      "candidate_track_match_rate": 0.905064606644265,
+      "max_suppressor_box_abs_diff": 0.0001220703125,
+      "max_suppressor_score_abs_diff": 0.0,
+      "sequence": "MOT20-02",
+      "suppressor_track_match_ge_0p50": 52395,
+      "suppressor_track_match_rate": 0.9075241625385388,
+      "unique_candidate_crops_added": 57734,
+      "unique_suppressor_phase0_rows": 57734
+    },
+    {
+      "budget_candidates": 122108,
+      "candidate_track_match_ge_0p50": 108162,
+      "candidate_track_match_rate": 0.8857896288531464,
+      "max_suppressor_box_abs_diff": 0.0001220703125,
+      "max_suppressor_score_abs_diff": 0.0,
+      "sequence": "MOT20-03",
+      "suppressor_track_match_ge_0p50": 108339,
+      "suppressor_track_match_rate": 0.887239165329053,
+      "unique_candidate_crops_added": 122105,
+      "unique_suppressor_phase0_rows": 122108
+    },
+    {
+      "budget_candidates": 273345,
+      "candidate_track_match_ge_0p50": 258238,
+      "candidate_track_match_rate": 0.9447328467687355,
+      "max_suppressor_box_abs_diff": 0.0001220703125,
+      "max_suppressor_score_abs_diff": 0.0,
+      "sequence": "MOT20-05",
+      "suppressor_track_match_ge_0p50": 258730,
+      "suppressor_track_match_rate": 0.9465327699427464,
+      "unique_candidate_crops_added": 273340,
+      "unique_suppressor_phase0_rows": 273345
+    }
+  ],
+  "sources": {
+    "MOT20-01": {
+      "baseline_sha256": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "candidate_plan_manifest_sha256": "aca50d36c04829642cc03de9551c882282e759a9b7876ea0a9d7c57fd5926e87",
+      "phase0_columns_member_sha256": "7e5b044c643e883a8eb978623c3c0a70a8b67831a3b2861351d28b472bdd5ddc",
+      "phase0_detections_member_sha256": "70db0b3d6db1730b5eb5d04f010890baa5db45d68968aeb5578007894cadc3fc",
+      "phase0_image_wh_member_sha256": "e07ca025f86c4ca6b63597f1f9b56299a6afe1258edff1d8aa72585fd171d223",
+      "phase0_offsets_member_sha256": "209026729a229c9f612cef6a6c367360d91f8c2a17560911ad27c4acc97e7158",
+      "suppression_data_sha256": "9552e228d7179f1a6824c874cf225da66403afd37a6cd3c7696e08a9cfad2ae1",
+      "suppression_manifest_sha256": "5101c71579fcd2600d268645f4232774e5c8d920d3e59843bac9770596ed760a"
+    },
+    "MOT20-02": {
+      "baseline_sha256": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "candidate_plan_manifest_sha256": "ce4a8a54309c747e1b530ff0e8f9dd3b336954864938764085a701a9b034affa",
+      "phase0_columns_member_sha256": "7e5b044c643e883a8eb978623c3c0a70a8b67831a3b2861351d28b472bdd5ddc",
+      "phase0_detections_member_sha256": "a23ba0c7be3ea75a97a051cfb11aee5f32dfe9b377f970945880babf02b182dc",
+      "phase0_image_wh_member_sha256": "f3b422dcefc23f61c6efcd0ec38af32e8d8301208b57d76dbcdd4d6791979024",
+      "phase0_offsets_member_sha256": "fa83d485b33f092d397c9c30b8624f5b24fd05abc4804db8b86add6e32bae65d",
+      "suppression_data_sha256": "631f08845819ced15059603717ee3558b7ddeee96589fa730647a34ae6f0b10a",
+      "suppression_manifest_sha256": "f233d047a5c79d5f625e0d2d11f428030651a1fc271ab46035bd4ab780f91691"
+    },
+    "MOT20-03": {
+      "baseline_sha256": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "candidate_plan_manifest_sha256": "723b663edd253eeb4478a52ff5a25274ee7ff7486a9c8dd34c3e51a99c9e34a5",
+      "phase0_columns_member_sha256": "7e5b044c643e883a8eb978623c3c0a70a8b67831a3b2861351d28b472bdd5ddc",
+      "phase0_detections_member_sha256": "91f787294ca032f0a0e4eacffd85380e5e32990f05b783a8ee95c534ad8053e5",
+      "phase0_image_wh_member_sha256": "bd58b1fc5f2bd01258f868b4972b3b3c919d7ce918b266b713635340a4b948ef",
+      "phase0_offsets_member_sha256": "c2ecac5e027d10e1dd613987f7ea4339736eefb7ee86c7f70a67757f57ae557d",
+      "suppression_data_sha256": "3099b8f791b573a843c934ed67c818d70eca0a60be6d9ae645928bd140d5d303",
+      "suppression_manifest_sha256": "6ce3c68130930d540375f665562377184e9471e8585c50b2136c2a79dfd34e47"
+    },
+    "MOT20-05": {
+      "baseline_sha256": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc",
+      "candidate_plan_manifest_sha256": "280c68a3c9cc45fd6dd5541a6f5e167fad3d64423f05293cffc8eb071cdcac21",
+      "phase0_columns_member_sha256": "7e5b044c643e883a8eb978623c3c0a70a8b67831a3b2861351d28b472bdd5ddc",
+      "phase0_detections_member_sha256": "4535d99ac6013af7b7aba190b9628ada96fc0b0308f388d8e7821454e5dfb311",
+      "phase0_image_wh_member_sha256": "2c98bbbb2d5dd5d2bbec421a3ec72e0dd23598d8f053a004a974430b002f4e27",
+      "phase0_offsets_member_sha256": "a1a8c559cf2b4ff1c5b804fa88f84cb24b1460b8b3102b57e0a92ff11756806d",
+      "suppression_data_sha256": "6021e37832b639090d741deb24840e86afb6cd68fb4e8ad7d86032cfb3a9f6e0",
+      "suppression_manifest_sha256": "b5c1d6a47ae33d94075ac364d624fa292a0bfadd0e9f7ff7ee4538e82296fae8"
+    }
+  },
+  "validation": {
+    "all_suppressors_have_phase0_reid": true,
+    "candidate_rows_equal_frozen_budget": true,
+    "invalid_candidate_crops": 0,
+    "suppressor_mapping_failures": 0
+  }
+}

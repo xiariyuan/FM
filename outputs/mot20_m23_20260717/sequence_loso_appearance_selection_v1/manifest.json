@@ -1,0 +1,13 @@
+{
+  "file_hashes": {
+    "block_coverage.csv": "9be6d1dc7a5287a2174c675a8b04e75d05d7f9e9729157dcf567c6bdb64eef98",
+    "fold_metrics.csv": "2c142dcee4a5dd7205d0aea78f5a25cef658aa7f8a22025dd9fe4f416605a56f",
+    "identity_attribution_events.csv": "8b41f5d435cd37d3af1480e1090813696dd9c6dcf8095057dfdf58706d125a38",
+    "identity_attribution_summary.csv": "b23e1265cc191c1a939a80fb9de9d2f75fe66757170fc17d3ea38c5d015eb8c9",
+    "oof_predictions.npy": "5784d7a82fd0735f92813a15eaf0203923ee50e8d2857373951eb67897fa1bb9",
+    "report.json": "d850149759b2e417174f37f2be5575d1021a294e03ec5b8819cf2dca7eb57c21",
+    "selection_metrics.csv": "c4d18df4844c4aa01c13cd84b9d582a9f94f5a47d4a0919e9fc30fc8e97eb294"
+  },
+  "report_sha256": "d850149759b2e417174f37f2be5575d1021a294e03ec5b8819cf2dca7eb57c21",
+  "schema": "fmtrack.m23_2.sequence_loso_appearance_selection.manifest.v1"
+}
