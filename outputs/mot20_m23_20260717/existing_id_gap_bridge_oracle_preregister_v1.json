@@ -1,0 +1,143 @@
+{
+  "acceptance": {
+    "context_reproduction_tolerance": 1e-06,
+    "minimum_safe_combined_hota": 78.1,
+    "minimum_safe_sequence_hota_gain": 0.0,
+    "require_safe_all_sequence_hota_nonnegative": true
+  },
+  "protocol": {
+    "all_additions": "all GT-matched bridge candidates",
+    "candidate_target_matching": "global frame-level Hungarian IoU>=0.5",
+    "context_exclusive_iou": 0.5,
+    "eligible_gap": "consecutive segments of same baseline tracker ID with 1..30 missing frames and same positive modal train-GT support",
+    "gap_sweeps": 0,
+    "identity_relabeling": false,
+    "locked_p15_policy": "no_op",
+    "maximum_gap_frames": 30,
+    "models_trained": 0,
+    "new_identity_namespace": false,
+    "parameter_sweeps": 0,
+    "safe_additions": "maximum IoU with every dense-context row in frame <0.5",
+    "starting_tracker": "M23-3-1 dense replacement oracle context",
+    "suppressor_routing": false,
+    "target_deduplication": "per frame and GT: shorter gap, higher minimum purity, more matched support, lower inherited ID",
+    "threshold_sweeps": 0,
+    "variants": [
+      "baseline_raw",
+      "dense_replacement_context",
+      "all_existing_id_gap_bridge_oracle",
+      "safe_existing_id_gap_bridge_oracle"
+    ]
+  },
+  "references": {
+    "baseline_combined": {
+      "AssA": 74.672127,
+      "CLR_FN": 52754,
+      "CLR_FP": 18566,
+      "DetA": 80.90724,
+      "Dets": 1100426,
+      "HOTA": 77.69901999999999,
+      "IDF1": 89.30846875223709,
+      "IDSW": 1222,
+      "MOTA": 93.60645999432407,
+      "sequence": "COMBINED",
+      "variant": "baseline_raw"
+    },
+    "dense_combined": {
+      "AssA": 74.91532,
+      "CLR_FN": 52276,
+      "CLR_FP": 18118,
+      "DetA": 81.267375,
+      "Dets": 1100456,
+      "HOTA": 78.00133,
+      "IDF1": 89.33688877753269,
+      "IDSW": 1220,
+      "MOTA": 93.68824992464397,
+      "sequence": "COMBINED",
+      "variant": "dense_replacement_oracle"
+    }
+  },
+  "schema": "fmtrack.m23_4.existing_id_gap_bridge_oracle.preregister.v1",
+  "script_sha256": "6a3fe917c9ec874e005e82d0c5d56b894a98539bdcbc549dad1a095cca568190",
+  "sources": {
+    "baseline": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "candidate_keys": {
+      "path": "outputs/mot20_m23_20260717/compact_appearance_features_v1/candidate_keys.npy",
+      "sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56"
+    },
+    "candidate_manifest": {
+      "path": "outputs/mot20_m23_20260717/appearance_manifest_v1/candidate_manifest.npy",
+      "sha256": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6"
+    },
+    "dense_trackers": {
+      "MOT20-01": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8",
+      "MOT20-02": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16",
+      "MOT20-03": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e",
+      "MOT20-05": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178"
+    },
+    "gt": {
+      "MOT20-01": "89fd0196d67a5eb6011a470dc2a49b02255403b49e8848031cdf99add8a36d9c",
+      "MOT20-02": "10abe457a67d9919a9cbfe821d3619c8e6174c2b0ed7ecf4cb68c1fd6cad58de",
+      "MOT20-03": "350fbc950c6dc00e3cc8a71358b3d0b8958906c8be57a7bf5fb9db34bff70f28",
+      "MOT20-05": "6da1ad9a528c39203c181aa93fc492d194358c50856695a7fe17656c928f5c17"
+    },
+    "replacement_manifest": {
+      "path": "outputs/mot20_m23_20260717/deployable_replacement_oracle_v1/manifest.json",
+      "sha256": "92b1d6e0451420859a9a2c777e8d03dccc2c060dee0287735eb3b09e0e4eaf6f"
+    },
+    "replacement_report": {
+      "path": "outputs/mot20_m23_20260717/deployable_replacement_oracle_v1/report.json",
+      "sha256": "95b1e75d18c1ee225bd30f96eba834c2121ab9dfd8037a4f09f10cf3a0b67223"
+    },
+    "segment_script": {
+      "path": "scripts/audit_m23_3_candidate_default_action_space.py",
+      "sha256": "6bd62425faa18fd916540dc6e92e2bb091db44e71b52de7ad473410748f294f0"
+    }
+  },
+  "stage": "M23-4-0 preregistered after fixed structural bridge preflight and before any M23-4 TrackEval",
+  "structural_preflight": {
+    "all_plan_events": 3825,
+    "candidate_track_other": 3002,
+    "candidate_track_same": 0,
+    "candidate_track_zero": 823,
+    "consecutive_segment_pairs": 1887,
+    "context_iou_ge_0_50": 2996,
+    "context_iou_lt_0_50": 829,
+    "deduped_competing_targets": 1,
+    "gap_frames": 6381,
+    "gap_le30_pairs": 1809,
+    "matched_additions": 3825,
+    "note": "Only structural target/candidate matching and context-overlap counts were inspected. No M23-4 tracker variant was generated or evaluated.",
+    "per_sequence": {
+      "MOT20-01": {
+        "context_iou_ge_0_50": 84,
+        "matched_additions": 100,
+        "safe_plan_events": 16
+      },
+      "MOT20-02": {
+        "context_iou_ge_0_50": 846,
+        "matched_additions": 880,
+        "safe_plan_events": 34
+      },
+      "MOT20-03": {
+        "context_iou_ge_0_50": 462,
+        "matched_additions": 796,
+        "safe_plan_events": 334
+      },
+      "MOT20-05": {
+        "context_iou_ge_0_50": 1604,
+        "matched_additions": 2049,
+        "safe_plan_events": 445
+      }
+    },
+    "safe_plan_events": 829,
+    "same_support_gap_pairs": 1365,
+    "target_gt_visible": 6381,
+    "unique_target_frames": 6380
+  }
+}

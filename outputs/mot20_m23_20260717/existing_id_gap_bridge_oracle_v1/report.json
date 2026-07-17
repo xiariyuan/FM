@@ -1,0 +1,282 @@
+{
+  "acceptance": {
+    "context_reproduction_tolerance": 1e-06,
+    "minimum_safe_combined_hota": 78.1,
+    "minimum_safe_sequence_hota_gain": 0.0,
+    "require_safe_all_sequence_hota_nonnegative": true
+  },
+  "counts": {
+    "all_plan_events": 3825,
+    "candidate_track_other": 3002,
+    "candidate_track_zero": 823,
+    "consecutive_segment_pairs": 1887,
+    "context_iou_ge_0_50": 2996,
+    "context_iou_ge_0_90": 1555,
+    "context_iou_ge_0_999": 706,
+    "context_iou_lt_0_50": 829,
+    "deduped_competing_targets": 1,
+    "gap_frames": 6381,
+    "gap_le30_pairs": 1809,
+    "matched_additions": 3825,
+    "safe_plan_events": 829,
+    "same_support_gap_pairs": 1365,
+    "target_gt_visible": 6381,
+    "unique_target_frames": 6380,
+    "unmatched_targets": 2555
+  },
+  "decision": {
+    "all_additions_combined_hota": 78.13954,
+    "all_additions_sequence_hota_deltas": {
+      "MOT20-01": 0.26977599999999313,
+      "MOT20-02": 0.20421199999999828,
+      "MOT20-03": 0.11103599999999858,
+      "MOT20-05": 0.13523500000000865
+    },
+    "baseline_metric_deltas": {
+      "AssA": 0.0,
+      "DetA": 0.0,
+      "HOTA": 0.0,
+      "IDF1": 0.0,
+      "MOTA": 0.0
+    },
+    "baseline_reproduced": true,
+    "dense_context_reproduced": true,
+    "dense_metric_deltas": {
+      "AssA": 0.0,
+      "DetA": 0.0,
+      "HOTA": 0.0,
+      "IDF1": 0.0,
+      "MOTA": 0.0
+    },
+    "deployment_allowed": false,
+    "internal_gap_bridge_ceiling_passed": false,
+    "locked_manifest_created": false,
+    "next_stage": "close same-ID internal gap fill and audit cross-ID tracklet relinking ceiling",
+    "safe_additions_all_sequence_hota_nonnegative": true,
+    "safe_additions_combined_hota": 78.03542999999999,
+    "safe_additions_combined_hota_passed": false,
+    "safe_additions_minimum_sequence_gain": 0.010314999999991414,
+    "safe_additions_minimum_sequence_gain_passed": true,
+    "safe_additions_sequence_hota_deltas": {
+      "MOT20-01": 0.05056199999999933,
+      "MOT20-02": 0.010314999999991414,
+      "MOT20-03": 0.04918999999999585,
+      "MOT20-05": 0.03098500000000115
+    }
+  },
+  "event_plan_hashes": {
+    "all_existing_id_gap_bridge_oracle": {
+      "COMBINED": "5382693af2e87d94acb55c4ddece57050953a418a99393b00b2f409c7260eaeb",
+      "MOT20-01": "0a0bdfe0eb1cfcc0b3565f0c41e7ff838eefcca7f072a2b37883081634bea402",
+      "MOT20-02": "8b6f066926294ba112a56c6277326d3b490da8b4715e6df6cbd50f84d5f65a0c",
+      "MOT20-03": "50a224e84ccd579cdb351274fa72eabcd7a3df8bb3be7625dfeb422d9b4f46e1",
+      "MOT20-05": "ff9599f8bf6eb695f48e72467a5feed0e9f05485bb6f0bff8e747473b0f33eea"
+    },
+    "safe_existing_id_gap_bridge_oracle": {
+      "COMBINED": "2aeec08198a379696836658c629892587131b99d3ba08ace8b10559126c68647",
+      "MOT20-01": "d19296f567724cc5891a2c6c5c6f089edde9fddefa001526aead713ce3fba17e",
+      "MOT20-02": "8c742ecffa7d1abf5f2210ac7795d31450736a3b59613b92cceaeb8283e52cf9",
+      "MOT20-03": "7384a993e3f167aeaa8b11765b12da1c41d7bef13cae5410b5ae9cd680bba98b",
+      "MOT20-05": "cdb49daf1091d14a61c6c49fdb9db68e47e2d318bd6dd1e6d29c3b85437e5290"
+    }
+  },
+  "exact_combined_metrics": {
+    "all_existing_id_gap_bridge_oracle": {
+      "AssA": 75.01741,
+      "CLR_FN": 48617,
+      "CLR_FP": 18270,
+      "DetA": 81.44535400000001,
+      "Dets": 1104267,
+      "HOTA": 78.13954,
+      "IDF1": 89.44968490955974,
+      "IDSW": 1104,
+      "MOTA": 94.0075655685546,
+      "sequence": "COMBINED",
+      "variant": "all_existing_id_gap_bridge_oracle"
+    },
+    "baseline_raw": {
+      "AssA": 74.672127,
+      "CLR_FN": 52754,
+      "CLR_FP": 18566,
+      "DetA": 80.90724,
+      "Dets": 1100426,
+      "HOTA": 77.69901999999999,
+      "IDF1": 89.30846875223709,
+      "IDSW": 1222,
+      "MOTA": 93.60645999432407,
+      "sequence": "COMBINED",
+      "variant": "baseline_raw"
+    },
+    "dense_replacement_context": {
+      "AssA": 74.91532,
+      "CLR_FN": 52276,
+      "CLR_FP": 18118,
+      "DetA": 81.267375,
+      "Dets": 1100456,
+      "HOTA": 78.00133,
+      "IDF1": 89.33688877753269,
+      "IDSW": 1220,
+      "MOTA": 93.68824992464397,
+      "sequence": "COMBINED",
+      "variant": "dense_replacement_context"
+    },
+    "safe_existing_id_gap_bridge_oracle": {
+      "AssA": 74.93957999999999,
+      "CLR_FN": 51463,
+      "CLR_FP": 18134,
+      "DetA": 81.31231,
+      "Dets": 1101285,
+      "HOTA": 78.03542999999999,
+      "IDF1": 89.36342831228066,
+      "IDSW": 1228,
+      "MOTA": 93.75778899255606,
+      "sequence": "COMBINED",
+      "variant": "safe_existing_id_gap_bridge_oracle"
+    }
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "all_additions": "all GT-matched candidates",
+    "candidate_target_matching": "global frame-level Hungarian at IoU>=0.5",
+    "eligible_gap": "consecutive segments of same baseline tracker ID, 1..30 missing frames, same positive modal train-GT support",
+    "gap_sweeps": 0,
+    "identity_relabeling": false,
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "models_trained": 0,
+    "mot20_train_trackeval_invocations": 1,
+    "new_identity_namespace": false,
+    "parameter_sweeps": 0,
+    "safe_additions": "maximum IoU with every dense-context row in the frame is strictly below 0.5",
+    "starting_tracker": "M23-3-1 dense replacement oracle context",
+    "suppressor_routing": false,
+    "target_deduplication": "per frame and GT: shorter gap, higher minimum purity, more matched support, lower inherited ID",
+    "threshold_sweeps": 0
+  },
+  "schema": "fmtrack.m23_4.existing_id_gap_bridge_oracle.v1",
+  "sources": {
+    "baseline": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "candidate_keys": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/compact_appearance_features_v1/candidate_keys.npy",
+      "sha256": "4a3e444c1548b31125176aa68ece3fc9b8261857e00c214bcacfa9ce92cb2a56"
+    },
+    "candidate_manifest": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/appearance_manifest_v1/candidate_manifest.npy",
+      "sha256": "3c0e1d8a1c81f958d45958b45f2774348adf859fc59c92755fda0f2aa6cda3c6"
+    },
+    "dense_trackers": {
+      "MOT20-01": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8",
+      "MOT20-02": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16",
+      "MOT20-03": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e",
+      "MOT20-05": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178"
+    },
+    "gt": {
+      "MOT20-01": "89fd0196d67a5eb6011a470dc2a49b02255403b49e8848031cdf99add8a36d9c",
+      "MOT20-02": "10abe457a67d9919a9cbfe821d3619c8e6174c2b0ed7ecf4cb68c1fd6cad58de",
+      "MOT20-03": "350fbc950c6dc00e3cc8a71358b3d0b8958906c8be57a7bf5fb9db34bff70f28",
+      "MOT20-05": "6da1ad9a528c39203c181aa93fc492d194358c50856695a7fe17656c928f5c17"
+    },
+    "preregister": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/existing_id_gap_bridge_oracle_preregister_v1.json",
+      "sha256": "15f439a76cbb802779183e5e20cdab03b06ddefd4f5c923594069e8675b5295f"
+    },
+    "replacement_manifest": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/deployable_replacement_oracle_v1/manifest.json",
+      "sha256": "92b1d6e0451420859a9a2c777e8d03dccc2c060dee0287735eb3b09e0e4eaf6f"
+    },
+    "replacement_report": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/deployable_replacement_oracle_v1/report.json",
+      "sha256": "95b1e75d18c1ee225bd30f96eba834c2121ab9dfd8037a4f09f10cf3a0b67223"
+    },
+    "segment_script": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/scripts/audit_m23_3_candidate_default_action_space.py",
+      "sha256": "6bd62425faa18fd916540dc6e92e2bb091db44e71b52de7ad473410748f294f0"
+    }
+  },
+  "tracker_hashes": {
+    "all_existing_id_gap_bridge_oracle": {
+      "MOT20-01": "c298c2cfb5ad1b017102602e84975ed17dbea82d7c7d379a1f063cc7585ed1e0",
+      "MOT20-02": "6878d6645745689020cd5ff6204d4c8f373b4fe1c3633a8c81f5fd9c367bc393",
+      "MOT20-03": "63b621a23139380392651196e94d59ee84b3b40cfc520632291a8ef6a07faeb2",
+      "MOT20-05": "ecfcf70c87023a6f794728468ef830f8557c2eb618da63b72b496cd7323ef8fe"
+    },
+    "baseline_raw": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "dense_replacement_context": {
+      "MOT20-01": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8",
+      "MOT20-02": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16",
+      "MOT20-03": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e",
+      "MOT20-05": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178"
+    },
+    "safe_existing_id_gap_bridge_oracle": {
+      "MOT20-01": "bdcd69a0c4dd3e90755058b85a891606c1a9154f69f21d8033a1891926a7bcab",
+      "MOT20-02": "91c410eed8ff1ba838c51e47cc4b0103fbd5e8a3c0661f8259dca8262e94325f",
+      "MOT20-03": "00a30aa2a03b12f3e38a3e227ecdfa8cc14de5e57a159870a01de82115f303f8",
+      "MOT20-05": "4fd2fcb921d88a888c5bf5cb23c97a4396a1133edf4c2a49a21dc8e9b7d6fdec"
+    }
+  },
+  "variant_metrics": {
+    "all_existing_id_gap_bridge_oracle": {
+      "AssA": 75.017,
+      "CLR_FN": 48617,
+      "CLR_FP": 18270,
+      "DetA": 81.445,
+      "Dets": 1104267,
+      "HOTA": 78.14,
+      "IDF1": 89.45,
+      "IDSW": 1104,
+      "MOTA": 94.008,
+      "variant": "all_existing_id_gap_bridge_oracle"
+    },
+    "baseline_raw": {
+      "AssA": 74.672,
+      "CLR_FN": 52754,
+      "CLR_FP": 18566,
+      "DetA": 80.907,
+      "Dets": 1100426,
+      "HOTA": 77.699,
+      "IDF1": 89.308,
+      "IDSW": 1222,
+      "MOTA": 93.606,
+      "variant": "baseline_raw"
+    },
+    "dense_replacement_context": {
+      "AssA": 74.915,
+      "CLR_FN": 52276,
+      "CLR_FP": 18118,
+      "DetA": 81.267,
+      "Dets": 1100456,
+      "HOTA": 78.001,
+      "IDF1": 89.337,
+      "IDSW": 1220,
+      "MOTA": 93.688,
+      "variant": "dense_replacement_context"
+    },
+    "safe_existing_id_gap_bridge_oracle": {
+      "AssA": 74.94,
+      "CLR_FN": 51463,
+      "CLR_FP": 18134,
+      "DetA": 81.312,
+      "Dets": 1101285,
+      "HOTA": 78.035,
+      "IDF1": 89.363,
+      "IDSW": 1228,
+      "MOTA": 93.758,
+      "variant": "safe_existing_id_gap_bridge_oracle"
+    }
+  }
+}

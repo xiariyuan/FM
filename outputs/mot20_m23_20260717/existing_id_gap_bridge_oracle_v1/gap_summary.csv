@@ -1,0 +1,6 @@
+sequence,consecutive_segment_pairs,gap_le30_pairs,same_support_gap_pairs,gap_frames,target_gt_absent,target_gt_visible,unique_target_frames,deduped_competing_targets,target_no_candidates,matched_additions,unmatched_targets,candidate_track_zero,candidate_track_same,candidate_track_other,context_iou_ge_0_999,context_iou_ge_0_90,context_iou_ge_0_50,context_iou_lt_0_50,all_plan_events,safe_plan_events
+MOT20-01,52,50,40,204,,204,204,0,,100,104,16,,84,17,32,84,16,100,16
+MOT20-02,544,518,369,1470,,1470,1470,0,,880,590,34,,846,172,375,846,34,880,34
+MOT20-03,376,357,265,1152,,1152,1151,1,,796,355,334,,462,117,274,462,334,796,334
+MOT20-05,915,884,691,3555,,3555,3555,0,,2049,1506,439,,1610,400,874,1604,445,2049,445
+COMBINED,1887,1809,1365,6381,,6381,6380,1,,3825,2555,823,,3002,706,1555,2996,829,3825,829

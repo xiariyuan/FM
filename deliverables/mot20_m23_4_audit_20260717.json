@@ -1,0 +1,496 @@
+{
+  "all_checks_passed": true,
+  "check_results": [
+    {
+      "detail": {
+        "actual": "6a3fe917c9ec874e005e82d0c5d56b894a98539bdcbc549dad1a095cca568190",
+        "expected": "6a3fe917c9ec874e005e82d0c5d56b894a98539bdcbc549dad1a095cca568190"
+      },
+      "name": "script_sha_matches_preregister",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "formal_report_sha_matches_manifest",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "6b209f859469d0539314f294c0967f72d08a52d9a5238199075c216defe77bcc",
+        "repro": "6b209f859469d0539314f294c0967f72d08a52d9a5238199075c216defe77bcc"
+      },
+      "name": "compact_byte_identical::gap_pairs.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "be833c5f5de3d1c3a1f1d96d052cd2cb7b2de162d76fae611302d749cf0ba896",
+        "repro": "be833c5f5de3d1c3a1f1d96d052cd2cb7b2de162d76fae611302d749cf0ba896"
+      },
+      "name": "compact_byte_identical::gap_summary.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "1d80f3488dfc8033f29e81eff039e102ee90558376642a6508bf3475d2e74489",
+        "repro": "1d80f3488dfc8033f29e81eff039e102ee90558376642a6508bf3475d2e74489"
+      },
+      "name": "compact_byte_identical::bridge_events.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "68a368a157efd012da88e99ee6ad029448e8b64eb76a41ae8fd441384250172c",
+        "repro": "68a368a157efd012da88e99ee6ad029448e8b64eb76a41ae8fd441384250172c"
+      },
+      "name": "compact_byte_identical::per_sequence_metrics.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "98d98e44ccbfd5a00ed8460678d4ff37b1da4bf923e56fdb37371543914e82a4",
+        "repro": "98d98e44ccbfd5a00ed8460678d4ff37b1da4bf923e56fdb37371543914e82a4"
+      },
+      "name": "compact_byte_identical::variant_metrics.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "4408d6928fb35025a5d6b79a89c61ff6789cbc25ebabd84a194228cfb08567f2",
+        "repro": "4408d6928fb35025a5d6b79a89c61ff6789cbc25ebabd84a194228cfb08567f2"
+      },
+      "name": "compact_byte_identical::report.json",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "09dcd13bc9b3afefc3283c09bddff0fcfa8813774f97a57d95e52d3776f3f290",
+        "repro": "09dcd13bc9b3afefc3283c09bddff0fcfa8813774f97a57d95e52d3776f3f290"
+      },
+      "name": "compact_byte_identical::manifest.json",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+        "repro": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c"
+      },
+      "name": "tracker_byte_identical::baseline_raw::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+        "repro": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79"
+      },
+      "name": "tracker_byte_identical::baseline_raw::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+        "repro": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867"
+      },
+      "name": "tracker_byte_identical::baseline_raw::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc",
+        "repro": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+      },
+      "name": "tracker_byte_identical::baseline_raw::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8",
+        "repro": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8"
+      },
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16",
+        "repro": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16"
+      },
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e",
+        "repro": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e"
+      },
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178",
+        "repro": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178"
+      },
+      "name": "tracker_byte_identical::dense_replacement_context::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "c298c2cfb5ad1b017102602e84975ed17dbea82d7c7d379a1f063cc7585ed1e0",
+        "repro": "c298c2cfb5ad1b017102602e84975ed17dbea82d7c7d379a1f063cc7585ed1e0"
+      },
+      "name": "tracker_byte_identical::all_existing_id_gap_bridge_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "6878d6645745689020cd5ff6204d4c8f373b4fe1c3633a8c81f5fd9c367bc393",
+        "repro": "6878d6645745689020cd5ff6204d4c8f373b4fe1c3633a8c81f5fd9c367bc393"
+      },
+      "name": "tracker_byte_identical::all_existing_id_gap_bridge_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "63b621a23139380392651196e94d59ee84b3b40cfc520632291a8ef6a07faeb2",
+        "repro": "63b621a23139380392651196e94d59ee84b3b40cfc520632291a8ef6a07faeb2"
+      },
+      "name": "tracker_byte_identical::all_existing_id_gap_bridge_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "ecfcf70c87023a6f794728468ef830f8557c2eb618da63b72b496cd7323ef8fe",
+        "repro": "ecfcf70c87023a6f794728468ef830f8557c2eb618da63b72b496cd7323ef8fe"
+      },
+      "name": "tracker_byte_identical::all_existing_id_gap_bridge_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "bdcd69a0c4dd3e90755058b85a891606c1a9154f69f21d8033a1891926a7bcab",
+        "repro": "bdcd69a0c4dd3e90755058b85a891606c1a9154f69f21d8033a1891926a7bcab"
+      },
+      "name": "tracker_byte_identical::safe_existing_id_gap_bridge_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "91c410eed8ff1ba838c51e47cc4b0103fbd5e8a3c0661f8259dca8262e94325f",
+        "repro": "91c410eed8ff1ba838c51e47cc4b0103fbd5e8a3c0661f8259dca8262e94325f"
+      },
+      "name": "tracker_byte_identical::safe_existing_id_gap_bridge_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "00a30aa2a03b12f3e38a3e227ecdfa8cc14de5e57a159870a01de82115f303f8",
+        "repro": "00a30aa2a03b12f3e38a3e227ecdfa8cc14de5e57a159870a01de82115f303f8"
+      },
+      "name": "tracker_byte_identical::safe_existing_id_gap_bridge_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "4fd2fcb921d88a888c5bf5cb23c97a4396a1133edf4c2a49a21dc8e9b7d6fdec",
+        "repro": "4fd2fcb921d88a888c5bf5cb23c97a4396a1133edf4c2a49a21dc8e9b7d6fdec"
+      },
+      "name": "tracker_byte_identical::safe_existing_id_gap_bridge_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "c8f4b22922280ef07932e47679335bf5f75b63a7ec7942d42c5d72fce9b1f44f",
+        "repro": "c8f4b22922280ef07932e47679335bf5f75b63a7ec7942d42c5d72fce9b1f44f"
+      },
+      "name": "trackeval_byte_identical::baseline_raw::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "f992b2cba1390fd01f6df84fab44068d661d41ae3e1c7c105f43ab1523f0cf5d",
+        "repro": "f992b2cba1390fd01f6df84fab44068d661d41ae3e1c7c105f43ab1523f0cf5d"
+      },
+      "name": "trackeval_byte_identical::baseline_raw::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "46f4653c4d847d79576d18823a064134f17a81e230de5d59ce29655a3e2909b9",
+        "repro": "46f4653c4d847d79576d18823a064134f17a81e230de5d59ce29655a3e2909b9"
+      },
+      "name": "trackeval_byte_identical::dense_replacement_context::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "fef04ec43c3a1a45762f0356467c88e999815b520f2266d9b17bb16645fbfa5a",
+        "repro": "fef04ec43c3a1a45762f0356467c88e999815b520f2266d9b17bb16645fbfa5a"
+      },
+      "name": "trackeval_byte_identical::dense_replacement_context::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "4664ce02fc5b6a09049e7f8eb900827fd77bf9ca9c2983c2ff5a0944a0d5130c",
+        "repro": "4664ce02fc5b6a09049e7f8eb900827fd77bf9ca9c2983c2ff5a0944a0d5130c"
+      },
+      "name": "trackeval_byte_identical::all_existing_id_gap_bridge_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "57bf14bba0c5827edd057af401664e6bce0140ce4d4ea27868ff5bfdf862c3c8",
+        "repro": "57bf14bba0c5827edd057af401664e6bce0140ce4d4ea27868ff5bfdf862c3c8"
+      },
+      "name": "trackeval_byte_identical::all_existing_id_gap_bridge_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "fee4c08b5efd159e9b07db9d184d44b59afc920c645509474ee9256fd3fdaa0f",
+        "repro": "fee4c08b5efd159e9b07db9d184d44b59afc920c645509474ee9256fd3fdaa0f"
+      },
+      "name": "trackeval_byte_identical::safe_existing_id_gap_bridge_oracle::pedestrian_summary.txt",
+      "passed": true
+    },
+    {
+      "detail": {
+        "formal": "54ccaad360994688a9a44199d1566e06aa4eba6f50038b5033f6a6c7da79c31f",
+        "repro": "54ccaad360994688a9a44199d1566e06aa4eba6f50038b5033f6a6c7da79c31f"
+      },
+      "name": "trackeval_byte_identical::safe_existing_id_gap_bridge_oracle::pedestrian_detailed.csv",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "baseline_source_exact::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dense_source_exact::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 100,
+        "altered_source_rows": 0,
+        "expected_additions": 100,
+        "missing_source_rows": 0,
+        "rows": 18944
+      },
+      "name": "extension_exact::all_existing_id_gap_bridge_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 16,
+        "altered_source_rows": 0,
+        "expected_additions": 16,
+        "missing_source_rows": 0,
+        "rows": 18860
+      },
+      "name": "extension_exact::safe_existing_id_gap_bridge_oracle::MOT20-01",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "baseline_source_exact::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dense_source_exact::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 880,
+        "altered_source_rows": 0,
+        "expected_additions": 880,
+        "missing_source_rows": 0,
+        "rows": 146447
+      },
+      "name": "extension_exact::all_existing_id_gap_bridge_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 34,
+        "altered_source_rows": 0,
+        "expected_additions": 34,
+        "missing_source_rows": 0,
+        "rows": 145601
+      },
+      "name": "extension_exact::safe_existing_id_gap_bridge_oracle::MOT20-02",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "baseline_source_exact::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dense_source_exact::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 796,
+        "altered_source_rows": 0,
+        "expected_additions": 796,
+        "missing_source_rows": 0,
+        "rows": 304151
+      },
+      "name": "extension_exact::all_existing_id_gap_bridge_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 334,
+        "altered_source_rows": 0,
+        "expected_additions": 334,
+        "missing_source_rows": 0,
+        "rows": 303689
+      },
+      "name": "extension_exact::safe_existing_id_gap_bridge_oracle::MOT20-03",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "baseline_source_exact::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dense_source_exact::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 2049,
+        "altered_source_rows": 0,
+        "expected_additions": 2049,
+        "missing_source_rows": 0,
+        "rows": 634986
+      },
+      "name": "extension_exact::all_existing_id_gap_bridge_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": {
+        "additions": 445,
+        "altered_source_rows": 0,
+        "expected_additions": 445,
+        "missing_source_rows": 0,
+        "rows": 633382
+      },
+      "name": "extension_exact::safe_existing_id_gap_bridge_oracle::MOT20-05",
+      "passed": true
+    },
+    {
+      "detail": 3825,
+      "name": "all_plan_event_count",
+      "passed": true
+    },
+    {
+      "detail": 829,
+      "name": "safe_plan_event_count",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "safe_events_context_iou_lt_0_5",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "all_event_frame_inherited_unique",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "all_gap_lengths_fixed_range",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "all_target_iou_at_least_0_5",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "baseline_reproduced",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "dense_context_reproduced",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "safe_gate_failed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "safe_all_sequences_nonnegative",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "ceiling_closed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "deployment_disallowed",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "locked_manifest_absent",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_locked_access",
+      "passed": true
+    },
+    {
+      "detail": null,
+      "name": "no_training_or_sweeps",
+      "passed": true
+    }
+  ],
+  "checks": 64,
+  "interpretation": {
+    "all_fn_reduction": 3659,
+    "all_fp_change": 152,
+    "all_hota_gain_over_dense": 0.13821000000000083,
+    "all_idsw_change": -116,
+    "conflict_fraction": 0.7832679738562092,
+    "context_exclusive_events": 829,
+    "formal_repro_compact_identical": 7,
+    "formal_repro_tracker_identical": 16,
+    "formal_repro_trackeval_identical": 8,
+    "overlapping_conflict_events": 2996,
+    "safe_fn_reduction": 813,
+    "safe_fp_change": 16,
+    "safe_hota_gain_over_dense": 0.034099999999995134,
+    "safe_idsw_change": 8
+  },
+  "research_decision": {
+    "deployment_allowed": false,
+    "do_not_train_same_id_gap_selector": true,
+    "locked_manifest_created": false,
+    "next_stage": "M23-5-0 cross-ID tracklet relinking/reassignment action-space oracle on the 2,996 overlapping conflict events",
+    "p15_policy": "no_op; 156 locked rows untouched",
+    "reason": "829 context-exclusive GT oracle additions reach only 78.03543 HOTA, below the preregistered 78.10 gate",
+    "same_id_internal_gap_fill_closed": true
+  },
+  "schema": "fmtrack.m23_4.unified_audit.v1"
+}

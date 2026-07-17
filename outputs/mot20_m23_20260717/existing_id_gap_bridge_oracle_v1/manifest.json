@@ -1,0 +1,54 @@
+{
+  "event_plan_hashes": {
+    "all_existing_id_gap_bridge_oracle": {
+      "COMBINED": "5382693af2e87d94acb55c4ddece57050953a418a99393b00b2f409c7260eaeb",
+      "MOT20-01": "0a0bdfe0eb1cfcc0b3565f0c41e7ff838eefcca7f072a2b37883081634bea402",
+      "MOT20-02": "8b6f066926294ba112a56c6277326d3b490da8b4715e6df6cbd50f84d5f65a0c",
+      "MOT20-03": "50a224e84ccd579cdb351274fa72eabcd7a3df8bb3be7625dfeb422d9b4f46e1",
+      "MOT20-05": "ff9599f8bf6eb695f48e72467a5feed0e9f05485bb6f0bff8e747473b0f33eea"
+    },
+    "safe_existing_id_gap_bridge_oracle": {
+      "COMBINED": "2aeec08198a379696836658c629892587131b99d3ba08ace8b10559126c68647",
+      "MOT20-01": "d19296f567724cc5891a2c6c5c6f089edde9fddefa001526aead713ce3fba17e",
+      "MOT20-02": "8c742ecffa7d1abf5f2210ac7795d31450736a3b59613b92cceaeb8283e52cf9",
+      "MOT20-03": "7384a993e3f167aeaa8b11765b12da1c41d7bef13cae5410b5ae9cd680bba98b",
+      "MOT20-05": "cdb49daf1091d14a61c6c49fdb9db68e47e2d318bd6dd1e6d29c3b85437e5290"
+    }
+  },
+  "file_hashes": {
+    "bridge_events.csv": "1d80f3488dfc8033f29e81eff039e102ee90558376642a6508bf3475d2e74489",
+    "gap_pairs.csv": "6b209f859469d0539314f294c0967f72d08a52d9a5238199075c216defe77bcc",
+    "gap_summary.csv": "be833c5f5de3d1c3a1f1d96d052cd2cb7b2de162d76fae611302d749cf0ba896",
+    "per_sequence_metrics.csv": "68a368a157efd012da88e99ee6ad029448e8b64eb76a41ae8fd441384250172c",
+    "report.json": "4408d6928fb35025a5d6b79a89c61ff6789cbc25ebabd84a194228cfb08567f2",
+    "variant_metrics.csv": "98d98e44ccbfd5a00ed8460678d4ff37b1da4bf923e56fdb37371543914e82a4"
+  },
+  "report_sha256": "4408d6928fb35025a5d6b79a89c61ff6789cbc25ebabd84a194228cfb08567f2",
+  "schema": "fmtrack.m23_4.existing_id_gap_bridge_oracle.manifest.v1",
+  "tracker_hashes": {
+    "all_existing_id_gap_bridge_oracle": {
+      "MOT20-01": "c298c2cfb5ad1b017102602e84975ed17dbea82d7c7d379a1f063cc7585ed1e0",
+      "MOT20-02": "6878d6645745689020cd5ff6204d4c8f373b4fe1c3633a8c81f5fd9c367bc393",
+      "MOT20-03": "63b621a23139380392651196e94d59ee84b3b40cfc520632291a8ef6a07faeb2",
+      "MOT20-05": "ecfcf70c87023a6f794728468ef830f8557c2eb618da63b72b496cd7323ef8fe"
+    },
+    "baseline_raw": {
+      "MOT20-01": "44ef021b29e6ae86864ee8a2a73a9ff3c2c92b86a6259ce1f56cd50a13ff387c",
+      "MOT20-02": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79",
+      "MOT20-03": "138f3fde385128c0bd9af95ba2119fe40b69881f23c6046f2ed94f3b00077867",
+      "MOT20-05": "0afcc057bf7bcd1a6c9cf16553cb73c5b0a83f1645e4d30f28e8d073a3e485dc"
+    },
+    "dense_replacement_context": {
+      "MOT20-01": "9e17df681a74d1868e139886b620ad507ebdb60e92895051a59600690bc1f9b8",
+      "MOT20-02": "27ce56f571bf55a14aa6d9a7e89b544da1e1270c5901d470f087671ec4cd3b16",
+      "MOT20-03": "53ffa5a586fe33b5a8ac4a7cd4b3faffa8d95feb860dced96f62193f1152e56e",
+      "MOT20-05": "a7d3eefa8381e52d423a31ba775520c998dd56b4e7ae30b71ffeaceeb1907178"
+    },
+    "safe_existing_id_gap_bridge_oracle": {
+      "MOT20-01": "bdcd69a0c4dd3e90755058b85a891606c1a9154f69f21d8033a1891926a7bcab",
+      "MOT20-02": "91c410eed8ff1ba838c51e47cc4b0103fbd5e8a3c0661f8259dca8262e94325f",
+      "MOT20-03": "00a30aa2a03b12f3e38a3e227ecdfa8cc14de5e57a159870a01de82115f303f8",
+      "MOT20-05": "4fd2fcb921d88a888c5bf5cb23c97a4396a1133edf4c2a49a21dc8e9b7d6fdec"
+    }
+  }
+}
