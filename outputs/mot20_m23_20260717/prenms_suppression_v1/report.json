@@ -1,0 +1,29 @@
+{
+  "all_reference_equivalence_passed": true,
+  "counts": {
+    "frames": 8931,
+    "postnms_kept": 1188001,
+    "pre_candidates": 10334053,
+    "pre_to_post_ratio": 8.69869048931777,
+    "suppressed_candidates": 9146052
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "schema": "fmtrack.m23.prenms_suppression_dump.combined.v1",
+  "sequence_manifest_hashes": {
+    "MOT20-01": "5101c71579fcd2600d268645f4232774e5c8d920d3e59843bac9770596ed760a",
+    "MOT20-02": "f233d047a5c79d5f625e0d2d11f428030651a1fc271ab46035bd4ab780f91691",
+    "MOT20-03": "6ce3c68130930d540375f665562377184e9471e8585c50b2136c2a79dfd34e47",
+    "MOT20-05": "b5c1d6a47ae33d94075ac364d624fa292a0bfadd0e9f7ff7ee4538e82296fae8"
+  },
+  "sequences": [
+    "MOT20-01",
+    "MOT20-02",
+    "MOT20-03",
+    "MOT20-05"
+  ]
+}

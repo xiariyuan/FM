@@ -1,0 +1,152 @@
+{
+  "files": {
+    "budget_family_rank": {
+      "dtype": "int16",
+      "path": "budget_family_rank.npy",
+      "sha256": "2eb908ada380bbf12219618ba9ab5ca7882a08677513ef6cdb666139ce23baaa",
+      "shape": [
+        57734
+      ],
+      "size_bytes": 115596
+    },
+    "budget_indices": {
+      "dtype": "int64",
+      "path": "budget_indices.npy",
+      "sha256": "b4e5b25259701a0742533e3fed04c8db1fac73c267fd36917234278d11108cb7",
+      "shape": [
+        57734
+      ],
+      "size_bytes": 462000
+    },
+    "budget_local_rank": {
+      "dtype": "int16",
+      "path": "budget_local_rank.npy",
+      "sha256": "eb65b19feb87257493c2c4ebe2975d860326d041579c47501430e5dffca686cc",
+      "shape": [
+        57734
+      ],
+      "size_bytes": 115596
+    },
+    "budget_priority": {
+      "dtype": "float32",
+      "path": "budget_priority.npy",
+      "sha256": "c98daad19d721cb7c475f37f46fdcb117663d3604c25723f285ea004619cc0c0",
+      "shape": [
+        57734
+      ],
+      "size_bytes": 231064
+    },
+    "full_family_rank": {
+      "dtype": "int16",
+      "path": "full_family_rank.npy",
+      "sha256": "cdec710e7bedb2b2b8ed5467f82c1dffad30f5edce1fddd05118a936b34d1bfc",
+      "shape": [
+        210300
+      ],
+      "size_bytes": 420728
+    },
+    "full_indices": {
+      "dtype": "int64",
+      "path": "full_indices.npy",
+      "sha256": "15df4d0c8e7092ea1dc55f35a5516332e4d081332f6ca6f4fbf0ba5918f0615a",
+      "shape": [
+        210300
+      ],
+      "size_bytes": 1682528
+    },
+    "full_local_rank": {
+      "dtype": "int16",
+      "path": "full_local_rank.npy",
+      "sha256": "9217aed0e77ae870a06f7bf449eca36f1d4ef7dd22c6ab257d2eea1f3281d4af",
+      "shape": [
+        210300
+      ],
+      "size_bytes": 420728
+    },
+    "full_priority": {
+      "dtype": "float32",
+      "path": "full_priority.npy",
+      "sha256": "866c96498ba9e510cce2df47abb2675a4f3d099ff3197f0180f0954ff9412285",
+      "shape": [
+        210300
+      ],
+      "size_bytes": 841328
+    }
+  },
+  "inventory": {
+    "available_suppressed_budget": 57734,
+    "baseline_rows": 145567,
+    "budget_limit_rows": 218350,
+    "budget_passed": true,
+    "budget_pool_ratio": 1.499996565155564,
+    "budget_pool_rows": 218350,
+    "budget_selected_index_sha256": "cdaa5a5eb90bba95f2f55885764813d7b4097cff9919493568663ea26fec7e64",
+    "budget_selected_rows": 57734,
+    "exact_duplicate_removed_iou_ge_0p99": 552678,
+    "family_duplicate_removed_iou_ge_0p95": 454843,
+    "full_survivor_index_sha256": "db1355c9a55e8ff5dd20bc0a3c4f38be976899ef43b486da0d723a5fad8f1836",
+    "full_survivor_rows": 210300,
+    "policy": "discard suppressor_iou>=0.99; within-family greedy IoU<0.95; priority=score*normalized suppressor novelty; family-rank diversity; sequence round-robin by frame-local rank",
+    "postnms_novel_rows": 15049,
+    "raw_suppressed_rows": 1217821,
+    "sequence": "MOT20-02",
+    "suppression_families": 135980
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "exact_duplicate_iou": 0.99,
+    "family_dedupe_iou": 0.95,
+    "ground_truth_read": false,
+    "pool_ratio_limit": 1.5,
+    "priority": "score * clip((0.99 - suppressor_iou) / (0.99 - nms_threshold), 0, 1)",
+    "selection_order": "frame-local rank, descending priority, frame, stable global index",
+    "selector_trained": false,
+    "threshold_sweep": false,
+    "trackeval_calls": 0
+  },
+  "schema": "fmtrack.m23.prenms_candidate_plan.v1",
+  "sequence": "MOT20-02",
+  "sources": {
+    "baseline": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/trusttrack_review_20260710/all4_baseline_oracle/baseline/eval_work/trackers/all4_baseline/data/MOT20-02.txt",
+      "rows": 145567,
+      "sha256": "29689176d10da75b301d1b474721e4958451324d137ba270001b21cdb93c7a79"
+    },
+    "phase0": {
+      "columns": [
+        "frame",
+        "frame_det_idx",
+        "global_det_idx",
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "score",
+        "obj_conf",
+        "cls_conf",
+        "class_id",
+        "has_reid"
+      ],
+      "columns_member_sha256": "7e5b044c643e883a8eb978623c3c0a70a8b67831a3b2861351d28b472bdd5ddc",
+      "detections": 160051,
+      "detections_member_sha256": "a23ba0c7be3ea75a97a051cfb11aee5f32dfe9b377f970945880babf02b182dc",
+      "npz_path": "/gemini/code/FMtrack-main/FM-Track/outputs/alink_train_inputs/phase0_root/MOT20-02/dump_yolox_reid.npz",
+      "npz_size_bytes": 663943488,
+      "score_max": 0.9636635184288025,
+      "score_min": 0.09000396728515625
+    },
+    "prenms_data": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppression_v1/MOT20-02/suppressed_candidates.f32",
+      "sha256": "631f08845819ced15059603717ee3558b7ddeee96589fa730647a34ae6f0b10a"
+    },
+    "prenms_manifest": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppression_v1/MOT20-02/manifest.json",
+      "sha256": "f233d047a5c79d5f625e0d2d11f428030651a1fc271ab46035bd4ab780f91691"
+    }
+  }
+}

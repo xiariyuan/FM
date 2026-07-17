@@ -1,0 +1,22 @@
+{
+  "decision": {
+    "reference_class_mismatch": 0,
+    "reference_count_mismatch_frames": 0,
+    "reference_equivalence_passed": true,
+    "reference_max_box_abs_diff": 0.0001220703125,
+    "reference_max_score_abs_diff": 0.0,
+    "reference_min_matched_iou": 0.9999936705455673,
+    "reference_order_mismatch_frames": 0,
+    "reference_set_mismatch_frames": 0,
+    "suppression_orphans": 0
+  },
+  "file_hashes": {
+    "columns.json": "958bc92b02377b20ec5fab68e8bf91480406a308fcb377fece6b8059f6f58f90",
+    "frame_offsets.npy": "2f62a8d9d50554e60e52b2fa9ae4edb2b214b151cccc211384b8560d3f7ac340",
+    "frame_summary.csv": "d11e12b2355557e7240775d230abcd8220801eb7198e7abde9a05fd46c38f4be",
+    "report.json": "43aaf41244abcde7147b44122dc5c63341b3adec928e98f052f1c308c7bd5eee",
+    "suppressed_candidates.f32": "9552e228d7179f1a6824c874cf225da66403afd37a6cd3c7696e08a9cfad2ae1"
+  },
+  "schema": "fmtrack.m23.prenms_suppression_dump.manifest.v1",
+  "sequence": "MOT20-01"
+}

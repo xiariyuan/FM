@@ -1,0 +1,117 @@
+{
+  "counts": {
+    "frames": 2405,
+    "postnms_kept": 332280,
+    "pre_candidates": 2852310,
+    "pre_to_post_ratio": 8.584055615745756,
+    "suppressed_candidates": 2520030
+  },
+  "decision": {
+    "reference_class_mismatch": 0,
+    "reference_count_mismatch_frames": 0,
+    "reference_equivalence_passed": true,
+    "reference_max_box_abs_diff": 0.0001220703125,
+    "reference_max_score_abs_diff": 0.0,
+    "reference_min_matched_iou": 0.9999917172337667,
+    "reference_order_mismatch_frames": 0,
+    "reference_set_mismatch_frames": 0,
+    "suppression_orphans": 0
+  },
+  "files": {
+    "columns": {
+      "columns": [
+        "frame",
+        "raw_anchor_idx",
+        "frame_pre_idx",
+        "global_pre_idx",
+        "frame_suppressed_idx",
+        "x1",
+        "y1",
+        "x2",
+        "y2",
+        "score",
+        "obj_conf",
+        "cls_conf",
+        "class_id",
+        "suppressor_frame_pre_idx",
+        "suppressor_global_pre_idx",
+        "suppressor_nms_rank",
+        "suppressor_iou",
+        "suppressor_score",
+        "suppressor_x1",
+        "suppressor_y1",
+        "suppressor_x2",
+        "suppressor_y2"
+      ],
+      "sha256": "958bc92b02377b20ec5fab68e8bf91480406a308fcb377fece6b8059f6f58f90"
+    },
+    "frame_offsets": {
+      "sha256": "b65a9342634435f1425d1ed8d17d203c74ef46009b750126db1fc2bcf33351b0",
+      "shape": [
+        2406
+      ]
+    },
+    "frame_summary": {
+      "rows": 2405,
+      "sha256": "35930e4c2ff46728f0d613d2c4b1c449c36969d2645d58e24df3723aa522d5dc"
+    },
+    "suppressed_candidates": {
+      "dtype": "little-endian float32",
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppression_v1/MOT20-03/suppressed_candidates.f32",
+      "sha256": "3099b8f791b573a843c934ed67c818d70eca0a60be6d9ae645928bd140d5d303",
+      "shape": [
+        2520030,
+        22
+      ],
+      "size_bytes": 221762640
+    }
+  },
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "batch_size": 1,
+    "confidence_threshold": 0.09000000000000001,
+    "detector_precision": "fp32",
+    "equivalence_max_score_diff": 0.0001,
+    "equivalence_min_iou": 0.999,
+    "fused_model": false,
+    "ground_truth_used": false,
+    "nms_threshold": 0.7,
+    "reid_extracted": false,
+    "suppression_parent": "first selected NMS box of the same class with IoU above the NMS threshold"
+  },
+  "reference_phase0": {
+    "columns": [
+      "frame",
+      "frame_det_idx",
+      "global_det_idx",
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "score",
+      "obj_conf",
+      "cls_conf",
+      "class_id",
+      "has_reid"
+    ],
+    "columns_member_sha256": "7e5b044c643e883a8eb978623c3c0a70a8b67831a3b2861351d28b472bdd5ddc",
+    "detections": 332280,
+    "detections_member_sha256": "91f787294ca032f0a0e4eacffd85380e5e32990f05b783a8ee95c534ad8053e5",
+    "frame_offsets_member_sha256": "c2ecac5e027d10e1dd613987f7ea4339736eefb7ee86c7f70a67757f57ae557d",
+    "full_npz_hash_omitted": "feature member is multi-GB and is not read by this geometry-only audit",
+    "path": "/gemini/code/FMtrack-main/FM-Track/outputs/alink_train_inputs/phase0_root/MOT20-03/dump_yolox_reid.npz",
+    "size_bytes": 1377566968
+  },
+  "report_refresh": {
+    "detector_rerun": false,
+    "purpose": "replace whole-NPZ hashing with hashes of the geometry members actually read",
+    "raw_dump_unchanged": true
+  },
+  "schema": "fmtrack.m23.prenms_suppression_dump.v1",
+  "sequence": "MOT20-03"
+}

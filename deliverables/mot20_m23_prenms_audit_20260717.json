@@ -1,0 +1,106 @@
+{
+  "checks": {
+    "all_required_checks_passed": true,
+    "baseline_oracle_reproduced": true,
+    "candidate_budget_passed": true,
+    "candidate_plan_all_files_byte_identical": true,
+    "candidate_plan_file_count": 43,
+    "candidate_plan_frozen_before_gt": true,
+    "candidate_pool_ratio": 1.4999986372345673,
+    "combined_target_passed": true,
+    "expanded_evidence_ceiling_sufficient": true,
+    "m23_0_postnms_tracks_reproduced": true,
+    "nms_suppressed": 9146052,
+    "oracle_compact_all_byte_identical": true,
+    "oracle_compact_file_count": 7,
+    "post_nms_kept": 1188001,
+    "pre_nms_candidates": 10334053,
+    "suppression_frames": 8931,
+    "suppression_reference_equivalence_passed": true,
+    "tracker_file_count": 28,
+    "tracker_hashes_equal": true,
+    "trackeval_summary_count": 7,
+    "trackeval_summary_hashes_equal": true,
+    "worst_sequence_target_passed": true
+  },
+  "date": "2026-07-17",
+  "excluded_from_git": [
+    "NMS-suppressed raw .f32 dumps (hashes retained in manifests)",
+    "eval_work tracker/evaluation directories",
+    "all *_repro directories",
+    ".mcp_runs and temporary probes",
+    "unrelated historical dirty files"
+  ],
+  "formal_paths": {
+    "candidate_plan": "outputs/mot20_m23_20260717/prenms_candidate_plan_v1",
+    "notion_pending": "deliverables/notion_sync_pending_fmtrack_m23_prenms_20260717.md",
+    "oracle": "outputs/mot20_m23_20260717/prenms_suppressed_oracle_v1",
+    "report": "deliverables/mot20_m23_prenms_suppressed_evidence_oracle_20260717.md",
+    "suppression_dump": "outputs/mot20_m23_20260717/prenms_suppression_v1"
+  },
+  "hashes": {
+    "candidate_plan_manifest": "c9dab3959da330ef5ca5bebc85a0d87807666cc6db82e3d70f07e724e2b9a7ad",
+    "candidate_plan_report": "36148846db896a5e5faf2a6b6b44a98c41798c9750f949329d1c8c57789310fc",
+    "formal_report": "f6e9f23c3051046581c2b7fd1a1a01cd116953ac9ac5fc469732cdb3e5ff1ada",
+    "notion_pending": "51eae1ce7ea6d07a54f7f5fac37ca57f83689f362d81c7087136648c6f285bc6",
+    "oracle_compact_files": {
+      "candidate_inventory.csv": "0c33539c6689f349968a302ce54234e9a8eccb2c64361594955fca4533b59b9c",
+      "manifest.json": "c72676559c5dde842a6dec77082950ece703d7edb1af8e58cc822b7dc8930c50",
+      "oracle_selected_events.csv": "5454624f792d1ab7c00b7998ea9295552bb7af3b0c3650194d45ad7f2a1b1a21",
+      "per_sequence_metrics.csv": "243da4d08f10fd93bb6c79c649669f9a195c5e7ff493f6dc8a0e270d85fd7b15",
+      "report.json": "5d5acf57f6cbf6434916b9964366ab334ccd7a382e9d7133cf017e9fe3e1ba28",
+      "suppression_mechanism_summary.csv": "7f4216b85e6bd845634a2ed4239a9d7eba8df78e0b95adf9974e054bc49387dd",
+      "variant_metrics.csv": "021e6b0c6ae9ba3c262d28369730b65e859a3b72d0327b3bb37ce822d3c651cb"
+    },
+    "scripts": {
+      "audit_m23_prenms_suppressed_evidence_oracle.py": "ce43ea5fa60670479cb45f76b1d530c250c562d3219cf0984a51694c92729ee7",
+      "dump_yolox_prenms_suppression.py": "e5d720c31462f084f0a05c6b56b33db9bd5fc895464e4558b1dd5dbf7fadf0d0",
+      "freeze_m23_prenms_candidate_plan.py": "1234817aa6c14e335da9b52030f5424d1ba9d2ad3b42e0db8afd3eb1fc3055ce"
+    },
+    "suppression_manifest": "9b7e4db25c6a96dadc82dcd0aa7c37a385ee31320a63ed63fa79699e5c9e7a9f",
+    "suppression_report": "4829259c4fd13c5b9261ce04935bb9c9c0bf06c8ff574260da71c9def3d12472"
+  },
+  "lock_state": {
+    "deployment_allowed": false,
+    "locked_label_reads": 0,
+    "locked_manifest_created": false,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "metrics": {
+    "baseline_hota": 77.699,
+    "baseline_id_oracle_hota": 82.571,
+    "baseline_oracle_reproduced": true,
+    "candidate_budget_passed": true,
+    "candidate_plan_manifest_sha256": "c9dab3959da330ef5ca5bebc85a0d87807666cc6db82e3d70f07e724e2b9a7ad",
+    "candidate_plan_manifest_verified": true,
+    "candidate_pool_ratio": 1.4999986372345673,
+    "combined_target_passed": true,
+    "deployment_allowed": false,
+    "expanded_evidence_ceiling_sufficient": true,
+    "locked_label_reads": 0,
+    "locked_manifest_created": false,
+    "locked_trackeval_calls": 0,
+    "m23_0_postnms_replace_add_hota": 83.676,
+    "m23_0_postnms_tracks_reproduced": true,
+    "next_stage": "appearance-conditioned global tracklet graph on the fixed budgeted evidence pool",
+    "p15_policy": "no_op",
+    "prenms_budget_additive_hota": 84.135,
+    "prenms_budget_replace_add_hota": 84.523,
+    "prenms_budget_selected_ceiling_hota": 85.132,
+    "prenms_full_selected_ceiling_hota": 85.915,
+    "remaining_locked_rows_untouched": 156,
+    "target_combined_hota": 84.5,
+    "target_worst_sequence_hota": 84.0,
+    "worst_sequence": "MOT20-03",
+    "worst_sequence_hota": 84.640986,
+    "worst_sequence_target_passed": true
+  },
+  "notion_sync": {
+    "reason": "writable Notion connector unavailable",
+    "status": "pending"
+  },
+  "schema": "fmtrack.m23.prenms_suppressed_evidence.unified_audit.v1",
+  "stage": "M23-1"
+}

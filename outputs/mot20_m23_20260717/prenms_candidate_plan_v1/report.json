@@ -1,0 +1,157 @@
+{
+  "decision": {
+    "candidate_budget_passed": true,
+    "candidate_plan_frozen": true,
+    "candidate_pool_ratio": 1.4999986372345673,
+    "deployment_allowed": false,
+    "locked_manifest_created": false
+  },
+  "inventory": [
+    {
+      "available_suppressed_budget": 6712,
+      "baseline_rows": 18844,
+      "budget_limit_rows": 28266,
+      "budget_passed": true,
+      "budget_pool_ratio": 1.5,
+      "budget_pool_rows": 28266,
+      "budget_selected_index_sha256": "bbe8acd3c42d9971b3a439903945db7f2c310fa42f3000b66e6de1a474eb0389",
+      "budget_selected_rows": 6712,
+      "exact_duplicate_removed_iou_ge_0p99": 72140,
+      "family_duplicate_removed_iou_ge_0p95": 58868,
+      "full_survivor_index_sha256": "6ccb5ab197169c20af3c8138030a4c749dc8dbdbf3882fcb2c3908547ff062a3",
+      "full_survivor_rows": 28312,
+      "policy": "discard suppressor_iou>=0.99; within-family greedy IoU<0.95; priority=score*normalized suppressor novelty; family-rank diversity; sequence round-robin by frame-local rank",
+      "postnms_novel_rows": 2710,
+      "raw_suppressed_rows": 159320,
+      "sequence": "MOT20-01",
+      "suppression_families": 18191
+    },
+    {
+      "available_suppressed_budget": 57734,
+      "baseline_rows": 145567,
+      "budget_limit_rows": 218350,
+      "budget_passed": true,
+      "budget_pool_ratio": 1.499996565155564,
+      "budget_pool_rows": 218350,
+      "budget_selected_index_sha256": "cdaa5a5eb90bba95f2f55885764813d7b4097cff9919493568663ea26fec7e64",
+      "budget_selected_rows": 57734,
+      "exact_duplicate_removed_iou_ge_0p99": 552678,
+      "family_duplicate_removed_iou_ge_0p95": 454843,
+      "full_survivor_index_sha256": "db1355c9a55e8ff5dd20bc0a3c4f38be976899ef43b486da0d723a5fad8f1836",
+      "full_survivor_rows": 210300,
+      "policy": "discard suppressor_iou>=0.99; within-family greedy IoU<0.95; priority=score*normalized suppressor novelty; family-rank diversity; sequence round-robin by frame-local rank",
+      "postnms_novel_rows": 15049,
+      "raw_suppressed_rows": 1217821,
+      "sequence": "MOT20-02",
+      "suppression_families": 135980
+    },
+    {
+      "available_suppressed_budget": 122108,
+      "baseline_rows": 303355,
+      "budget_limit_rows": 455032,
+      "budget_passed": true,
+      "budget_pool_ratio": 1.4999983517660826,
+      "budget_pool_rows": 455032,
+      "budget_selected_index_sha256": "a4dc9189d8eee4b72983814e334aa181f2b31761b4d21c4d973dd3d0eebcfc87",
+      "budget_selected_rows": 122108,
+      "exact_duplicate_removed_iou_ge_0p99": 908775,
+      "family_duplicate_removed_iou_ge_0p95": 1187860,
+      "full_survivor_index_sha256": "cdf6ead67215b283f462063f554358d31c608c993bb95c84f749fbe97d90d2cd",
+      "full_survivor_rows": 423395,
+      "policy": "discard suppressor_iou>=0.99; within-family greedy IoU<0.95; priority=score*normalized suppressor novelty; family-rank diversity; sequence round-robin by frame-local rank",
+      "postnms_novel_rows": 29569,
+      "raw_suppressed_rows": 2520030,
+      "sequence": "MOT20-03",
+      "suppression_families": 313177
+    },
+    {
+      "available_suppressed_budget": 273345,
+      "baseline_rows": 632937,
+      "budget_limit_rows": 949405,
+      "budget_passed": true,
+      "budget_pool_ratio": 1.4999992100319621,
+      "budget_pool_rows": 949405,
+      "budget_selected_index_sha256": "9992055964b0fa28048cd430a0ee6e274018f06239fe1ce03ab30c15a136ffd7",
+      "budget_selected_rows": 273345,
+      "exact_duplicate_removed_iou_ge_0p99": 2134993,
+      "family_duplicate_removed_iou_ge_0p95": 2235659,
+      "full_survivor_index_sha256": "b109ff7dacc3f0c750851918b2035155cbcae431e0aa0cab5c948984a905f9f9",
+      "full_survivor_rows": 878229,
+      "policy": "discard suppressor_iou>=0.99; within-family greedy IoU<0.95; priority=score*normalized suppressor novelty; family-rank diversity; sequence round-robin by frame-local rank",
+      "postnms_novel_rows": 43123,
+      "raw_suppressed_rows": 5248881,
+      "sequence": "MOT20-05",
+      "suppression_families": 614274
+    },
+    {
+      "available_suppressed_budget": 459899,
+      "baseline_gt_coverage": 0.0,
+      "baseline_rows": 1100703,
+      "budget_gt_coverage": 0.0,
+      "budget_limit_rows": 1651053,
+      "budget_passed": true,
+      "budget_pool_ratio": 1.4999986372345673,
+      "budget_pool_rows": 1651053,
+      "budget_selected_rows": 459899,
+      "exact_duplicate_removed_iou_ge_0p99": 3668586,
+      "family_duplicate_removed_iou_ge_0p95": 3937230,
+      "full_gt_coverage": 0.0,
+      "full_survivor_rows": 1540236,
+      "postnms_gt_coverage": 0.0,
+      "postnms_novel_rows": 90451,
+      "raw_suppressed_rows": 9146052,
+      "sequence": "COMBINED",
+      "suppression_families": 1081622
+    }
+  ],
+  "locked_state": {
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "remaining_locked_rows_untouched": 156
+  },
+  "protocol": {
+    "candidate_plan_frozen_before_oracle": true,
+    "ground_truth_read": false,
+    "selector_trained": false,
+    "threshold_sweep": false,
+    "trackeval_calls": 0
+  },
+  "schema": "fmtrack.m23.prenms_candidate_plan.combined.v1",
+  "sequence_manifests": {
+    "MOT20-01": {
+      "path": "MOT20-01/manifest.json",
+      "sha256": "aca50d36c04829642cc03de9551c882282e759a9b7876ea0a9d7c57fd5926e87"
+    },
+    "MOT20-02": {
+      "path": "MOT20-02/manifest.json",
+      "sha256": "ce4a8a54309c747e1b530ff0e8f9dd3b336954864938764085a701a9b034affa"
+    },
+    "MOT20-03": {
+      "path": "MOT20-03/manifest.json",
+      "sha256": "723b663edd253eeb4478a52ff5a25274ee7ff7486a9c8dd34c3e51a99c9e34a5"
+    },
+    "MOT20-05": {
+      "path": "MOT20-05/manifest.json",
+      "sha256": "280c68a3c9cc45fd6dd5541a6f5e167fad3d64423f05293cffc8eb071cdcac21"
+    }
+  },
+  "sources": {
+    "candidate_plan_script": {
+      "path": "scripts/freeze_m23_prenms_candidate_plan.py",
+      "sha256": "1234817aa6c14e335da9b52030f5424d1ba9d2ad3b42e0db8afd3eb1fc3055ce"
+    },
+    "policy_script": {
+      "path": "scripts/audit_m23_prenms_suppressed_evidence_oracle.py",
+      "sha256": "ce43ea5fa60670479cb45f76b1d530c250c562d3219cf0984a51694c92729ee7"
+    },
+    "prenms_combined_manifest": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppression_v1/manifest.json",
+      "sha256": "9b7e4db25c6a96dadc82dcd0aa7c37a385ee31320a63ed63fa79699e5c9e7a9f"
+    },
+    "prenms_combined_report": {
+      "path": "/gemini/code/FMtrack-main/FM-Track/outputs/mot20_m23_20260717/prenms_suppression_v1/report.json",
+      "sha256": "4829259c4fd13c5b9261ce04935bb9c9c0bf06c8ff574260da71c9def3d12472"
+    }
+  }
+}

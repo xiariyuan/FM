@@ -1,0 +1,23 @@
+{
+  "candidate_inventory_sha256": "3a01b6d8f0b75025f61bfe950deadbff42effc80955310c6807d667f171509c2",
+  "report_sha256": "36148846db896a5e5faf2a6b6b44a98c41798c9750f949329d1c8c57789310fc",
+  "schema": "fmtrack.m23.prenms_candidate_plan.combined_manifest.v1",
+  "sequence_manifests": {
+    "MOT20-01": {
+      "path": "MOT20-01/manifest.json",
+      "sha256": "aca50d36c04829642cc03de9551c882282e759a9b7876ea0a9d7c57fd5926e87"
+    },
+    "MOT20-02": {
+      "path": "MOT20-02/manifest.json",
+      "sha256": "ce4a8a54309c747e1b530ff0e8f9dd3b336954864938764085a701a9b034affa"
+    },
+    "MOT20-03": {
+      "path": "MOT20-03/manifest.json",
+      "sha256": "723b663edd253eeb4478a52ff5a25274ee7ff7486a9c8dd34c3e51a99c9e34a5"
+    },
+    "MOT20-05": {
+      "path": "MOT20-05/manifest.json",
+      "sha256": "280c68a3c9cc45fd6dd5541a6f5e167fad3d64423f05293cffc8eb071cdcac21"
+    }
+  }
+}

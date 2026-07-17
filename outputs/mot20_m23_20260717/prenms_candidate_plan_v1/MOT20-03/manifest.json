@@ -1,0 +1,16 @@
+{
+  "file_hashes": {
+    "budget_family_rank.npy": "a3ab296edbdca5cdc0b45a1b2510c24940adb6e8285073dcd7041e6db160b6f8",
+    "budget_indices.npy": "41b6685ac5dd5ed9bbabb626fbb8a1d84caeb97a7e983a3cea75620a942fb71d",
+    "budget_local_rank.npy": "1a3c45adc805fbd0202cd5f55561eb1dcce73f0f450785c88e3367e6c6b584cc",
+    "budget_priority.npy": "8808e0cd52f792130a56a090f7e6af11eaaa035e442eff00eb9446e994216e20",
+    "full_family_rank.npy": "1af7a87cd14ef8c17b3c0053219ea2dffeee47cc5df23663bc0d056d4e649a85",
+    "full_indices.npy": "a8d975a2f177ec83a70c75febed79a3abd0c44f48e17728965969276a1882921",
+    "full_local_rank.npy": "b6f2d1bb9976e4871c4f2d84e0507f3da971552c7f41109746f288a01a3898a0",
+    "full_priority.npy": "7ad9e66809b7e970cedf0778d05e59189208edff0e5f1769def9ed56b614da95",
+    "report.json": "8450f2e19093cbe6ddf41a82c4a592540c3e8277a9195c72e15e7f5825198fba"
+  },
+  "report_sha256": "8450f2e19093cbe6ddf41a82c4a592540c3e8277a9195c72e15e7f5825198fba",
+  "schema": "fmtrack.m23.prenms_candidate_plan.manifest.v1",
+  "sequence": "MOT20-03"
+}
