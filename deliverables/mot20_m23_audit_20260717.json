@@ -1,0 +1,132 @@
+{
+  "schema": "fmtrack.m23.audit.v1",
+  "date": "2026-07-17",
+  "stage": "M23-0 post-NMS expanded-evidence oracle audit",
+  "status": "completed",
+  "checkpoint": "refs/mcp-checkpoints/20260717-090548-before-m23-0-expanded-evidence-oracle-4552bb",
+  "base_commit": "e0246d49ded223e8854af8d4236583e84b09efb9",
+  "protocol": {
+    "sequences": [
+      "MOT20-01",
+      "MOT20-02",
+      "MOT20-03",
+      "MOT20-05"
+    ],
+    "phase0_semantics": "YOLOX postprocess/NMS detections with score >= 0.09",
+    "pre_nms_included": false,
+    "propagation_included": false,
+    "novelty_iou": 0.9,
+    "gt_match_iou": 0.5,
+    "preproc_iou": 0.5,
+    "fixed_before_evaluation": true,
+    "threshold_sweep": false,
+    "model_training": false
+  },
+  "combined_metrics": {
+    "baseline": {
+      "HOTA": 77.699,
+      "DetA": 80.907,
+      "AssA": 74.672,
+      "IDF1": 89.308,
+      "MOTA": 93.606,
+      "IDSW": 1222
+    },
+    "baseline_id_oracle": {
+      "HOTA": 82.571,
+      "DetA": 81.324,
+      "AssA": 83.872,
+      "IDF1": 96.882,
+      "MOTA": 93.857,
+      "IDSW": 0
+    },
+    "expanded_additive_oracle": {
+      "HOTA": 83.63,
+      "DetA": 82.43,
+      "AssA": 84.884,
+      "IDF1": 97.855,
+      "MOTA": 95.734,
+      "IDSW": 13
+    },
+    "expanded_replace_add_oracle": {
+      "HOTA": 83.676,
+      "DetA": 82.48,
+      "AssA": 84.924,
+      "IDF1": 97.881,
+      "MOTA": 95.784,
+      "IDSW": 6
+    },
+    "expanded_selected_ceiling": {
+      "HOTA": 84.265,
+      "DetA": 83.561,
+      "AssA": 85.011,
+      "IDF1": 98.657,
+      "MOTA": 97.349,
+      "IDSW": 6
+    }
+  },
+  "candidate_inventory": {
+    "baseline_source_rows": 1100703,
+    "phase0_postnms_rows": 1188001,
+    "phase0_novel_rows": 90451,
+    "expanded_pool_rows": 1191154,
+    "expanded_pool_ratio": 1.082175664098308,
+    "candidate_budget_limit": 1.5,
+    "candidate_budget_passed": true,
+    "baseline_valid_gt_matches": 1082673,
+    "expanded_valid_gt_matches": 1104551,
+    "new_valid_gt_matches": 21878,
+    "baseline_gt_coverage": 0.9542214356600571,
+    "expanded_gt_coverage": 0.9735037642757801,
+    "additive_recovered_gt": 21309,
+    "additive_recovered_score_ge_0p60": 5391,
+    "additive_recovered_score_0p10_0p60": 15121,
+    "additive_recovered_score_0p09_0p10": 797,
+    "recovered_below_0p60_fraction": 0.7470083063494298
+  },
+  "target_analysis": {
+    "desired_hota": 82.5,
+    "preregistered_ceiling_target": 84.5,
+    "replace_add_margin_over_82p5": 1.176000000000002,
+    "selected_margin_over_82p5": 1.7650000000000006,
+    "old_oracle_gain_fraction_required_for_82p5": 0.985426929392447,
+    "expanded_replace_add_gain_fraction_required_for_82p5": 0.803245775472645,
+    "expanded_selected_gain_fraction_required_for_82p5": 0.731190983856229,
+    "replace_add_passed_84p5": false,
+    "selected_ceiling_passed_84p5": false
+  },
+  "per_sequence_replace_add_hota": {
+    "MOT20-01": 83.936,
+    "MOT20-02": 82.984,
+    "MOT20-03": 83.581,
+    "MOT20-05": 83.85
+  },
+  "decision": {
+    "postnms_evidence_sufficient_to_continue_toward_82p5": true,
+    "postnms_evidence_has_84p5_safety_margin": false,
+    "next_stage": "M23-1 pre-NMS suppressed-evidence oracle audit",
+    "deployment_allowed": false,
+    "locked_manifest_created": false,
+    "p15_policy": "no_op",
+    "locked_label_reads": 0,
+    "locked_trackeval_calls": 0,
+    "remaining_locked_rows_untouched": 156
+  },
+  "reproducibility": {
+    "formal_output": "outputs/mot20_m23_20260717/expanded_evidence_oracle_v1",
+    "repro_output": "outputs/mot20_m23_20260717/expanded_evidence_oracle_v1_repro",
+    "compact_files_byte_identical": true,
+    "generated_tracker_hashes_equal": true,
+    "trackeval_summaries_byte_identical": true,
+    "baseline_id_oracle_byte_identical_to_reference": true
+  },
+  "sha256": {
+    "script": "d9472db58eb27a712bcd7d65040b0f2d0c3183d6c3a35aea5b6c5e430047342b",
+    "candidate_inventory": "4c8d342f79301e462ee72d90a36677847e7ab375fd013483939c2118205f9cee",
+    "expanded_selected_events": "76ed4e41e09fd6d7408e4d79ab4907dbcd308f9767f601cb944c7f65c1cbb715",
+    "per_sequence_metrics": "1535d94c7f77af48f5212b5cbe68bf67b02acaf1ee05637fdaa2590dacb694cd",
+    "variant_metrics": "7fc6a558e50a5b9e7c3caebb106f5fa34e46ea705f5fe9ae73797674221bb6d9",
+    "report": "032655a04cc3e8b734d04af432d21be717869d581260de2680d87e1bf04566f4",
+    "manifest": "dc72c8fea28571adc48944bc4ccf17bc8ee1788fb6acc785f52a0849242971c4",
+    "deliverable_report": "40bea06fd995000cbc6b3b577090131f32c2108850021d14da5a5672c083914f"
+  }
+}

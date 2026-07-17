@@ -1,0 +1,125 @@
+{
+  "compact_file_hashes": {
+    "candidate_inventory.csv": "4c8d342f79301e462ee72d90a36677847e7ab375fd013483939c2118205f9cee",
+    "expanded_selected_events.csv": "76ed4e41e09fd6d7408e4d79ab4907dbcd308f9767f601cb944c7f65c1cbb715",
+    "report.json": "032655a04cc3e8b734d04af432d21be717869d581260de2680d87e1bf04566f4",
+    "variant_metrics.csv": "7fc6a558e50a5b9e7c3caebb106f5fa34e46ea705f5fe9ae73797674221bb6d9"
+  },
+  "decision": {
+    "additive_target_passed": false,
+    "baseline_hota": 77.699,
+    "baseline_id_oracle_byte_identical_to_reference": true,
+    "baseline_id_oracle_hota": 82.571,
+    "candidate_budget_passed": true,
+    "deployment_allowed": false,
+    "expanded_additive_oracle_hota": 83.63,
+    "expanded_pool_ratio": 1.082175664098308,
+    "expanded_replace_add_oracle_hota": 83.676,
+    "expanded_selected_ceiling_hota": 84.265,
+    "locked_label_reads": 0,
+    "locked_manifest_created": false,
+    "locked_trackeval_calls": 0,
+    "p15_policy": "no_op",
+    "phase0_evidence_semantics": "YOLOX postprocess/NMS output filtered at dump score >=0.09",
+    "pre_nms_evidence_included": false,
+    "propagation_evidence_included": false,
+    "remaining_locked_rows_untouched": 156,
+    "replace_add_target_passed": false,
+    "selected_ceiling_target_passed": false,
+    "target_hota": 84.5
+  },
+  "generated_track_hashes": {
+    "baseline_id_oracle": {
+      "MOT20-01": {
+        "sha256": "3db06511ff05fb8f1293e375d1e357889ee8c3994ed8012734aeab0c2c075d11",
+        "size_bytes": 1287496
+      },
+      "MOT20-02": {
+        "sha256": "6aee949fc809bb1b1979976f64724a822d99e0a3600dd82c8b63af8b5d0cc669",
+        "size_bytes": 10142740
+      },
+      "MOT20-03": {
+        "sha256": "8fe8d9f4156493b96ef44140f309e1f289f45e7fe36ef0019b6b1e9eadcd8e72",
+        "size_bytes": 20811800
+      },
+      "MOT20-05": {
+        "sha256": "e6bcb8535fcd38ee9aff76b2414cb9e76622e697b2d34a52c962f3f4a9fc0f9b",
+        "size_bytes": 44152937
+      }
+    },
+    "baseline_raw": {
+      "MOT20-01": {
+        "sha256": "a3293e7b6c465040a688600f2c903f7b5bae2f96e9f530a403e52823534a4bd7",
+        "size_bytes": 1287253
+      },
+      "MOT20-02": {
+        "sha256": "723033c1169d3a5fca8320f34d31276a5f4d7af8f1adde7469f081adb4f1e7c7",
+        "size_bytes": 10169428
+      },
+      "MOT20-03": {
+        "sha256": "898c314d54452e7782810cf32727a58a127eb4c389ab1b66e11b3ee4626e9c62",
+        "size_bytes": 20801381
+      },
+      "MOT20-05": {
+        "sha256": "d7979678b45f293394331509ade7b34b93c3509a54ec5d91e5effd367951153c",
+        "size_bytes": 44240650
+      }
+    },
+    "expanded_additive_oracle": {
+      "MOT20-01": {
+        "sha256": "5a8ea57e1209d318c44e87b5bb7f11787368a12168cd4d5897d5cb696ba83f2d",
+        "size_bytes": 1324394
+      },
+      "MOT20-02": {
+        "sha256": "cc5821c42bd2003ca2d077b1e703fd61a06246bea8e0e9b8f5bd76da2cab12b7",
+        "size_bytes": 10385556
+      },
+      "MOT20-03": {
+        "sha256": "412dd3ce08be7295a59eaac772519ff23825130b08df099e1fdc78e91aadd28e",
+        "size_bytes": 21329349
+      },
+      "MOT20-05": {
+        "sha256": "3c8af170159e153d85156b2403f78691b3f43f1fc8e3017ee2528a53af3c07f8",
+        "size_bytes": 44815875
+      }
+    },
+    "expanded_replace_add_oracle": {
+      "MOT20-01": {
+        "sha256": "5c4a1e4fa71b2177896239c11d759d553b7a073be3026850b77022c30ee7b087",
+        "size_bytes": 1325278
+      },
+      "MOT20-02": {
+        "sha256": "550393ddfff83c8f582218e526ce5d57d1442ec765a69ad33385425871cc5604",
+        "size_bytes": 10401028
+      },
+      "MOT20-03": {
+        "sha256": "a4b933242804258857c93319f3455b136723558a06690b26cce2a01c9d4be36d",
+        "size_bytes": 21335757
+      },
+      "MOT20-05": {
+        "sha256": "18cbb21dc72a02268f2e774e1d01ca53837684aa0e92d5ee0283f8714a2c65eb",
+        "size_bytes": 44832316
+      }
+    },
+    "expanded_selected_ceiling": {
+      "MOT20-01": {
+        "sha256": "dff9a8d864c57d2f5f474d69aa55fec87e0a21d49ea4b05fd5667c6a3392125f",
+        "size_bytes": 1308845
+      },
+      "MOT20-02": {
+        "sha256": "39a441e2f3917dd9bdfa95325fdc5d4805af1de8c3fed38489d7012cf1d4a049",
+        "size_bytes": 10251832
+      },
+      "MOT20-03": {
+        "sha256": "e5e7d0a0bc810f6f2ae753f42e150ca1a0d272760cd32677ac55214617f165f3",
+        "size_bytes": 21074754
+      },
+      "MOT20-05": {
+        "sha256": "3546ab3b7b87f54e540ad2e6267abd1cc725dd6b9d5f18ac6105b3ab3c0f3140",
+        "size_bytes": 43960148
+      }
+    }
+  },
+  "report_sha256": "032655a04cc3e8b734d04af432d21be717869d581260de2680d87e1bf04566f4",
+  "schema": "fmtrack.m23.expanded_evidence_oracle.v1"
+}
