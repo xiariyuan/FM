@@ -1,0 +1,3 @@
+sequence,status,stage,HOTA,DetA,AssA,IDSW,delta_HOTA,selected_actions,train_dir,graph_root,result_root,message
+MOT20-01,running,train,,,,,,,outputs/mot20_m23_20260718/m23_24_fastreid_loso_full/MOT20-01,outputs/mot20_m23_20260718/m23_24_micrograph_loso/MOT20-01,outputs/mot20_m23_20260718/m23_25_sequence_calibrated_graph_loso/MOT20-01,
+MOT20-02,success,completed,72.868943,80.713767,65.88567499999999,317,1.2940329999999989,18,,,outputs/mot20_m23_20260718/m23_25_sequence_calibrated_graph_m02_full_v1,reused completed strict outer fold

@@ -78,3 +78,23 @@ sequences. It deliberately avoids a large end-to-end graph transformer.
 - If M23-25 cannot outperform M23-24, the next change will target exact
   counterfactual HOTA/AssA supervision and temporal tracklet encoding rather than
   additional threshold grids.
+
+## First strict outer-fold result
+
+The full MOT20-02 fold passed the strong-signal gate:
+
+- Parent: 71.574910 HOTA / 63.638735 AssA / 286 IDSW.
+- M23-24 fine-tuned fixed-budget policy: 72.040470 HOTA / 64.406186 AssA /
+  328 IDSW with 32 actions.
+- M23-25: 72.868943 HOTA / 65.885675 AssA / 317 IDSW with 18 actions.
+- Delta from parent: +1.294033 HOTA / +2.246940 AssA / +31 IDSW.
+- Delta from M23-24: +0.828473 HOTA / +1.479489 AssA / -11 IDSW.
+
+Inner training-sequence calibration froze loss multiplier 1.0, minimum positive
+probability 0.5 and sequence-relative score quantile 0.999 before the outer
+TrackEval. The result uses no MOT20-02 GT before tracker freezing.
+
+This result validates the structured decision mechanism but is not a combined
+score. The remaining MOT20-01, MOT20-03 and MOT20-05 FastReID outer folds are
+queued sequentially. Only their concatenated four-fold TrackEval can trigger the
+80.0 promotion rule.

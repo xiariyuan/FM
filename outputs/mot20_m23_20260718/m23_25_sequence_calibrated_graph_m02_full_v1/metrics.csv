@@ -1,0 +1,2 @@
+status,held_sequence,HOTA,DetA,AssA,IDSW,delta_HOTA,delta_AssA,delta_IDSW,selected_actions,loss_multiplier,min_probability,score_quantile,message
+success,MOT20-02,72.868943,80.713767,65.88567499999999,317,1.2940329999999989,2.246939999999995,31,18,1.0,0.5,0.999,strict outer-held TrackEval
