@@ -1,0 +1,16 @@
+{
+  "calibration": "inner leave-one-training-sequence-out; maximize worst sequence-normalized transaction utility",
+  "candidate_feature_gt_use": "none",
+  "experiment": "M23-25 sequence-calibrated transaction conflict graph",
+  "held_gt_use": "final TrackEval only",
+  "held_sequence": "MOT20-03",
+  "reuse_training_label_root": null,
+  "selection": "sequence-relative score quantile plus exact maximum-weight transaction matching; no fixed action budget",
+  "status": "success",
+  "training_gt_use": "training-sequence transaction utility labels only",
+  "training_sequences": [
+    "MOT20-01",
+    "MOT20-02",
+    "MOT20-05"
+  ]
+}
