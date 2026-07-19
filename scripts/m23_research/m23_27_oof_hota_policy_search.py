@@ -106,9 +106,12 @@ def policy_id(policy: Optional[Tuple[float, float, float]]) -> str:
     return raw.replace(".", "p")
 
 
-def selection_signature(selected_by_sequence: Dict[str, pd.DataFrame]) -> str:
+def selection_signature(
+    selected_by_sequence: Dict[str, pd.DataFrame],
+    sequences: Sequence[str],
+) -> str:
     payload = []
-    for seq in SEQUENCES:
+    for seq in sequences:
         frame = selected_by_sequence[seq]
         rows = sorted(
             (
@@ -238,7 +241,11 @@ def candidate_reason_map(
 
 def parse_combined_metrics(detailed_path: Path) -> Dict[str, float]:
     with detailed_path.open(encoding="utf-8") as handle:
-        row = next(item for item in csv.DictReader(handle) if item["seq"] == "COMBINED")
+        rows = list(csv.DictReader(handle))
+    row = next(
+        (item for item in rows if item["seq"] == "COMBINED"),
+        rows[-1],
+    )
     return {
         "HOTA": 100.0 * float(row["HOTA___AUC"]),
         "DetA": 100.0 * float(row["DetA___AUC"]),
@@ -247,7 +254,12 @@ def parse_combined_metrics(detailed_path: Path) -> Dict[str, float]:
     }
 
 
-def evaluate_combined(track_results: Path, candidate_root: Path, tracker_name: str) -> Dict[str, float]:
+def evaluate_combined(
+    track_results: Path,
+    candidate_root: Path,
+    tracker_name: str,
+    sequences: Sequence[str],
+) -> Dict[str, float]:
     work_dir = candidate_root / "eval_work"
     command = [
         sys.executable,
@@ -265,7 +277,7 @@ def evaluate_combined(track_results: Path, candidate_root: Path, tracker_name: s
         "--work-dir",
         str(work_dir),
         "--seqs",
-        *SEQUENCES,
+        *sequences,
     ]
     completed = subprocess.run(
         command,
@@ -305,13 +317,14 @@ def build_candidate_tracks(
     predictions: Dict[str, pd.DataFrame],
     selected_by_sequence: Dict[str, pd.DataFrame],
     candidate_root: Path,
+    sequences: Sequence[str],
 ) -> Dict[str, Dict[str, object]]:
     track_root = candidate_root / "track_results"
     selected_root = candidate_root / "selected_transactions"
     track_root.mkdir(parents=True, exist_ok=True)
     selected_root.mkdir(parents=True, exist_ok=True)
     reports: Dict[str, Dict[str, object]] = {}
-    for seq in SEQUENCES:
+    for seq in sequences:
         meta = pd.read_parquet(graph_root / seq / "microtracklets.parquet")
         edges = pd.read_parquet(graph_root / seq / "candidate_edges.parquet")
         selected = selected_by_sequence[seq].copy()
@@ -360,12 +373,28 @@ def main() -> None:
             "use this to run disjoint parallel shards"
         ),
     )
+    parser.add_argument(
+        "--eval-seqs",
+        default=",".join(SEQUENCES),
+        help=(
+            "comma-separated train sequences to evaluate; a single sequence enables "
+            "targeted HOTA search while preserving OOF predictions"
+        ),
+    )
     parser.add_argument("--keep-candidate-tracks", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
 
     source_root = Path(args.source_root).resolve()
     output_root = Path(args.output_root).resolve()
+    eval_sequences = tuple(
+        value.strip() for value in args.eval_seqs.split(",") if value.strip()
+    )
+    if not eval_sequences:
+        raise ValueError("--eval-seqs must contain at least one sequence")
+    unknown_sequences = sorted(set(eval_sequences).difference(SEQUENCES))
+    if unknown_sequences:
+        raise ValueError(f"unknown --eval-seqs values: {unknown_sequences}")
     output_root.mkdir(parents=True, exist_ok=True)
     metrics_path = output_root / "metrics.csv"
     report_path = output_root / "report.json"
@@ -391,7 +420,7 @@ def main() -> None:
 
     evaluator.DATA = graph_root
     evaluator.PARENT = TRAIN_PARENT
-    evaluator.SEQS = list(SEQUENCES)
+    evaluator.SEQS = list(eval_sequences)
 
     existing = {} if args.overwrite else load_existing_rows(metrics_path)
     metric_rows: Dict[str, Dict[str, object]] = dict(existing)
@@ -420,7 +449,7 @@ def main() -> None:
         ]
     for policy in ordered_policies:
         selected = select_transactions(m26, predictions, policy)
-        signature = selection_signature(selected)
+        signature = selection_signature(selected, eval_sequences)
         candidate_id = policy_id(policy)
         if signature in seen_signatures:
             candidate_manifest.append(
@@ -439,6 +468,8 @@ def main() -> None:
             seq: float(selected[seq][TARGET].sum()) if len(selected[seq]) else 0.0
             for seq in SEQUENCES
         }
+        eval_action_count = sum(counts[seq] for seq in eval_sequences)
+        eval_proxy_sums = [proxy_sums[seq] for seq in eval_sequences]
         candidate_manifest.append(
             {
                 "candidate_id": candidate_id,
@@ -463,13 +494,13 @@ def main() -> None:
             "loss_multiplier": "" if policy is None else policy[0],
             "min_probability": "" if policy is None else policy[1],
             "score_quantile": "" if policy is None else policy[2],
-            "selected_actions": sum(counts.values()),
+            "selected_actions": eval_action_count,
             "selected_MOT20_01": counts["MOT20-01"],
             "selected_MOT20_02": counts["MOT20-02"],
             "selected_MOT20_03": counts["MOT20-03"],
             "selected_MOT20_05": counts["MOT20-05"],
-            "proxy_sum": sum(proxy_sums.values()),
-            "proxy_worst_sequence": min(proxy_sums.values()),
+            "proxy_sum": sum(eval_proxy_sums),
+            "proxy_worst_sequence": min(eval_proxy_sums),
             "source_reason": "; ".join(sorted(set(reasons[policy]))),
             "message": "",
         }
@@ -488,12 +519,14 @@ def main() -> None:
                 predictions,
                 selected,
                 candidate_root,
+                eval_sequences,
             )
             tracker_name = f"m23_27_{candidate_id}"
             metrics = evaluate_combined(
                 candidate_root / "track_results",
                 candidate_root,
                 tracker_name,
+                eval_sequences,
             )
             row.update(
                 {
@@ -512,6 +545,7 @@ def main() -> None:
                         "selection_signature": signature,
                         "sequence_reports": sequence_reports,
                         "metrics": metrics,
+                        "eval_sequences": eval_sequences,
                         "protocol": "OOF predictions; train GT used only by TrackEval model selection",
                     },
                     indent=2,
@@ -550,6 +584,7 @@ def main() -> None:
         "output_root": str(output_root.relative_to(REPO)),
         "requested_max_candidates": args.max_candidates,
         "requested_candidate_ids": sorted(requested_ids),
+        "eval_sequences": eval_sequences,
         "unique_candidates_considered": len(seen_signatures),
         "completed_candidates": len(successful),
         "best": best,
