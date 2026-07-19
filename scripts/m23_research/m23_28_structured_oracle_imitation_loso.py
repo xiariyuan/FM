@@ -27,7 +27,7 @@ from typing import Dict, Iterable, List, Sequence, Tuple
 import networkx as nx
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import HistGradientBoostingClassifier
+from sklearn.ensemble import HistGradientBoostingClassifier, HistGradientBoostingRegressor
 
 
 REPO = Path(__file__).resolve().parents[2]
@@ -178,6 +178,44 @@ def fit_oracle_model(
     return model
 
 
+def fit_oracle_value_model(
+    frame: pd.DataFrame,
+    features: Sequence[str],
+    seed: int,
+    max_iter: int,
+) -> HistGradientBoostingRegressor:
+    selected = frame[frame[ORACLE_TARGET].to_numpy(int) == 1].copy()
+    if len(selected) < 20:
+        raise RuntimeError("insufficient structured-oracle positives")
+    scale_by_sequence = {}
+    for seq, part in selected.groupby("seq", sort=False):
+        scale_by_sequence[str(seq)] = max(
+            float(np.median(part[TARGET].to_numpy(float))), 1e-3
+        )
+    target = np.log1p(
+        selected[TARGET].to_numpy(float)
+        / selected.seq.map(scale_by_sequence).to_numpy(float)
+    )
+    counts = selected.seq.value_counts().to_dict()
+    weights = np.asarray(
+        [len(selected) / (len(counts) * counts[seq]) for seq in selected.seq],
+        dtype=np.float64,
+    )
+    model = HistGradientBoostingRegressor(
+        loss="absolute_error",
+        max_iter=max_iter,
+        learning_rate=0.04,
+        max_leaf_nodes=15,
+        min_samples_leaf=10,
+        l2_regularization=10.0,
+        max_bins=255,
+        early_stopping=False,
+        random_state=seed,
+    )
+    model.fit(selected[list(features)], target, sample_weight=weights)
+    return model
+
+
 def add_selection_scores(frame: pd.DataFrame) -> pd.DataFrame:
     output = frame.copy()
     oracle_rank = robust_percentile(output.oracle_selection_probability)
@@ -189,12 +227,22 @@ def add_selection_scores(frame: pd.DataFrame) -> pd.DataFrame:
     utility_rank = robust_percentile(utility_score)
     output["selection_oracle"] = oracle_rank
     output["selection_utility"] = utility_rank
+    expected_value = (
+        output.oracle_selection_probability.to_numpy(float)
+        * output.oracle_predicted_normalized_value.to_numpy(float)
+    )
+    output["selection_expected_value"] = robust_percentile(
+        pd.Series(expected_value, index=output.index)
+    )
     for oracle_weight in (0.25, 0.5, 0.75):
         suffix = int(round(100 * oracle_weight))
         output[f"selection_blend_{suffix}"] = (
             oracle_weight * oracle_rank + (1.0 - oracle_weight) * utility_rank
         )
     output["selection_product"] = oracle_rank * utility_rank
+    output["selection_value_utility_product"] = (
+        output.selection_expected_value * utility_rank
+    )
     return output
 
 
@@ -306,7 +354,10 @@ def main() -> None:
     parser.add_argument("--max-iter", type=int, default=350)
     parser.add_argument(
         "--score-columns",
-        default="selection_oracle,selection_blend_50,selection_product",
+        default=(
+            "selection_oracle,selection_expected_value,selection_blend_50,"
+            "selection_product,selection_value_utility_product"
+        ),
     )
     parser.add_argument("--quantile-grid", default="0.9985,0.999,0.9995")
     args = parser.parse_args()
@@ -350,10 +401,19 @@ def main() -> None:
         28000 + SEQUENCES.index(held) + (100 if args.model_mode == "stack" else 0),
         args.max_iter,
     )
+    value_model = fit_oracle_value_model(
+        training,
+        features,
+        28500 + SEQUENCES.index(held) + (100 if args.model_mode == "stack" else 0),
+        args.max_iter,
+    )
     held_frame = frames[held].copy()
     held_frame["oracle_selection_probability"] = model.predict_proba(
         held_frame[features]
     )[:, 1]
+    held_frame["oracle_predicted_normalized_value"] = np.maximum(
+        np.expm1(value_model.predict(held_frame[features])), 0.0
+    )
     held_frame = add_selection_scores(held_frame)
     held_frame.to_parquet(output_root / "held_predictions.parquet", index=False)
 
