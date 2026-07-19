@@ -1,0 +1,49 @@
+{
+  "delta_vs_m23_25": {
+    "HOTA": 0.0981830000000059
+  },
+  "delta_vs_m23_39": {
+    "AssA": 0.04175999999999647,
+    "DetA": -3.499999999689862e-05,
+    "HOTA": 0.02153300000000513,
+    "IDSW": 1
+  },
+  "deployable": true,
+  "experiment": "M23-46 strict sequence-LOSO four-fold stitched official TrackEval",
+  "folds": {
+    "MOT20-01": {
+      "AssA": 76.043165,
+      "DetA": 81.83741,
+      "HOTA": 78.805125,
+      "IDSW": 46
+    },
+    "MOT20-02": {
+      "AssA": 66.407293,
+      "DetA": 80.58482000000001,
+      "HOTA": 73.09814999999999,
+      "IDSW": 325
+    },
+    "MOT20-03": {
+      "AssA": 80.06813000000001,
+      "DetA": 81.174386,
+      "HOTA": 80.60328,
+      "IDSW": 146
+    },
+    "MOT20-05": {
+      "AssA": 77.68582,
+      "DetA": 81.95481,
+      "HOTA": 79.770327,
+      "IDSW": 479
+    }
+  },
+  "held_label_file_read_before_freeze": false,
+  "margin_to_80": -0.8768069999999994,
+  "metrics": {
+    "AssA": 76.82515,
+    "DetA": 81.54347,
+    "HOTA": 79.123193,
+    "IDSW": 996
+  },
+  "official_csv": "outputs/mot20_m23_20260718/m23_46_pure_hgb_topk_combined_oof_v1/official_eval/eval/m23_46_pure_hgb_topk_combined_oof/pedestrian_detailed.csv",
+  "protocol": "four independently trained and frozen outer-held trackers; one official TrackEval"
+}

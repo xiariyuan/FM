@@ -1,0 +1,16 @@
+{
+  "delta_vs_m23_39": {
+    "HOTA": 0.17373999999999512
+  },
+  "deployable": false,
+  "experiment": "M23-45 teacher-only source-cut capacity on strict M23-39 baselines",
+  "margin_to_80": -0.7246000000000095,
+  "metrics": {
+    "AssA": 77.100015,
+    "DetA": 81.56533,
+    "HOTA": 79.27539999999999,
+    "IDSW": 1048
+  },
+  "official_csv": "outputs/mot20_m23_20260718/m23_45_source_cut_teacher_combined_v1/official_eval/eval/m23_45_source_cut_teacher_combined/pedestrian_detailed.csv",
+  "teacher_only": true
+}
