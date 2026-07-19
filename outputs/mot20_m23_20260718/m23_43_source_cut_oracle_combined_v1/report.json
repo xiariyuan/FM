@@ -1,0 +1,26 @@
+{
+  "candidate_construction": "GT-free shortlist per sequence; GT exact HOTA teacher after freeze",
+  "delta_vs_m23_41_full_oracle": {
+    "AssA": 0.15595000000000425,
+    "DetA": 0.01779599999998993,
+    "HOTA": 0.08823299999998824,
+    "IDSW": 32
+  },
+  "deployable": false,
+  "experiment": "M23-43 source-boundary-cut teacher oracle official combined",
+  "margin_over_80": 0.029636999999993918,
+  "metrics": {
+    "AssA": 78.5571,
+    "DetA": 81.58205,
+    "HOTA": 80.029637,
+    "IDSW": 1083
+  },
+  "official_csv": "outputs/mot20_m23_20260718/m23_43_source_cut_oracle_combined_v1/official_eval/eval/m23_43_source_cut_oracle/pedestrian_detailed.csv",
+  "source_trackers": {
+    "MOT20-01": "outputs/mot20_m23_20260718/m23_43_source_cut_oracle_01_v1/best_tracker/track_results/MOT20-01.txt",
+    "MOT20-02": "outputs/mot20_m23_20260718/m23_43_source_cut_oracle_02_v1/best_tracker/track_results/MOT20-02.txt",
+    "MOT20-03": "outputs/mot20_m23_20260718/m23_43_source_cut_oracle_03_v1/best_tracker/track_results/MOT20-03.txt",
+    "MOT20-05": "outputs/mot20_m23_20260718/m23_43_source_cut_oracle_05_v1/best_tracker/track_results/MOT20-05.txt"
+  },
+  "teacher_only": true
+}
