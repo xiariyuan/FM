@@ -1,0 +1,97 @@
+{
+  "experiment": "M23-47 prerequisite: materialize strict M23-46 applied graphs",
+  "held_gt_read": false,
+  "sequences": {
+    "MOT20-01": {
+      "applied_edges": 606,
+      "byte_identical": true,
+      "existing_sha256": "7daadfdb4815bbe56c0969ec6a9e860ab5371a7f2ef767ab7485881c7c0b0fb4",
+      "reconstructed_sha256": "7daadfdb4815bbe56c0969ec6a9e860ab5371a7f2ef767ab7485881c7c0b0fb4",
+      "removed_source_indices": [],
+      "tracker_report": {
+        "chains": 92,
+        "chunks": 698,
+        "diagnostic_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_positive": 0,
+        "diagnostic_cross_precision": 0.0,
+        "predicted_utility_sum": 601.8889151584594,
+        "rows": 19372,
+        "selected_cross_edges": 9,
+        "selected_edges": 606,
+        "selected_source_edges": 597,
+        "seq": "MOT20-01",
+        "source_edges_replaced": 10
+      }
+    },
+    "MOT20-02": {
+      "applied_edges": 4852,
+      "byte_identical": true,
+      "existing_sha256": "f6f5600da5fd630d07a496e3d6eda5dab5c194fedc5fbfc2e2f8e184be70a714",
+      "reconstructed_sha256": "f6f5600da5fd630d07a496e3d6eda5dab5c194fedc5fbfc2e2f8e184be70a714",
+      "removed_source_indices": [],
+      "tracker_report": {
+        "chains": 438,
+        "chunks": 5290,
+        "diagnostic_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_positive": 0,
+        "diagnostic_cross_precision": 0.0,
+        "predicted_utility_sum": 4844.76893262162,
+        "rows": 151152,
+        "selected_cross_edges": 25,
+        "selected_edges": 4852,
+        "selected_source_edges": 4827,
+        "seq": "MOT20-02",
+        "source_edges_replaced": 41
+      }
+    },
+    "MOT20-03": {
+      "applied_edges": 9848,
+      "byte_identical": true,
+      "existing_sha256": "753d1f6e042afd9501589cc0d5aec82f1b11ad6c89b3b60db517da97cfca3cf1",
+      "reconstructed_sha256": "753d1f6e042afd9501589cc0d5aec82f1b11ad6c89b3b60db517da97cfca3cf1",
+      "removed_source_indices": [],
+      "tracker_report": {
+        "chains": 754,
+        "chunks": 10602,
+        "diagnostic_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_positive": 0,
+        "diagnostic_cross_precision": 0.0,
+        "predicted_utility_sum": 9842.82846086209,
+        "rows": 305937,
+        "selected_cross_edges": 7,
+        "selected_edges": 9848,
+        "selected_source_edges": 9841,
+        "seq": "MOT20-03",
+        "source_edges_replaced": 8
+      }
+    },
+    "MOT20-05": {
+      "applied_edges": 20647,
+      "byte_identical": true,
+      "existing_sha256": "5c665fd61a75048c3c8ef8538491b0b5f421658f3046d5be585d28c87a2a7dae",
+      "reconstructed_sha256": "5c665fd61a75048c3c8ef8538491b0b5f421658f3046d5be585d28c87a2a7dae",
+      "removed_source_indices": [
+        20472,
+        19959
+      ],
+      "tracker_report": {
+        "chains": 1581,
+        "chunks": 22228,
+        "diagnostic_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_actual_assa_proxy_sum": 0.0,
+        "diagnostic_cross_positive": 0,
+        "diagnostic_cross_precision": 0.0,
+        "predicted_utility_sum": 20642.576366287376,
+        "rows": 638588,
+        "selected_cross_edges": 31,
+        "selected_edges": 20647,
+        "selected_source_edges": 20616,
+        "seq": "MOT20-05",
+        "source_edges_replaced": 52
+      }
+    }
+  }
+}

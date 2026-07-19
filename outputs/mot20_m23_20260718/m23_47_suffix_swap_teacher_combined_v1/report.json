@@ -1,0 +1,56 @@
+{
+  "candidate_gt_fields_used": false,
+  "delta_vs_m23_46": {
+    "AssA": 0.06964600000000587,
+    "DetA": 2.2999999998774e-05,
+    "HOTA": 0.036017000000001076,
+    "IDSW": -3
+  },
+  "deployable": false,
+  "experiment": "M23-47 teacher-only two-boundary suffix-swap capacity on strict M23-46 baselines",
+  "folds": {
+    "MOT20-01": {
+      "baseline_HOTA": 78.80512475967407,
+      "best_HOTA": 78.81225347518921,
+      "best_policy": "positive_t0",
+      "delta_HOTA": 0.007128715515136719,
+      "positive_actions": 1,
+      "successful_actions": 64
+    },
+    "MOT20-02": {
+      "baseline_HOTA": 73.09815287590027,
+      "best_HOTA": 73.19956421852112,
+      "best_policy": "positive_t0",
+      "delta_HOTA": 0.10141134262084961,
+      "positive_actions": 3,
+      "successful_actions": 64
+    },
+    "MOT20-03": {
+      "baseline_HOTA": 80.60327768325806,
+      "best_HOTA": 80.67116141319275,
+      "best_policy": "positive_t0",
+      "delta_HOTA": 0.06788372993469238,
+      "positive_actions": 2,
+      "successful_actions": 64
+    },
+    "MOT20-05": {
+      "baseline_HOTA": 79.77032661437988,
+      "best_HOTA": 79.77728843688965,
+      "best_policy": "positive_t0",
+      "delta_HOTA": 0.006961822509765625,
+      "positive_actions": 2,
+      "successful_actions": 64
+    }
+  },
+  "margin_to_80": -0.8407899999999984,
+  "metrics": {
+    "AssA": 76.894796,
+    "DetA": 81.543493,
+    "HOTA": 79.15921,
+    "IDSW": 993
+  },
+  "official_csv": "outputs/mot20_m23_20260718/m23_47_suffix_swap_teacher_combined_v1/official_eval/eval/m23_47_suffix_swap_teacher_combined/pedestrian_detailed.csv",
+  "protocol": "four per-sequence GT-free shortlists frozen before exact-HOTA teacher; one official stitched TrackEval",
+  "status": "completed",
+  "teacher_only": true
+}
