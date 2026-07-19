@@ -63,6 +63,13 @@ DEFAULT_OUTPUT = (
     / "mot20_m23_20260718"
     / "m23_33_routed_alltrain_test_candidate_v1"
 )
+DEFAULT_STRICT_REPORT = (
+    REPO
+    / "outputs"
+    / "mot20_m23_20260718"
+    / "m23_33_latest_strict_oof_combined_v1"
+    / "report.json"
+)
 TARGET = "chain_transaction_delta_proxy"
 ROUTING_FEATURES = (
     "rows",
@@ -214,6 +221,7 @@ def main() -> None:
     parser.add_argument("--train-parent", default=str(DEFAULT_TRAIN_PARENT))
     parser.add_argument("--test-parent", default=str(DEFAULT_TEST_PARENT))
     parser.add_argument("--output-root", default=str(DEFAULT_OUTPUT))
+    parser.add_argument("--strict-report", default=str(DEFAULT_STRICT_REPORT))
     args = parser.parse_args()
 
     model_root = Path(args.model_root).resolve()
@@ -221,6 +229,7 @@ def main() -> None:
     train_parent = Path(args.train_parent).resolve()
     test_parent = Path(args.test_parent).resolve()
     output_root = Path(args.output_root).resolve()
+    strict_report_path = Path(args.strict_report).resolve()
     output_root.mkdir(parents=True, exist_ok=True)
 
     train_graph = graph_root / "train_oof_micrograph"
@@ -346,6 +355,10 @@ def main() -> None:
     validate_submission(package_root, zip_path, output_root)
 
     training_report = json.loads((model_root / "report.json").read_text(encoding="utf-8"))
+    strict_report = json.loads(strict_report_path.read_text(encoding="utf-8"))
+    strict_combined = next(
+        row for row in strict_report["results"] if row["sequence"] == "COMBINED"
+    )
     manifest = {
         "status": "completed",
         "created_at": now_iso(),
@@ -354,7 +367,8 @@ def main() -> None:
         "test_inference_gt_free": True,
         "training_fit_HOTA": training_report["metrics"]["COMBINED"]["HOTA"],
         "training_fit_role": training_report["score_role"],
-        "strict_oof_reference_HOTA": 79.53797,
+        "strict_oof_reference_HOTA": strict_combined["HOTA"],
+        "strict_oof_reference_report": str(strict_report_path.relative_to(REPO)),
         "absolute_threshold_rejected": artifact["probability_threshold"],
         "calibration": (
             "nearest train-sequence descriptor route plus routed train selected-action fraction"
