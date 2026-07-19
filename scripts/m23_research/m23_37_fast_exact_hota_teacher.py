@@ -107,6 +107,9 @@ class PreparedExactHOTA:
             raw["tracker_dets"], self.data["tracker_dets"]
         )
         self.parent_rows, self.frame_row_indices = self._read_parent_rows(parent_tracker)
+        self.parent_row_ids = np.asarray(
+            [int(float(fields[1])) for fields in self.parent_rows], dtype=np.int64
+        )
         self._validate_frame_alignment()
         self.processed_parent_row_indices = [
             np.asarray(self.frame_row_indices.get(frame, []), dtype=np.int64)[keep]
@@ -193,6 +196,8 @@ class PreparedExactHOTA:
 
     def ids_from_tracker_file(self, tracker_file: Path) -> np.ndarray:
         """Return tracker IDs aligned to the parent rows by frame and exact box."""
+        if tracker_file.resolve() == self.parent_tracker.resolve():
+            return self.parent_row_ids.copy()
         ids = np.empty(self.num_parent_rows, dtype=np.int64)
         candidate_by_frame: Dict[int, List[tuple[np.ndarray, int]]] = {}
         with tracker_file.open(encoding="utf-8") as handle:
