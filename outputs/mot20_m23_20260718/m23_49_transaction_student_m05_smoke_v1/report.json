@@ -1,0 +1,141 @@
+{
+  "action_policy": "replacement-only maximum-weight matching, top-k",
+  "candidate_space": "M23-41 diverse GT-free transaction shortlist",
+  "delta_vs_strict_m23_25": null,
+  "delta_vs_strict_m23_39": null,
+  "delta_vs_strict_m23_46": null,
+  "deployable": true,
+  "eval": null,
+  "experiment": "M23-49 compact pure-HGB top-k transaction student",
+  "features": [
+    "m23_38_parent_policy_score",
+    "pred_positive_probability",
+    "motion_appearance_joint",
+    "max_margin",
+    "backward_motion_error",
+    "motion_error_mean",
+    "motion_error_min",
+    "sequence_motion_percentile",
+    "motion_rank_consensus",
+    "rank_consensus",
+    "appearance_cos",
+    "segment_appearance_cos",
+    "segment_endpoint_gain",
+    "max_rank",
+    "channel_parent_policy"
+  ],
+  "frozen_inner_selection": {
+    "held_label_file_read": false,
+    "outer_held_gt_read": false,
+    "selected_inner_metrics": {
+      "AssA": 75.482404,
+      "DetA": 81.049967,
+      "HOTA": 78.183484,
+      "IDSW": 499,
+      "M01_HOTA": 79.18148000000001,
+      "M01_delta_HOTA": 0.0,
+      "M02_HOTA": 72.868943,
+      "M02_delta_HOTA": 0.0,
+      "M03_HOTA": 80.571616,
+      "M03_delta_HOTA": 0.0,
+      "mean_fold_delta_HOTA": 0.0,
+      "policy_id": "noop",
+      "positive_inner_folds": 0,
+      "selected_actions": 0,
+      "top_k": 0,
+      "worst_fold_delta_HOTA": 0.0
+    },
+    "selected_policy": {
+      "action_type": "replace",
+      "policy_id": "noop",
+      "top_k": 0
+    },
+    "selection_rule": "maximum worst-fold exact HOTA delta; then mean delta, stitched HOTA, AssA, fewer actions"
+  },
+  "held_candidate_actions": 256,
+  "held_candidate_gt_use": "none",
+  "held_gt_read_before_tracker_freeze": false,
+  "held_label_file_read": false,
+  "held_selected_replacements": 0,
+  "inner_candidates": [
+    {
+      "AssA": 75.482404,
+      "DetA": 81.049967,
+      "HOTA": 78.183484,
+      "IDSW": 499,
+      "M01_HOTA": 79.18148000000001,
+      "M01_delta_HOTA": 0.0,
+      "M02_HOTA": 72.868943,
+      "M02_delta_HOTA": 0.0,
+      "M03_HOTA": 80.571616,
+      "M03_delta_HOTA": 0.0,
+      "mean_fold_delta_HOTA": 0.0,
+      "policy_id": "noop",
+      "positive_inner_folds": 0,
+      "selected_actions": 0,
+      "top_k": 0,
+      "worst_fold_delta_HOTA": 0.0
+    }
+  ],
+  "label_regeneration": false,
+  "model": "single replacement HistGradientBoostingClassifier, max_leaf_nodes=5",
+  "outer_held_sequence": "MOT20-05",
+  "outer_training_sequences": [
+    "MOT20-01",
+    "MOT20-02",
+    "MOT20-03"
+  ],
+  "policies": [
+    0
+  ],
+  "policy_selection": "maximum worst per-inner-sequence HOTA delta; then mean delta and stitched HOTA",
+  "protocol": "strict nested sequence LOSO",
+  "status": "tracker_frozen",
+  "strict_m23_25_baseline": {
+    "AssA": 77.457994,
+    "DetA": 81.95517,
+    "HOTA": 79.653203,
+    "IDSW": 475
+  },
+  "strict_m23_39_baseline": {
+    "AssA": 77.61292,
+    "DetA": 81.95485,
+    "HOTA": 79.73285,
+    "IDSW": 478
+  },
+  "strict_m23_46_baseline": {
+    "AssA": 77.68582,
+    "DetA": 81.95481,
+    "HOTA": 79.770327,
+    "IDSW": 479
+  },
+  "tracker_report": {
+    "mean_probability": 0.0,
+    "removed_baseline_actions": 0,
+    "replacement_actions": 0,
+    "resulting_selected_actions": 28,
+    "selected_source_indices": [],
+    "seq": "MOT20-05",
+    "tracker_report": {
+      "chains": 1579,
+      "chunks": 22228,
+      "diagnostic_actual_assa_proxy_sum": 0.0,
+      "diagnostic_cross_actual_assa_proxy_sum": 0.0,
+      "diagnostic_cross_positive": 0,
+      "diagnostic_cross_precision": 0.0,
+      "predicted_utility_sum": 20649.0,
+      "rows": 638588,
+      "selected_cross_edges": 28,
+      "selected_edges": 20649,
+      "selected_source_edges": 20621,
+      "seq": "MOT20-05",
+      "source_edges_replaced": 47
+    }
+  },
+  "training_gt_use": "existing M23-41 exact transaction labels from outer-training sequences only",
+  "training_rows": {
+    "MOT20-01": 260,
+    "MOT20-02": 274,
+    "MOT20-03": 256
+  }
+}

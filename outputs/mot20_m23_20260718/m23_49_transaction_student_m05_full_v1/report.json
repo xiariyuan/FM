@@ -1,0 +1,239 @@
+{
+  "action_policy": "replacement-only maximum-weight matching, top-k",
+  "candidate_space": "M23-41 diverse GT-free transaction shortlist",
+  "delta_vs_strict_m23_25": {
+    "AssA": -0.01705400000000168,
+    "DetA": -0.0015199999999992997,
+    "HOTA": -0.009536000000011313,
+    "IDSW": 0
+  },
+  "delta_vs_strict_m23_39": {
+    "AssA": -0.1719800000000049,
+    "DetA": -0.0011999999999972033,
+    "HOTA": -0.08918300000000556,
+    "IDSW": -3
+  },
+  "delta_vs_strict_m23_46": {
+    "AssA": -0.2448800000000091,
+    "DetA": -0.0011599999999987176,
+    "HOTA": -0.1266600000000011,
+    "IDSW": -4
+  },
+  "deployable": true,
+  "eval": {
+    "AssA": 77.44094,
+    "DetA": 81.95365,
+    "HOTA": 79.643667,
+    "IDSW": 475
+  },
+  "experiment": "M23-49 compact pure-HGB top-k transaction student",
+  "features": [
+    "m23_38_parent_policy_score",
+    "pred_positive_probability",
+    "motion_appearance_joint",
+    "max_margin",
+    "backward_motion_error",
+    "motion_error_mean",
+    "motion_error_min",
+    "sequence_motion_percentile",
+    "motion_rank_consensus",
+    "rank_consensus",
+    "appearance_cos",
+    "segment_appearance_cos",
+    "segment_endpoint_gain",
+    "max_rank",
+    "channel_parent_policy"
+  ],
+  "frozen_inner_selection": {
+    "held_label_file_read": false,
+    "outer_held_gt_read": false,
+    "selected_inner_metrics": {
+      "AssA": 75.53003000000001,
+      "DetA": 81.04884999999999,
+      "HOTA": 78.2078,
+      "IDSW": 502,
+      "M01_HOTA": 79.29779,
+      "M01_delta_HOTA": 0.11630999999999858,
+      "M02_HOTA": 72.87,
+      "M02_delta_HOTA": 0.0010570000000029722,
+      "M03_HOTA": 80.600554,
+      "M03_delta_HOTA": 0.028937999999996578,
+      "mean_fold_delta_HOTA": 0.04876833333333271,
+      "policy_id": "replace_top1",
+      "positive_inner_folds": 3,
+      "selected_actions": 3,
+      "top_k": 1,
+      "worst_fold_delta_HOTA": 0.0010570000000029722
+    },
+    "selected_policy": {
+      "action_type": "replace",
+      "policy_id": "replace_top1",
+      "top_k": 1
+    },
+    "selection_rule": "maximum worst-fold exact HOTA delta; then mean delta, stitched HOTA, AssA, fewer actions"
+  },
+  "held_candidate_actions": 256,
+  "held_candidate_gt_use": "none",
+  "held_gt_read_before_tracker_freeze": false,
+  "held_label_file_read": false,
+  "held_selected_replacements": 1,
+  "inner_candidates": [
+    {
+      "AssA": 75.482404,
+      "DetA": 81.049967,
+      "HOTA": 78.183484,
+      "IDSW": 499,
+      "M01_HOTA": 79.18148000000001,
+      "M01_delta_HOTA": 0.0,
+      "M02_HOTA": 72.868943,
+      "M02_delta_HOTA": 0.0,
+      "M03_HOTA": 80.571616,
+      "M03_delta_HOTA": 0.0,
+      "mean_fold_delta_HOTA": 0.0,
+      "policy_id": "noop",
+      "positive_inner_folds": 0,
+      "selected_actions": 0,
+      "top_k": 0,
+      "worst_fold_delta_HOTA": 0.0
+    },
+    {
+      "AssA": 75.53003000000001,
+      "DetA": 81.04884999999999,
+      "HOTA": 78.2078,
+      "IDSW": 502,
+      "M01_HOTA": 79.29779,
+      "M01_delta_HOTA": 0.11630999999999858,
+      "M02_HOTA": 72.87,
+      "M02_delta_HOTA": 0.0010570000000029722,
+      "M03_HOTA": 80.600554,
+      "M03_delta_HOTA": 0.028937999999996578,
+      "mean_fold_delta_HOTA": 0.04876833333333271,
+      "policy_id": "replace_top1",
+      "positive_inner_folds": 3,
+      "selected_actions": 3,
+      "top_k": 1,
+      "worst_fold_delta_HOTA": 0.0010570000000029722
+    },
+    {
+      "AssA": 75.4914,
+      "DetA": 81.05212,
+      "HOTA": 78.18923,
+      "IDSW": 507,
+      "M01_HOTA": 79.272795,
+      "M01_delta_HOTA": 0.09131499999999448,
+      "M02_HOTA": 72.938764,
+      "M02_delta_HOTA": 0.06982100000000457,
+      "M03_HOTA": 80.543303,
+      "M03_delta_HOTA": -0.028313000000011357,
+      "mean_fold_delta_HOTA": 0.04427433333332923,
+      "policy_id": "replace_top2",
+      "positive_inner_folds": 2,
+      "selected_actions": 6,
+      "top_k": 2,
+      "worst_fold_delta_HOTA": -0.028313000000011357
+    },
+    {
+      "AssA": 75.487065,
+      "DetA": 81.04865,
+      "HOTA": 78.185225,
+      "IDSW": 511,
+      "M01_HOTA": 79.37068000000001,
+      "M01_delta_HOTA": 0.1891999999999996,
+      "M02_HOTA": 72.94836000000001,
+      "M02_delta_HOTA": 0.07941700000000651,
+      "M03_HOTA": 80.52678,
+      "M03_delta_HOTA": -0.04483600000000365,
+      "mean_fold_delta_HOTA": 0.07459366666666749,
+      "policy_id": "replace_top4",
+      "positive_inner_folds": 2,
+      "selected_actions": 12,
+      "top_k": 4,
+      "worst_fold_delta_HOTA": -0.04483600000000365
+    },
+    {
+      "AssA": 75.40058499999999,
+      "DetA": 81.04616999999999,
+      "HOTA": 78.138715,
+      "IDSW": 526,
+      "M01_HOTA": 79.14735,
+      "M01_delta_HOTA": -0.03413000000000466,
+      "M02_HOTA": 73.02784,
+      "M02_delta_HOTA": 0.15889699999999607,
+      "M03_HOTA": 80.43492,
+      "M03_delta_HOTA": -0.1366960000000006,
+      "mean_fold_delta_HOTA": -0.003976333333336394,
+      "policy_id": "replace_top8",
+      "positive_inner_folds": 1,
+      "selected_actions": 24,
+      "top_k": 8,
+      "worst_fold_delta_HOTA": -0.1366960000000006
+    }
+  ],
+  "label_regeneration": false,
+  "model": "single replacement HistGradientBoostingClassifier, max_leaf_nodes=5",
+  "outer_held_sequence": "MOT20-05",
+  "outer_training_sequences": [
+    "MOT20-01",
+    "MOT20-02",
+    "MOT20-03"
+  ],
+  "policies": [
+    0,
+    1,
+    2,
+    4,
+    8
+  ],
+  "policy_selection": "maximum worst per-inner-sequence HOTA delta; then mean delta and stitched HOTA",
+  "protocol": "strict nested sequence LOSO",
+  "status": "completed",
+  "strict_m23_25_baseline": {
+    "AssA": 77.457994,
+    "DetA": 81.95517,
+    "HOTA": 79.653203,
+    "IDSW": 475
+  },
+  "strict_m23_39_baseline": {
+    "AssA": 77.61292,
+    "DetA": 81.95485,
+    "HOTA": 79.73285,
+    "IDSW": 478
+  },
+  "strict_m23_46_baseline": {
+    "AssA": 77.68582,
+    "DetA": 81.95481,
+    "HOTA": 79.770327,
+    "IDSW": 479
+  },
+  "tracker_report": {
+    "mean_probability": 0.7261370715167385,
+    "removed_baseline_actions": 1,
+    "replacement_actions": 1,
+    "resulting_selected_actions": 28,
+    "selected_source_indices": [
+      122636
+    ],
+    "seq": "MOT20-05",
+    "tracker_report": {
+      "chains": 1579,
+      "chunks": 22228,
+      "diagnostic_actual_assa_proxy_sum": 0.0,
+      "diagnostic_cross_actual_assa_proxy_sum": 0.0,
+      "diagnostic_cross_positive": 0,
+      "diagnostic_cross_precision": 0.0,
+      "predicted_utility_sum": 20648.726137071517,
+      "rows": 638588,
+      "selected_cross_edges": 28,
+      "selected_edges": 20649,
+      "selected_source_edges": 20621,
+      "seq": "MOT20-05",
+      "source_edges_replaced": 47
+    }
+  },
+  "training_gt_use": "existing M23-41 exact transaction labels from outer-training sequences only",
+  "training_rows": {
+    "MOT20-01": 260,
+    "MOT20-02": 274,
+    "MOT20-03": 256
+  }
+}
