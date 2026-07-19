@@ -352,6 +352,14 @@ def main() -> None:
         default=24,
         help="0 evaluates the full policy grid; positive values run a diverse fast pass",
     )
+    parser.add_argument(
+        "--candidate-ids",
+        default="",
+        help=(
+            "optional comma-separated policy IDs from the selected candidate set; "
+            "use this to run disjoint parallel shards"
+        ),
+    )
     parser.add_argument("--keep-candidate-tracks", action="store_true")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
@@ -397,6 +405,19 @@ def main() -> None:
             policy if policy is not None else (0.0, 0.0, 0.0),
         ),
     )
+    requested_ids = {
+        value.strip() for value in args.candidate_ids.split(",") if value.strip()
+    }
+    if requested_ids:
+        available = {policy_id(policy): policy for policy in ordered_policies}
+        unknown = sorted(requested_ids.difference(available))
+        if unknown:
+            raise ValueError(
+                f"unknown candidate IDs for max-candidates={args.max_candidates}: {unknown}"
+            )
+        ordered_policies = [
+            policy for policy in ordered_policies if policy_id(policy) in requested_ids
+        ]
     for policy in ordered_policies:
         selected = select_transactions(m26, predictions, policy)
         signature = selection_signature(selected)
@@ -528,6 +549,7 @@ def main() -> None:
         "source_root": str(source_root.relative_to(REPO)),
         "output_root": str(output_root.relative_to(REPO)),
         "requested_max_candidates": args.max_candidates,
+        "requested_candidate_ids": sorted(requested_ids),
         "unique_candidates_considered": len(seen_signatures),
         "completed_candidates": len(successful),
         "best": best,
