@@ -1,0 +1,32 @@
+{
+  "experiment": "M23-53 Global Identity Flow Capacity",
+  "date": "2026-07-20",
+  "teacher_only": true,
+  "deployable": false,
+  "strict_parent": "M23-46",
+  "uniform_candidate_protocol": {
+    "segmentation": "fixed chunk-30",
+    "top_k": 32,
+    "max_gap": 600,
+    "max_motion_error": 5.0,
+    "max_endpoint_displacement": 6.0,
+    "max_abs_log_height_ratio": 1.2,
+    "freeze_before_gt": true
+  },
+  "official": {
+    "MOT20-01": {"HOTA": 80.843790, "DetA": 82.058820, "AssA": 79.788980, "IDSW": 56},
+    "MOT20-02": {"HOTA": 75.020460, "DetA": 81.605670, "AssA": 69.072660, "IDSW": 462},
+    "MOT20-03": {"HOTA": 81.342626, "DetA": 81.399490, "AssA": 81.317570, "IDSW": 199},
+    "MOT20-05": {"HOTA": 80.353534, "DetA": 82.078904, "AssA": 78.705120, "IDSW": 620},
+    "COMBINED": {"HOTA": 79.950590, "DetA": 81.820434, "AssA": 78.174204, "IDSW": 1337}
+  },
+  "comparison": {
+    "strict_m23_46_HOTA": 79.123193,
+    "gain_over_m23_46": 0.827397,
+    "m23_51_residual_oracle_HOTA": 79.719687,
+    "gain_over_m23_51": 0.230903,
+    "gap_to_80": 0.049410,
+    "gap_to_capacity_floor_80_3": 0.349410
+  },
+  "decision": "fixed_chunk30_capacity_insufficient_start_m23_53b_no_m23_54"
+}
