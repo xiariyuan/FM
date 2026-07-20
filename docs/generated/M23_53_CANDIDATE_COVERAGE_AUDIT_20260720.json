@@ -1,0 +1,1311 @@
+{
+  "adaptive_followup": {
+    "combined_HOTA": 79.92049,
+    "completed": true,
+    "decision": "adaptive_protocol_insufficient_close_m23_53b_do_not_start_m23_54",
+    "deployable": false
+  },
+  "audit": "M23-53 candidate coverage and flow conversion",
+  "candidate_regenerated": false,
+  "capacity_decision": "fixed_chunk30_capacity_insufficient_start_m23_53b_no_m23_54",
+  "combined": {
+    "coverage": {
+      "by_crowd": {
+        "high": {
+          "candidate_present": 12709,
+          "candidate_recall": 0.9805570557827328,
+          "events": 12961,
+          "selected_by_teacher": 12634,
+          "teacher_selection_rate_all": 0.9747704652418795,
+          "teacher_selection_rate_when_present": 0.9940986702336927
+        },
+        "low": {
+          "candidate_present": 11156,
+          "candidate_recall": 0.9904119318181818,
+          "events": 11264,
+          "selected_by_teacher": 11110,
+          "teacher_selection_rate_all": 0.986328125,
+          "teacher_selection_rate_when_present": 0.9958766583004661
+        },
+        "medium": {
+          "candidate_present": 11421,
+          "candidate_recall": 0.9855885398688298,
+          "events": 11588,
+          "selected_by_teacher": 11389,
+          "teacher_selection_rate_all": 0.982827062478426,
+          "teacher_selection_rate_when_present": 0.9971981437702477
+        }
+      },
+      "by_gap": {
+        "0": {
+          "candidate_present": 34877,
+          "candidate_recall": 0.9975402568429482,
+          "events": 34963,
+          "selected_by_teacher": 34816,
+          "teacher_selection_rate_all": 0.9957955553013186,
+          "teacher_selection_rate_when_present": 0.9982509963586318
+        },
+        "1-30": {
+          "candidate_present": 362,
+          "candidate_recall": 0.530791788856305,
+          "events": 682,
+          "selected_by_teacher": 272,
+          "teacher_selection_rate_all": 0.39882697947214074,
+          "teacher_selection_rate_when_present": 0.7513812154696132
+        },
+        "181-600": {
+          "candidate_present": 2,
+          "candidate_recall": 0.2222222222222222,
+          "events": 9,
+          "selected_by_teacher": 2,
+          "teacher_selection_rate_all": 0.2222222222222222,
+          "teacher_selection_rate_when_present": 1.0
+        },
+        "31-90": {
+          "candidate_present": 37,
+          "candidate_recall": 0.2781954887218045,
+          "events": 133,
+          "selected_by_teacher": 35,
+          "teacher_selection_rate_all": 0.2631578947368421,
+          "teacher_selection_rate_when_present": 0.9459459459459459
+        },
+        "91-180": {
+          "candidate_present": 8,
+          "candidate_recall": 0.3076923076923077,
+          "events": 26,
+          "selected_by_teacher": 8,
+          "teacher_selection_rate_all": 0.3076923076923077,
+          "teacher_selection_rate_when_present": 1.0
+        }
+      },
+      "by_trajectory_length": {
+        "high": {
+          "candidate_present": 21760,
+          "candidate_recall": 0.9896757174694137,
+          "events": 21987,
+          "selected_by_teacher": 21664,
+          "teacher_selection_rate_all": 0.9853095010688134,
+          "teacher_selection_rate_when_present": 0.9955882352941177
+        },
+        "low": {
+          "candidate_present": 3396,
+          "candidate_recall": 0.9733447979363714,
+          "events": 3489,
+          "selected_by_teacher": 3382,
+          "teacher_selection_rate_all": 0.9693321868730295,
+          "teacher_selection_rate_when_present": 0.9958775029446407
+        },
+        "medium": {
+          "candidate_present": 10130,
+          "candidate_recall": 0.9799748476347102,
+          "events": 10337,
+          "selected_by_teacher": 10087,
+          "teacher_selection_rate_all": 0.975815033375254,
+          "teacher_selection_rate_when_present": 0.9957551826258638
+        }
+      },
+      "candidate_present": 35286,
+      "candidate_recall": 0.9852846731633764,
+      "correct_continuation_rank": {
+        "appearance_in_rank": {
+          "count": 35286,
+          "max": 106.0,
+          "p50": 1.0,
+          "p90": 2.0,
+          "p95": 5.0,
+          "top10_rate": 0.980105424247577,
+          "top1_rate": 0.8751346142946211,
+          "top32_rate": 0.9984413081675452,
+          "top5_rate": 0.9558181715127813
+        },
+        "appearance_out_rank": {
+          "count": 35286,
+          "max": 17.0,
+          "p50": 1.0,
+          "p90": 2.0,
+          "p95": 6.0,
+          "top10_rate": 0.971688488352321,
+          "top1_rate": 0.8758147707306013,
+          "top32_rate": 1.0,
+          "top5_rate": 0.9475429348750213
+        },
+        "candidate_present_events": 35286,
+        "in_rank": {
+          "count": 35286,
+          "max": 127.0,
+          "p50": 1.0,
+          "p90": 4.0,
+          "p95": 7.0,
+          "top10_rate": 0.9687694836479057,
+          "top1_rate": 0.7771070679589639,
+          "top32_rate": 0.9970243155925863,
+          "top5_rate": 0.9325228135804569
+        },
+        "max_rank": {
+          "count": 35286,
+          "max": 127.0,
+          "p50": 1.0,
+          "p90": 6.0,
+          "p95": 13.0,
+          "top10_rate": 0.9402029133367341,
+          "top1_rate": 0.6789945020688092,
+          "top32_rate": 0.9970243155925863,
+          "top5_rate": 0.8964745224735022
+        },
+        "motion_in_rank": {
+          "count": 35286,
+          "max": 49.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "p95": 1.0,
+          "top10_rate": 0.9997166014850082,
+          "top1_rate": 0.9897409737572975,
+          "top32_rate": 0.9999716601485008,
+          "top5_rate": 0.9989797653460296
+        },
+        "motion_out_rank": {
+          "count": 35286,
+          "max": 11.0,
+          "p50": 1.0,
+          "p90": 1.0,
+          "p95": 1.0,
+          "top10_rate": 0.9999716601485008,
+          "top1_rate": 0.9920365017287309,
+          "top32_rate": 1.0,
+          "top5_rate": 0.9993198435640197
+        },
+        "out_rank": {
+          "count": 35286,
+          "max": 17.0,
+          "p50": 1.0,
+          "p90": 4.0,
+          "p95": 9.0,
+          "top10_rate": 0.9548262767103101,
+          "top1_rate": 0.7811596667233464,
+          "top32_rate": 1.0,
+          "top5_rate": 0.925551210111659
+        }
+      },
+      "cross_successor_events": 403,
+      "gt_successor_events": 35813,
+      "present_but_not_selected": 153,
+      "selected_by_teacher": 35133,
+      "source_parent_successor_events": 34883,
+      "teacher_selection_rate_all_successors": 0.9810124815011309,
+      "teacher_selection_rate_when_candidate_present": 0.9956640027206257,
+      "within_gap_600_candidate_present": 35286,
+      "within_gap_600_candidate_recall": 0.9852846731633764,
+      "within_gap_600_events": 35813
+    },
+    "flow_edit_audit": {
+      "cut_parent_edges": 1110,
+      "detection_boxes_or_scores_changed": 0,
+      "detection_row_values_changed": 0,
+      "detection_rows_total": 1115049,
+      "dummy_restart_nodes": 3635,
+      "dummy_terminate_nodes": 3635,
+      "edge_edit_rate_vs_parent": 0.04033043139654549,
+      "exact_two_successor_swap_transactions": 5,
+      "identity_assignment_affected_chunks": 2356,
+      "identity_assignment_affected_row_rate": 0.04920321887199576,
+      "identity_assignment_affected_rows": 54864,
+      "keep_parent_edges": 34843,
+      "note": "fold-wise unique affected-row counts are summed; detection row values, boxes and scores remain unchanged",
+      "parent_edges": 35953,
+      "selected_correct_cross_edges": 340,
+      "selected_cross_edges": 340,
+      "selected_edges": 35183,
+      "selected_wrong_or_unmatched_cross_edges": 0,
+      "swap_involved_source_edges": 10,
+      "symmetric_difference_edges": 1450
+    },
+    "source_edge_audit": {
+      "both_endpoints_matched": 35471,
+      "cross_gt_identity_edges": 545,
+      "cross_gt_ratio_all_parent": 0.015158679386977443,
+      "cross_gt_ratio_among_matched_parent": 0.015364664091793295,
+      "cross_gt_with_any_alternative_rate": 0.3467889908256881,
+      "cross_gt_with_any_same_gt_forward_cross_alternative": 189,
+      "cross_gt_with_exact_gt_successor_cross_alternative": 144,
+      "cross_gt_with_exact_successor_alternative_rate": 0.26422018348623855,
+      "parent_source_edges": 35953,
+      "unmatched_endpoint_edges": 482,
+      "unmatched_endpoint_ratio": 0.013406391678024087,
+      "wrong_or_unmatched_source_edges": 1027,
+      "wrong_with_any_alternative_rate": 0.20253164556962025,
+      "wrong_with_any_same_gt_forward_cross_alternative": 208,
+      "wrong_with_exact_gt_successor_cross_alternative": 159,
+      "wrong_with_exact_successor_alternative_rate": 0.15481986368062317
+    },
+    "successor_events": "outputs/mot20_m23_20260718/m23_53_candidate_coverage_audit_v1/successor_events.parquet",
+    "successor_events_sha256": "6d68296a9645dc43185dc404ceb360fb17a841b2dfeadaf5bce37efc75802c99"
+  },
+  "created_at": "2026-07-20T06:51:41.246419+00:00",
+  "deployable": false,
+  "existing_code_reuse_audit": {
+    "eval_max_weight_identity_path_cover": "legacy track-level positive-link path-cover precedent; insufficient for frozen source/cross/dummy unified flow",
+    "m23_11_eval_utility_graph": "sparse maximum-weight bipartite matching, tracker reconstruction, official-evaluation patterns",
+    "m23_12_chain_transaction_oracle": "chain transaction and tracker-writing conventions",
+    "m23_37_fast_exact_hota_teacher": "exact-HOTA and official-verification infrastructure; single-action delta objective not reused",
+    "m23_53_extension": "unified frozen source/cross/dummy semantics on existing sparse matching and reconstruction machinery",
+    "new_solver_required": false
+  },
+  "folds": {
+    "MOT20-01": {
+      "baseline_byte_exact": true,
+      "coverage": {
+        "by_crowd": {
+          "high": {
+            "candidate_present": 144,
+            "candidate_recall": 0.96,
+            "events": 150,
+            "selected_by_teacher": 142,
+            "teacher_selection_rate_all": 0.9466666666666667,
+            "teacher_selection_rate_when_present": 0.9861111111111112
+          },
+          "low": {
+            "candidate_present": 182,
+            "candidate_recall": 0.9891304347826086,
+            "events": 184,
+            "selected_by_teacher": 182,
+            "teacher_selection_rate_all": 0.9891304347826086,
+            "teacher_selection_rate_when_present": 1.0
+          },
+          "medium": {
+            "candidate_present": 271,
+            "candidate_recall": 0.9748201438848921,
+            "events": 278,
+            "selected_by_teacher": 267,
+            "teacher_selection_rate_all": 0.960431654676259,
+            "teacher_selection_rate_when_present": 0.985239852398524
+          }
+        },
+        "by_gap": {
+          "0": {
+            "candidate_present": 579,
+            "candidate_recall": 0.9863713798977853,
+            "events": 587,
+            "selected_by_teacher": 577,
+            "teacher_selection_rate_all": 0.9829642248722317,
+            "teacher_selection_rate_when_present": 0.9965457685664939
+          },
+          "1-30": {
+            "candidate_present": 16,
+            "candidate_recall": 0.7272727272727273,
+            "events": 22,
+            "selected_by_teacher": 13,
+            "teacher_selection_rate_all": 0.5909090909090909,
+            "teacher_selection_rate_when_present": 0.8125
+          },
+          "31-90": {
+            "candidate_present": 2,
+            "candidate_recall": 0.6666666666666666,
+            "events": 3,
+            "selected_by_teacher": 1,
+            "teacher_selection_rate_all": 0.3333333333333333,
+            "teacher_selection_rate_when_present": 0.5
+          }
+        },
+        "by_trajectory_length": {
+          "high": {
+            "candidate_present": 300,
+            "candidate_recall": 0.974025974025974,
+            "events": 308,
+            "selected_by_teacher": 295,
+            "teacher_selection_rate_all": 0.9577922077922078,
+            "teacher_selection_rate_when_present": 0.9833333333333333
+          },
+          "low": {
+            "candidate_present": 91,
+            "candidate_recall": 0.9680851063829787,
+            "events": 94,
+            "selected_by_teacher": 91,
+            "teacher_selection_rate_all": 0.9680851063829787,
+            "teacher_selection_rate_when_present": 1.0
+          },
+          "medium": {
+            "candidate_present": 206,
+            "candidate_recall": 0.9809523809523809,
+            "events": 210,
+            "selected_by_teacher": 205,
+            "teacher_selection_rate_all": 0.9761904761904762,
+            "teacher_selection_rate_when_present": 0.9951456310679612
+          }
+        },
+        "candidate_present": 597,
+        "candidate_recall": 0.9754901960784313,
+        "correct_continuation_rank": {
+          "appearance_in_rank": {
+            "count": 597,
+            "max": 41.0,
+            "p50": 1.0,
+            "p90": 3.0,
+            "p95": 6.0,
+            "top10_rate": 0.9765494137353434,
+            "top1_rate": 0.8425460636515912,
+            "top32_rate": 0.998324958123953,
+            "top5_rate": 0.9430485762144054
+          },
+          "appearance_out_rank": {
+            "count": 597,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 3.0,
+            "p95": 11.199999999999932,
+            "top10_rate": 0.9447236180904522,
+            "top1_rate": 0.8291457286432161,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9262981574539364
+          },
+          "candidate_present_events": 597,
+          "in_rank": {
+            "count": 597,
+            "max": 47.0,
+            "p50": 1.0,
+            "p90": 4.0,
+            "p95": 8.0,
+            "top10_rate": 0.9681742043551089,
+            "top1_rate": 0.7554438860971524,
+            "top32_rate": 0.998324958123953,
+            "top5_rate": 0.932998324958124
+          },
+          "max_rank": {
+            "count": 597,
+            "max": 47.0,
+            "p50": 1.0,
+            "p90": 5.399999999999977,
+            "p95": 14.0,
+            "top10_rate": 0.9279731993299832,
+            "top1_rate": 0.6365159128978225,
+            "top32_rate": 0.998324958123953,
+            "top5_rate": 0.8994974874371859
+          },
+          "motion_in_rank": {
+            "count": 597,
+            "max": 5.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 1.0,
+            "top1_rate": 0.9715242881072027,
+            "top32_rate": 1.0,
+            "top5_rate": 1.0
+          },
+          "motion_out_rank": {
+            "count": 597,
+            "max": 6.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 1.0,
+            "top1_rate": 0.9782244556113903,
+            "top32_rate": 1.0,
+            "top5_rate": 0.998324958123953
+          },
+          "out_rank": {
+            "count": 597,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 5.0,
+            "p95": 11.199999999999932,
+            "top10_rate": 0.9430485762144054,
+            "top1_rate": 0.7420435510887772,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9195979899497487
+          }
+        },
+        "cross_successor_events": 18,
+        "gt_successor_events": 612,
+        "present_but_not_selected": 6,
+        "selected_by_teacher": 591,
+        "source_parent_successor_events": 579,
+        "teacher_selection_rate_all_successors": 0.9656862745098039,
+        "teacher_selection_rate_when_candidate_present": 0.9899497487437185,
+        "within_gap_600_candidate_present": 597,
+        "within_gap_600_candidate_recall": 0.9754901960784313,
+        "within_gap_600_events": 612
+      },
+      "coverage_thresholds": {
+        "crowd_definition": "max M23-46 tracker detections at source-last and destination-first frames",
+        "crowd_tertiles_from_all_frozen_nodes": {
+          "low_upper": 46.0,
+          "medium_upper": 51.0
+        },
+        "successor_definition": "for each GT-labeled source chunk, the earliest same-GT chunk whose first frame is strictly after the source last frame; deterministic ties by first_frame,last_frame,chunk_id",
+        "trajectory_length_definition": "sum of dominant matched rows over chunks assigned to the GT identity",
+        "trajectory_length_tertiles": {
+          "low_upper": 205.0,
+          "medium_upper": 335.0
+        }
+      },
+      "flow_edit_audit": {
+        "cut_parent_edges": 29,
+        "detection_boxes_or_scores_changed": 0,
+        "detection_row_values_changed": 0,
+        "detection_rows_total": 19372,
+        "dummy_restart_nodes": 101,
+        "dummy_terminate_nodes": 101,
+        "edge_edit_rate_vs_parent": 0.08085808580858085,
+        "exact_two_successor_swap_transactions": 0,
+        "identity_assignment_affected_chunks": 68,
+        "identity_assignment_affected_row_rate": 0.08718769357836052,
+        "identity_assignment_affected_rows": 1689,
+        "keep_parent_edges": 577,
+        "note": "affected rows belong to chunks incident to a cut or newly selected edge; the detector rows, boxes and scores themselves remain byte-identical",
+        "parent_edges": 606,
+        "selected_correct_cross_edges": 20,
+        "selected_cross_edges": 20,
+        "selected_edges": 597,
+        "selected_wrong_or_unmatched_cross_edges": 0,
+        "swap_involved_source_edges": 0,
+        "symmetric_difference_edges": 49
+      },
+      "forbidden_edge_columns": [],
+      "forbidden_node_columns": [],
+      "freeze_manifest_sha256": "805556350bd0432ed9733180a7a6ef6f9ae14a65055bee882c850768084d82a3",
+      "frozen_edges_sha256": "038d118b807fd140d476bbfdc2c670c6ff09570a85f48faec38f6296ba552e6d",
+      "frozen_nodes_sha256": "1101fd75359664421e575b3894157a1a91fc959fab13044bc44327925b45a6a4",
+      "official_trackeval": {
+        "AssA": 79.78898,
+        "DetA": 82.05882,
+        "HOTA": 80.84379,
+        "IDSW": 56
+      },
+      "run": "m23_53_identity_flow_capacity_m01_v1",
+      "source_edge_audit": {
+        "both_endpoints_matched": 603,
+        "cross_gt_identity_edges": 23,
+        "cross_gt_ratio_all_parent": 0.037953795379537955,
+        "cross_gt_ratio_among_matched_parent": 0.03814262023217247,
+        "cross_gt_with_any_alternative_rate": 0.4782608695652174,
+        "cross_gt_with_any_same_gt_forward_cross_alternative": 11,
+        "cross_gt_with_exact_gt_successor_cross_alternative": 9,
+        "cross_gt_with_exact_successor_alternative_rate": 0.391304347826087,
+        "parent_source_edges": 606,
+        "unmatched_endpoint_edges": 3,
+        "unmatched_endpoint_ratio": 0.0049504950495049506,
+        "wrong_or_unmatched_source_edges": 26,
+        "wrong_with_any_alternative_rate": 0.4230769230769231,
+        "wrong_with_any_same_gt_forward_cross_alternative": 11,
+        "wrong_with_exact_gt_successor_cross_alternative": 9,
+        "wrong_with_exact_successor_alternative_rate": 0.34615384615384615
+      },
+      "successor_events": "outputs/mot20_m23_20260718/m23_53_candidate_coverage_audit_v1/MOT20-01/successor_events.parquet",
+      "successor_events_sha256": "239bf88dd7371ef3388cd44cb3473a0f4279498c3f06d2030df1632beae893ec"
+    },
+    "MOT20-02": {
+      "baseline_byte_exact": true,
+      "coverage": {
+        "by_crowd": {
+          "high": {
+            "candidate_present": 1586,
+            "candidate_recall": 0.9395734597156398,
+            "events": 1688,
+            "selected_by_teacher": 1560,
+            "teacher_selection_rate_all": 0.9241706161137441,
+            "teacher_selection_rate_when_present": 0.9836065573770492
+          },
+          "low": {
+            "candidate_present": 1580,
+            "candidate_recall": 0.9819763828464885,
+            "events": 1609,
+            "selected_by_teacher": 1567,
+            "teacher_selection_rate_all": 0.9738968303293971,
+            "teacher_selection_rate_when_present": 0.9917721518987341
+          },
+          "medium": {
+            "candidate_present": 1559,
+            "candidate_recall": 0.9695273631840796,
+            "events": 1608,
+            "selected_by_teacher": 1550,
+            "teacher_selection_rate_all": 0.9639303482587065,
+            "teacher_selection_rate_when_present": 0.9942270686337396
+          }
+        },
+        "by_gap": {
+          "0": {
+            "candidate_present": 4601,
+            "candidate_recall": 0.9930930282754155,
+            "events": 4633,
+            "selected_by_teacher": 4590,
+            "teacher_selection_rate_all": 0.9907187567450896,
+            "teacher_selection_rate_when_present": 0.9976092153879591
+          },
+          "1-30": {
+            "candidate_present": 112,
+            "candidate_recall": 0.5022421524663677,
+            "events": 223,
+            "selected_by_teacher": 75,
+            "teacher_selection_rate_all": 0.336322869955157,
+            "teacher_selection_rate_when_present": 0.6696428571428571
+          },
+          "181-600": {
+            "candidate_present": 0,
+            "candidate_recall": 0.0,
+            "events": 1,
+            "selected_by_teacher": 0,
+            "teacher_selection_rate_all": 0.0,
+            "teacher_selection_rate_when_present": null
+          },
+          "31-90": {
+            "candidate_present": 12,
+            "candidate_recall": 0.2926829268292683,
+            "events": 41,
+            "selected_by_teacher": 12,
+            "teacher_selection_rate_all": 0.2926829268292683,
+            "teacher_selection_rate_when_present": 1.0
+          },
+          "91-180": {
+            "candidate_present": 0,
+            "candidate_recall": 0.0,
+            "events": 7,
+            "selected_by_teacher": 0,
+            "teacher_selection_rate_all": 0.0,
+            "teacher_selection_rate_when_present": null
+          }
+        },
+        "by_trajectory_length": {
+          "high": {
+            "candidate_present": 2520,
+            "candidate_recall": 0.9725974527209572,
+            "events": 2591,
+            "selected_by_teacher": 2496,
+            "teacher_selection_rate_all": 0.9633346198379005,
+            "teacher_selection_rate_when_present": 0.9904761904761905
+          },
+          "low": {
+            "candidate_present": 741,
+            "candidate_recall": 0.9512195121951219,
+            "events": 779,
+            "selected_by_teacher": 734,
+            "teacher_selection_rate_all": 0.9422336328626444,
+            "teacher_selection_rate_when_present": 0.99055330634278
+          },
+          "medium": {
+            "candidate_present": 1464,
+            "candidate_recall": 0.9537459283387623,
+            "events": 1535,
+            "selected_by_teacher": 1447,
+            "teacher_selection_rate_all": 0.9426710097719869,
+            "teacher_selection_rate_when_present": 0.9883879781420765
+          }
+        },
+        "candidate_present": 4725,
+        "candidate_recall": 0.963302752293578,
+        "correct_continuation_rank": {
+          "appearance_in_rank": {
+            "count": 4725,
+            "max": 57.0,
+            "p50": 1.0,
+            "p90": 3.0,
+            "p95": 7.0,
+            "top10_rate": 0.9695238095238096,
+            "top1_rate": 0.8213756613756614,
+            "top32_rate": 0.997037037037037,
+            "top5_rate": 0.9358730158730159
+          },
+          "appearance_out_rank": {
+            "count": 4725,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 4.0,
+            "p95": 11.0,
+            "top10_rate": 0.9445502645502646,
+            "top1_rate": 0.8165079365079365,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9164021164021164
+          },
+          "candidate_present_events": 4725,
+          "in_rank": {
+            "count": 4725,
+            "max": 69.0,
+            "p50": 1.0,
+            "p90": 5.0,
+            "p95": 9.0,
+            "top10_rate": 0.9591534391534392,
+            "top1_rate": 0.7151322751322752,
+            "top32_rate": 0.995978835978836,
+            "top5_rate": 0.9106878306878307
+          },
+          "max_rank": {
+            "count": 4725,
+            "max": 69.0,
+            "p50": 1.0,
+            "p90": 9.0,
+            "p95": 17.0,
+            "top10_rate": 0.9142857142857143,
+            "top1_rate": 0.6035978835978836,
+            "top32_rate": 0.995978835978836,
+            "top5_rate": 0.8537566137566137
+          },
+          "motion_in_rank": {
+            "count": 4725,
+            "max": 15.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 0.9993650793650793,
+            "top1_rate": 0.9758730158730159,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9980952380952381
+          },
+          "motion_out_rank": {
+            "count": 4725,
+            "max": 10.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 1.0,
+            "top1_rate": 0.9775661375661375,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9980952380952381
+          },
+          "out_rank": {
+            "count": 4725,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 6.0,
+            "p95": 15.0,
+            "top10_rate": 0.9333333333333333,
+            "top1_rate": 0.7140740740740741,
+            "top32_rate": 1.0,
+            "top5_rate": 0.8899470899470899
+          }
+        },
+        "cross_successor_events": 126,
+        "gt_successor_events": 4905,
+        "present_but_not_selected": 48,
+        "selected_by_teacher": 4677,
+        "source_parent_successor_events": 4599,
+        "teacher_selection_rate_all_successors": 0.9535168195718654,
+        "teacher_selection_rate_when_candidate_present": 0.9898412698412699,
+        "within_gap_600_candidate_present": 4725,
+        "within_gap_600_candidate_recall": 0.963302752293578,
+        "within_gap_600_events": 4905
+      },
+      "coverage_thresholds": {
+        "crowd_definition": "max M23-46 tracker detections at source-last and destination-first frames",
+        "crowd_tertiles_from_all_frozen_nodes": {
+          "low_upper": 47.0,
+          "medium_upper": 70.0
+        },
+        "successor_definition": "for each GT-labeled source chunk, the earliest same-GT chunk whose first frame is strictly after the source last frame; deterministic ties by first_frame,last_frame,chunk_id",
+        "trajectory_length_definition": "sum of dominant matched rows over chunks assigned to the GT identity",
+        "trajectory_length_tertiles": {
+          "low_upper": 417.0,
+          "medium_upper": 613.3333333333333
+        }
+      },
+      "flow_edit_audit": {
+        "cut_parent_edges": 258,
+        "detection_boxes_or_scores_changed": 0,
+        "detection_row_values_changed": 0,
+        "detection_rows_total": 151152,
+        "dummy_restart_nodes": 592,
+        "dummy_terminate_nodes": 592,
+        "edge_edit_rate_vs_parent": 0.07460840890354493,
+        "exact_two_successor_swap_transactions": 1,
+        "identity_assignment_affected_chunks": 540,
+        "identity_assignment_affected_row_rate": 0.09246983169260083,
+        "identity_assignment_affected_rows": 13977,
+        "keep_parent_edges": 4594,
+        "note": "affected rows belong to chunks incident to a cut or newly selected edge; the detector rows, boxes and scores themselves remain byte-identical",
+        "parent_edges": 4852,
+        "selected_correct_cross_edges": 104,
+        "selected_cross_edges": 104,
+        "selected_edges": 4698,
+        "selected_wrong_or_unmatched_cross_edges": 0,
+        "swap_involved_source_edges": 2,
+        "symmetric_difference_edges": 362
+      },
+      "forbidden_edge_columns": [],
+      "forbidden_node_columns": [],
+      "freeze_manifest_sha256": "10f38b6e07cbd522c876f690a3bb540749757e1e3f455c4e99cfa1cd58d3ecbe",
+      "frozen_edges_sha256": "3270e307fc5bf65daf17a9f9162b4614ee6eea62b253c8e266483c7a503530f8",
+      "frozen_nodes_sha256": "ca6bafb2fde9168a16cee3d99191c3d3d0e10702af9c048681fdd759680b8969",
+      "official_trackeval": {
+        "AssA": 69.07266,
+        "DetA": 81.60567,
+        "HOTA": 75.02046,
+        "IDSW": 462
+      },
+      "run": "m23_53_identity_flow_capacity_m02_v1",
+      "source_edge_audit": {
+        "both_endpoints_matched": 4801,
+        "cross_gt_identity_edges": 187,
+        "cross_gt_ratio_all_parent": 0.03854080791426216,
+        "cross_gt_ratio_among_matched_parent": 0.03895021870443657,
+        "cross_gt_with_any_alternative_rate": 0.5187165775401069,
+        "cross_gt_with_any_same_gt_forward_cross_alternative": 97,
+        "cross_gt_with_exact_gt_successor_cross_alternative": 69,
+        "cross_gt_with_exact_successor_alternative_rate": 0.3689839572192513,
+        "parent_source_edges": 4852,
+        "unmatched_endpoint_edges": 51,
+        "unmatched_endpoint_ratio": 0.010511129431162407,
+        "wrong_or_unmatched_source_edges": 238,
+        "wrong_with_any_alternative_rate": 0.4369747899159664,
+        "wrong_with_any_same_gt_forward_cross_alternative": 104,
+        "wrong_with_exact_gt_successor_cross_alternative": 75,
+        "wrong_with_exact_successor_alternative_rate": 0.31512605042016806
+      },
+      "successor_events": "outputs/mot20_m23_20260718/m23_53_candidate_coverage_audit_v1/MOT20-02/successor_events.parquet",
+      "successor_events_sha256": "db2eac4fcdf429c85bcde9dee067a64d09666b71918da38277b41f26f9ff9087"
+    },
+    "MOT20-03": {
+      "baseline_byte_exact": true,
+      "coverage": {
+        "by_crowd": {
+          "high": {
+            "candidate_present": 3358,
+            "candidate_recall": 0.9911452184179457,
+            "events": 3388,
+            "selected_by_teacher": 3344,
+            "teacher_selection_rate_all": 0.987012987012987,
+            "teacher_selection_rate_when_present": 0.9958308516974389
+          },
+          "low": {
+            "candidate_present": 3098,
+            "candidate_recall": 0.9964618848504342,
+            "events": 3109,
+            "selected_by_teacher": 3093,
+            "teacher_selection_rate_all": 0.9948536506915406,
+            "teacher_selection_rate_when_present": 0.9983860555196902
+          },
+          "medium": {
+            "candidate_present": 3256,
+            "candidate_recall": 0.9932885906040269,
+            "events": 3278,
+            "selected_by_teacher": 3254,
+            "teacher_selection_rate_all": 0.9926784624771202,
+            "teacher_selection_rate_when_present": 0.9993857493857494
+          }
+        },
+        "by_gap": {
+          "0": {
+            "candidate_present": 9645,
+            "candidate_recall": 0.9991712421009012,
+            "events": 9653,
+            "selected_by_teacher": 9635,
+            "teacher_selection_rate_all": 0.9981352947270279,
+            "teacher_selection_rate_when_present": 0.9989631933644375
+          },
+          "1-30": {
+            "candidate_present": 56,
+            "candidate_recall": 0.5833333333333334,
+            "events": 96,
+            "selected_by_teacher": 45,
+            "teacher_selection_rate_all": 0.46875,
+            "teacher_selection_rate_when_present": 0.8035714285714286
+          },
+          "181-600": {
+            "candidate_present": 1,
+            "candidate_recall": 0.3333333333333333,
+            "events": 3,
+            "selected_by_teacher": 1,
+            "teacher_selection_rate_all": 0.3333333333333333,
+            "teacher_selection_rate_when_present": 1.0
+          },
+          "31-90": {
+            "candidate_present": 8,
+            "candidate_recall": 0.4444444444444444,
+            "events": 18,
+            "selected_by_teacher": 8,
+            "teacher_selection_rate_all": 0.4444444444444444,
+            "teacher_selection_rate_when_present": 1.0
+          },
+          "91-180": {
+            "candidate_present": 2,
+            "candidate_recall": 0.4,
+            "events": 5,
+            "selected_by_teacher": 2,
+            "teacher_selection_rate_all": 0.4,
+            "teacher_selection_rate_when_present": 1.0
+          }
+        },
+        "by_trajectory_length": {
+          "high": {
+            "candidate_present": 5747,
+            "candidate_recall": 0.9953238656044336,
+            "events": 5774,
+            "selected_by_teacher": 5736,
+            "teacher_selection_rate_all": 0.9934187738136474,
+            "teacher_selection_rate_when_present": 0.9980859578910736
+          },
+          "low": {
+            "candidate_present": 912,
+            "candidate_recall": 0.9848812095032398,
+            "events": 926,
+            "selected_by_teacher": 907,
+            "teacher_selection_rate_all": 0.9794816414686826,
+            "teacher_selection_rate_when_present": 0.9945175438596491
+          },
+          "medium": {
+            "candidate_present": 3053,
+            "candidate_recall": 0.9928455284552845,
+            "events": 3075,
+            "selected_by_teacher": 3048,
+            "teacher_selection_rate_all": 0.9912195121951219,
+            "teacher_selection_rate_when_present": 0.9983622666229938
+          }
+        },
+        "candidate_present": 9712,
+        "candidate_recall": 0.9935549872122762,
+        "correct_continuation_rank": {
+          "appearance_in_rank": {
+            "count": 9712,
+            "max": 50.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 3.0,
+            "top10_rate": 0.984349258649094,
+            "top1_rate": 0.9002265238879736,
+            "top32_rate": 0.9990733113673805,
+            "top5_rate": 0.966330313014827
+          },
+          "appearance_out_rank": {
+            "count": 9712,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 4.0,
+            "top10_rate": 0.9804365733113674,
+            "top1_rate": 0.9063014827018122,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9635502471169687
+          },
+          "candidate_present_events": 9712,
+          "in_rank": {
+            "count": 9712,
+            "max": 57.0,
+            "p50": 1.0,
+            "p90": 2.0,
+            "p95": 5.0,
+            "top10_rate": 0.978171334431631,
+            "top1_rate": 0.8445222405271828,
+            "top32_rate": 0.9984555189456342,
+            "top5_rate": 0.9547981878088962
+          },
+          "max_rank": {
+            "count": 9712,
+            "max": 57.0,
+            "p50": 1.0,
+            "p90": 3.0,
+            "p95": 8.0,
+            "top10_rate": 0.9621087314662273,
+            "top1_rate": 0.7724464579901154,
+            "top32_rate": 0.9984555189456342,
+            "top5_rate": 0.9329695222405272
+          },
+          "motion_in_rank": {
+            "count": 9712,
+            "max": 14.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 0.9998970345963756,
+            "top1_rate": 0.9937191103789127,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9990733113673805
+          },
+          "motion_out_rank": {
+            "count": 9712,
+            "max": 7.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 1.0,
+            "top1_rate": 0.9950576606260296,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9995881383855024
+          },
+          "out_rank": {
+            "count": 9712,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 2.0,
+            "p95": 5.0,
+            "top10_rate": 0.9735378912685337,
+            "top1_rate": 0.8478171334431631,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9537685337726524
+          }
+        },
+        "cross_successor_events": 68,
+        "gt_successor_events": 9775,
+        "present_but_not_selected": 21,
+        "selected_by_teacher": 9691,
+        "source_parent_successor_events": 9644,
+        "teacher_selection_rate_all_successors": 0.9914066496163683,
+        "teacher_selection_rate_when_candidate_present": 0.997837726523888,
+        "within_gap_600_candidate_present": 9712,
+        "within_gap_600_candidate_recall": 0.9935549872122762,
+        "within_gap_600_events": 9775
+      },
+      "coverage_thresholds": {
+        "crowd_definition": "max M23-46 tracker detections at source-last and destination-first frames",
+        "crowd_tertiles_from_all_frozen_nodes": {
+          "low_upper": 116.0,
+          "medium_upper": 164.0
+        },
+        "successor_definition": "for each GT-labeled source chunk, the earliest same-GT chunk whose first frame is strictly after the source last frame; deterministic ties by first_frame,last_frame,chunk_id",
+        "trajectory_length_definition": "sum of dominant matched rows over chunks assigned to the GT identity",
+        "trajectory_length_tertiles": {
+          "low_upper": 265.0,
+          "medium_upper": 616.0
+        }
+      },
+      "flow_edit_audit": {
+        "cut_parent_edges": 212,
+        "detection_boxes_or_scores_changed": 0,
+        "detection_row_values_changed": 0,
+        "detection_rows_total": 305937,
+        "dummy_restart_nodes": 908,
+        "dummy_terminate_nodes": 908,
+        "edge_edit_rate_vs_parent": 0.027416734362307068,
+        "exact_two_successor_swap_transactions": 1,
+        "identity_assignment_affected_chunks": 452,
+        "identity_assignment_affected_row_rate": 0.03324213808725326,
+        "identity_assignment_affected_rows": 10170,
+        "keep_parent_edges": 9636,
+        "note": "affected rows belong to chunks incident to a cut or newly selected edge; the detector rows, boxes and scores themselves remain byte-identical",
+        "parent_edges": 9848,
+        "selected_correct_cross_edges": 58,
+        "selected_cross_edges": 58,
+        "selected_edges": 9694,
+        "selected_wrong_or_unmatched_cross_edges": 0,
+        "swap_involved_source_edges": 2,
+        "symmetric_difference_edges": 270
+      },
+      "forbidden_edge_columns": [],
+      "forbidden_node_columns": [],
+      "freeze_manifest_sha256": "997c6b10a1dc6e04f6f9a94cc90d0874ffaac140b17f76ead5d50800286796cd",
+      "frozen_edges_sha256": "c6eab090ddb813c919c10899b1be5124056acbffb3928b1801141722a8f9d40c",
+      "frozen_nodes_sha256": "4dd0e4be790170d9aa8f5bb127c07e9c6b22af33665f55b1adc276206ab898a9",
+      "official_trackeval": {
+        "AssA": 81.31756999999999,
+        "DetA": 81.39949,
+        "HOTA": 81.342626,
+        "IDSW": 199
+      },
+      "run": "m23_53_identity_flow_capacity_m03_v1",
+      "source_edge_audit": {
+        "both_endpoints_matched": 9748,
+        "cross_gt_identity_edges": 102,
+        "cross_gt_ratio_all_parent": 0.010357432981316004,
+        "cross_gt_ratio_among_matched_parent": 0.0104636848584325,
+        "cross_gt_with_any_alternative_rate": 0.23529411764705882,
+        "cross_gt_with_any_same_gt_forward_cross_alternative": 24,
+        "cross_gt_with_exact_gt_successor_cross_alternative": 23,
+        "cross_gt_with_exact_successor_alternative_rate": 0.22549019607843138,
+        "parent_source_edges": 9848,
+        "unmatched_endpoint_edges": 100,
+        "unmatched_endpoint_ratio": 0.010154346060113728,
+        "wrong_or_unmatched_source_edges": 202,
+        "wrong_with_any_alternative_rate": 0.1485148514851485,
+        "wrong_with_any_same_gt_forward_cross_alternative": 30,
+        "wrong_with_exact_gt_successor_cross_alternative": 27,
+        "wrong_with_exact_successor_alternative_rate": 0.13366336633663367
+      },
+      "successor_events": "outputs/mot20_m23_20260718/m23_53_candidate_coverage_audit_v1/MOT20-03/successor_events.parquet",
+      "successor_events_sha256": "8edf150368ad06d8a5d1d61a20d13d7d3ef9b1a7a698d626a5db0d4c67ba2a21"
+    },
+    "MOT20-05": {
+      "baseline_byte_exact": true,
+      "coverage": {
+        "by_crowd": {
+          "high": {
+            "candidate_present": 7621,
+            "candidate_recall": 0.985261797026503,
+            "events": 7735,
+            "selected_by_teacher": 7588,
+            "teacher_selection_rate_all": 0.9809954751131221,
+            "teacher_selection_rate_when_present": 0.9956698595984779
+          },
+          "low": {
+            "candidate_present": 6296,
+            "candidate_recall": 0.9896259038038353,
+            "events": 6362,
+            "selected_by_teacher": 6268,
+            "teacher_selection_rate_all": 0.9852247720842502,
+            "teacher_selection_rate_when_present": 0.9955527318932655
+          },
+          "medium": {
+            "candidate_present": 6335,
+            "candidate_recall": 0.986145703611457,
+            "events": 6424,
+            "selected_by_teacher": 6318,
+            "teacher_selection_rate_all": 0.9834993773349938,
+            "teacher_selection_rate_when_present": 0.9973164956590371
+          }
+        },
+        "by_gap": {
+          "0": {
+            "candidate_present": 20052,
+            "candidate_recall": 0.9981085116973619,
+            "events": 20090,
+            "selected_by_teacher": 20014,
+            "teacher_selection_rate_all": 0.9962170233947237,
+            "teacher_selection_rate_when_present": 0.9981049271893078
+          },
+          "1-30": {
+            "candidate_present": 178,
+            "candidate_recall": 0.5219941348973607,
+            "events": 341,
+            "selected_by_teacher": 139,
+            "teacher_selection_rate_all": 0.40762463343108507,
+            "teacher_selection_rate_when_present": 0.7808988764044944
+          },
+          "181-600": {
+            "candidate_present": 1,
+            "candidate_recall": 0.2,
+            "events": 5,
+            "selected_by_teacher": 1,
+            "teacher_selection_rate_all": 0.2,
+            "teacher_selection_rate_when_present": 1.0
+          },
+          "31-90": {
+            "candidate_present": 15,
+            "candidate_recall": 0.2112676056338028,
+            "events": 71,
+            "selected_by_teacher": 14,
+            "teacher_selection_rate_all": 0.19718309859154928,
+            "teacher_selection_rate_when_present": 0.9333333333333333
+          },
+          "91-180": {
+            "candidate_present": 6,
+            "candidate_recall": 0.42857142857142855,
+            "events": 14,
+            "selected_by_teacher": 6,
+            "teacher_selection_rate_all": 0.42857142857142855,
+            "teacher_selection_rate_when_present": 1.0
+          }
+        },
+        "by_trajectory_length": {
+          "high": {
+            "candidate_present": 13193,
+            "candidate_recall": 0.990911822142106,
+            "events": 13314,
+            "selected_by_teacher": 13137,
+            "teacher_selection_rate_all": 0.9867057232987833,
+            "teacher_selection_rate_when_present": 0.9957553247934511
+          },
+          "low": {
+            "candidate_present": 1652,
+            "candidate_recall": 0.9775147928994082,
+            "events": 1690,
+            "selected_by_teacher": 1650,
+            "teacher_selection_rate_all": 0.9763313609467456,
+            "teacher_selection_rate_when_present": 0.9987893462469734
+          },
+          "medium": {
+            "candidate_present": 5407,
+            "candidate_recall": 0.9800616276962117,
+            "events": 5517,
+            "selected_by_teacher": 5387,
+            "teacher_selection_rate_all": 0.976436469095523,
+            "teacher_selection_rate_when_present": 0.9963010911781025
+          }
+        },
+        "candidate_present": 20252,
+        "candidate_recall": 0.9868914770235369,
+        "correct_continuation_rank": {
+          "appearance_in_rank": {
+            "count": 20252,
+            "max": 106.0,
+            "p50": 1.0,
+            "p90": 2.0,
+            "p95": 5.0,
+            "top10_rate": 0.9806438870235038,
+            "top1_rate": 0.8766047797748371,
+            "top32_rate": 0.9984692869840016,
+            "top5_rate": 0.9558068338929488
+          },
+          "appearance_out_rank": {
+            "count": 20252,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 2.0,
+            "p95": 6.0,
+            "top10_rate": 0.9746197906379617,
+            "top1_rate": 0.876407268417934,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9477582460991507
+          },
+          "candidate_present_events": 20252,
+          "in_rank": {
+            "count": 20252,
+            "max": 127.0,
+            "p50": 1.0,
+            "p90": 4.0,
+            "p95": 8.0,
+            "top10_rate": 0.9665218250049378,
+            "top1_rate": 0.7598755678451511,
+            "top32_rate": 0.9965435512541971,
+            "top5_rate": 0.9269207979458819
+          },
+          "max_rank": {
+            "count": 20252,
+            "max": 127.0,
+            "p50": 1.0,
+            "p90": 6.0,
+            "p95": 14.0,
+            "top10_rate": 0.9361050760418724,
+            "top1_rate": 0.6530219237606162,
+            "top32_rate": 0.9965435512541971,
+            "top5_rate": 0.8888504839028244
+          },
+          "motion_in_rank": {
+            "count": 20252,
+            "max": 49.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 0.9997037329646454,
+            "top1_rate": 0.9916057673316215,
+            "top32_rate": 0.9999506221607742,
+            "top5_rate": 0.9991111988939364
+          },
+          "motion_out_rank": {
+            "count": 20252,
+            "max": 11.0,
+            "p50": 1.0,
+            "p90": 1.0,
+            "p95": 1.0,
+            "top10_rate": 0.9999506221607742,
+            "top1_rate": 0.9943709263282638,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9995062216077425
+          },
+          "out_rank": {
+            "count": 20252,
+            "max": 17.0,
+            "p50": 1.0,
+            "p90": 4.0,
+            "p95": 10.0,
+            "top10_rate": 0.9512146948449536,
+            "top1_rate": 0.7659984199091447,
+            "top32_rate": 1.0,
+            "top5_rate": 0.9205016788465337
+          }
+        },
+        "cross_successor_events": 191,
+        "gt_successor_events": 20521,
+        "present_but_not_selected": 78,
+        "selected_by_teacher": 20174,
+        "source_parent_successor_events": 20061,
+        "teacher_selection_rate_all_successors": 0.9830904926660494,
+        "teacher_selection_rate_when_candidate_present": 0.996148528540391,
+        "within_gap_600_candidate_present": 20252,
+        "within_gap_600_candidate_recall": 0.9868914770235369,
+        "within_gap_600_events": 20521
+      },
+      "coverage_thresholds": {
+        "crowd_definition": "max M23-46 tracker detections at source-last and destination-first frames",
+        "crowd_tertiles_from_all_frozen_nodes": {
+          "low_upper": 190.0,
+          "medium_upper": 197.0
+        },
+        "successor_definition": "for each GT-labeled source chunk, the earliest same-GT chunk whose first frame is strictly after the source last frame; deterministic ties by first_frame,last_frame,chunk_id",
+        "trajectory_length_definition": "sum of dominant matched rows over chunks assigned to the GT identity",
+        "trajectory_length_tertiles": {
+          "low_upper": 293.0,
+          "medium_upper": 603.0
+        }
+      },
+      "flow_edit_audit": {
+        "cut_parent_edges": 611,
+        "detection_boxes_or_scores_changed": 0,
+        "detection_row_values_changed": 0,
+        "detection_rows_total": 638588,
+        "dummy_restart_nodes": 2034,
+        "dummy_terminate_nodes": 2034,
+        "edge_edit_rate_vs_parent": 0.03724512035646825,
+        "exact_two_successor_swap_transactions": 3,
+        "identity_assignment_affected_chunks": 1296,
+        "identity_assignment_affected_row_rate": 0.04545653848803924,
+        "identity_assignment_affected_rows": 29028,
+        "keep_parent_edges": 20036,
+        "note": "affected rows belong to chunks incident to a cut or newly selected edge; the detector rows, boxes and scores themselves remain byte-identical",
+        "parent_edges": 20647,
+        "selected_correct_cross_edges": 158,
+        "selected_cross_edges": 158,
+        "selected_edges": 20194,
+        "selected_wrong_or_unmatched_cross_edges": 0,
+        "swap_involved_source_edges": 6,
+        "symmetric_difference_edges": 769
+      },
+      "forbidden_edge_columns": [],
+      "forbidden_node_columns": [],
+      "freeze_manifest_sha256": "6e297fd6430ab6d4b57acc75e1dd2704968d2524e7c962a99eb4e7bd47a8369d",
+      "frozen_edges_sha256": "71466803a98511ccf91e7630149c48a456bd7038286d6455f546c05a9fe8515b",
+      "frozen_nodes_sha256": "f9f8a8d7f994c312353f1bdf85fe1ecdd713189c20eb148bc001691bd341da84",
+      "official_trackeval": {
+        "AssA": 78.70512,
+        "DetA": 82.078904,
+        "HOTA": 80.35353400000001,
+        "IDSW": 620
+      },
+      "run": "m23_53_identity_flow_capacity_m05_v1",
+      "source_edge_audit": {
+        "both_endpoints_matched": 20319,
+        "cross_gt_identity_edges": 233,
+        "cross_gt_ratio_all_parent": 0.011284932435704945,
+        "cross_gt_ratio_among_matched_parent": 0.0114670997588464,
+        "cross_gt_with_any_alternative_rate": 0.2446351931330472,
+        "cross_gt_with_any_same_gt_forward_cross_alternative": 57,
+        "cross_gt_with_exact_gt_successor_cross_alternative": 43,
+        "cross_gt_with_exact_successor_alternative_rate": 0.18454935622317598,
+        "parent_source_edges": 20647,
+        "unmatched_endpoint_edges": 328,
+        "unmatched_endpoint_ratio": 0.015886085145541726,
+        "wrong_or_unmatched_source_edges": 561,
+        "wrong_with_any_alternative_rate": 0.11229946524064172,
+        "wrong_with_any_same_gt_forward_cross_alternative": 63,
+        "wrong_with_exact_gt_successor_cross_alternative": 48,
+        "wrong_with_exact_successor_alternative_rate": 0.0855614973262032
+      },
+      "successor_events": "outputs/mot20_m23_20260718/m23_53_candidate_coverage_audit_v1/MOT20-05/successor_events.parquet",
+      "successor_events_sha256": "9d5585d1840ef5d825d0eb3fbf9f8ee6a4879ce820d87abdb9929ffa6d60ff5e"
+    }
+  },
+  "git_head": "d5fc3407c7e4960ed6835781fae0b04d753b39af",
+  "m02_smoke_verification": {
+    "acyclic": true,
+    "baseline_byte_exact": true,
+    "baseline_tracker_sha256": "f6f5600da5fd630d07a496e3d6eda5dab5c194fedc5fbfc2e2f8e184be70a714",
+    "forbidden_edge_columns": [],
+    "forbidden_node_columns": [],
+    "frozen_edges": 6900,
+    "official_trackeval": {
+      "AssA": 67.02141999999999,
+      "DetA": 81.60555000000001,
+      "HOTA": 73.896456,
+      "IDSW": 464
+    },
+    "one_to_one": true,
+    "rerun": false,
+    "run": "m23_53_identity_flow_capacity_m02_smoke_v1",
+    "time_forward": true
+  },
+  "next_gate": "M23-54 prohibited because teacher capacity is below 80.700000",
+  "official_combined": {
+    "AssA": 78.174204,
+    "DetA": 81.82043399999999,
+    "HOTA": 79.95059,
+    "IDSW": 1337
+  },
+  "read_only_post_freeze_diagnostic": true,
+  "status": "completed",
+  "strict_deployable_best": {
+    "AssA": 76.82515,
+    "DetA": 81.54347,
+    "HOTA": 79.123193,
+    "IDSW": 996,
+    "experiment": "M23-46"
+  },
+  "strict_parent": "M23-46 frozen deployable trackers/applied graphs",
+  "teacher_only": true,
+  "teacher_weights_changed": false,
+  "test_submission": false,
+  "trackeval_rerun": false
+}
