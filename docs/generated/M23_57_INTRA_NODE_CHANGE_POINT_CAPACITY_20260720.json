@@ -1,0 +1,714 @@
+{
+  "boundary_universe": {
+    "feature_count": 108,
+    "folds": {
+      "MOT20-01": {
+        "actions": 18674,
+        "boundary_features_sha256": "5ec2e9ef371cf0a55c62e3d409a4e7c4a5227968a9bfbb9d0cc703904f0f107b",
+        "chunk_membership_sha256": "c4517d5dd0ca053a31cda9b1077c1dabe7b69a6c72e13d43bf429989c9c7a307",
+        "feature_matrix_sha256": "059b3b7ce01d9e8e8b761191b5ae4d0207f71396e3a8bb7b41eaaccc9936ce4f",
+        "fixed_nodes": 698,
+        "manifest_sha256": "39f25e0361def9bfb8a1b1a24ad1b586506343c5645b5adc7a94dda28e549085",
+        "peak_rss_mb": 1101.0234375,
+        "rows": 19372,
+        "runtime_seconds": 20.437391757965088
+      },
+      "MOT20-02": {
+        "actions": 145862,
+        "boundary_features_sha256": "f47c4fe4271b82a570524817f51ce553db6a058bdf3b39eb70e6f2941a88305d",
+        "chunk_membership_sha256": "092c644377139b8383a29adabd7694e077ca51004b6a2b6fe23fefd6345f6e2b",
+        "feature_matrix_sha256": "176dd5e3f3918adbbe82614609a240eef35751d87b72f29daf5acae862b0df35",
+        "fixed_nodes": 5290,
+        "manifest_sha256": "68a0a5cada3498321dc68ff787d2798e016356af54acec6ebc26d24fef797cd1",
+        "peak_rss_mb": 1974.30859375,
+        "rows": 151152,
+        "runtime_seconds": 139.42396712303162
+      },
+      "MOT20-03": {
+        "actions": 295335,
+        "boundary_features_sha256": "595fb7cf5db450a817bf69bf4f561773bada5f2d98593b56c1e5e08177b7b29c",
+        "chunk_membership_sha256": "b1569d8534522b27e3c3876fd1a967124f131f16eb59c7481ff1007272cc9198",
+        "feature_matrix_sha256": "b6e2c3d97fda1a985ba569ade858a6f4aa6b9b6dda7c41a5b473d384066ca81f",
+        "fixed_nodes": 10602,
+        "manifest_sha256": "31fcc3a2cbedfaa9672d0ff4c3d9fe011bf152488ef14f184b67bb70998391c7",
+        "peak_rss_mb": 3452.23828125,
+        "rows": 305937,
+        "runtime_seconds": 269.0822334289551
+      },
+      "MOT20-05": {
+        "actions": 616360,
+        "boundary_features_sha256": "ef68a7114223a22ce3aead0a0d2a6f5ec161d5fe74c67f7482f8323697b3458e",
+        "chunk_membership_sha256": "cad73b818e59a3cf4a0a7725d14deff84effaf276b173fb4435ee4fb016fecdb",
+        "feature_matrix_sha256": "24331db89f2ab86368e1ad9ce568c4917382a8059a8687eea305d3be8c98f6c3",
+        "fixed_nodes": 22228,
+        "manifest_sha256": "0f97e36881a5fbe16f007329789bf0a931882553ca7371e3999b338a9cbec52e",
+        "peak_rss_mb": 6603.3125,
+        "rows": 638588,
+        "runtime_seconds": 544.724062204361
+      }
+    },
+    "forbidden_columns_all_empty": true,
+    "parent_transition_boundaries": 0,
+    "total_actions": 1076231
+  },
+  "capacity": {
+    "aggregate_graph": {
+      "added_nodes": 2105,
+      "candidate_edges": 7548198,
+      "candidate_recall": 0.9953051643192489,
+      "canonical_present": 37736,
+      "canonical_selected": 37468,
+      "canonical_successors": 37914,
+      "cross_edges": 7510140,
+      "cut_parent": 2913,
+      "fixed_nodes": 38818,
+      "flow_conversion_when_present": 0.9928980284078863,
+      "keep_parent": 35145,
+      "new_internal_canonical_successors": 504,
+      "new_internal_conversion": 0.975609756097561,
+      "new_internal_present": 492,
+      "new_internal_recall": 0.9761904761904762,
+      "new_internal_selected": 480,
+      "oracle_split_nodes": 40923,
+      "parent_edges": 38058,
+      "selected_cross": 2424
+    },
+    "combined_report_sha256": "e9e74ad402fd0def243d95e6933ecc27f847533522953e61b4a25e71d2a64226",
+    "delta_vs_m23_55": {
+      "COMBINED": {
+        "AssA": 1.393889999999999,
+        "DetA": 0.10920799999999531,
+        "HOTA": 0.7625059999999877,
+        "IDSW": -705
+      },
+      "MOT20-01": {
+        "AssA": 1.5713640000000026,
+        "DetA": 0.263504999999995,
+        "HOTA": 0.9254840000000115,
+        "IDSW": -36
+      },
+      "MOT20-02": {
+        "AssA": 2.382105999999993,
+        "DetA": 0.3076850000000064,
+        "HOTA": 1.4220760000000041,
+        "IDSW": -242
+      },
+      "MOT20-03": {
+        "AssA": 0.5824900000000071,
+        "DetA": 0.08136000000000365,
+        "HOTA": 0.33231000000000677,
+        "IDSW": -124
+      },
+      "MOT20-05": {
+        "AssA": 1.5481100000000083,
+        "DetA": 0.07029799999999398,
+        "HOTA": 0.8190460000000002,
+        "IDSW": -303
+      }
+    },
+    "folds": {
+      "MOT20-01": {
+        "candidate_graph": {
+          "cross_edges": 110954,
+          "edges": 111659,
+          "manifest": "outputs/mot20_m23_20260718/m23_57_intra_node_change_point_capacity_v2/capacity/MOT20-01/frozen_candidate_graph/freeze_manifest.json",
+          "manifest_sha256": "f3b8915feb276156e5bd497b3f27d29eff2e6b9b3d27c7b454e277cd8a2e7c0a",
+          "nodes": 797,
+          "parent_edges": 705
+        },
+        "canonical_flow": {
+          "candidate_recall": 0.9971830985915493,
+          "canonical_present_in_flow_graph": 708,
+          "canonical_selected": 699,
+          "canonical_successors": 710,
+          "new_internal_canonical_present": 16,
+          "new_internal_canonical_selected": 16,
+          "new_internal_canonical_successors": 16,
+          "teacher_flow_conversion_when_present": 0.9872881355932204
+        },
+        "delta_vs_m23_55": {
+          "AssA": 1.5713640000000026,
+          "DetA": 0.263504999999995,
+          "HOTA": 0.9254840000000115,
+          "IDSW": -36
+        },
+        "flow_actions": {
+          "affected_chunks": 189,
+          "affected_detection_row_rate": 0.11821185215775346,
+          "affected_detection_rows": 2290,
+          "cross": 113,
+          "cut_parent": 116,
+          "dummy_restart": 95,
+          "dummy_terminate": 95,
+          "keep_parent": 589
+        },
+        "integrity": {
+          "acyclic": true,
+          "baseline_m23_46_byte_exact": true,
+          "detection_payload_unchanged": true,
+          "one_to_one": true,
+          "time_forward": true
+        },
+        "node_counts": {
+          "added_nodes": 99,
+          "fixed_chunk30_nodes": 698,
+          "impure_fixed_nodes": 49,
+          "oracle_split_nodes": 797
+        },
+        "official_trackeval": {
+          "AssA": 81.363344,
+          "DetA": 82.25968999999999,
+          "HOTA": 81.74223,
+          "IDSW": 19
+        },
+        "peak_gpu_memory_mb": 39.9453125,
+        "peak_rss_mb": 1100.90625,
+        "report_sha256": "b9f4ada2c295042ab9d83ffe3d4499446ae62c9008d819fa126df70c9b29dead",
+        "runtime_seconds": 35.548081398010254,
+        "split_actions": {
+          "chunks_with_teacher_split": 49,
+          "mandatory_parent_transition_boundaries": 0,
+          "teacher_change_points": 99,
+          "teacher_split_affected_detection_rows": 1393
+        },
+        "tracker_sha256": "f3d6b60f9d13a133fec2be7cfeb87f29a42e357cb60564ab1499466964a2777c"
+      },
+      "MOT20-02": {
+        "candidate_graph": {
+          "cross_edges": 1128129,
+          "edges": 1133804,
+          "manifest": "outputs/mot20_m23_20260718/m23_57_intra_node_change_point_capacity_v2/capacity/MOT20-02/frozen_candidate_graph/freeze_manifest.json",
+          "manifest_sha256": "e21a388e0c2caaa10135ce4d5b915b9f81635f608235b355c4a3121530cb6212",
+          "nodes": 6113,
+          "parent_edges": 5675
+        },
+        "canonical_flow": {
+          "candidate_recall": 0.9813230930354337,
+          "canonical_present_in_flow_graph": 5622,
+          "canonical_selected": 5540,
+          "canonical_successors": 5729,
+          "new_internal_canonical_present": 144,
+          "new_internal_canonical_selected": 138,
+          "new_internal_canonical_successors": 153,
+          "teacher_flow_conversion_when_present": 0.9854144432586268
+        },
+        "delta_vs_m23_55": {
+          "AssA": 2.382105999999993,
+          "DetA": 0.3076850000000064,
+          "HOTA": 1.4220760000000041,
+          "IDSW": -242
+        },
+        "flow_actions": {
+          "affected_chunks": 1554,
+          "affected_detection_row_rate": 0.12481475600719805,
+          "affected_detection_rows": 18866,
+          "cross": 900,
+          "cut_parent": 972,
+          "dummy_restart": 510,
+          "dummy_terminate": 510,
+          "keep_parent": 4703
+        },
+        "integrity": {
+          "acyclic": true,
+          "baseline_m23_46_byte_exact": true,
+          "detection_payload_unchanged": true,
+          "one_to_one": true,
+          "time_forward": true
+        },
+        "node_counts": {
+          "added_nodes": 823,
+          "fixed_chunk30_nodes": 5290,
+          "impure_fixed_nodes": 390,
+          "oracle_split_nodes": 6113
+        },
+        "official_trackeval": {
+          "AssA": 73.57198,
+          "DetA": 81.90729,
+          "HOTA": 77.59354,
+          "IDSW": 193
+        },
+        "peak_gpu_memory_mb": 149.662109375,
+        "peak_rss_mb": 4196.3671875,
+        "report_sha256": "da3e055683fd89d1bb9849e4cc08103cf87905866761efc9d94f88a275982335",
+        "runtime_seconds": 231.44186687469482,
+        "split_actions": {
+          "chunks_with_teacher_split": 390,
+          "mandatory_parent_transition_boundaries": 0,
+          "teacher_change_points": 823,
+          "teacher_split_affected_detection_rows": 11508
+        },
+        "tracker_sha256": "4a2745244a881535af39ca3135b051cb2e37277f5e0db35049ba008ed9816ac3"
+      },
+      "MOT20-03": {
+        "candidate_graph": {
+          "cross_edges": 1920922,
+          "edges": 1931117,
+          "manifest": "outputs/mot20_m23_20260718/m23_57_intra_node_change_point_capacity_v2/capacity/MOT20-03/frozen_candidate_graph/freeze_manifest.json",
+          "manifest_sha256": "62091135ff65e2118430ba57eafb2099a08969c3e0bcd6a9e6910740cb3b36b6",
+          "nodes": 10949,
+          "parent_edges": 10195
+        },
+        "canonical_flow": {
+          "candidate_recall": 0.9992096423631693,
+          "canonical_present_in_flow_graph": 10114,
+          "canonical_selected": 10077,
+          "canonical_successors": 10122,
+          "new_internal_canonical_present": 104,
+          "new_internal_canonical_selected": 103,
+          "new_internal_canonical_successors": 104,
+          "teacher_flow_conversion_when_present": 0.9963417045679257
+        },
+        "delta_vs_m23_55": {
+          "AssA": 0.5824900000000071,
+          "DetA": 0.08136000000000365,
+          "HOTA": 0.33231000000000677,
+          "IDSW": -124
+        },
+        "flow_actions": {
+          "affected_chunks": 892,
+          "affected_detection_row_rate": 0.03947871620627776,
+          "affected_detection_rows": 12078,
+          "cross": 386,
+          "cut_parent": 496,
+          "dummy_restart": 864,
+          "dummy_terminate": 864,
+          "keep_parent": 9699
+        },
+        "integrity": {
+          "acyclic": true,
+          "baseline_m23_46_byte_exact": true,
+          "detection_payload_unchanged": true,
+          "one_to_one": true,
+          "time_forward": true
+        },
+        "node_counts": {
+          "added_nodes": 347,
+          "fixed_chunk30_nodes": 10602,
+          "impure_fixed_nodes": 177,
+          "oracle_split_nodes": 10949
+        },
+        "official_trackeval": {
+          "AssA": 82.33011,
+          "DetA": 81.46961,
+          "HOTA": 81.88512,
+          "IDSW": 65
+        },
+        "peak_gpu_memory_mb": 249.0302734375,
+        "peak_rss_mb": 7112.375,
+        "report_sha256": "b3785797267aa7613b22b9735abf9586ef5c10e0d6fa1af0b335be8978fb3720",
+        "runtime_seconds": 477.753778219223,
+        "split_actions": {
+          "chunks_with_teacher_split": 177,
+          "mandatory_parent_transition_boundaries": 0,
+          "teacher_change_points": 347,
+          "teacher_split_affected_detection_rows": 5003
+        },
+        "tracker_sha256": "1378723c90b4bed6adfef53b9bdc56cd3e143d3bf890e1c68ecf88280b8a8d12"
+      },
+      "MOT20-05": {
+        "candidate_graph": {
+          "cross_edges": 4350135,
+          "edges": 4371618,
+          "manifest": "outputs/mot20_m23_20260718/m23_57_intra_node_change_point_capacity_v2/capacity/MOT20-05/frozen_candidate_graph/freeze_manifest.json",
+          "manifest_sha256": "f29ec03b721907c0b464dcd4779b9230fd6038f5d93a40107aeb6ff21e8af385",
+          "nodes": 23064,
+          "parent_edges": 21483
+        },
+        "canonical_flow": {
+          "candidate_recall": 0.9971432585585164,
+          "canonical_present_in_flow_graph": 21292,
+          "canonical_selected": 21152,
+          "canonical_successors": 21353,
+          "new_internal_canonical_present": 228,
+          "new_internal_canonical_selected": 223,
+          "new_internal_canonical_successors": 231,
+          "teacher_flow_conversion_when_present": 0.9934247604734172
+        },
+        "delta_vs_m23_55": {
+          "AssA": 1.5481100000000083,
+          "DetA": 0.07029799999999398,
+          "HOTA": 0.8190460000000002,
+          "IDSW": -303
+        },
+        "flow_actions": {
+          "affected_chunks": 2444,
+          "affected_detection_row_rate": 0.056971004779294315,
+          "affected_detection_rows": 36381,
+          "cross": 1025,
+          "cut_parent": 1329,
+          "dummy_restart": 1885,
+          "dummy_terminate": 1885,
+          "keep_parent": 20154
+        },
+        "integrity": {
+          "acyclic": true,
+          "baseline_m23_46_byte_exact": true,
+          "detection_payload_unchanged": true,
+          "one_to_one": true,
+          "time_forward": true
+        },
+        "node_counts": {
+          "added_nodes": 836,
+          "fixed_chunk30_nodes": 22228,
+          "impure_fixed_nodes": 437,
+          "oracle_split_nodes": 23064
+        },
+        "official_trackeval": {
+          "AssA": 81.04388,
+          "DetA": 82.141143,
+          "HOTA": 81.57332000000001,
+          "IDSW": 277
+        },
+        "peak_gpu_memory_mb": 350.67578125,
+        "peak_rss_mb": 15709.76953125,
+        "report_sha256": "5f322b466cfb79e1995271d1890f7b900e8428700bc8cde1efbb324a3f325cb5",
+        "runtime_seconds": 943.412309885025,
+        "split_actions": {
+          "chunks_with_teacher_split": 437,
+          "mandatory_parent_transition_boundaries": 0,
+          "teacher_change_points": 836,
+          "teacher_split_affected_detection_rows": 12511
+        },
+        "tracker_sha256": "6a333d987ad629f6071f37c83ff21f14f5f61050602dc008b654a580e6abe4a3"
+      }
+    },
+    "gate_HOTA": 80.7,
+    "gate_margin": 0.44804599999999084,
+    "gate_pass": true,
+    "official_trackeval": {
+      "COMBINED": {
+        "AssA": 80.4249,
+        "DetA": 81.920034,
+        "HOTA": 81.148046,
+        "IDSW": 554
+      },
+      "MOT20-01": {
+        "AssA": 81.363344,
+        "DetA": 82.25968999999999,
+        "HOTA": 81.74223,
+        "IDSW": 19
+      },
+      "MOT20-02": {
+        "AssA": 73.57198,
+        "DetA": 81.90729,
+        "HOTA": 77.59354,
+        "IDSW": 193
+      },
+      "MOT20-03": {
+        "AssA": 82.33011,
+        "DetA": 81.46961,
+        "HOTA": 81.88512,
+        "IDSW": 65
+      },
+      "MOT20-05": {
+        "AssA": 81.04388,
+        "DetA": 82.141143,
+        "HOTA": 81.57332000000001,
+        "IDSW": 277
+      }
+    },
+    "tracker_sha256": {
+      "MOT20-01.txt": "f3d6b60f9d13a133fec2be7cfeb87f29a42e357cb60564ab1499466964a2777c",
+      "MOT20-02.txt": "4a2745244a881535af39ca3135b051cb2e37277f5e0db35049ba008ed9816ac3",
+      "MOT20-03.txt": "1378723c90b4bed6adfef53b9bdc56cd3e143d3bf890e1c68ecf88280b8a8d12",
+      "MOT20-05.txt": "6a333d987ad629f6071f37c83ff21f14f5f61050602dc008b654a580e6abe4a3"
+    }
+  },
+  "commands": {
+    "capacity": "python scripts/m23_research/m23_57_intra_node_change_point_capacity.py capacity --seq <SEQ>",
+    "combined": "python scripts/m23_research/m23_57_intra_node_change_point_capacity.py combine",
+    "freeze": "python scripts/m23_research/m23_57_intra_node_change_point_capacity.py freeze-boundaries --seq <SEQ>",
+    "observability": "CUBLAS_WORKSPACE_CONFIG=:4096:8 python scripts/m23_research/m23_57_change_point_observability_audit.py run-outer --held <SEQ>",
+    "observability_summary": "python scripts/m23_research/m23_57_change_point_observability_audit.py summarize"
+  },
+  "date": "2026-07-20",
+  "decision": {
+    "branch": "C",
+    "conclusion": "optional intra-node action space has ample teacher capacity, but current GT-free local representation is even less transferable than M23-56 source-error representation",
+    "m23_54_started": false,
+    "m23_58_started": false,
+    "mot20_test_submission": false,
+    "next_candidate_only": "relation-specific external pretraining"
+  },
+  "deployable": false,
+  "equivalence_audit": {
+    "m23_53b_equivalent": false,
+    "path": "outputs/mot20_m23_20260718/m23_57_intra_node_change_point_capacity_v2/m23_53b_equivalence_audit.json",
+    "reason": "M23-53B admits at most one preselected boundary per fixed chunk; M23-57 admits every adjacent internal boundary independently and supports multiple cuts/A-B-A.",
+    "sha256": "b151fd6b7659f71aad9976f4466db5e83f468b1cf315609507b902825ecae6c6"
+  },
+  "experiment": "M23-57 Optional Intra-node Change-point Capacity and Observability Audit",
+  "highest_teacher_capacity": {
+    "AssA": 80.4249,
+    "DetA": 81.920034,
+    "HOTA": 81.148046,
+    "IDSW": 554,
+    "experiment": "M23-57 v2"
+  },
+  "invalid_v1": {
+    "manifest": "outputs/mot20_m23_20260718/m23_57_intra_node_change_point_capacity_v1/INVALIDATED_AFTER_GT_BUG.json",
+    "manifest_sha256": "377914f807b8601fc9c40dc488861f741f211a17f139aca4ad8454a2cbb6ff59",
+    "metrics_used_for_selection": false,
+    "status": "invalid_after_GT_opened_bug",
+    "v1_artifacts_reused_by_v2": false
+  },
+  "observability": {
+    "aggregate": {
+      "base_rate": {
+        "max": 0.0030103823185544565,
+        "mean": 0.0016712974884655163,
+        "min": 0.0007211018436170468
+      },
+      "false_split_rate_on_pure_nodes": {
+        "max": 0.006832957909883305,
+        "mean": 0.003865489372064243,
+        "min": 0.0025544267053701016
+      },
+      "pr_auc": {
+        "max": 0.03231784141705932,
+        "mean": 0.025120420411199898,
+        "min": 0.01698720682626794
+      },
+      "precision_at_actual_split_count": {
+        "max": 0.05,
+        "mean": 0.04175757030704446,
+        "min": 0.023809523809523808
+      },
+      "recall_at_95_precision": {
+        "max": 0.004761904761904762,
+        "mean": 0.0011904761904761906,
+        "min": 0.0
+      }
+    },
+    "clearly_better_than_m23_56": false,
+    "comparison_to_m23_56": {
+      "M23_56": {
+        "precision_at_actual_edit_count": 0.21907241179210601,
+        "recall_at_95_precision": 0.012017174739538172,
+        "source_error_pr_auc": 0.18298375390596652
+      },
+      "M23_57": {
+        "pr_auc": 0.025120420411199898,
+        "precision_at_actual_split_count": 0.04175757030704446,
+        "recall_at_95_precision": 0.0011904761904761906
+      },
+      "absolute_improvement": {
+        "pr_auc": -0.1578633334947666,
+        "precision_at_actual_split_count": -0.17731484148506155,
+        "recall_at_95_precision": -0.010826698549061983
+      }
+    },
+    "decision": "C_capacity_exists_but_local_representation_not_safely_transferable",
+    "fixed_D_rule": {
+      "m02_m05_pr_auc_degradation_at_most_0p15": true,
+      "mean_pr_auc_at_least_0p283": false,
+      "mean_precision_at_actual_split_count_at_least_0p35": false,
+      "mean_recall_at_95_precision_at_least_0p05": false
+    },
+    "folds": {
+      "MOT20-01": {
+        "detection_offset": {
+          "events": 40,
+          "exact_boundary_rate": 0.25,
+          "mean_signed_offset_rows": 0.75,
+          "median_absolute_offset_rows": 2.5,
+          "p90_absolute_offset_rows": 13.200000000000003
+        },
+        "metrics": {
+          "actual_splits": 40,
+          "base_rate": 0.0021743857360295715,
+          "f1": 0.0851063829787234,
+          "false_negative": 34,
+          "false_positive": 95,
+          "false_split_rate_on_pure_nodes": 0.0025544267053701016,
+          "pr_auc": 0.03231784141705932,
+          "precision": 0.0594059405940594,
+          "precision_at_actual_split_count": 0.05,
+          "predicted_splits": 101,
+          "recall": 0.15,
+          "recall_at_90_precision": 0.0,
+          "recall_at_95_precision": 0.0,
+          "recall_at_99_precision": 0.0,
+          "roc_auc": 0.8846712246676836,
+          "threshold": 0.9849289059638977,
+          "true_positive": 6
+        },
+        "model_sha256": "8bf7345d0afab3ef8ea61a0391b45fb44d8432e2ac607300017cd1917ed72d12",
+        "peak_gpu_memory_mb": 93.4287109375,
+        "peak_rss_mb": 3373.03515625,
+        "report_sha256": "9df7a3e8d9d5213e0217105a09415441a164eae50ba6e7845435bcadac5a8d89",
+        "runtime_seconds": 37.74464797973633,
+        "scaler_sha256": "812718fda8334e4fdcfb764d1b4c094680b517da01e99025bb58bf5e2230f1f1"
+      },
+      "MOT20-02": {
+        "detection_offset": {
+          "events": 430,
+          "exact_boundary_rate": 0.1883720930232558,
+          "mean_signed_offset_rows": -0.23255813953488372,
+          "median_absolute_offset_rows": 3.0,
+          "p90_absolute_offset_rows": 12.0
+        },
+        "metrics": {
+          "actual_splits": 430,
+          "base_rate": 0.0030103823185544565,
+          "f1": 0.06481012658227848,
+          "false_negative": 366,
+          "false_positive": 1481,
+          "false_split_rate_on_pure_nodes": 0.006832957909883305,
+          "pr_auc": 0.029488970425609634,
+          "precision": 0.041423948220064725,
+          "precision_at_actual_split_count": 0.046511627906976744,
+          "predicted_splits": 1545,
+          "recall": 0.14883720930232558,
+          "recall_at_90_precision": 0.0,
+          "recall_at_95_precision": 0.0,
+          "recall_at_99_precision": 0.0,
+          "roc_auc": 0.8660297224486236,
+          "threshold": 0.9867032766342163,
+          "true_positive": 64
+        },
+        "model_sha256": "a00170723be571a37194578593655cda6a12dd41b2756474819f758f1df6035d",
+        "peak_gpu_memory_mb": 93.4287109375,
+        "peak_rss_mb": 3282.90625,
+        "report_sha256": "51853d3e0195bf44d6e7e7c244706a68fa58b2894bf4fa5669e9296232e920ea",
+        "runtime_seconds": 32.53366827964783,
+        "scaler_sha256": "90bafc264aeafb40396ced22ee19e4d482c626144a1e9eabea03d00632bced44"
+      },
+      "MOT20-03": {
+        "detection_offset": {
+          "events": 210,
+          "exact_boundary_rate": 0.17142857142857143,
+          "mean_signed_offset_rows": -0.46190476190476193,
+          "median_absolute_offset_rows": 3.0,
+          "p90_absolute_offset_rows": 12.0
+        },
+        "metrics": {
+          "actual_splits": 210,
+          "base_rate": 0.0007211018436170468,
+          "f1": 0.050452781371280724,
+          "false_negative": 171,
+          "false_positive": 1297,
+          "false_split_rate_on_pure_nodes": 0.00336142658386306,
+          "pr_auc": 0.021687662975862703,
+          "precision": 0.029191616766467067,
+          "precision_at_actual_split_count": 0.023809523809523808,
+          "predicted_splits": 1336,
+          "recall": 0.18571428571428572,
+          "recall_at_90_precision": 0.004761904761904762,
+          "recall_at_95_precision": 0.004761904761904762,
+          "recall_at_99_precision": 0.004761904761904762,
+          "roc_auc": 0.9239073764352879,
+          "threshold": 0.9846109747886658,
+          "true_positive": 39
+        },
+        "model_sha256": "67a9c9073bbf84e87e79e0e69da18af9d1721f134124579f0e071e5f0802fc2c",
+        "peak_gpu_memory_mb": 93.4287109375,
+        "peak_rss_mb": 3603.82421875,
+        "report_sha256": "b0d40a25bedf5f9a4c5215dd7464a12c8c066b5fec16ac753cfc67fb69e40fcd",
+        "runtime_seconds": 25.890390157699585,
+        "scaler_sha256": "70cc68ac197ceef162975b1d7322f2e8d0cf1cab2c506b2ebe3f3b37ddbffbf5"
+      },
+      "MOT20-05": {
+        "detection_offset": {
+          "events": 471,
+          "exact_boundary_rate": 0.1910828025477707,
+          "mean_signed_offset_rows": -0.06369426751592357,
+          "median_absolute_offset_rows": 3.0,
+          "p90_absolute_offset_rows": 13.0
+        },
+        "metrics": {
+          "actual_splits": 471,
+          "base_rate": 0.0007793200556609908,
+          "f1": 0.04745762711864407,
+          "false_negative": 408,
+          "false_positive": 2121,
+          "false_split_rate_on_pure_nodes": 0.0027131462891405054,
+          "pr_auc": 0.01698720682626794,
+          "precision": 0.028846153846153848,
+          "precision_at_actual_split_count": 0.04670912951167728,
+          "predicted_splits": 2184,
+          "recall": 0.1337579617834395,
+          "recall_at_90_precision": 0.0,
+          "recall_at_95_precision": 0.0,
+          "recall_at_99_precision": 0.0,
+          "roc_auc": 0.8792342229906245,
+          "threshold": 0.9866948127746582,
+          "true_positive": 63
+        },
+        "model_sha256": "24f22a0b3fe8e085dde4bf5f11c1076003553873292196a6636f801ec92ac71a",
+        "peak_gpu_memory_mb": 93.4287109375,
+        "peak_rss_mb": 4004.03125,
+        "report_sha256": "d3282ebec3c8b58bc44bcaa729d50e3f4607984c25d6591e5280b0297c4d1656",
+        "runtime_seconds": 26.742148876190186,
+        "scaler_sha256": "b5da62bde1c1e091a2fb4d7e39f14961baee4433f90c2ff37020100037842a9f"
+      }
+    },
+    "model": "fixed single linear logistic classifier, class-balanced sequence group-DRO",
+    "model_raw_feature_count": 57,
+    "summary_sha256": "0f055c5df932140ac472b44c0b51e372dbcaa0cf9e80d8a856c463c7f6569d5f",
+    "transfer_degradation": {
+      "M01_M03_mean_pr_auc": 0.027002752196461012,
+      "M02_M05_mean_pr_auc": 0.023238088625938787,
+      "degradation": 0.0037646635705222246
+    }
+  },
+  "protocol": {
+    "all_boundary_freezes_before_teacher": true,
+    "capacity_script_sha256": "3314e8e900553efd77d06ef5f8ebc944fdfffbf01bf6136d7b10052d69361501",
+    "implementation_manifest_sha256": "faca4cd7f9d98485037de4fb3eeed1228bd3165005da8b5a680b66e29b62ae08",
+    "observability_models_frozen_before_held_labels": true,
+    "observability_script_sha256": "43f272f772f754912471e340f137fbc8a1297a7463d83c08048596d65f041697",
+    "preregistration_sha256": "06ef9d70f2fe319de8e787e7aedcf74895c39736b31da1146c84cec24a5778d5",
+    "trackeval_runs": {
+      "combined": 1,
+      "fold": 4
+    }
+  },
+  "resources": {
+    "boundary_freeze_total_seconds": 973.6676545143127,
+    "capacity_fold_total_seconds": 1688.1560363769531,
+    "environment": {
+      "cpu_logical": 96,
+      "cpu_physical": 48,
+      "cuda_available": true,
+      "environment_snapshot_tool_error": "name 'sys' is not defined",
+      "git_head": "982c176b9c77dfbf6ef0b96bb66530c905d88797",
+      "gpu": {
+        "name": "B1.gpu.large",
+        "torch_cuda": "12.1",
+        "total_memory_bytes": 24968727056
+      },
+      "origin_main": "982c176b9c77dfbf6ef0b96bb66530c905d88797",
+      "platform": "Linux-5.4.0-42-generic-x86_64-with-glibc2.35",
+      "python": "3.11.8 (main, Feb 26 2024, 21:39:34) [GCC 11.2.0]",
+      "ram_total_bytes": 540688650240,
+      "torch": "2.2.2+cu121"
+    },
+    "environment_snapshot_sha256": "dc024519cf850c99eef2bb4db378d22e0c177e7868c90da3abda92bc0baf4240",
+    "environment_snapshot_tool_error": "name 'sys' is not defined; manual equivalent snapshot recorded",
+    "maximum_peak_gpu_memory_mb": 350.67578125,
+    "maximum_peak_rss_mb": 15709.76953125,
+    "observability_total_seconds": 122.91085529327393
+  },
+  "status": "completed_closed_branch_C",
+  "strict_deployable_best": {
+    "AssA": 76.82515,
+    "DetA": 81.54347,
+    "HOTA": 79.123193,
+    "IDSW": 996,
+    "experiment": "M23-46"
+  },
+  "taxonomy": {
+    "a_to_b_to_a_patterns": 889,
+    "change_points": 2105,
+    "fixed_nodes": 38818,
+    "impure_nodes": 1053,
+    "pure_nodes": 36946,
+    "supported_change_points": 1151,
+    "teacher_split_affected_detection_rows": 30415,
+    "unsupported_change_points": 954,
+    "unsupported_nodes": 819
+  },
+  "teacher_only": true,
+  "valid_run_version": "v2"
+}
