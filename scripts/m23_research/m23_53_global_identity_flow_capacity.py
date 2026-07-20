@@ -72,6 +72,7 @@ NODE_ALLOWLIST = (
     "start_vy",
     "end_vx",
     "end_vy",
+    "parent_tracker_id",
 )
 
 EDGE_ALLOWLIST = (
@@ -200,38 +201,48 @@ def line_chunks(rows: list[dict], nodes: pd.DataFrame) -> dict[int, int]:
     by_track: dict[int, list[int]] = defaultdict(list)
     for row_index, row in enumerate(rows):
         by_track[int(row["track_id"])].append(row_index)
+    nodes_by_track: dict[int, list] = defaultdict(list)
+    for node in nodes.itertuples(index=False):
+        nodes_by_track[int(node.source_track_id)].append(node)
     mapping: dict[int, int] = {}
-    chunk_id = 0
     for track_id, indices in sorted(by_track.items()):
         indices.sort(key=lambda index: (rows[index]["frame"], index))
-        start = 0
-        ordinal = 0
-        for end in range(1, len(indices) + 1):
-            boundary = (
-                end == len(indices)
-                or rows[indices[end]]["frame"] - rows[indices[end - 1]]["frame"]
-                > GAP_BREAK
-                or rows[indices[end]]["frame"] - rows[indices[start]]["frame"]
-                >= CHUNK_SPAN
-            )
-            if not boundary:
-                continue
-            record = nodes.iloc[chunk_id]
+        records = sorted(
+            nodes_by_track.get(track_id, []),
+            key=lambda record: int(record.source_ordinal),
+        )
+        if [int(record.source_ordinal) for record in records] != list(
+            range(len(records))
+        ):
+            raise RuntimeError(f"non-contiguous source ordinals for track {track_id}")
+        cursor = 0
+        for record in records:
+            count = int(record.rows)
+            part = indices[cursor : cursor + count]
+            if len(part) != count:
+                raise RuntimeError(
+                    f"track {track_id}: node {int(record.chunk_id)} row underflow"
+                )
             if (
-                int(record.source_track_id) != track_id
-                or int(record.source_ordinal) != ordinal
-                or int(record.first_frame) != rows[indices[start]]["frame"]
-                or int(record.last_frame) != rows[indices[end - 1]]["frame"]
+                int(record.first_frame) != rows[part[0]]["frame"]
+                or int(record.last_frame) != rows[part[-1]]["frame"]
             ):
-                raise RuntimeError(f"chunk reconstruction mismatch at {chunk_id}")
-            for index in indices[start:end]:
-                mapping[index] = chunk_id
-            chunk_id += 1
-            ordinal += 1
-            start = end
-    if chunk_id != len(nodes) or len(mapping) != len(rows):
+                raise RuntimeError(
+                    f"adaptive chunk reconstruction mismatch at {int(record.chunk_id)}"
+                )
+            for index in part:
+                mapping[index] = int(record.chunk_id)
+            cursor += count
+        if cursor != len(indices):
+            raise RuntimeError(
+                f"track {track_id}: assigned {cursor}/{len(indices)} source rows"
+            )
+    unknown_tracks = sorted(set(nodes_by_track) - set(by_track))
+    if unknown_tracks:
+        raise RuntimeError(f"nodes reference unknown source tracks: {unknown_tracks[:8]}")
+    if len(nodes) != len(set(mapping.values())) or len(mapping) != len(rows):
         raise RuntimeError(
-            f"chunk reconstruction incomplete: chunks={chunk_id}/{len(nodes)}, "
+            f"chunk reconstruction incomplete: chunks={len(set(mapping.values()))}/{len(nodes)}, "
             f"rows={len(mapping)}/{len(rows)}"
         )
     return mapping
@@ -268,6 +279,7 @@ def write_tracker(
     nodes: pd.DataFrame,
     selected: pd.DataFrame,
     output_path: Path,
+    preserve_parent_ids: bool = False,
 ) -> dict:
     rows = read_tracker_rows(source_parent)
     mapping = line_chunks(rows, nodes)
@@ -277,7 +289,12 @@ def write_tracker(
     seen: set[tuple[int, int]] = set()
     for row_index, row in enumerate(rows):
         chunk_id = mapping[row_index]
-        new_id = base + assignment[chunk_id]
+        if preserve_parent_ids:
+            if "parent_tracker_id" not in nodes.columns:
+                raise RuntimeError("parent_tracker_id is required for preserved IDs")
+            new_id = int(nodes.iloc[chunk_id].parent_tracker_id)
+        else:
+            new_id = base + assignment[chunk_id]
         if new_id >= (1 << 24):
             raise RuntimeError("synthetic ID exceeds exact float32 integer range")
         fields = list(row["fields"])
@@ -369,7 +386,7 @@ def build_and_freeze_candidates(
             raise FileNotFoundError(path)
 
     nodes = read_allowlisted_parquet(nodes_path, NODE_ALLOWLIST)
-    missing_nodes = set(NODE_ALLOWLIST) - set(nodes.columns)
+    missing_nodes = (set(NODE_ALLOWLIST) - {"parent_tracker_id"}) - set(nodes.columns)
     if missing_nodes:
         raise RuntimeError(f"missing node observables: {sorted(missing_nodes)}")
     nodes = nodes.sort_values("chunk_id", kind="mergesort").reset_index(drop=True)
@@ -383,7 +400,12 @@ def build_and_freeze_candidates(
     # Byte-exact no-op reconstruction is a pre-GT protocol gate.
     reconstructed = output_root / "baseline_reconstruction" / "track_results" / f"{seq}.txt"
     baseline_report = write_tracker(
-        seq, source_parent, nodes, parent_applied, reconstructed
+        seq,
+        source_parent,
+        nodes,
+        parent_applied,
+        reconstructed,
+        preserve_parent_ids="parent_tracker_id" in nodes.columns,
     )
     parent_sha = sha256_file(parent_tracker)
     reconstructed_sha = sha256_file(reconstructed)
@@ -645,7 +667,12 @@ def build_teacher_utilities(
     labeler.PARENT = source_parent_root
     m23 = labeler.load_m23()
     rows = labeler.read_tracker(source_parent_root / f"{seq}.txt")
-    row_chunk = labeler.line_chunks(rows, nodes)
+    row_chunk_map = line_chunks(
+        read_tracker_rows(source_parent_root / f"{seq}.txt"), nodes
+    )
+    row_chunk = np.asarray(
+        [row_chunk_map[index] for index in range(len(rows))], dtype=np.int32
+    )
     row_gt = labeler.matched_gt_per_row(rows, seq, m23)
     totals = labeler.gt_counts(seq)
 

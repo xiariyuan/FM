@@ -1,0 +1,41 @@
+{
+  "experiment": "M23-53B Adaptive Microtracklet Identity-Flow Capacity",
+  "date": "2026-07-20",
+  "teacher_only": true,
+  "deployable": false,
+  "strict_parent": "M23-46",
+  "segmentation_protocol": {
+    "fixed_chunk30_boundaries_preserved": true,
+    "minimum_segment_rows": 5,
+    "cut_quantile": 0.75,
+    "maximum_adaptive_cuts_per_fixed_chunk": 1,
+    "projection_dim": 128,
+    "projection_seed": 2353,
+    "appearance_bank_k": 32,
+    "motion_bank_k": 8,
+    "max_gap": 600,
+    "gt_used": false
+  },
+  "graph_sizes": {
+    "MOT20-01": {"fixed_chunks": 698, "adaptive_chunks": 1321, "added_boundaries": 623, "candidate_edges": 44833},
+    "MOT20-02": {"fixed_chunks": 5290, "adaptive_chunks": 10086, "added_boundaries": 4796, "candidate_edges": 370296},
+    "MOT20-03": {"fixed_chunks": 10602, "adaptive_chunks": 20536, "added_boundaries": 9934, "candidate_edges": 744092},
+    "MOT20-05": {"fixed_chunks": 22228, "adaptive_chunks": 43022, "added_boundaries": 20794, "candidate_edges": 1581079}
+  },
+  "official": {
+    "MOT20-01": {"HOTA": 80.061990, "DetA": 82.239550, "AssA": 78.101580, "IDSW": 63},
+    "MOT20-02": {"HOTA": 74.572086, "DetA": 81.765190, "AssA": 68.102280, "IDSW": 484},
+    "MOT20-03": {"HOTA": 81.308920, "DetA": 81.442480, "AssA": 81.208030, "IDSW": 211},
+    "MOT20-05": {"HOTA": 80.442330, "DetA": 82.112646, "AssA": 78.846020, "IDSW": 591},
+    "COMBINED": {"HOTA": 79.920490, "DetA": 81.876564, "AssA": 78.059750, "IDSW": 1349}
+  },
+  "comparison": {
+    "fixed_m23_53_combined_HOTA": 79.950590,
+    "delta_vs_fixed_m23_53": -0.030100,
+    "strict_m23_46_HOTA": 79.123193,
+    "gain_over_strict_m23_46": 0.797297,
+    "gap_to_80": 0.079510,
+    "gap_to_m23_54_floor_80_7": 0.779510
+  },
+  "decision": "adaptive_protocol_insufficient_close_m23_53b_do_not_start_m23_54"
+}
