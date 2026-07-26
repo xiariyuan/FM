@@ -1,0 +1,5 @@
+# M23-65 — M23-59 v3 MOT20 Frozen-Checkpoint Representation Gate
+
+Pre-registered 2026-07-23. This is a frozen-checkpoint representation-only experiment on MOT20 train sequences MOT20-01, MOT20-02, MOT20-03 and MOT20-05. Topology and raw model scores are generated without labels and frozen before any GT file is opened. GT is used only for a separate official MOTChallenge label sidecar and metrics. No training, optimizer, tracker, TrackEval or HOTA is allowed.
+
+The immutable feature contract is 90cfab7d3a1fc87cc46b26441d3d883b9fc72f27d8852d1e2074b00e628428f5. Frozen topology uses 30-row/30-gap chunks, a 600-frame candidate horizon, buckets 1-30/31-90/91-180/181-600, K=32 per source/bucket, and ranking 0.70 appearance cosine + 0.30 exp(-4 normalized center distance) with deterministic destination tie breaks. Repeated-window scores use arithmetic mean over finite valid observations. The frozen v2 gate is macro boundary PR-AUC >= 0.283, macro precision@actual >= 0.35, macro recall at 95% precision >= 0.05, and every-sequence precision@actual >= 0.20; undefined values fail closed.
